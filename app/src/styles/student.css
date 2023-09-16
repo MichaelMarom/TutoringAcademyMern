@@ -1,0 +1,25 @@
+@media screen and (min-width: 720px) {
+    .form-subject-data-tabs{
+        width: 90%;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .form-subject-data-tabs div{
+        flex-shrink: 0;
+        padding: 10px;
+        display: flex;
+        white-space: nowrap;
+        justify-content: center;
+        width: calc(100% / 11 - 6px);
+        margin: 0 5px 5px 5px;
+    }
+
+    #form-subject-data-collection-table{
+        width: 70%;
+        height: 100%;
+        margin: auto;
+    }
+}

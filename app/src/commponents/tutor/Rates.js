@@ -244,7 +244,7 @@ const Rates = () => {
 
 
                     <div className="tutor-tab-rate-box">
-                        <h6>Multi Student Hourly Rate</h6>  
+                        <h6 className='text-secondary'>Multi Student Hourly Rate</h6>  
                         <div style={{height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'auto'}}>
                             <input type="checkbox"  onInput={e => setMultiStudentOption(e.target.checked ? true : false)} style={{cursor: 'pointer', height: '20px', width: '20px'}} name="multi-student-checkbox" id="multi-student-checkbox"  /> &nbsp;
                             <label htmlFor="multi-student-checkbox"><h6>Activate multi student option</h6></label>
@@ -381,7 +381,7 @@ const Rates = () => {
                         </div>
 
                         <div className="tutor-tab-rates-btm-options" style={{height: '600px', display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', margin: 'auto'}}>
-                            <h6>Multi Student Hourly Rate</h6>
+                            <h6 className='text-primary'>Multi Student Hourly Rate</h6>
 
                             <div className="highlight">
                                 Hours are accumulated on annual bases that will start counting from your enrollment

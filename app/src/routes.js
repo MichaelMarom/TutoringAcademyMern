@@ -2,6 +2,7 @@ import { Route, Link, useLocation, Routes, useNavigate } from "react-router-dom"
 import{motion,AnimatePresence} from 'framer-motion';
 
 import './styles/Tab_Styles/LargeScreen.css';
+import './styles/student.css';
 import './styles/Collaboration_Styles/LargeScreen.css';
 
 

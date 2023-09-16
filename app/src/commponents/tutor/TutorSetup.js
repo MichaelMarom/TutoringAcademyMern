@@ -469,89 +469,101 @@ const TutorSetup = () => {
                             
                         </div>
 
-                        <div className="profile-details-cnt" >
+                        <div className="profile-details-cnt" style={{float: 'left', margin: '0 10px 0 10px ', width: '40%'}}>
 
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap'}}>
-                                <input onInput={ e => set_fname(e.target.value)}  placeholder='First Name' defaultValue={fname} type="text" id="fname" style={{float: 'right'}} />
+                            <div style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>First Name</label> &nbsp;&nbsp;
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={ e => set_fname(e.target.value)}  placeholder='First Name' defaultValue={fname} type="text" id="fname"  />
                             </div>
 
-                            <div  style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap'}}>
-                                <input onInput={ e => set_mname(e.target.value)} placeholder='Middle Name' defaultValue={mname} type="text" id="mname" style={{float: 'right'}} />
+                            <div  style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Middle</label> &nbsp;&nbsp;
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={ e => set_mname(e.target.value)} placeholder='Middle Name' defaultValue={mname} type="text" id="mname"  />
                             </div>
 
-                            <div  style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap'}}>
-                                <input onInput={ e => set_sname(e.target.value)} placeholder='Last Name' defaultValue={sname} type="text" id="sname" style={{float: 'right'}} />
+                            <div  style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Last Name</label> &nbsp;&nbsp;
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={ e => set_sname(e.target.value)} placeholder='Last Name' defaultValue={sname} type="text" id="sname"  />
                             </div>
 
-                            {/*<div  style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap', pointerEvents: 'none'}}>
-                                <input onInput={ e => set_uname(e.target.value)} placeholder='Screen Name' type="text" id="sname" style={{float: 'right'}} />
+                            {/*<div  style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap', pointerEvents: 'none'}}>
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={ e => set_uname(e.target.value)} placeholder='Screen Name' type="text" id="sname"  />
     </div>*/}
 
-                            <div  style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap'}}>
-                                <input onInput={ e => set_email(e.target.value)} onBlur={handleEmail} placeholder='Email' defaultValue={email} type="text" id="email" style={{float: 'right'}} />
-
-                                <div className='err-mssg' >
-                                    Email already exist, Please try something else...
-                                </div>
-
+                            <div  style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', alignItems: 'center', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Email</label> &nbsp;&nbsp;
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={ e => set_email(e.target.value)} onBlur={handleEmail} placeholder='Email' defaultValue={email} type="text" id="email"  />
+                            </div>
+                            <div className='err-mssg' >
+                                Email already exist, Please try something else...
                             </div>
 
-                            <div  style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap'}}>
-                                <input onInput={ e => set_pwd(e.target.value)} placeholder='Password' defaultValue={pwd} type="text" id="pwd" style={{float: 'right'}} />
+                            <div  style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Password</label> &nbsp;&nbsp;
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={ e => set_pwd(e.target.value)} placeholder='Password' defaultValue={pwd} type="text" id="pwd"  />
                             </div>
 
-                            <div  style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap'}}>
-                                <input onInput={ e => set_cell(e.target.value)} placeholder='Cell Phone' defaultValue={cell} type="text" id="cellphn" style={{float: 'right'}} />
+                            <div  style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Cell Phone</label> &nbsp;&nbsp;
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={ e => set_cell(e.target.value)} placeholder='Cell Phone' defaultValue={cell} type="text" id="cellphn"  />
                             </div>
 
-                            <div  style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <input onInput={e => set_add1(e.target.value)} placeholder='Address 1' defaultValue={add1} type="text" id="add1" style={{float: 'right'}} />
+                            <div  style={{display: 'flex', width: '100%', display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Address 1</label> &nbsp;&nbsp;
+                                <input style={{margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative'}} onInput={e => set_add1(e.target.value)} placeholder='Address 1' defaultValue={add1} type="text" id="add1"  />
                             </div>
 
                             
 
                         </div>
 
-                        <div className="profile-details-cnt" style={{float: 'left'}}>
+                        <div className="profile-details-cnt" style={{float: 'right', margin: '0 10px 0 10px ', width: '40%'}}>
 
 
-                            <div  style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <input onInput={e => set_add2(e.target.value)} placeholder='Address 2' defaultValue={add2} type="text" id="add2" style={{float: 'right'}} />
+                            <div  style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Address 2</label> &nbsp;&nbsp;
+                                <input onInput={e => set_add2(e.target.value)} placeholder='Address 2' defaultValue={add2} type="text" id="add2" style={{float: 'right', width: '70%', margin: '2.5px 0 0 0'}} />
                             </div>
 
-                            <div style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <input onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" defaultValue={city} id="city" style={{float: 'right'}} />
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>City/Town</label> &nbsp;&nbsp;
+                                <input onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" defaultValue={city} id="city" style={{float: 'right', width: '70%', margin: '2.5px 0 0 0'}} />
                             </div>
 
-                            <div style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <select  onInput={e => set_state(e.target.value)} id="state" defaultValue={state} style={{float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>State</label> &nbsp;&nbsp;
+                                <select  onInput={e => set_state(e.target.value)} id="state" defaultValue={state} style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
                                     {stateList}
 
                                 </select>
                             </div>
 
-                            <div  style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <input onInput={e => set_zipCode(e.target.value)} defaultValue={zipCode} placeholder='Zip-Code' type="text" id="zip" style={{float: 'right'}} />
+                            <div  style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Zip Code</label> &nbsp;&nbsp;
+                                <input onInput={e => set_zipCode(e.target.value)} defaultValue={zipCode} placeholder='Zip-Code' type="text" id="zip" style={{float: 'right', width: '70%', margin: '2.5px 0 0 0'}} />
                             </div>
 
-                            <div style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <select  onInput={e => set_country(e.target.value)} id="country" defaultValue={country} style={{float: 'right', padding: '5px', margin: '0 0 10px 0'}}>
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Country</label> &nbsp;&nbsp;
+                                <select  onInput={e => set_country(e.target.value)} id="country" defaultValue={country} style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px', margin: '0 0 10px 0'}}>
                                     {countryList}
 
                                 </select>
                                 
                             </div>
 
-                            <div style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <select  onInput={e => set_timeZone(e.target.value)} id="timeZone" defaultValue={timeZone} style={{float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Time Zone</label> &nbsp;&nbsp;
+                                <select  onInput={e => set_timeZone(e.target.value)} id="timeZone" defaultValue={timeZone} style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
                                     {GMTList}
 
                                 </select>
                             </div>
 
-                            <div style={{display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                <label style={{width: '30%'}} htmlFor=''>Response Zone</label> &nbsp;&nbsp;
 
-                                <select  onInput={e => set_response_zone(e.target.value)} defaultValue={response_zone} id="resZone" style={{float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
+                                <select  onInput={e => set_response_zone(e.target.value)} defaultValue={response_zone} id="resZone" style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
                                     {response_list}
 
                                 </select>
@@ -560,7 +572,7 @@ const TutorSetup = () => {
 
                         </div>
 
-                        <div className="profile-video-cnt" style={{float: 'right'}}>
+                        <div className="profile-video-cnt" style={{float: 'right', width: '70%'}}>
                             <h5 style={{whiteSpace: 'nowrap'}}>Produce your profile video </h5>
 
                             <input data-type='file' defaultValue={video} onChange={handleVideo} type="file" style={{display: 'none'}} id="video" />

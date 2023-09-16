@@ -58,7 +58,7 @@ const Header = () => {
     return ( 
         <>
 
-        <div className="screen-name" style={{position: 'fixed', top: '40px', zIndex: '1000', background: '#000', color: '#fff', left: '50px', padding: '10px'}}>
+        <div className="screen-name" style={{position: 'fixed', top: '50px', zIndex: '1000', background: 'blue', fontWeight: 'bold', color: '#fff', left: '50px', padding: '10px'}}>
             {screen_name}
         </div>
 

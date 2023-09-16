@@ -10,6 +10,9 @@ const StudentFaculties = () => {
 
     const columns = useMemo(() => COLUMNS, []);
 
+     
+    let multi_student_cols = [{Header: '# Select'}, {Header: 'Subject'}, {Header: 'Level'}, {Header: 'Experience', }, {Header: 'Certification', }, {Header: 'State', }, {Header: 'Expiration', }, {Header: 'Rate', }]
+
 
     const tableInstance = useTable({columns, data})
 
@@ -34,21 +37,24 @@ const StudentFaculties = () => {
                     <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select for tutoring. Did't find your subject? List your expertise above and submit We may list your subject after examination.</p>
                 </div>
 
-                <div className="form-subject-data-collection-table">
-                    <div className="form-subject-data-tabs">
-                        <div id="active">Math</div>
-                        <div>Computer Language</div>
-                        <div>English</div>
-                        <div>Languages</div>
-                        <div>Elementary Edu...</div>
-                        <div>Business</div>
-                        <div>Programming</div>
-                        <div>TestProp</div>
-                        <div>Art </div>
-                        <div>Engineering</div>
-                        <div>Aviation</div>
-                    </div>
-                    <div className="highlight">
+                <div className="form-subject-data-tabs">
+                    <div id="active">Math</div>
+                    <div>Computer Language</div>
+                    <div>English</div>
+                    <div>Languages</div>
+                    <div>Elementary Edu...</div>
+                    <div>Business</div>
+                    <div>Programming</div>
+                    <div>TestProp</div>
+                    <div>Art </div>
+                    <div>Engineering</div>
+                    <div>Aviation</div>
+                </div>
+
+                <div id="form-subject-data-collection-table">
+                    
+
+                    <div className="highlight" style={{width: '100%'}}>
                         Checkbox any subject in any faculty where you are proficient enough to tutor, Ultimately you are being rated by the students feedback, if students feedback is only 2 stars then its free checkbox the subject then select the certificate, state expiration if available. Then click on the rate button which will pop up a table to select your rate
                     </div>
 
@@ -57,8 +63,8 @@ const StudentFaculties = () => {
                             <label style={{float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px'}} htmlFor="search"><h6>Search accross all faculties. type the subject of interest then checkbox to select</h6></label>
 
                             <div className="search-bar">
-                                <input type="search" placeholder='Search Here...' id="search"  /> 
-                                <input type="button" value="Search" />
+                                <input type="search" placeholder='Search Here...' id="search" tyle={{ outline: 'none', border: 'none'}} /> 
+                                <input type="button" value="Search " style={{width: '50px', outline: 'none', border: 'none'}} />
                             </div>
                             
 
@@ -66,38 +72,35 @@ const StudentFaculties = () => {
 
                     </div>
 
-                    <table {...getTableProps()}>
+                    <table>
                         <thead>
-                            {
-                                headerGroups.map((headerGroup) => (
-                                    <tr {...headerGroup.getHeaderGroupProps()}>
-                                        {
-                                            headerGroup.headers.map((column) => (
-                                                <th {...column.getHeaderProps()}>
-                                                    {column.render('Header')}
-                                                </th>
-                                            ))
-                                        }
-                                    </tr>
-                                ))
-                            }
+                            <tr>
+                                {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>)}
+                            </tr>
                         </thead>
+                        <tbody>
+                            
+                            
 
-                        <tbody {...getTableBodyProps()}>
-                            {rows.map((row) => {
-                                prepareRow(row);
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {row.cells.map((cell) => {
-                                            return (
-                                                <td {...cell.getCellProps()}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
+                                
+                            {
+
+                                
+                                //subscription_dicount.map((item, index) => 
+                                    //<tr key={index}>
+                                       // <td>{(index + 1) * 4 }</td>
+
+                                        //<td>
+                                            //<input  onInput={e => setSubscriptionPlan(e.target.value)} type='radio'/*onInput={e => item === document.querySelector('#custom-rate') ? document.querySelector('#custom-rate').value : item}*/ name='student-subscription' id='student-subscription' style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}}/>
+                                        //</td>
+
+                                        //</tbody><td>{item}</td>
+                                   // </tr>
+                                //)
+                                
+                            }
+                            
+                            
                         </tbody>
                     </table>
                 </div>

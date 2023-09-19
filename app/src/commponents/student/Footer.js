@@ -64,7 +64,7 @@ const Footer = () => {
 
                     <li id="student-edit" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}}>edit</button></li>
                     
-                    <li id="student-save" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}} onClick={save}>save</button></li>
+                    <li id="student-save" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}} >save</button></li>
 
                     <li className="next" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}} onClick={next}>next</button></li>
                 </ul>

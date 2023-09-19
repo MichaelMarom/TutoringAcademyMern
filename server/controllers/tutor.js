@@ -1,5 +1,5 @@
 const { resolve } = require('path/posix');
-const { marom_db, knex } = require('../db');
+const { marom_db, knex, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
 
 
@@ -122,42 +122,85 @@ let post_form_one = (req,res) => {
 } 
 
 
-let post_form_two = (req,res) => {
+let post_form_two =async (req,res) => {
 
     
     
     let {level,university1,university2,degree,certificate,language,state2,state3,state4,state5,state6,experience,graduagteYr1,graduagteYr2,graduagteYr3,expiration,otherang,workExperience,user_id} = req.body;
 
-    marom_db(async(config) => {
-        const sql = require('mssql');
-        console.log('uploading data...')
-    
-        var poolConnection = await sql.connect(config);
-        if(poolConnection){
-            var resultSet = poolConnection.request().query(
-                `
-                    INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, College1State, College1Year, College2, College2State, College2StateYear, Degree, DegreeState, DegreeYear, Certificate, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
-                    VALUES ('${level}', '${experience}', '${university1}','${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}','${degree}', '${state4}','${graduagteYr3}','${certificate}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')
+
+    let duplicate = await connecteToDB.then(async(poolConnection) => {
+        return await poolConnection.request().query( `SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${user_id}'` )
+        .then((result) => {
+
+            return result.recordset
+        })
+        .catch(err => console.log(err))
+    });
+
+    console.log(duplicate.length)
+    if(duplicate.length === 0){
+        marom_db(async(config) => {
+            const sql = require('mssql');
+            console.log('uploading data...')
+        
+            var poolConnection = await sql.connect(config);
+            if(poolConnection){
+                var resultSet = poolConnection.request().query(
                     `
-            ) 
+                        INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, College1State, College1Year, College2, College2State, College2StateYear, Degree, DegreeState, DegreeYear, Certificate, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
+                        VALUES ('${level}', '${experience}', '${university1}','${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}','${degree}', '${state4}','${graduagteYr3}','${certificate}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')
+                        `
+                ) 
 
-            resultSet.then((result) => {
+                resultSet.then((result) => {
+                    
+                    result.rowsAffected[0] === 1 
+                    ? 
+                    res.send(true)
+                    :
+                    res.send(false)
                 
-                result.rowsAffected[0] === 1 
-                ? 
-                res.send(true)
-                :
-                res.send(false)
-               
-            })
-            .catch((err) => {
-                console.log(err);
-                res.send(false)
-            })
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.send(false)
+                })
 
-        }
-    
-    })
+            }
+        
+        })
+    }else{
+        marom_db(async(config) => {
+            const sql = require('mssql');
+            console.log('uploading data...')
+        
+            var poolConnection = await sql.connect(config);
+            if(poolConnection){
+                var resultSet = poolConnection.request().query(
+                    `
+                        UPDATE  "Education" SET EducationalLevel = '${level}', EducationalLevelExperience = '${experience}', College1 = '${university1}', College1State = '${state2}', College1Year = '${graduagteYr1}', College2 ='${university2}', College2State = '${state3}', College2StateYear = '${graduagteYr2}', Degree = '${degree}', DegreeState ='${state4}', DegreeYear = '${graduagteYr3}', Certificate = '${certificate}', CertificateState = '${state5}', CertificateExpiration = '${expiration}', NativeLang = '${language}', NativeLangState = '${state6}', NativeLangOtherLang = '${otherang}', WorkExperience = '${workExperience}' WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
+                        `
+                ) 
+
+                resultSet.then((result) => {
+                    
+                    result.rowsAffected[0] === 1 
+                    ? 
+                    res.send(true)
+                    :
+                    res.send(false)
+                
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.send(false)
+                })
+
+            }
+        
+        })
+    }
 } 
 
 let post_form_three = (req,res) => {

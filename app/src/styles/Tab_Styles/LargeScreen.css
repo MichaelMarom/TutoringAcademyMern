@@ -349,16 +349,22 @@
     }
 
     input{
-        height: 50px;
+        height: 35px;
         width: 300px;
         outline: none;
     }
 
     select{
-        height: 50px;
+        height: 35px;
         border-radius: 2.5px;
         width: 300px;
         outline: none;
+    }
+    select#yr1, #yr2, #yr3,#state1,#state2,#state3 {
+        width: 100px;
+    }
+    #state1,#state2,#state3,#university1,#university2,#degree,#certificate {
+        margin-top: 30px;
     }
     
     option{
@@ -455,6 +461,10 @@
         background-color: #ffffff;
     }
 
+    .tutor-footer button {
+        padding: 0 5px;
+        line-height: 33px;
+    }
 
 
     

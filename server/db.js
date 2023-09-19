@@ -35,6 +35,36 @@ let marom_db  = async(cb) => {
     cb(config)
 }
 
+let connecteToDB = new Promise ((resolve,reject) => {
+
+  const config = {
+      user: 'michael', // better stored in an app setting such as process.env.DB_USER
+      password: '43Naomi333', // better stored in an app setting such as process.env.DB_PASSWORD
+      server: 'tutoringacademy.database.windows.net', // better stored in an app setting such as process.env.DB_SERVER
+      port: 1433, // optional, defaults to 1433, better stored in an app setting such as process.env.DB_PORT
+      database: 'Tutoringacademy', // better stored in an app setting such as process.env.DB_NAME
+      authentication: {
+          type: 'default'
+      },
+      
+      options: {
+          encrypt: true,
+          "requestTimeout": 300000
+      },
+
+  }
+
+  const sql = require('mssql');
+      var poolConnection = sql.connect(config);
+      poolConnection 
+      ?
+      resolve(poolConnection)
+      :
+      reject()
+
+      
+})
+
 /*let knex = require('knex')({
     client: 'mssql',
     connection: {
@@ -91,5 +121,6 @@ const knex = require('knex')({
 module.exports = {
     ConnectToMongoDb,
     marom_db,
-    knex
+    knex,
+    connecteToDB
 }

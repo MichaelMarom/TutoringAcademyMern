@@ -188,17 +188,17 @@ const Accounting = () => {
                     <div style={{display: 'inline-block', width: '100%', padding: '0'}}>
                        
                         <div  style={{float: 'left', margin: '0 0 20px 0', width: '50%'}}>
-                            <input checked={payment_option === 'Paypal' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" onInput={handle_bank} value='Paypal' name='p-method' id="" />  
+                            <input defaultChecked={payment_option === 'Paypal' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" onInput={handle_bank} value='Paypal' name='p-method' id="" />  
                             <span>Paypal</span> 
                         </div>
 
                         <div  style={{float: 'left', margin: '0 0 20px 0', width: '50%'}}>
-                            <input checked={payment_option === 'Zale' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" onInput={handle_bank} value='Zale' name='p-method' id="" />   
+                            <input defaultChecked={payment_option === 'Zale' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" onInput={handle_bank} value='Zale' name='p-method' id="" />   
                             <span>Zale</span>
                         </div>
                         
                         <div  style={{float: 'left', margin: '0 0 20px 0', width: '50%'}}>
-                            <input checked={payment_option === 'Bank' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" value='Bank' onInput={handle_bank} name='p-method' id="" />    
+                            <input defaultChecked={payment_option === 'Bank' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" value='Bank' onInput={handle_bank} name='p-method' id="" />    
                             <span>Bank</span>
                         </div>
 

@@ -59,3 +59,70 @@ export let get_student_grade = () => {
 
     })
 }
+
+
+export let get_tutor_subject = (subject) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/student/tutor-subject', { params: {subject} })
+        .then((result) => {
+            resolve(result.data) 
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
+
+export let upload_student_short_list = (items) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.post('http://localhost:9876/student/short-list', { items })
+        .then((result) => {
+            resolve(result.data) 
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
+
+export let get_student_short_list = (AcademyId,Subject) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/student/short-list', {  })
+        .then((result) => {
+            resolve(result.data) 
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
+export let get_student_short_list_data = (AcademyId,Subject) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/student/short-list-data', {  })
+        .then((result) => {
+            resolve(result.data) 
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}

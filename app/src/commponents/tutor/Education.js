@@ -69,11 +69,11 @@ const Education = () => {
  
     document.querySelector('#tutor-save').onclick = async() => {
 
-        //let all_inputs = [...document.querySelectorAll('input')].filter(item => item.getAttribute('id') !== 'university2' )
-        //let selects = [...document.querySelectorAll('select')].filter(item => item.getAttribute('id') !== 'state3' && item.getAttribute('id') !== 'yr2' )
+        let all_inputs = [...document.querySelectorAll('input')]
+        let selects = [...document.querySelectorAll('select')]
         let text = [...document.querySelectorAll('textarea')]
 
-        let all_values = text;
+        let all_values = [...text,...selects,...all_inputs];
 
 
         let  bool_list = []
@@ -208,7 +208,6 @@ const Education = () => {
         get_state()
         .then(({recordset}) => {
             let data = recordset.map(item => item.State);
-            data.unshift('Select state')
             setStateList(data); 
             console.log(data)
 
@@ -303,12 +302,12 @@ const Education = () => {
                         <h3>Education</h3>
 
                         <h6 className='tutor-tab-education-notice highlight' >
-                            Now let's turn our attention to table headers — special cells that go at the start of a row or column and define the type of data that row or column contains (as an example, see the "Person" and "Age" cells in the first example shown in this article). To illustrate why they are useful, have a look at the following table example. First the source code:
+                        Tutor does not have to be academic graduate in order to pass his knowledge. However, when you select an academic background, you musted uplaod your credentials. You have 7 days doing that. Until your diploma or teacher's cerificate uploaded, a "X" icon is being shown near the appropriate field.. When your documentaions are uploaded, the icon be changed to a green "verified" logo. The studen or parents are able to see your status when making their decision of selecting you.
                         </h6>
 
                         
                         <div className='input-cnt'>
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <select id='level' style={{padding: '5px'}} onInput={edu_level}>
                                     {
                                         level_list
@@ -316,14 +315,14 @@ const Education = () => {
                                 </select>
                             </div>
 
-                            <div style={{display: 'flex', visibility: 'hidden', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', 
+                            {/* <div style={{display: 'flex', visibility: 'hidden', justifyContent: 'center',  width: '100%', 
                             whiteSpace: 'nowrap'}}>
                                 <select onInput={e => set_state1(e.target.value)} id="state1">
                                     <option value='null'>Select</option>
                                 </select>
-                            </div>
+                            </div> */}
 
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap', width:'150px'}}>
                                 <select  onInput={e => set_experience(e.target.value)} id="experience" style={{float: 'right', padding: '8px', margin: '0 0 10px 0'}}>
                                     {exp}
                                 </select>
@@ -331,13 +330,14 @@ const Education = () => {
                         </div>
 
                         <div className='input-cnt' style={{pointerEvents: event, opacity: opacity}}>
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <input type='text' id='university1' defaultValue={university1} onInput={e => set_university1(e.target.value)} placeholder='College/University 1' />
                             </div>
 
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 30px 0', width: '100%', 
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', 
                             whiteSpace: 'nowrap'}}>
-                                <select style={{padding: '5px', width: '150px'}} onInput={e => set_state2(e.target.value)} id="state1">
+                                <select style={{padding: '5px', width: '100px'}} onInput={e => set_state2(e.target.value)} id="state1">
+                                    <option value=''>Select State</option>
                                     {
                                        stateList.map(item => 
                                             {
@@ -358,7 +358,7 @@ const Education = () => {
                                 </select>
                             </div>
 
-                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',  width: '100%', whiteSpace: 'nowrap',marginTop:'10px'}}>
                                 <label htmlFor='yr1'>Graduation Year</label> 
 
                                 <select onInput={e => set_graduagteYr1(e.target.value)} id="yr1">
@@ -385,13 +385,14 @@ const Education = () => {
                         </div>
 
                         <div className='input-cnt' style={{pointerEvents: event, opacity: opacity}}>
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <input type='text' defaultValue={university2} id='university2' onInput={e => set_university2(e.target.value)} placeholder='College/University 2' />
                             </div>
 
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 30px 0', width: '100%', 
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', 
                             whiteSpace: 'nowrap'}}>
-                                <select style={{padding: '5px', width: '150px'}} onInput={e => set_state3(e.target.value)} id="state3">
+                                <select style={{padding: '5px', width: '100px'}} onInput={e => set_state3(e.target.value)} id="state3">
+                                 <option value=''>Select State</option>
                                     {
                                         stateList.map(item => 
                                             {
@@ -412,7 +413,7 @@ const Education = () => {
                                 </select>
                             </div>
 
-                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',  width: '100%', whiteSpace: 'nowrap',marginTop:'10px'}}>
                                 <label htmlFor='yr2'>Graduation Year</label> 
                                 <select onInput={e => set_graduagteYr2(e.target.value)} id="yr2">
                                     {
@@ -437,7 +438,7 @@ const Education = () => {
                         </div>
 
                         <div className='input-cnt' style={{pointerEvents: event, opacity: opacity}}>
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <select id='degree' style={{padding: '5px'}} onInput={e => set_degree(e.target.value)}>
                                     {
                                         degree_list
@@ -445,9 +446,10 @@ const Education = () => {
                                 </select>
                             </div>
 
-                            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 0 30px 0', width: '100%', 
+                            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', 
                             whiteSpace: 'nowrap'}}>
-                                <select style={{padding: '5px', width: '150px'}} onInput={e => set_state4(e.target.value)} id="state1">
+                                <select style={{padding: '5px', width: '100px'}} onInput={e => set_state4(e.target.value)} id="state1">
+                                    <option value=''>Select State</option>
                                     {
                                         stateList.map(item => 
                                             {
@@ -472,7 +474,7 @@ const Education = () => {
                                 </select>
                             </div>
 
-                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center',  width: '100%', whiteSpace: 'nowrap', marginTop:'10px'}}>
                                 <label htmlFor='yr3'>Graduation Year</label> 
                                 <select onInput={e => set_graduagteYr3(e.target.value)} id="yr3">
                                     {
@@ -501,7 +503,7 @@ const Education = () => {
                         </div>
                         
                         <div className='input-cnt'>
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <select id='certificate' style={{padding: '5px'}} onInput={certified}>
                                     {
                                         certificate_list
@@ -511,7 +513,8 @@ const Education = () => {
 
                             <div style={{display: 'flex', opacity: certified_opacity, pointerEvents: certified_event, justifyContent: 'center', margin: '0 0 30px 0', width: '100%', 
                             whiteSpace: 'nowrap'}}>
-                                <select style={{padding: '5px', width: '150px'}} onInput={e => set_state5(e.target.value)} id="state1">
+                                <select style={{padding: '5px', width: '100px'}} onInput={e => set_state5(e.target.value)} id="state1">
+                                    <option value=''>Select State</option>
                                     {
                                         stateList.map(item => 
                                             {
@@ -533,24 +536,24 @@ const Education = () => {
                                 </select>
                             </div>
 
-                            <div style={{display: 'flex', opacity: certified_opacity, pointerEvents: certified_event, justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
-                                <input onInput={e => set_expiration(e.target.value)} placeholder='Expiration' type="date" defaultValue={files !== null ? files.CertificateExpiration : ''} id="expiration" style={{float: 'right'}} />
+                            <div style={{display: 'flex', opacity: certified_opacity, pointerEvents: certified_event, justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
+                                <input onInput={e => set_expiration(e.target.value)} placeholder='Expiration' type="date" defaultValue={files !== null ? files.CertificateExpiration : ''} id="expiration" style={{float: 'right',width:'200px', marginTop:'30px'}} />
                             </div>
                         </div>
 
                         <div className='input-cnt'>
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <input id='language' style={{padding: '5px'}} defaultValue={language} onInput={e => set_language(e.target.value)} placeholder='Native Language' />
                             </div>
 
                             <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 30px 0', width: '100%', 
                             whiteSpace: 'nowrap'}}>
-                                <select style={{padding: '5px', width: '150px', visibility: 'hidden'}} value='null' id="state1">
+                                <select style={{padding: '5px', width: '100px', visibility: 'hidden'}} value='null' id="state1">
                                    <option value='null'>Select</option>
                                 </select>
                             </div>
 
-                            <div style={{display: 'flex', justifyContent: 'center', margin: '0 0 20px 0', width: '100%', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <input onInput={e => set_othelang(e.target.value)} defaultValue={othelang}  placeholder='Other Languages' type="text" id="other_languages" style={{float: 'right'}} />
                             </div>
                         </div>

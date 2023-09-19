@@ -530,7 +530,7 @@ const TutorSetup = () => {
                                 <input onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" defaultValue={city} id="city" style={{float: 'right', width: '70%', margin: '2.5px 0 0 0'}} />
                             </div>
 
-                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center',  display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
                                 <label style={{width: '30%'}} htmlFor=''>State</label> &nbsp;&nbsp;
                                 <select  onInput={e => set_state(e.target.value)} id="state" defaultValue={state} style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
                                     {stateList}
@@ -543,7 +543,7 @@ const TutorSetup = () => {
                                 <input onInput={e => set_zipCode(e.target.value)} defaultValue={zipCode} placeholder='Zip-Code' type="text" id="zip" style={{float: 'right', width: '70%', margin: '2.5px 0 0 0'}} />
                             </div>
 
-                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
                                 <label style={{width: '30%'}} htmlFor=''>Country</label> &nbsp;&nbsp;
                                 <select  onInput={e => set_country(e.target.value)} id="country" defaultValue={country} style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px', margin: '0 0 10px 0'}}>
                                     {countryList}
@@ -552,7 +552,7 @@ const TutorSetup = () => {
                                 
                             </div>
 
-                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                            <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
                                 <label style={{width: '30%'}} htmlFor=''>Time Zone</label> &nbsp;&nbsp;
                                 <select  onInput={e => set_timeZone(e.target.value)} id="timeZone" defaultValue={timeZone} style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
                                     {GMTList}
@@ -610,7 +610,7 @@ const TutorSetup = () => {
 
                         <div className="profile-motivation" style={{textAlign: 'center', float: 'right'}}>
                             <label style={{fontWeight: 'bold'}} htmlFor="intro">Motivate</label><br />
-                            <textarea defaultValue={motivation} placeholder='Write Something That Will Motivate Your Students...' onInput={e => set_motivation(e.target.value)} style={{width: '80%', padding: '10px',height: '250px'}} name="" id="">
+                            <textarea defaultValue={motivation} placeholder='Write Something That will Motivate Your Students, like free introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...' onInput={e => set_motivation(e.target.value)} style={{width: '80%', padding: '10px',height: '250px'}} name="" id="">
                                 
                             </textarea>
                         </div>

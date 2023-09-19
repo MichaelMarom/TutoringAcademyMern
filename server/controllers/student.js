@@ -1,4 +1,4 @@
-const { marom_db } = require('../db');
+const { marom_db, connecteToDB } = require('../db');
 const {express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt} = require('../modules');
 require('dotenv').config();
 
@@ -151,9 +151,240 @@ let get_student_grade = (req,res) => {
     })
 }
 
+let get_tutor_subject = async(req,res) => {
+
+    let {subject} = req.query;
+
+    let book = {}
+    let document = []
+    let subjectLength = 0
+
+    let subjects = async() =>  await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * From SubjectRates  WHERE CONVERT(VARCHAR, faculty) =  '${subject}'` )
+        .then((result) => {
+            subjectLength = result.recordset.length;
+            return result.recordset;
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+    )
+    
+    let edu = (subjectsBook) =>  connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subjectsBook.AcademyId}'` )
+        .then((result) => {
+
+            return result.recordset
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+    )
+
+    let tutor = (subjectsBook) =>  connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT TutorScreenname From TutorSetup  WHERE CONVERT(VARCHAR, AcademyId) =  '${subjectsBook.AcademyId}'` )
+        .then(async(result) => {
+
+            //return book[subjectsBook.AcademyId] = [...await edu(subjectsBook.AcademyId), ...result.recordset, subjectsBook]
+
+            return result.recordset
+           
+        })
+        .catch(err => console.log(err))
+    )
+
+
+
+    async function extratInfo(){
+        let subject = await subjects();
+
+        subject.map((async(item) => {
+            let tutorData = await tutor(item);
+            let tutorEducation = await edu(item)
+
+            book[shortId.generate()] = [(item),...tutorEducation,...tutorData];
+            if(Object.keys(book).length === subjectLength){
+                
+                let data = Object.values(book)
+                console.log(data)
+                res.status(200).send(data)
+            }
+            
+        })) 
+    }
+
+    extratInfo()
+
+
+
+    
+}
+
+let upload_student_short_list = async(req,res) => {
+
+    let book = []
+    let {items} = req.body;
+
+    items.map((item) => {
+
+        let list = item.split('-');
+
+        let bool = checkDuplicates(list[1],list[0])
+        if(bool){ uploadData(list) } else{deleteData(list[1],list[0])}
+
+        
+
+    })
+
+    let checkDuplicates = async(subject,AcademyId) => {
+
+        let response  = await connecteToDB
+        .then((poolConnection) => 
+            poolConnection.request().query( `select * from StudentShortList WHERE CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
+            .then((result) => {
+
+                return result.recordset
+                //res.status(200).send()
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+        )
+
+        return response.length > 0 ? false : true;
+    }
+
+    let uploadData = (list) => {
+        connecteToDB
+        .then((poolConnection) => 
+            poolConnection.request().query( `INSERT INTO StudentShortList(Subject,AcademyId,date,ScreenName,Rate) values('${list[1]}', '${list[0]}', '${Date().toString()}', '${list[3]}', '${list[2]}')` )
+            .then((result) => {
+
+                book.push(result.rowsAffected[0]);
+                if(book.subjectLength === items){
+                    res.send(result.rowsAffected[0] === 1 ? true : false)
+
+                }
+
+                //res.status(200).send()
+                console.log(book)
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+        )
+    }
+
+    let deleteData = (subject,AcademyId) => {
+        connecteToDB
+        .then((poolConnection) => 
+            poolConnection.request().query( `DELETE FROM TABLE WHERE CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
+            .then((result) => {
+
+                book.push(result.rowsAffected[0]);
+                if(book.subjectLength === items){
+                    res.send(result.rowsAffected[0] === 1 ? true : false)
+
+                }
+
+                //res.status(200).send()
+                console.log(book)
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+        )
+    }
+
+    console.log(checkDuplicates)
+}
+
+
+let get_student_short_list = (req,res) => {
+    let book = {}
+    let document = [];
+
+    let tutors =  async() =>  await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * From StudentShortList` )
+        .then((result) => {
+            return result.recordset;
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+    )
+
+    let getTutorDemo = async(tutor) => {
+        let tutorList = await tutors();
+        tutorList.map((item, index) => {
+            connecteToDB.then(poolConnection => 
+                poolConnection.request().query( `SELECT FreeDemoLesson From TutorRates
+                WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'` )
+                .then((result) => {
+
+                    book[item.AcademyId] = [item,result.recordset[0], tutor[index]]
+
+                    if(index + 1 === tutorList.length){
+                        res.send(Object.values(book))
+                    }
+                  
+                })
+                .catch(err => console.log(err))
+            )
+        })
+    }
+
+   
+    let getTutorData = async() => {
+
+        let tutorList = await tutors();
+        tutorList.map((item, index) => {
+            connecteToDB.then(poolConnection => 
+                poolConnection.request().query( `SELECT Video, Photo, Country, GMT  From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'` )
+                .then((result) => {
+
+                    document.push(result.recordset);
+                    if(index + 1 === tutorList.length){
+                        getTutorDemo(document)
+                    }
+                  
+                })
+                .catch(err => console.log(err))
+            )
+        })
+    }
+
+
+    getTutorData();
+
+    
+}
+
+
+let get_student_short_list_data = (req,res) => {
+
+    connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * From StudentShortList` )
+        .then((result) => {
+            res.send(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+    )
+
+    
+}
+
+
 module.exports = {
     upload_form_one,
     get_student_setup,
-    get_student_grade
+    get_student_grade,
+    get_tutor_subject,
+    get_student_short_list,
+    upload_student_short_list,
+    get_student_short_list_data
 }
 

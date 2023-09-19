@@ -95,7 +95,7 @@ export let upload_student_short_list = (items) => {
 }
 
 
-export let get_student_short_list = (AcademyId,Subject) => {
+export let get_student_short_list = () => {
 
     return new Promise((resolve, reject) => {
 
@@ -111,7 +111,7 @@ export let get_student_short_list = (AcademyId,Subject) => {
     })
 }
 
-export let get_student_short_list_data = (AcademyId,Subject) => {
+export let get_student_short_list_data = () => {
 
     return new Promise((resolve, reject) => {
 

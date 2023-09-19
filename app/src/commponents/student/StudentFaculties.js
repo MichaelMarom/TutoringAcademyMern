@@ -20,12 +20,7 @@ const StudentFaculties = () => {
         })
         .catch((err) => setResponse(err))
 
-        get_student_short_list_data()
-        .then((result) => {
-            setData(result)
-            console.log(data)
-        })
-        .catch((err) => setResponse(err))
+        
     }, [])
 
     let getTutorSubject = e => {
@@ -111,7 +106,22 @@ const StudentFaculties = () => {
     },[])
 
     
+    useEffect(() => {
+        get_student_short_list_data()
+        .then((result) => {
+            let list = [...document.querySelectorAll('#student-tutor')];
 
+            result.map(item => {
+                let elem = list.filter(response => response.dataset.id.split('-')[0] === item.AcademyId && response.dataset.id.split('-')[1] === item.Subject)
+                console.log(elem)
+                if(elem.length > 0){
+                    elem[0].children[0].checked = true;
+                }
+            })
+            console.log(result)
+        })
+        .catch((err) => console.log(err))
+    },[response])
 
      
     let multi_student_cols = [{Header: '# Select'}, {Header: 'Subject'}, {Header: 'Tutor'}, {Header: 'Experience'}, {Header: 'Certification', }, {Header: 'State', }, {Header: 'Expiration', }, {Header: 'Rate', }]

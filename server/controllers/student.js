@@ -227,20 +227,11 @@ let upload_student_short_list = async(req,res) => {
     let book = []
     let {items} = req.body;
 
-    items.map((item) => {
-
-        let list = item.split('-');
-
-        let bool = checkDuplicates(list[1],list[0])
-        if(bool){ uploadData(list) } else{deleteData(list[1],list[0])}
-
-        
-
-    })
+    
 
     let checkDuplicates = async(subject,AcademyId) => {
 
-        let response  = await connecteToDB
+        let response  = await  connecteToDB
         .then((poolConnection) => 
             poolConnection.request().query( `select * from StudentShortList WHERE CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
             .then((result) => {
@@ -252,13 +243,14 @@ let upload_student_short_list = async(req,res) => {
             .catch(err => console.log(err))
         )
 
+
         return response.length > 0 ? false : true;
     }
 
     let uploadData = (list) => {
         connecteToDB
         .then((poolConnection) => 
-            poolConnection.request().query( `INSERT INTO StudentShortList(Subject,AcademyId,date,ScreenName,Rate) values('${list[1]}', '${list[0]}', '${Date().toString()}', '${list[3]}', '${list[2]}')` )
+            poolConnection.request().query( `INSERT INTO StudentShortList (Subject,AcademyId,date,ScreenName,Rate) values('${list[1]}', '${list[0]}', '${Date().toString()}', '${list[3]}', '${list[2]}')` )
             .then((result) => {
 
                 book.push(result.rowsAffected[0]);
@@ -268,7 +260,6 @@ let upload_student_short_list = async(req,res) => {
                 }
 
                 //res.status(200).send()
-                console.log(book)
                 //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
@@ -278,7 +269,7 @@ let upload_student_short_list = async(req,res) => {
     let deleteData = (subject,AcademyId) => {
         connecteToDB
         .then((poolConnection) => 
-            poolConnection.request().query( `DELETE FROM TABLE WHERE CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
+            poolConnection.request().query( `DELETE FROM StudentShortList WHERE CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
             .then((result) => {
 
                 book.push(result.rowsAffected[0]);
@@ -288,14 +279,23 @@ let upload_student_short_list = async(req,res) => {
                 }
 
                 //res.status(200).send()
-                console.log(book)
                 //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
         )
     }
 
-    console.log(checkDuplicates)
+
+    items.map(async(item) => {
+
+        let list = item.split('-');
+
+        let bool = await checkDuplicates(list[1],list[0])
+        if(bool){ uploadData(list) } //else{deleteData(list[1],list[0])}
+
+        
+
+    })
 }
 
 
@@ -366,6 +366,7 @@ let get_student_short_list_data = (req,res) => {
     connecteToDB.then(poolConnection => 
         poolConnection.request().query( `SELECT * From StudentShortList` )
         .then((result) => {
+
             res.send(result.recordset);
             //res.status(200).send()
             //console.log(result)

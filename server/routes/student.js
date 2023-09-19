@@ -7,8 +7,8 @@ STUDENT_ROUTES.get('/student/setup', get_student_setup)
 STUDENT_ROUTES.get('/student/grade', get_student_grade)
 STUDENT_ROUTES.get('/student/tutor-subject', get_tutor_subject)
 STUDENT_ROUTES.post('/student/short-list', parser, upload_student_short_list)
-STUDENT_ROUTES.get('/student/short-list', parser, get_student_short_list)
-STUDENT_ROUTES.get('/student/short-list-data', parser, get_student_short_list_data)
+STUDENT_ROUTES.get('/student/short-list', get_student_short_list)
+STUDENT_ROUTES.get('/student/short-list-data', get_student_short_list_data)
 
 STUDENT_ROUTES.post('/student/setup', parser, upload_form_one)
 

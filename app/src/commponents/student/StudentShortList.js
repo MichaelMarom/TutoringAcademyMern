@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useCallback } from 'react';
 import containerVariants from '../constraint';
 import { get_student_short_list } from '../../axios/student';
+import { useNavigate } from 'react-router-dom';
 
 const StudentShortList = () => {
 
@@ -16,6 +17,8 @@ const StudentShortList = () => {
     const [response, setResponse] = useState([]);
 
     const columns = useMemo(() => COLUMNS, []);
+
+    let navigate = useNavigate()
 
     useEffect(() => {
         get_student_short_list()
@@ -29,7 +32,11 @@ const StudentShortList = () => {
 
     let multi_student_cols = [{Header: 'Intro Video'}, {Header: 'Photo'}, {Header: 'Demo Lesson'}, {Header: 'Subject'}, {Header: 'Tutor'}, {Header: 'Country' }, {Header: 'GMT'}, {Header: 'Invite'}, {Header: 'Hire'}, {Header: 'Rate', }]
 
-
+    let redirect_to_tutor_profile = tutor_user_id => {
+        window.localStorage.setItem('tutor_user_id', tutor_user_id);
+        window.localStorage.setItem('user_role', 'admin');
+        navigate('/tutor/tutor-profile')
+    }
     return ( 
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro">
@@ -52,20 +59,20 @@ const StudentShortList = () => {
                             ?
 
                             response.map((item,index) => 
-                                <tr>
+                                <tr onDoubleClick={e => redirect_to_tutor_profile(item.AcademyId)}>
                                     <td>
-                                        {<video src={item[2] ? item[2][0].Video : ''} controls style={{height: '100px', width: '100px'}}></video>}
+                                        {<video src={item[2] ? item[2][0].Video : ''} controls style={{height: '100px', width: '120px'}}></video>}
                                     </td>
 
-                                    <td>{<img src={item[2] ? item[2][0].Photo : ''}  style={{height: '100px', width: '100px'}} />}</td> 
+                                    <td>{<img src={item[2] ? item[2][0].Photo : ''}  style={{height: '100px', width: '120px'}} />}</td> 
                                     <td>
-                                        <input type='checkbox' defaultChecked={item[1].FreeDemoLesson === 'yes' ? true : false} />
+                                        <input type='checkbox' style={{height: '20px', width: '20px'}} defaultChecked={item[1].FreeDemoLesson === 'yes' ? true : false} />
                                     </td>
                                     <td>
                                         {item[0].Subject}
                                     </td>
                                     <td>
-                                        {item[0].TutorScreenname}
+                                        {item[0].ScreenName}
                                     </td>
                                     <td>
                                         {item[2] ? item[2][0].Country : ''}
@@ -73,9 +80,9 @@ const StudentShortList = () => {
                                     <td>
                                         {item[2] ? item[2][0].GMT : ''}
                                     </td>
-                                    <td><input type='checkbox' /></td>
-                                    <td><input type='radio' /></td>
-                                    <td>{item[0].rate}</td>
+                                    <td><input style={{height: '20px', width: '20px'}} type='checkbox' /></td>
+                                    <td><input style={{height: '20px', width: '20px'}} type='radio' /></td>
+                                    <td>{item[0].Rate}</td>
                                 </tr>
                                 )
                             :

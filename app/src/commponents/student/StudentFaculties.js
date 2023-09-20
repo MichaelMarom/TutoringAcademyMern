@@ -51,7 +51,33 @@ const StudentFaculties = () => {
 
         })
         .catch((err) => setResponse(err))
+
+        let clickedElem = e.currentTarget;
+        let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
+
+        deactivedElem.removeAttribute('id');
+        clickedElem.setAttribute('id', 'form-subject-data-tabs-list-active')
     }
+
+    let handle_scroll_right = () => {
+
+        let div = document.querySelector('.form-subject-data-tabs');
+        let scroll_elem = div.children[1];
+        //console.log(scroll_elem) 
+        let w = scroll_elem.offsetWidth;
+        scroll_elem.scrollLeft = w;
+
+    }
+
+    let handle_scroll_left = () => {
+        
+        let div = document.querySelector('.form-subject-data-tabs');
+        let scroll_elem = div.children[1];
+        let w = scroll_elem.offsetWidth;
+        scroll_elem.scrollLeft = -w
+
+    }
+
 
     useEffect(() => {
         document.querySelector('#student-save').onclick = () => {
@@ -171,26 +197,49 @@ const StudentFaculties = () => {
                     <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 12 faculties for tutoring.</p>
                 </div>
 
-                <div className="form-subject-data-tabs" style={{display: 'flex', margin: 'auto', padding: '0 0 10px 0', justifyContent: 'center', alignItems: 'center', overflowX: 'auto', width: '100%'}}>
-                    <div data-id='1' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}} >Math</div>
-                    <div data-id='2' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Computer Language</div>
-                    <div data-id='3' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>English</div>
-                    <div data-id='4' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Languages</div>
-                    <div data-id='5' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Elementary Education</div>
-                    <div data-id='6' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Science</div>
-                    <div data-id='7' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Art </div>
-                    <div data-id='8' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Social Studies </div>
-                    <div data-id='9' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Programming</div>
-                    <div data-id='10' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>TestProp</div>
-                    <div data-id='11' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Business</div>
-                    <div data-id='12' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}></div>
-                    <div data-id='13' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}></div>
-                    <div data-id='14' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}></div>
-                    <div data-id='15' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Aviation</div>
-                    <div data-id='16' onClick={getTutorSubject} style={{cursor: 'pointer', margin: '0 10px 0 10px', width: 'fit-content', padding: '0', flexShrink: '0'}}>Engineering</div>
+                <div id="form-subject-data-collection-table">
+
+                    <div className="form-subject-data-tabs" style={{display: 'flex', margin: 'auto', padding: '0 0 0 0', justifyContent: 'center', alignItems: 'center', overflowX: 'auto', width: '100%'}}>
+                        
+                        <div style={{margin: '0 0 0 0', display
+                        : 'flex', alignItems: 'center', justifyContent: 'center',background: '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-left" onClick={handle_scroll_left}>
+                            <div style={{opacity: '1'}}>
+                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 9L8 12M8 12L11 15M8 12H16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000"  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>   
+                            </div>           
+
+                        </div>
+                        <ul>
+                            <li data-id='1' onClick={getTutorSubject} id='form-subject-data-tabs-list-active'><a>Math</a></li>
+                            <li data-id='2' onClick={getTutorSubject}><a>Computer Language</a></li>
+                            <li data-id='3' onClick={getTutorSubject}><a>English</a></li>
+                            <li data-id='4' onClick={getTutorSubject}><a>Languages</a></li>
+                            <li data-id='5' onClick={getTutorSubject}><a>Elementary Education</a></li>
+                            <li data-id='6' onClick={getTutorSubject}><a>Science</a></li>
+                            <li data-id='7' onClick={getTutorSubject}><a>Art </a></li>
+                            <li data-id='8' onClick={getTutorSubject}><a>Social Studies </a></li>
+                            <li data-id='9' onClick={getTutorSubject}><a>Programming</a></li>
+                            <li data-id='10' onClick={getTutorSubject}><a>TestProp</a></li>
+                            <li data-id='11' onClick={getTutorSubject}><a>Business</a></li>
+                            <li data-id='12' onClick={getTutorSubject}><a></a></li>
+                            <li data-id='13' onClick={getTutorSubject}><a></a></li>
+                            <li data-id='14' onClick={getTutorSubject}><a></a></li>
+                            <li data-id='15' onClick={getTutorSubject}><a>Aviation</a></li>
+                            <li data-id='16' onClick={getTutorSubject}><a>Engineering</a></li>
+                        </ul>
+
+
+                        <div style={{margin: '0 0 0 0',background: '#efefef', display
+                        : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-right" onClick={handle_scroll_right}>
+                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
+                            <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
+                        </div>
                 </div>
 
-                <div id="form-subject-data-collection-table">
+                
                     
 
                     <div className="highlight" style={{width: '100%'}}>

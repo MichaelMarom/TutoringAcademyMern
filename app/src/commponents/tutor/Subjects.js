@@ -5,8 +5,10 @@ import { useMemo } from 'react';
 import { useEffect } from 'react';
 import { get_rates, get_subject, get_user_data, upload_tutor_rates } from '../../axios/tutor';
 import { COLUMNS } from '../../Tables/Subject/columns';
+//import left from './../../images/arrow-circle-left-svgrepo-com'
 
-const Subjects = () => {
+
+const Subjects = () => { 
 
     const [data, set_data] = useState([]);
     const [data_ready, set_data_ready] = useState(false);
@@ -183,7 +185,19 @@ const Subjects = () => {
         console.log(index_of_elem)
         tables[index_of_elem].removeAttribute('id');
 
+
+        let clickedElem = e.currentTarget;
+        let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
+
+        deactivedElem.removeAttribute('id');
+        clickedElem.setAttribute('id', 'table_options_menu')
+
+       
+
     }
+
+    
+    
 
     let save = document.querySelector('#tutor-save');
     save.onclick = () => {
@@ -267,28 +281,51 @@ const Subjects = () => {
                     <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 15 faculties for tutoring. Didn't find your subject? List your expertise above and submit for review. We may list your subject after examination.</p>
                 </div>
 
+
                 <div className="tutor-tab-subject-data-collection-table">
                     
-                    <div className="tutor-tab-subject-data-tabs">
+                    <div  className="tutor-tab-subject-data-tabs">
+                        <div style={{margin: '0 0 0 0', display
+                        : 'flex', alignItems: 'center', justifyContent: 'center',background: '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-left" onClick={handle_scroll_left}>
+                            <div style={{opacity: '1'}}>
+                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 9L8 12M8 12L11 15M8 12H16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000"  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>   
+                            </div>           
 
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Math</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Software</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>English</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Languages</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Elementary Edu...</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Science</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Art</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Social Study</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Programming</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Test Prep</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Business</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Health </div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Life Skills</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>?</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Aviation</div>
-                        <div onClick={e => set_active_course(handle_active_course(e))}>Engineering</div>
+                        </div>
+
                         
-                    </div>
+                        <ul>
+                            
+                            <li className='tutor-tab-subject-data-menu' id='table_options_menu' onClick={e => set_active_course(handle_active_course(e))}><a>Math</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Software</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>English</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Languages</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Elementary Edu...</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Science</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Art</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Social Study</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Programming</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Test Prep</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Business</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Health </a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Life Skills</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>?</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Aviation</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Engineering</a></li>
+                            
+                        </ul>
+                        <div style={{margin: '0 0 0 0',background: '#efefef', display
+                        : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-right" onClick={handle_scroll_right}>
+                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
+                            <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
+                        </div>
+
+                    </div>          
+
                     <div className="highlight">
                         Checkbox any subject in any faculty where you are proficient enough to tutor, Ultimately you are being rated by the students feedback, if students feedback is only 2 stars then its free checkbox the subject then select the certificate, state expiration if available. Then click on the rate button which will pop up a table to select your rate
                     </div>
@@ -795,6 +832,8 @@ const Subjects = () => {
                     </div>
 
                 </div>
+
+                
             </div>
         </>
      );

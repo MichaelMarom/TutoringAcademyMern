@@ -18,7 +18,7 @@ const Header = () => {
 
     let handle_scroll_right = () => {
 
-        let div = document.querySelector('.tutor-tab-header');
+        let div = document.querySelector('.student-tab-header');
         let scroll_elem = div.children[1];
         console.log(scroll_elem) 
         let w = scroll_elem.offsetWidth;
@@ -28,7 +28,7 @@ const Header = () => {
 
     let handle_scroll_left = () => {
         
-        let div = document.querySelector('.tutor-tab-header');
+        let div = document.querySelector('.student-tab-header');
         let scroll_elem = div.children[1];
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = -w
@@ -37,13 +37,13 @@ const Header = () => {
 
     
     let handleTabClick = e => {
-        let clickedElem = e.target;
+        let clickedElem = e.currentTarget;
         let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
 
         deactivedElem.removeAttribute('id');
-        clickedElem.setAttribute('id', 'active')
+        clickedElem.setAttribute('id', 'student-tab-header-list-active')
 
-        nav(`student/${e.target.dataset.url}`)
+        nav(`student/${e.currentTarget.dataset.url}`)
  
     }
 
@@ -53,19 +53,19 @@ const Header = () => {
             <div className="screen-name" style={{position: 'fixed', top: '50px', zIndex: '1000', background: 'blue', fontWeight: 'bold', color: '#fff', left: '50px', padding: '10px'}}>
                 {screen_name}
             </div>
-            <div className="tutor-tab-header shadow-sm">
+            <div className="student-tab-header shadow-sm">
                 <div className="scroller-left" onClick={handle_scroll_left}></div>
                     <ul>
-                        <li data-url='intro' onClick={handleTabClick} id="active">Introduction</li>
-                        <li data-url='setup' onClick={handleTabClick} >Student Setup</li>
-                        <li data-url='faculties' onClick={handleTabClick} >Faculties</li>
-                        <li data-url='short-list' onClick={handleTabClick} >Short List</li>
-                        <li data-url='accounting' onClick={handleTabClick} >Accounting</li>
-                        <li data-url='subjects' onClick={handleTabClick} >Calender Scheduling</li>
-                        <li data-url='my-students' onClick={handleTabClick} >Message Board</li>
-                        <li data-url='market-place' onClick={handleTabClick} >Market place</li>
-                        <li data-url='collaboration' onClick={handleTabClick} >Collaboration </li>
-                        <li data-url='tutor-profile' onClick={handleTabClick} >Profile</li>
+                        <li data-url='intro' onClick={handleTabClick} id="student-tab-header-list-active"><a>Introduction</a></li>
+                        <li data-url='setup' onClick={handleTabClick} ><a>Student Setup</a></li>
+                        <li data-url='faculties' onClick={handleTabClick} ><a>Faculties</a></li>
+                        <li data-url='short-list' onClick={handleTabClick} ><a>Short List</a></li>
+                        <li data-url='accounting' onClick={handleTabClick} ><a>Accounting</a></li>
+                        <li data-url='subjects' onClick={handleTabClick} ><a>Calender Scheduling</a></li>
+                        <li data-url='my-students' onClick={handleTabClick} ><a>Message Board</a></li>
+                        <li data-url='market-place' onClick={handleTabClick} ><a>Market place</a></li>
+                        <li data-url='collaboration' onClick={handleTabClick} ><a>Collaboration </a></li>
+                        <li data-url='tutor-profile' onClick={handleTabClick} ><a>Profile</a></li>
                     </ul>
                 <div className="scroller-right" onClick={handle_scroll_right}></div>
             </div>

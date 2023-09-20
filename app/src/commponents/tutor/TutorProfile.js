@@ -143,7 +143,7 @@ const TutorProfile = () => {
 
                     <div className="tutor-intel2">
                         <p>
-                            This is the page where students/parents would be aquinted with you. Treat this page like it is yur business 
+                            This is the page where students/parents would be aquinted with you, and make their decision to hire you. Treat this page like it's your own business. 
                         </p>
 
                         <p>

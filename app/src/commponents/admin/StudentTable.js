@@ -44,7 +44,7 @@ const StudentTable = () => {
     }
 
     let redirect_to_student_setup = student_id => {
-        window.localStorage.setItem('user_id', student_id);
+        window.localStorage.setItem('student_user_id', student_id);
         window.localStorage.setItem('user_role', 'admin');
         navigate('/student/setup')
     }

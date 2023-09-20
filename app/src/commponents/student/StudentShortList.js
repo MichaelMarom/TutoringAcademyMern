@@ -20,10 +20,13 @@ const StudentShortList = () => {
 
     let navigate = useNavigate()
 
+    
+
     useEffect(() => {
         get_student_short_list()
         .then((result) => {
-           setResponse(result)
+            
+            setResponse(result)
         })
         .catch((err) => {
             console.log(err)
@@ -55,16 +58,16 @@ const StudentShortList = () => {
                             
                         {
 
-                            response.length > 0 
+                            response.reverse().sort().length > 0 
                             ?
 
                             response.map((item,index) => 
-                                <tr onDoubleClick={e => redirect_to_tutor_profile(item.AcademyId)}>
+                                <tr onDoubleClick={e => redirect_to_tutor_profile(item.AcademyId)} key={index}>
                                     <td>
-                                        {<video src={item[2] ? item[2][0].Video : ''} controls style={{height: '100px', width: '120px'}}></video>}
+                                        {<video src={item[2][0].Video} controls style={{height: '100px', width: '120px'}}></video>}
                                     </td>
 
-                                    <td>{<img src={item[2] ? item[2][0].Photo : ''}  style={{height: '100px', width: '120px'}} />}</td> 
+                                    <td>{<img src={item[2][0].Photo}  style={{height: '100px', width: '120px'}} />}</td> 
                                     <td>
                                         <input type='checkbox' style={{height: '20px', width: '20px'}} defaultChecked={item[1].FreeDemoLesson === 'yes' ? true : false} />
                                     </td>

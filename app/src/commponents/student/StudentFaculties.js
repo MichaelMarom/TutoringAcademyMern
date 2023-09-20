@@ -16,7 +16,16 @@ const StudentFaculties = () => {
         get_tutor_subject('1')
         .then((result) => {
             setResponse(result)
-            console.log(response)
+            result.sort(function (a, b) {
+                if (a[0].subject < b[0].subject) {
+                  return -1;
+                }
+                if (a[0].subject > b[0].subject) {
+                  return 1;
+                }
+                return 0;
+            });
+            console.log(result)
         })
         .catch((err) => setResponse(err))
 
@@ -29,7 +38,16 @@ const StudentFaculties = () => {
         get_tutor_subject(subject)
         .then((result) => {
             setResponse(result);
-            console.log(response)
+            result.sort(function (a, b) {
+                if (a[0].subject < b[0].subject) {
+                  return -1;
+                }
+                if (a[0].subject > b[0].subject) {
+                  return 1;
+                }
+                return 0;
+            });
+            console.log(result)
 
         })
         .catch((err) => setResponse(err))
@@ -72,7 +90,7 @@ const StudentFaculties = () => {
                     //}
                     /*else{
                         window.localStorage.setItem('tutor_user_id', response.user);
-                        window.localStorage.setItem('tutor_screen_name', response.screen_name);
+                        window.localStorage.setItem('tutor_screen[0].subject', response.screen_name);
                         setTimeout(() => {
                             document.querySelector('.save-overlay').removeAttribute('id');
                         }, 1000);
@@ -113,12 +131,10 @@ const StudentFaculties = () => {
 
             result.map(item => {
                 let elem = list.filter(response => response.dataset.id.split('-')[0] === item.AcademyId && response.dataset.id.split('-')[1] === item.Subject)
-                console.log(elem)
                 if(elem.length > 0){
                     elem[0].children[0].checked = true;
                 }
             })
-            console.log(result)
         })
         .catch((err) => console.log(err))
     },[response])
@@ -152,7 +168,7 @@ const StudentFaculties = () => {
                     <input type="submit" value="Upload" />
                 </div>
                 <div className="form-subject-alert">
-                    <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from, across of 12 faculties for tutoring.</p>
+                    <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 12 faculties for tutoring.</p>
                 </div>
 
                 <div className="form-subject-data-tabs" style={{display: 'flex', margin: 'auto', padding: '0 0 10px 0', justifyContent: 'center', alignItems: 'center', overflowX: 'auto', width: '100%'}}>

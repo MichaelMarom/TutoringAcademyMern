@@ -610,7 +610,7 @@ const TutorSetup = () => {
 
                         <div className="profile-motivation" style={{textAlign: 'center', float: 'right'}}>
                             <label style={{fontWeight: 'bold'}} htmlFor="intro">Motivate</label><br />
-                            <textarea defaultValue={motivation} placeholder='Write Something That will Motivate Your Students, like free introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...' onInput={e => set_motivation(e.target.value)} style={{width: '80%', padding: '10px',height: '250px'}} name="" id="">
+                            <textarea defaultValue={motivation} placeholder='Write Something That will Motivate Your Students. Use the "My Rates" tab to set up your promotions. Like free introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...' onInput={e => set_motivation(e.target.value)} style={{width: '80%', padding: '10px',height: '250px'}} name="" id="">
                                 
                             </textarea>
                         </div>

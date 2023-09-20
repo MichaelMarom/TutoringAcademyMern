@@ -154,7 +154,7 @@ let get_student_grade = (req,res) => {
 let get_tutor_subject = async(req,res) => {
 
     let {subject} = req.query;
-
+    console.log(subject)
     let book = {}
     let document = []
     let subjectLength = 0
@@ -163,6 +163,7 @@ let get_tutor_subject = async(req,res) => {
         poolConnection.request().query( `SELECT * From SubjectRates  WHERE CONVERT(VARCHAR, faculty) =  '${subject}'` )
         .then((result) => {
             subjectLength = result.recordset.length;
+            console.log(result)
             return result.recordset;
             //res.status(200).send()
             //console.log(result)
@@ -199,20 +200,24 @@ let get_tutor_subject = async(req,res) => {
 
     async function extratInfo(){
         let subject = await subjects();
+        if(subject.length > 0){
 
-        subject.map((async(item) => {
-            let tutorData = await tutor(item);
-            let tutorEducation = await edu(item)
+            subject.map((async(item) => {
+                let tutorData = await tutor(item);
+                let tutorEducation = await edu(item)
 
-            book[shortId.generate()] = [(item),...tutorEducation,...tutorData];
-            if(Object.keys(book).length === subjectLength){
+                book[shortId.generate()] = [(item),...tutorEducation,...tutorData];
+                if(Object.keys(book).length === subjectLength){
+                    
+                    let data = Object.values(book)
+                    console.log('data')
+                    res.status(200).send(data)
+                }else{
+                    console.log(Object.keys(book).length, subjectLength)
+                }
                 
-                let data = Object.values(book)
-                console.log(data)
-                res.status(200).send(data)
-            }
-            
-        })) 
+            })) 
+        }else{res.status(200).send([])}
     }
 
     extratInfo()
@@ -340,7 +345,7 @@ let get_student_short_list = (req,res) => {
         let tutorList = await tutors();
         tutorList.map((item, index) => {
             connecteToDB.then(poolConnection => 
-                poolConnection.request().query( `SELECT Video, Photo, Country, GMT  From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'` )
+                poolConnection.request().query( `SELECT *  From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'` )
                 .then((result) => {
 
                     document.push(result.recordset);

@@ -2,11 +2,20 @@
     *{
         box-sizing: border-box;
     }
-
+    .ReactModal__Overlay {
+        z-index: 11;
+        height: fit-content;
+    }
+    .disabled-date {
+        background-color: #f2f2f2; /* Example: Gray background for disabled dates */
+        color: #888; /* Example: Gray text color for disabled dates */
+        pointer-events: none; /* Example: Make disabled dates non-clickable */
+      }
+      
     html,body{
         height: 100%;
         width: 100%;
-        overflow: none;
+        overflow: scroll;
         padding: 0;
         margin: 0;
         user-select: none;

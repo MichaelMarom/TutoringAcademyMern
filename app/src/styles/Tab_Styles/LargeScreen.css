@@ -140,17 +140,14 @@
         font-family: cursive;
         position: relative;
         background: #212F3D;
+
     }
 
     .tutor-tab-header ul::-webkit-scrollbar{
         display: none; 
     }
 
-    #active{
-        background-color: #ffffff;
-    }
-
-    .tutor-tab-header  ul{
+    .tutor-tab-header ul{
         list-style-type: none;
         margin: 0;
         display: flex;
@@ -163,7 +160,7 @@
         transition: cubic-bezier(0.165, 0.84, 0.44, 1);
     }
 
-    .tutor-tab-header ul li{
+.tutor-tab-header ul li{
         padding: 15px 20px 15px 20px;
         color: #fff;
         display: flex;
@@ -198,6 +195,13 @@
           color: #F7F9F9;
     }
 
+
+
+
+    #active{
+        background-color: #ffffff;
+    }
+
     ul{
         list-style-type: none;
         margin: 0;
@@ -221,6 +225,19 @@
         justify-content: center;
         float: left;
         cursor: pointer;
+    }
+
+   
+    .inputValidator{
+        display: none;
+        color: red;
+        width: 100%;
+        margin: auto;
+        text-align: center;
+    }
+
+    #inputValidator{
+        display: block;
     }
 
     .tutor-tab-intro{

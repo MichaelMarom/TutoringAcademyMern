@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -17,9 +19,19 @@ const Header = () => {
  
     }
 
+    let [screen_name, set_screen_name] = useState('')
+
+    useEffect(() => {
+        let name = window.localStorage.getItem('admin_screen_name');
+        set_screen_name(name) 
+    }, []);
+
 
     return ( 
         <>
+        <div className="screen-name btn-success rounded" style={{display: screen_name === 'null' ? 'none': 'flex',position: 'fixed', top: '15px', zIndex: '1000', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height:'30px'}}>
+                {screen_name}
+            </div>  
             <div className="admin-tab-header shadow-sm">
                 <ul>
                     <li data-url='tutor-data' onClick={handleTabClick} id="admin-tab-header-list-active"><a>Tutor</a></li>

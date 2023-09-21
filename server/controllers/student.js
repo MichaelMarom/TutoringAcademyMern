@@ -296,7 +296,7 @@ let upload_student_short_list = async(req,res) => {
         let list = item.split('-');
 
         let bool = await checkDuplicates(list[1],list[0])
-        if(bool){ uploadData(list) } //else{deleteData(list[1],list[0])}
+        if(bool){ uploadData(list) } else{deleteData(list[1],list[0])}
 
         
 

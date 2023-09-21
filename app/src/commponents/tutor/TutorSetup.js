@@ -51,6 +51,7 @@ const TutorSetup = () => {
         }
     }, [])*/
 
+
     useEffect(() => {
         get_tutor_setup(window.localStorage.getItem('tutor_user_id'))
         .then((result) => {
@@ -444,6 +445,19 @@ const TutorSetup = () => {
         }
     } 
 
+    let counter = (inputs, elem, cb, length) => {
+        let charLength = inputs.length;
+        cb(inputs)
+
+        if(charLength < length){
+            elem.style.border = '1px solid black'
+            elem.nextElementSibling.removeAttribute('id')
+        }else{
+            elem.style.border = '1px solid red'
+            elem.nextElementSibling.setAttribute('id', 'inputValidator')
+        }
+    }
+
 
     return ( 
         <>
@@ -592,27 +606,38 @@ const TutorSetup = () => {
                     </div>
 
 
+                    <div style={{fontWeight: 'bold', margin: 'auto', textAlign: 'center', width: '60%'}}>
+                        <label s  htmlFor="headline">Headline</label><br />
+                        <input defaultValue={headline} maxLength={80} placeholder='Write A Catchy Headline.. Example: 21 years experienced nuclear science professor.' onInput={e => counter(e.target.value, e.target, set_headline, 80)} type="text" style={{width: '80%', height: '50px', margin: '0 0 10px 0'}} />
+                        <div className='inputValidator'>Your have reached your max limit</div>
+                    </div>
+,
+
 
 
                     <div className="tutor-setup-bottom-field" >
 
                         <div className="profile-headline" style={{textAlign: 'center', float: 'left'}}>
-                            <label style={{fontWeight: 'bold'}} htmlFor="headline">Headline</label><br />
-                            <input defaultValue={headline} placeholder='Write A Catchy Headline.. Example: 21 years experienced nuclear science professor.' onInput={e => set_headline(e.target.value)} type="text" style={{width: '80%', height: '50px', margin: '0 0 10px 0'}} />
-                            <br/>
+                            
+                           
 
                             <label style={{fontWeight: 'bold'}} htmlFor="intro">Introduction</label><br />
-                            <textarea defaultValue={intro} placeholder='Writw An Introduction Here... e.g(My name is Fabian and i am a graduate of Harvard University in Boston...)' onInput={e => set_intro(e.target.value)} style={{width: '80%', padding: '10px',height: '200px'}} name="" id="">
+                            <textarea defaultValue={intro} maxLength={500} placeholder='Writw An Introduction Here... e.g(My name is Fabian and i am a graduate of Harvard University in Boston...)' onInput={e => counter(e.target.value, e.target, set_intro, 500)} style={{width: '80%', padding: '10px',height: '160px'}} name="" id="">
                                 
                             </textarea>
+                            <div className='inputValidator'>Your have reached your max limit</div>
+
                         </div>
 
 
                         <div className="profile-motivation" style={{textAlign: 'center', float: 'right'}}>
                             <label style={{fontWeight: 'bold'}} htmlFor="intro">Motivate</label><br />
-                            <textarea defaultValue={motivation} placeholder='Write Something That will Motivate Your Students. Use the "My Rates" tab to set up your promotions. Like free introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...' onInput={e => set_motivation(e.target.value)} style={{width: '80%', padding: '10px',height: '250px'}} name="" id="">
+                            <textarea defaultValue={motivation} maxLength={500}  placeholder='Write Something That will Motivate Your Students. Use the "My Rates" tab to set up your promotions. Like free introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...' onInput={e => counter(e.target.value, e.target, set_motivation)} style={{width: '80%', padding: '10px',height: '160px'}} name="" id="">
                                 
                             </textarea>
+                            <div className='inputValidator'>Your have reached your max limit</div>
+                            
+                            
                         </div>
                             
                     </div>

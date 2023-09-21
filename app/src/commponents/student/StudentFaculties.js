@@ -89,12 +89,12 @@ const StudentFaculties = () => {
             )
 
             let data = doc.map(item => item.dataset.id)
-            console.log(data)
+
             if(data[0]){
                
                 let list = data[0].split('-')
                 //let response = upload_student_short_list(list[0],list[1],list[3],list[2]);
-                let response = upload_student_short_list(data)
+                let response = upload_student_short_list(data);
 
                 if(response){
                         
@@ -243,12 +243,12 @@ const StudentFaculties = () => {
                     
 
                     <div className="highlight" style={{width: '100%'}}>
-                        Click on the faculty above to show all subjects as being tought by the Tutors. Click on the Tutor's rate to view his/hers multi students, and/or Subscription discounts. Check box the Tutor(s) of interest and it be saved to your "Short" list.  
+                        Click on the faculty above to show all subjects as being tought by the Tutors. Check box the Tutor(s) of interest and "save" to your "Short" list to compare.``  
                     </div>
 
                     <div className="form-subject-search-bar">
                         <div>
-                            <label style={{float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px'}} htmlFor="search"><h6>Search accross all faculties. type the subject of interest then checkbox to select</h6></label>
+                            <label style={{float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px'}} htmlFor="search"><h6>From the list below, select the subjects of interest, then click the "Save" botton. The selected subjects to be compared in the next "Short list" tab.                                                               </h6></label>
 
                             <div className="search-bar">
                                 <input type="search" placeholder='Search Here...' id="search" tyle={{ outline: 'none', border: 'none'}} /> 

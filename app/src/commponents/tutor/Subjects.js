@@ -196,7 +196,24 @@ const Subjects = () => {
 
     }
 
-    
+    let handle_scroll_right = () => {
+
+        let div = document.querySelector('.tutor-tab-subject-data-tabs');
+        let scroll_elem = div.children[1];
+        console.log(scroll_elem) 
+        let w = scroll_elem.offsetWidth;
+        scroll_elem.scrollLeft = w;
+
+    }
+
+    let handle_scroll_left = () => {
+        
+        let div = document.querySelector('.tutor-tab-subject-data-tabs');
+        let scroll_elem = div.children[1];
+        let w = scroll_elem.offsetWidth;
+        scroll_elem.scrollLeft = -w
+
+    }
     
 
     let save = document.querySelector('#tutor-save');

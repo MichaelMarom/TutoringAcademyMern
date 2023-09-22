@@ -1,109 +1,32 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // import Calendar from 'react-calendar';
-import { Calendar, Views, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import CustomEventForm from "./CustomEventForm";
-import Events from "./Events";
-import EventModal from "../common/EventModal";
-import { hours, days } from "../../constants/constants";
-const localizer = momentLocalizer(moment);
+import { days, hours } from "../../constants/constants";
+import ShowCalendar from "../common/Calendar/Calendar";
 const Scheduling = () => {
-  const [events, setEvents] = useState([]);
-  const [eventDetails, setEventDetails] = useState({
-    title: "",
-    allDay: true,
-    start: null,
-    end: null,
-  });
-  const [view, setView] = useState(Views.MONTH);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
   const [activeTab, setActiveTab] = useState("month");
-  const disabledDateRange = {
-    start: new Date(2023, 8, 15),
-    end: new Date(2023, 8, 20),
-  };
-  const handleDateClick = (slotInfo) => {
-    console.log("handleDateClick", slotInfo);
-    if (
-      slotInfo.start.getTime() >= disabledDateRange.start.getTime() &&
-      slotInfo.end.getTime() <= disabledDateRange.end.getTime()
-    ) {
-      // This range is disabled, so you can prevent the selection
-      alert("This date range is disabled.");
-      return;
-    }
-    setIsModalOpen(true);
-    setSelectedDate(slotInfo.start.toString());
-  };
-  const handleCreateEvent = () => {
-    const newEvent = {
-      title: eventDetails.title,
-      allDay: eventDetails.allDay,
-      start: eventDetails.start,
-      end: eventDetails.end,
-    };
-    console.log(`Create event`, events);
-    // Update the events array with the new event
-    setEvents([...events, newEvent]);
-    console.log(`Update events`, events);
-    // Close the modal and reset the event details
-    setIsModalOpen(false);
-    setEventDetails({
-      title: "",
-      allDay: true,
-      start: null,
-      end: null,
-    });
-  };
-  
+  const [disabledDays, setdisabledDays] = useState([]);
 
-  const dayPropGetter = useCallback(
-    (date) => {
-      // Check if the date falls within the disabled date range
-      if (date >= disabledDateRange.start && date <= disabledDateRange.end) {
-        // Date is within the disabled date range
-        return {
-          className: "disabled-date",
-          onClick: (e) => {
-            e.preventDefault(); // Prevent interaction with disabled dates
-            // alert('This date is disabled.');
-          },
-        };
-      }
-
-      // Default styling for other dates
-      return {};
-    },
-    [disabledDateRange]
-  );
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedDate(null);
-  };
   const handleTabClick = (tab) => {
     // tab=='day' ? setView(Views.DAY) : setView(Views.MONTH);
-    console.log(view);
     setActiveTab(tab);
   };
-  function isDateDisabled(date) {
-    // Add your logic to determine if the date should be disabled
-    // For example, you can compare the date to a list of disabled dates
-    console.log("date", date);
-    const disabledDates = [new Date(2023, 9, 5), new Date(2023, 9, 10)];
-    console.log(disabledDates.includes(date));
-    return disabledDates.includes(date) ? "disabled-date" : null;
-  }
+  const handleCheckboxClick = (dayName) => {
+    if (disabledDays.includes(dayName)) {
+      // If the day is already disabled, remove it
+      setdisabledDays(disabledDays.filter((day) => day !== dayName));
+    } else {
+      // If the day is not disabled, add it
+      setdisabledDays([...disabledDays, dayName]);
+    }
+  };
   useEffect(() => {
     let next = document.querySelector(".tutor-next");
 
     if (next.hasAttribute("id")) {
       next.removeAttribute("id");
     }
-    console.log("Events updated:", events);
-  }, [events, view]);
+  });
   return (
     <>
       <div className="form-scheduling">
@@ -112,13 +35,13 @@ const Scheduling = () => {
             className={`nav-item ${activeTab === "month" ? "active" : ""}`}
             onClick={() => handleTabClick("month")}
           >
-            <a className="nav-link">Months</a>
+            <button className="nav-link">Months</button>
           </li>
           <li
             className={`nav-item ${activeTab === "day" ? "active" : ""}`}
             onClick={() => handleTabClick("day")}
           >
-            <a className="nav-link">Days</a>
+            <button className="nav-link">Days</button>
           </li>
         </ul>
         <div className="time-period">
@@ -153,7 +76,8 @@ const Scheduling = () => {
                           type="checkbox"
                           id={day.toLowerCase()}
                           className="form-check-input"
-                          onChange={() => {}}
+                          checked={disabledDays.includes(day)}
+                          onChange={() => handleCheckboxClick(day)}
                         />
                         <label
                           className="form-check-label"
@@ -211,26 +135,7 @@ const Scheduling = () => {
             </div>
 
             <div className="form-scheduling-cnt-right">
-              <div className="form-scheduling-cnt-right-header"></div>
-
-              <Calendar
-                localizer={localizer}
-                events={events}
-                selectable
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: "100%", width: "100%" }}
-                onSelectSlot={handleDateClick}
-                dayPropGetter={dayPropGetter}
-              />
-              <EventModal
-                isOpen={isModalOpen}
-                onRequestClose={closeModal}
-                selectedDate={selectedDate}
-                eventDetails={eventDetails}
-                setEventDetails={setEventDetails}
-                onCreateEvent={handleCreateEvent}
-              />
+              <ShowCalendar disabledDays={disabledDays}/>
             </div>
           </div>
 

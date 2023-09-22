@@ -61,7 +61,7 @@ function EventModal({
               <input
                 type="text"
                 className="form-control"
-                value={eventDetails.title}
+                value={eventDetails?.title || ""}
                 onChange={(e) =>
                   setEventDetails({ ...eventDetails, title: e.target.value })
                 }
@@ -71,7 +71,7 @@ function EventModal({
               <input
                 type="checkbox"
                 className="form-check-input"
-                checked={eventDetails.allDay}
+                checked={eventDetails?.allDay || ""}
                 onChange={(e) =>
                   setEventDetails({ ...eventDetails, allDay: e.target.checked })
                 }

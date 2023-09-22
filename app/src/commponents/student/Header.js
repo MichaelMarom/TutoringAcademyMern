@@ -42,7 +42,6 @@ const Header = () => {
 
         deactivedElem.removeAttribute('id');
         clickedElem.setAttribute('id', 'active')
-
         nav(`student/${e.target.dataset.url}`)
  
     }
@@ -61,7 +60,7 @@ const Header = () => {
                         <li data-url='faculties' onClick={handleTabClick} >Faculties</li>
                         <li data-url='short-list' onClick={handleTabClick} >Short List</li>
                         <li data-url='accounting' onClick={handleTabClick} >Accounting</li>
-                        <li data-url='subjects' onClick={handleTabClick} >Calender Scheduling</li>
+                        <li data-url='schedule' onClick={handleTabClick} >Calender Scheduling</li>
                         <li data-url='my-students' onClick={handleTabClick} >Message Board</li>
                         <li data-url='market-place' onClick={handleTabClick} >Market place</li>
                         <li data-url='collaboration' onClick={handleTabClick} >Collaboration </li>

@@ -174,7 +174,7 @@ const Subjects = () => {
     }, []) 
 
     let handle_active_course = e => {
-        let elem = e.target;
+        let elem = e.currentTarget;
         let tables = [...document.querySelectorAll('table')];
         let active_table = tables.filter(item => !item.hasAttribute('id'));
         active_table[0].setAttribute('id', 'hide_table');
@@ -188,7 +188,6 @@ const Subjects = () => {
 
         let clickedElem = e.currentTarget;
         let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
-
         deactivedElem.removeAttribute('id');
         clickedElem.setAttribute('id', 'table_options_menu')
 
@@ -225,18 +224,25 @@ const Subjects = () => {
         })
         let AcademyId = window.localStorage.getItem('tutor_user_id');
         let rate_list = [];
+        let rate_err =[]
 
         let result = () => {
             let file = values.map((item, index, array) => {
 
                 if( `${item[7].children[0].value}.${item[7].children[1].value}`  !== '00.00'){
-                    document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+                    //document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
                     let doc = {faculty: item[1].dataset.src, course: item[1].innerHTML, rate: "$" + item[7].children[0].value + "." + item[7].children[1].value}
+                    item[7].children[0].style.border = '1px solid #000';
+                    item[7].children[1].style.border = '1px solid #000';
                     rate_list.push(doc)
+                    rate_err.push(true)
+
 
                 }else{
                     item[7].children[0].style.border = '1px solid red';
                     item[7].children[1].style.border = '1px solid red';
+                    rate_err.push(false)
+                    //return false;
                 }
 
             })
@@ -268,7 +274,13 @@ const Subjects = () => {
                 .catch((err) => console.log(err))
             }
 
-            upload_agent(rate_list, AcademyId)
+            let errCheck =  rate_err.filter(item => item === false)
+            if(errCheck.length > 0){
+                alert('Please Ensure The Rate Field Is At Least $1')
+            }else{
+                document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+                upload_agent(rate_list, AcademyId) 
+            }
 
           
         }
@@ -341,7 +353,7 @@ const Subjects = () => {
 
                         </div>
 
-                    </div>          
+                    </div>           
 
                     <div className="highlight">
                         Checkbox any subject in any faculty where you are proficient enough to tutor, Ultimately you are being rated by the students feedback, if students feedback is only 2 stars then its free checkbox the subject then select the certificate, state expiration if available. Then click on the rate button which will pop up a table to select your rate

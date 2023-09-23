@@ -4,11 +4,13 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { COLUMNS,DATA } from '../../Tables/Faculty/columns';
 import { useMemo } from 'react';
 import { get_student_short_list_data, get_tutor_subject, upload_student_short_list } from '../../axios/student';
+import { socket } from '../../socket';
 
 const StudentFaculties = () => {
 
     const [response, setResponse] = useState([]);
     const [data, setData] = useState([]);
+    const [badData, setbadData] = useState([]);
 
     const columns = useMemo(() => COLUMNS, []);
 
@@ -149,6 +151,10 @@ const StudentFaculties = () => {
         }
     },[])
 
+    useEffect(() => {
+        console.log(badData)
+    }, [badData])
+
     
     useEffect(() => {
         get_student_short_list_data()
@@ -170,6 +176,19 @@ const StudentFaculties = () => {
 
 
     const tableInstance = useTable({columns, data})
+
+    let handleBadData = e => {
+
+        let elem = e.target;
+
+        let pElem = elem.parentElement;
+        let id = pElem.dataset;
+ 
+        if(!elem.checked){
+            socket.emit('studentIllShorList', {id})
+        }
+
+    }
 
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
 
@@ -275,9 +294,9 @@ const StudentFaculties = () => {
 
                                 response.map((item) => 
                                     <tr>
-                                        <td id='student-tutor' data-id={`${item[0].AcademyId}-${item[0].subject}-${item[0].rate}-${item[2].TutorScreenname}`}>
+                                        <td id='student-tutor' data-id={`${item[0].AcademyId}-${item[0].subject}-${item[0].rate}-${item[2].TutorScreenname}-${window.localStorage.getItem('student_user_id')}`}>
 
-                                            <input type='checkbox'style={{height: '20px', width: '20px'}}  />
+                                            <input onInput={handleBadData} type='checkbox' style={{height: '20px', width: '20px'}}  />
                                         </td>
 
                                         <td>{item[0].subject}</td> 

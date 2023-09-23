@@ -23,10 +23,11 @@ const StudentShortList = () => {
     
 
     useEffect(() => {
-        get_student_short_list()
+        get_student_short_list(window.localStorage.getItem('student_user_id'))
         .then((result) => {
             
             setResponse(result)
+            console.log(response)
         })
         .catch((err) => {
             console.log(err)
@@ -58,34 +59,34 @@ const StudentShortList = () => {
                             
                         {
 
-                            response.reverse().sort().length > 0 
+                            response.length > 0 
                             ?
 
                             response.map((item,index) => 
                                 <tr onDoubleClick={e => redirect_to_tutor_profile(item.AcademyId)} key={index}>
                                     <td>
-                                        {<video src={item[2][0].Video} controls style={{height: '100px', width: '120px'}}></video>}
+                                        {<video src={item.tutorData.Video} controls style={{height: '100px', width: '120px'}}></video>}
                                     </td>
 
-                                    <td>{<img src={item[2][0].Photo}  style={{height: '100px', width: '120px'}} />}</td> 
+                                    <td>{<img src={item.tutorData.Photo}  style={{height: '100px', width: '120px'}} />}</td> 
                                     <td>
-                                        <input type='checkbox' style={{height: '20px', width: '20px'}} defaultChecked={item[1].FreeDemoLesson === 'yes' ? true : false} />
+                                        <input type='checkbox' style={{height: '20px', width: '20px'}} defaultChecked={item.tutorDemoLesson.FreeDemoLesson === 'yes' ? true : false} />
                                     </td>
                                     <td>
-                                        {item[0].Subject}
+                                        {item.tutorShortList.Subject}
                                     </td>
                                     <td>
-                                        {item[0].ScreenName}
+                                        {item.tutorShortList.ScreenName}
                                     </td>
                                     <td>
-                                        {item[2] ? item[2][0].Country : ''}
+                                        {item.tutorData.Country}
                                     </td>
                                     <td>
-                                        {item[2] ? item[2][0].GMT : ''}
+                                        {item.tutorData.GMT}
                                     </td>
                                     <td><input style={{height: '20px', width: '20px'}} type='checkbox' /></td>
                                     <td><input style={{height: '20px', width: '20px'}} type='radio' /></td>
-                                    <td>{item[0].Rate}</td>
+                                    <td>{item.tutorShortList.Rate}</td>
                                 </tr>
                                 )
                             :

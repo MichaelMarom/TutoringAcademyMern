@@ -95,12 +95,12 @@ export let upload_student_short_list = (items) => {
 }
 
 
-export let get_student_short_list = () => {
+export let get_student_short_list = (student) => {
 
     return new Promise((resolve, reject) => {
 
     
-        axios.get('http://localhost:9876/student/short-list', {  })
+        axios.get('http://localhost:9876/student/short-list', { params: {student} })
         .then((result) => {
             resolve(result.data) 
         })

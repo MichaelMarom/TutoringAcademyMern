@@ -1,73 +1,32 @@
 import { useEffect, useState } from "react";
 // import Calendar from 'react-calendar';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import CustomEventForm from "./CustomEventForm";
-import Events from "./Events";
-import DateModal from "./DateModal";
-
-const localizer = momentLocalizer(moment);
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { days, hours } from "../../constants/constants";
+import ShowCalendar from "../common/Calendar/Calendar";
 const Scheduling = () => {
-  const [events, setEvents] = useState([]);
-  const [eventDetails, setEventDetails] = useState({
-    title: '',
-    allDay: true,
-    start: null,
-    end: null,
-  });
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
   const [activeTab, setActiveTab] = useState("month");
-  const handleDateClick = (slotInfo) => {
-    setIsModalOpen(true);
-    setSelectedDate(slotInfo.start.toString());
-  };
-  const handleCreateEvent = () => {
-    const newEvent = {
-      title: eventDetails.title,
-      allDay: eventDetails.allDay,
-      start: eventDetails.start,
-      end: eventDetails.end,
-    };
-    console.log(`Create event`,events);
-    // Update the events array with the new event
-    setEvents([...events, newEvent]);
-    
-    // Close the modal and reset the event details
-    setIsModalOpen(false);
-    setEventDetails({
-      title: '',
-      allDay: true,
-      start: null,
-      end: null,
-    });
-  };
-  
+  const [disabledDays, setdisabledDays] = useState([]);
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedDate(null);
-  };
   const handleTabClick = (tab) => {
+    // tab=='day' ? setView(Views.DAY) : setView(Views.MONTH);
     setActiveTab(tab);
   };
-  function isDateDisabled(date) {
-    // Add your logic to determine if the date should be disabled
-    // For example, you can compare the date to a list of disabled dates
-    console.log("date",date);
-    const disabledDates = [new Date(2023, 9, 5), new Date(2023, 9, 10)];
-    console.log(disabledDates.includes(date));
-    return disabledDates.includes(date) ? 'disabled-date' : null;
-  }
+  const handleCheckboxClick = (dayName) => {
+    if (disabledDays.includes(dayName)) {
+      // If the day is already disabled, remove it
+      setdisabledDays(disabledDays.filter((day) => day !== dayName));
+    } else {
+      // If the day is not disabled, add it
+      setdisabledDays([...disabledDays, dayName]);
+    }
+  };
   useEffect(() => {
     let next = document.querySelector(".tutor-next");
 
     if (next.hasAttribute("id")) {
       next.removeAttribute("id");
     }
-    console.log("Events updated:", events);
-  }, [events]);
+  });
   return (
     <>
       <div className="form-scheduling">
@@ -76,122 +35,111 @@ const Scheduling = () => {
             className={`nav-item ${activeTab === "month" ? "active" : ""}`}
             onClick={() => handleTabClick("month")}
           >
-            <a className="nav-link" href="#months">
-              Blocked Days
-            </a>
+            <button className="nav-link">Months</button>
           </li>
           <li
             className={`nav-item ${activeTab === "day" ? "active" : ""}`}
             onClick={() => handleTabClick("day")}
           >
-            <a className="nav-link" href="#days">
-              Blocked Hours
-            </a>
+            <button className="nav-link">Days</button>
           </li>
         </ul>
-
         <div className="time-period">
           <div id="form-scheduling-cnt" className="form-scheduling-cnt-month">
-            <div className="form-scheduling-cnt-left">
-              <h6>Blocked out days</h6>
-
-              <div className="highlight">
-                Checkbox the days of the week that you are not tutoring. Students will not
-                be able to setup lessons for your blocked out days
-              </div>
-
+            <div className="tab-content">
               <div
-                className="form-scheduling-b-days"
-                style={{
-                  position: "relative",
-                  display: "block",
-                  margin: "auto",
-                  marginBottom: "35px",
-                  width: "50%",
-                  background: "#fff",
-                }}
+                className={`tab-pane ${activeTab === "month" ? "active" : ""}`}
+                id="months"
               >
-                <div class="form-check">
-                  <input type="checkbox" id="sat" class="form-check-input" />
-                  <label class="form-check-label" for="sat">
-                    Saturday
-                  </label>
-                </div>
+                <div className="form-scheduling-cnt-left">
+                  <h6>Black out days</h6>
 
-                <div class="form-check">
-                  <input type="checkbox" id="sun" class="form-check-input" />
-                  <label class="form-check-label" for="sun">
-                    Sunday
-                  </label>
-                </div>
+                  <div className="highlight">
+                    Checkbox the date that you are not tutoring. students will
+                    not be able to setup lessons for your blacked out days
+                  </div>
 
-                <div class="form-check">
-                  <input type="checkbox" id="mon" class="form-check-input" />
-                  <label class="form-check-label" for="mon">
-                    Monday
-                  </label>
-                </div>
+                  <div
+                    className="form-scheduling-b-days"
+                    style={{
+                      position: "relative",
+                      display: "block",
+                      margin: "auto",
+                      marginBottom: "35px",
+                      width: "50%",
+                      background: "#fff",
+                    }}
+                  >
+                    {days.map((day, index) => (
+                      <div className="form-check" key={index}>
+                        <input
+                          type="checkbox"
+                          id={day.toLowerCase()}
+                          className="form-check-input"
+                          checked={disabledDays.includes(day)}
+                          onChange={() => handleCheckboxClick(day)}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor={day.toLowerCase()}
+                        >
+                          {day}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
 
-                <div class="form-check">
-                  <input type="checkbox" id="tues" class="form-check-input" />
-                  <label class="form-check-label" for="tues">
-                    Tuesday
-                  </label>
-                </div>
-
-                <div class="form-check">
-                  <input type="checkbox" id="wed" class="form-check-input" />
-                  <label class="form-check-label" for="wed">
-                    Wednesday
-                  </label>
-                </div>
-
-                <div class="form-check">
-                  <input type="checkbox" id="thurs" class="form-check-input" />
-                  <label class="form-check-label" for="thurs">
-                    Thursday
-                  </label>
-                </div>
-
-                <div class="form-check">
-                  <input type="checkbox" id="fri" class="form-check-input" />
-                  <label class="form-check-label" for="fri">
-                    Friday
-                  </label>
+                  <div className="highlight">
+                    Double click on a blocke dout day or hour. Will unblock the
+                    day or hour for that day or time.
+                  </div>
                 </div>
               </div>
+              <div
+                className={`tab-pane ${activeTab === "day" ? "active" : ""}`}
+                id="days"
+              >
+                <div className="form-scheduling-cnt-left">
+                  <h6>Black out hours</h6>
 
-              <div className="highlight">
-                Double click on a blocked out day or hour. Will unblock the day
-                or hour for that day or time.
+                  <div className="highlight">
+                    CheckBox the Hours that you are not tutoring. students will
+                    not be able to setup lessons for your blacked out hours
+                  </div>
+
+                  <div className="form-scheduling-hours">
+                    {hours.map((hour, index) => (
+                      <div className="form-check" key={index}>
+                        <input
+                          type="checkbox"
+                          id={`hour-${index}`}
+                          className="form-check-input"
+                          onChange={() => {}}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor={`hour-${index}`}
+                        >
+                          {hour}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="highlight mt-3">
+                    Double click on a blocke dout day or hour. Will unblock the
+                    day or hour for that day or time.
+                  </div>
+                </div>
               </div>
             </div>
 
             <div className="form-scheduling-cnt-right">
-              <div className="form-scheduling-cnt-right-header"></div>
-
-              <Calendar
-                localizer={localizer}
-                events={events}
-                selectable
-                startAccessor="start"
-                endAccessor="end"
-                style={{ height: '100%' , width: '100%' }} 
-                onSelectSlot={handleDateClick}
-                datePropGetter={isDateDisabled}
-              />
-              <DateModal
-                isOpen={isModalOpen}
-                onRequestClose={closeModal}
-                selectedDate={selectedDate}
-                eventDetails={eventDetails}
-                setEventDetails={setEventDetails}
-                onCreateEvent={handleCreateEvent}
-              />
+              <ShowCalendar disabledDays={disabledDays}/>
             </div>
           </div>
 
-          <div className="form-scheduling-cnt-day">
+          {/* <div className="form-scheduling-cnt-day">
             <div className="form-scheduling-cnt-left">
               <h6>Black out days</h6>
 
@@ -423,7 +371,7 @@ const Scheduling = () => {
                 </ul>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

@@ -786,7 +786,7 @@
     }
 
     .form-scheduling-cnt-month,.form-scheduling-cnt-day{
-        height: calc(100vh - 50px);
+        /* height: calc(100vh - 50px); */
         width: 100%;
         display: none;
     }
@@ -805,10 +805,9 @@
     }
 
     .form-scheduling-cnt-right{
-        height: 100%;
+        /* height: 100%; */
         width: calc(100% - 300px);
         float: right;
-        background-color: #efefef;
     }
 
     .form-scheduling-cnt-right-header{

@@ -4,16 +4,20 @@ import Modal from "react-modal";
 // Initialize the modal root element (put it in your index.js or App.js)
 Modal.setAppElement("#root");
 
-const customStyles= {
-    content:{
-        zIndex:'111',
-        height:'fit-content'
-    }
+const customStyles = {
+  content: {
+    zIndex: "111",
+    height: "fit-content",
+  },
+};
+function isTimestampWithinRange(x, min, max) {
+  return x >= min && x <= max;
 }
-function DateModal({
+function EventModal({
   isOpen,
   onRequestClose,
   selectedDate,
+  disabledDateRange,
   eventDetails,
   setEventDetails,
   onCreateEvent,
@@ -23,6 +27,14 @@ function DateModal({
   const handleSave = () => {
     if (!eventDetails.title || !eventDetails.start || !eventDetails.end) {
       alert("Please fill in all fields");
+      return;
+    }
+    let EventDetailsStartTimeStamp = eventDetails.start.getTime();
+    let EventDetailsEndTimeStamp = eventDetails.end.getTime();
+    let DisabledDateStartTimeStamp = disabledDateRange.start.getTime();
+    let DisabledDateEndTimeStamp = disabledDateRange.end.getTime();
+    if(isTimestampWithinRange(EventDetailsStartTimeStamp,DisabledDateStartTimeStamp,DisabledDateEndTimeStamp) || isTimestampWithinRange(EventDetailsEndTimeStamp,DisabledDateStartTimeStamp,DisabledDateEndTimeStamp)) {
+      alert("this is disabled date range. choose another one");
       return;
     }
     onCreateEvent();
@@ -49,7 +61,7 @@ function DateModal({
               <input
                 type="text"
                 className="form-control"
-                value={eventDetails.title}
+                value={eventDetails?.title || ""}
                 onChange={(e) =>
                   setEventDetails({ ...eventDetails, title: e.target.value })
                 }
@@ -59,7 +71,7 @@ function DateModal({
               <input
                 type="checkbox"
                 className="form-check-input"
-                checked={eventDetails.allDay}
+                checked={eventDetails?.allDay || ""}
                 onChange={(e) =>
                   setEventDetails({ ...eventDetails, allDay: e.target.checked })
                 }
@@ -71,7 +83,11 @@ function DateModal({
               <input
                 type="date"
                 className="form-control"
-                value={eventDetails.start ? eventDetails.start.toISOString().split('T')[0] : ''}
+                value={
+                  eventDetails.start
+                    ? eventDetails.start.toISOString().split("T")[0]
+                    : ""
+                }
                 onChange={(e) =>
                   setEventDetails({
                     ...eventDetails,
@@ -85,14 +101,18 @@ function DateModal({
               <input
                 type="date"
                 className="form-control"
-                value={eventDetails.end ? eventDetails.end.toISOString().split('T')[0] : ''}
+                value={
+                  eventDetails.end
+                    ? eventDetails.end.toISOString().split("T")[0]
+                    : ""
+                }
                 onChange={(e) =>
-                    setEventDetails({
+                  setEventDetails({
                     ...eventDetails,
                     end: new Date(e.target.value),
-                    })
+                  })
                 }
-                />
+              />
             </div>
           </form>
         </div>
@@ -117,4 +137,4 @@ function DateModal({
   );
 }
 
-export default DateModal;
+export default EventModal;

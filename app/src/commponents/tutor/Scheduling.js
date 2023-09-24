@@ -5,21 +5,31 @@ import { days, hours } from "../../constants/constants";
 import ShowCalendar from "../common/Calendar/Calendar";
 const Scheduling = () => {
   const [activeTab, setActiveTab] = useState("month");
-  const [disabledDays, setdisabledDays] = useState([]);
-
+  const [disabledDays, setDisabledDays] = useState([]);
+  const [disabledHours, setDisabledHours] = useState([]);
   const handleTabClick = (tab) => {
-    // tab=='day' ? setView(Views.DAY) : setView(Views.MONTH);
     setActiveTab(tab);
   };
-  const handleCheckboxClick = (dayName) => {
-    if (disabledDays.includes(dayName)) {
-      // If the day is already disabled, remove it
-      setdisabledDays(disabledDays.filter((day) => day !== dayName));
+  const handleCheckboxClick = (dayName, hourRange) => {
+    // Check if the day or hour is already disabled
+    const isDayDisabled = disabledDays.includes(dayName);
+    const isHourDisabled = disabledHours.includes(hourRange);
+  
+    if (isDayDisabled && isHourDisabled) {
+      // If both day and hour are already disabled, remove them
+      setDisabledDays(disabledDays.filter((day) => day !== dayName));
+      setDisabledHours(disabledHours.filter((hour) => hour !== hourRange));
     } else {
-      // If the day is not disabled, add it
-      setdisabledDays([...disabledDays, dayName]);
+      // If either day or hour is not disabled, add them
+      if (!isDayDisabled) {
+        setDisabledDays([...disabledDays, dayName]);
+      }
+      if (hourRange && !isHourDisabled) {
+        setDisabledHours([...disabledHours, hourRange]);
+      }
     }
   };
+  
   useEffect(() => {
     let next = document.querySelector(".tutor-next");
 
@@ -35,13 +45,13 @@ const Scheduling = () => {
             className={`nav-item ${activeTab === "month" ? "active" : ""}`}
             onClick={() => handleTabClick("month")}
           >
-            <button className="nav-link">Months</button>
+            <button className={`${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Months</button>
           </li>
           <li
             className={`nav-item ${activeTab === "day" ? "active" : ""}`}
             onClick={() => handleTabClick("day")}
           >
-            <button className="nav-link">Days</button>
+            <button className={`${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Days</button>
           </li>
         </ul>
         <div className="time-period">
@@ -108,19 +118,20 @@ const Scheduling = () => {
                   </div>
 
                   <div className="form-scheduling-hours">
-                    {hours.map((hour, index) => (
+                    {hours.map((timeRange, index) => (
                       <div className="form-check" key={index}>
                         <input
                           type="checkbox"
                           id={`hour-${index}`}
                           className="form-check-input"
-                          onChange={() => {}}
+                          checked={disabledHours.includes(timeRange)}
+                          onChange={() => handleCheckboxClick(null, timeRange)}
                         />
                         <label
                           className="form-check-label"
                           htmlFor={`hour-${index}`}
                         >
-                          {hour}
+                          {timeRange[0]} to {timeRange[1]}
                         </label>
                       </div>
                     ))}
@@ -135,7 +146,7 @@ const Scheduling = () => {
             </div>
 
             <div className="form-scheduling-cnt-right">
-              <ShowCalendar disabledDays={disabledDays}/>
+              <ShowCalendar disabledDays={disabledDays} disabledHours={disabledHours} />
             </div>
           </div>
 

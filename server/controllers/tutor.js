@@ -814,6 +814,31 @@ let get_my_edu = (req,res) => {
     })
 }
 
+let storeEvents = (req, res) => {
+  try {
+    // TODO:
+    // write sql query to store event in events table
+    console.log("event Data", req.body);
+    res.json({ data: req.body });
+  } catch (error) {
+    console.error("Error storing event:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+let storeDisabledDates = (req, res) => {
+  try {
+    // TODO:
+    // write sql query to store event in events table
+    console.log("event Data", req.body);
+
+    res.json({ data: req.body });
+  } catch (error) {
+    console.error("Error storing dates:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 module.exports = {
     subjects,
@@ -836,5 +861,7 @@ module.exports = {
     upload_form_four,
     get_tutor_setup,
     get_tutor_rates,
-    get_bank_details
+    get_bank_details,
+    storeEvents,
+    storeDisabledDates
 }

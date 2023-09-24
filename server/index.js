@@ -1,4 +1,7 @@
 const { express,path,Pusher,fs,parser,cookieParser,mocha,mongodb,morgan,io,cors,shortId,jwt} = require('./modules');
+const app = express();
+app.use(cors({origin: '*'}))
+app.use(morgan('tiny')); 
 const {ConnectToMongoDb, marom_db, sql} = require('./db')
 const { STUDENT_ROUTES } = require('./routes/student');
 const { ADMIN_ROUTES } = require('./routes/admin');
@@ -7,16 +10,12 @@ const { TUTOR_ROUTES } = require('./routes/tutor');
 
 
 require('dotenv').config();
-
-const app = express();
-app.use(cors({origin: '*'}))
 app.use(TUTOR_ROUTES);
 app.use(ADMIN_ROUTES);
 app.use(STUDENT_ROUTES);
-app.use(morgan('tiny')); 
 
 
-var server = app.listen(process.env.PORT,_ => console.log('app is live @',process.env.PORT));
+var server = app.listen(5000,_ => console.log('app is live @',5000));
 
 
 io(server, {cors: {origin: '*'}}).on('connection', socket => {

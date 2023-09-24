@@ -1,6 +1,12 @@
 import axios from 'axios'
 
-
+const instance = axios.create({
+  baseURL: "http://localhost:5000", // Adjust the base URL to match your backend API endpoint
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+  
 export let get_subject = () => {
 
     return new Promise((resolve, reject) => {
@@ -387,3 +393,22 @@ export let get_tutor_setup = (AcademyId) => {
 
     })
 }
+
+export const storeEventAPI = async (eventDetails) => {
+  try {
+    console.log(eventDetails);
+    const response = await instance.post("/api/store-event", eventDetails);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+ }
+};
+
+export const addDisabledDates = async (date) => {
+    try {
+      const response = await instance.post("/api/store-disabled-dates", date);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+   }
+  };

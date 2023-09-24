@@ -57,6 +57,9 @@ const Footer = () => {
 
     let save = () => {
         dispatch(setSaveTo(window.localStorage.getItem('tutor_tab_index')));
+        if(window.localStorage.getItem('tab_index')=='7') {
+            console.log('save tutor');
+        }
     }
     //nav(`tutor/${e.target.dataset.url}`)
     return (

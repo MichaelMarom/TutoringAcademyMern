@@ -10,7 +10,7 @@ import modeReducer from './tutor_store/Mode';
 import BoardAccessReducer from './tutor_store/BoardAccess';
 import save from './tutor_store/save';
 import ScreenName, { setscreenNameTo } from './tutor_store/ScreenName';
-
+import EventReducer from './tutor_store/EventSlice';
 
 let store = configureStore({
   reducer: {
@@ -28,7 +28,7 @@ let store = configureStore({
 
     toolReq: toolReq,
     asideReq: asideReq,
-
+    event: EventReducer
 
   }
 

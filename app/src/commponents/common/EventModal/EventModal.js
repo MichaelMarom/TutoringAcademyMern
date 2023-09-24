@@ -10,14 +10,15 @@ const customStyles = {
     height: "fit-content",
   },
 };
+
 function isTimestampWithinRange(x, min, max) {
   return x >= min && x <= max;
 }
+
 function EventModal({
   isOpen,
   onRequestClose,
   selectedDate,
-  disabledDateRange,
   eventDetails,
   setEventDetails,
   onCreateEvent,
@@ -25,19 +26,61 @@ function EventModal({
   // ...
 
   const handleSave = () => {
-    if (!eventDetails.title || !eventDetails.start || !eventDetails.end) {
-      alert("Please fill in all fields");
+    let startDateTime = eventDetails.start;
+    let endDateTime = eventDetails.end;
+    if (!eventDetails.title) {
+      alert("Please fill in the event title.");
       return;
     }
-    let EventDetailsStartTimeStamp = eventDetails.start.getTime();
-    let EventDetailsEndTimeStamp = eventDetails.end.getTime();
-    let DisabledDateStartTimeStamp = disabledDateRange.start.getTime();
-    let DisabledDateEndTimeStamp = disabledDateRange.end.getTime();
-    if(isTimestampWithinRange(EventDetailsStartTimeStamp,DisabledDateStartTimeStamp,DisabledDateEndTimeStamp) || isTimestampWithinRange(EventDetailsEndTimeStamp,DisabledDateStartTimeStamp,DisabledDateEndTimeStamp)) {
-      alert("this is disabled date range. choose another one");
-      return;
+
+    startDateTime = new Date(selectedDate); // Start of the selected day
+    endDateTime = new Date(selectedDate); // End of the selected day
+    endDateTime.setHours(23, 59, 59); // Set the end time to 11:59:59 PM
+    if (eventDetails.allDay) {
+    } else {
+      // Check for empty start and end times only if it's not an "All Day" event
+      if (!eventDetails.startTime || !eventDetails.endTime) {
+        alert("Please fill in both start and end times.");
+        return;
+      }
+      startDateTime.setHours(
+        parseInt(eventDetails.startTime.split(":")[0]),
+        parseInt(eventDetails.startTime.split(":")[1])
+      );
+      endDateTime.setHours(
+        parseInt(eventDetails.endTime.split(":")[0]),
+        parseInt(eventDetails.endTime.split(":")[1])
+      );
     }
-    onCreateEvent();
+
+
+    // Check if the event falls within the disabled date range
+    // let EventDetailsStartTimeStamp = startDateTime.getTime();
+    // let EventDetailsEndTimeStamp = endDateTime.getTime();
+    // let DisabledDateStartTimeStamp = disabledDateRange.start.getTime();
+    // let DisabledDateEndTimeStamp = disabledDateRange.end.getTime();
+
+    // if (
+    //   isTimestampWithinRange(
+    //     EventDetailsStartTimeStamp,
+    //     DisabledDateStartTimeStamp,
+    //     DisabledDateEndTimeStamp
+    //   ) ||
+    //   isTimestampWithinRange(
+    //     EventDetailsEndTimeStamp,
+    //     DisabledDateStartTimeStamp,
+    //     DisabledDateEndTimeStamp
+    //   )
+    // ) {
+    //   alert("This date or time is disabled. Choose another one.");
+    //   return;
+    // }
+
+    onCreateEvent({
+      title: eventDetails.title,
+      start: startDateTime,
+      end: endDateTime,
+    });
   };
 
   return (
@@ -71,49 +114,47 @@ function EventModal({
               <input
                 type="checkbox"
                 className="form-check-input"
-                checked={eventDetails?.allDay || ""}
+                checked={eventDetails?.allDay || false}
                 onChange={(e) =>
                   setEventDetails({ ...eventDetails, allDay: e.target.checked })
                 }
               />
               <label className="form-check-label">All Day</label>
             </div>
-            <div className="form-group">
-              <label>Start Time:</label>
-              <input
-                type="date"
-                className="form-control"
-                value={
-                  eventDetails.start
-                    ? eventDetails.start.toISOString().split("T")[0]
-                    : ""
-                }
-                onChange={(e) =>
-                  setEventDetails({
-                    ...eventDetails,
-                    start: new Date(e.target.value),
-                  })
-                }
-              />
-            </div>
-            <div className="form-group">
-              <label>End Time:</label>
-              <input
-                type="date"
-                className="form-control"
-                value={
-                  eventDetails.end
-                    ? eventDetails.end.toISOString().split("T")[0]
-                    : ""
-                }
-                onChange={(e) =>
-                  setEventDetails({
-                    ...eventDetails,
-                    end: new Date(e.target.value),
-                  })
-                }
-              />
-            </div>
+            {!eventDetails.allDay && ( // Conditionally render time inputs
+              <div>
+                <div className="form-group">
+                  <label>Start Time:</label>
+                  
+                  <input
+                    type="time"
+                    className="form-control"
+                    value={eventDetails.startTime || ""}
+                    onChange={(e) =>
+                      setEventDetails({
+                        ...eventDetails,
+                        startTime: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="form-group">
+                  <label>End Time:</label>
+                  
+                  <input
+                    type="time"
+                    className="form-control"
+                    value={eventDetails.endTime || ""}
+                    onChange={(e) =>
+                      setEventDetails({
+                        ...eventDetails,
+                        endTime: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            )}
           </form>
         </div>
         <div className="modal-footer">

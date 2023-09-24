@@ -1,4 +1,4 @@
-const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details } = require('../controllers/tutor');
+const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details, storeEvents, storeDisabledDates } = require('../controllers/tutor');
 const {express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt} = require('../modules');
 
 
@@ -31,6 +31,9 @@ TUTOR_ROUTES.post('/tutor/rates', parser, upload_tutor_rates);
 TUTOR_ROUTES.post('/tutor/form-one', parser, post_form_one);
 TUTOR_ROUTES.post('/tutor/form-two', parser, post_form_two);
 TUTOR_ROUTES.post('/tutor/form-three', parser, post_form_three);
+
+TUTOR_ROUTES.post("/api/store-event",parser, storeEvents);
+TUTOR_ROUTES.post("/api/store-disabled-dates", storeDisabledDates);
 
 module.exports = {
     TUTOR_ROUTES

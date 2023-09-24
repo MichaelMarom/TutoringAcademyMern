@@ -155,7 +155,7 @@ const Scheduling = () => {
               <h6>Black out days</h6>
 
               <div className="highlight">
-                Checkbox the date that you are not tutoring. students will not
+                Checkbox the day of the week that you are not tutoring. It will block out all days forward. students will not
                 be able to setup lessons for your blacked out days
               </div>
 
@@ -284,7 +284,7 @@ const Scheduling = () => {
               </div>
 
               <div className="highlight">
-                Double click on a blocke dout day or hour. Will unblock the day
+                Double click on a blocked out day or hour. Will unblock the day
                 or hour for that day or time.
               </div>
             </div>

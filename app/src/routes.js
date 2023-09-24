@@ -3,6 +3,7 @@ import{motion,AnimatePresence} from 'framer-motion';
 
 import './styles/Tab_Styles/LargeScreen.css';
 import './styles/student.css';
+import './styles/admin.css';
 import './styles/Collaboration_Styles/LargeScreen.css';
 
 

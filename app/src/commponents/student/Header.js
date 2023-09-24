@@ -18,7 +18,7 @@ const Header = () => {
 
     let handle_scroll_right = () => {
 
-        let div = document.querySelector('.tutor-tab-header');
+        let div = document.querySelector('.student-tab-header');
         let scroll_elem = div.children[1];
         console.log(scroll_elem) 
         let w = scroll_elem.offsetWidth;
@@ -28,7 +28,7 @@ const Header = () => {
 
     let handle_scroll_left = () => {
         
-        let div = document.querySelector('.tutor-tab-header');
+        let div = document.querySelector('.student-tab-header');
         let scroll_elem = div.children[1];
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = -w
@@ -37,7 +37,7 @@ const Header = () => {
 
     
     let handleTabClick = e => {
-        let clickedElem = e.target;
+        let clickedElem = e.currentTarget;
         let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
 
         deactivedElem.removeAttribute('id');
@@ -49,10 +49,10 @@ const Header = () => {
 
     return ( 
         <>
-            <div className="screen-name" style={{position: 'fixed', top: '50px', zIndex: '1000', background: 'blue', fontWeight: 'bold', color: '#fff', left: '50px', padding: '10px'}}>
+            <div className="screen-name btn-primary rounded" style={{display: screen_name === 'null' ? 'none': 'flex',position: 'fixed', top: '15px', zIndex: '1000', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height:'30px'}}>
                 {screen_name}
             </div>
-            <div className="tutor-tab-header shadow-sm">
+            <div className="student-tab-header shadow-sm">
                 <div className="scroller-left" onClick={handle_scroll_left}></div>
                     <ul>
                         <li data-url='intro' onClick={handleTabClick} id="active">Introduction</li>

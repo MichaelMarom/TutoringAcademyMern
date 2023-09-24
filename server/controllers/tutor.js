@@ -443,87 +443,103 @@ let get_user_data   = (req,res) => {
 }
 
 let upload_tutor_rates = (req, res) => {
-    let  {rate_list, AcademyId} = req.body;
 
-    let book = []
+    try{
+        let  {rate_list, AcademyId} = req.body;
 
-    let data = rate_list.map(async(item) => {
+        let book = []
 
-        let action = cb => {
-            marom_db(async(config) => {
-                const sql = require('mssql');
-                var poolConnection = await sql.connect(config);
+        let data = rate_list.map(async(item) => {
 
-                let result = poolConnection ? await get_action(poolConnection) : 'connection error';
-                cb(result);
-
-            })
-        }
-
-        let response = action((result) => {
-            if(result){
-
-                let db = marom_db(async(config) => {
+            let action = async cb => {
+                await marom_db(async(config) => {
                     const sql = require('mssql');
                     var poolConnection = await sql.connect(config);
-    
-                    let result = poolConnection ? await insert_rates(poolConnection) : 'connection error';
-                    
-                    console.log('insert:', result);
-                    book.push(result)
-                    if(book.length === rate_list.length){
-                        res.send(true)
-                        //console.log('rates: ', true)
-                    }
+
+                    let result = poolConnection ? await get_action(poolConnection) : 'connection error';
+                    cb(result);
+
                 })
-                
-            }else{
-
-                let db = marom_db(async(config) => {
-                    const sql = require('mssql');
-                    var poolConnection = await sql.connect(config);
-    
-                    let result = poolConnection ? await update_rates(poolConnection) : 'connection error';
-
-                    console.log('update:', result);
-                    book.push(result)
-                    if(book.length === rate_list.length){
-                        res.send(true)
-                        //console.log('rates: ', true)
-                    }
-                })
-
             }
+
+            let response = action(async(result) => {
+                if(result){
+
+                    try {
+                        await marom_db(async(config) => {
+                            const sql = require('mssql');
+                            var poolConnection = await sql.connect(config);
+            
+                            let result = poolConnection ? await insert_rates(poolConnection) : 'connection error';
+                            
+                            console.log('insert:', result);
+                            book.push(result)
+                            console.log(book.length, rate_list.length)
+                            if(book.length === rate_list.length){
+                                console.log('rates: ', true)
+
+                                res.status(200).send(true)
+                            }
+                        })
+                    } catch (error) {
+                        throw error
+                    }
+                    
+                }else{
+
+                    try {
+                        await marom_db(async(config) => {
+                            const sql = require('mssql');
+                            var poolConnection = await sql.connect(config);
+            
+                            let result = poolConnection ? await update_rates(poolConnection) : 'connection error';
+    
+                            console.log('update:', result);
+                            book.push(result)
+                            console.log(book.length, rate_list.length)
+                            if(book.length === rate_list.length){
+                                console.log('rates: ', true)
+
+                                res.status(200).send(true)
+                            }
+                        })
+                    } catch (error) {
+                        throw error
+                    }
+
+
+                }
+            })
+
+            let get_action = async(poolConnection) => {
+                let records = await poolConnection.request().query(`SELECT * FROM "SubjectRates"`)
+                let get_duplicate = await records.recordset.filter(file => file.subject === item.course && file.AcademyId === AcademyId);
+
+                let result = get_duplicate.length > 0 ? false : true;
+                return(result);
+            }
+
+            let insert_rates = async(poolConnection) => {
+                let records = await poolConnection.request().query(`INSERT INTO "SubjectRates"(faculty, subject, rate, AcademyId) VALUES('${item.faculty}','${item.course}','${item.rate}','${AcademyId}') `)
+
+                let result =  await records.rowsAffected[0] === 1 ? true : false
+
+                return(result);
+            }
+
+            let update_rates = async(poolConnection) => {
+                let records = await poolConnection.request().query(`UPDATE "SubjectRates" set faculty='${item.faculty}', subject='${item.course}', rate='${item.rate}'  WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' AND CONVERT(VARCHAR, subject) = '${item.course}' `)
+
+                //console.log('records :',records)
+                let result =  await records.rowsAffected[0] === 1 ? true : false
+                return(result);
+            
+            }
+
         })
-
-        let get_action = async(poolConnection) => {
-            let records = await poolConnection.request().query(`SELECT * FROM "SubjectRates"`)
-            let get_duplicate = await records.recordset.filter(file => file.subject === item.course && file.AcademyId === AcademyId);
-
-            let result = get_duplicate.length > 0 ? false : true;
-            return(result);
-        }
-
-        let insert_rates = async(poolConnection) => {
-            let records = await poolConnection.request().query(`INSERT INTO "SubjectRates"(faculty, subject, rate, AcademyId) VALUES('${item.faculty}','${item.course}','${item.rate}','${AcademyId}')`)
-
-            let result =  await records.rowsAffected[0] === 1 ? true : false
-            return(result);
-        }
-
-        let update_rates = async(poolConnection) => {
-            let records = await poolConnection.request().query(`UPDATE "SubjectRates" set faculty='${item.faculty}', subject='${item.course}', rate='${item.rate}'  WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' AND CONVERT(VARCHAR, subject) = '${item.course}' `)
-
-            //console.log('records :',records)
-            let result =  await records.rowsAffected[0] === 1 ? true : false
-            return(result);
-          
-        }
-
-
-        
-
-    })
+    }catch(err){
+        console.log('Error message',err)
+    }
 
 }
 

@@ -1,8 +1,7 @@
+
+
 const { express,path,Pusher,fs,parser,cookieParser,mocha,mongodb,morgan,io,cors,shortId,jwt} = require('./modules');
-const app = express();
-app.use(cors({origin: '*'}))
-app.use(morgan('tiny')); 
-const {ConnectToMongoDb, marom_db, sql} = require('./db')
+const {ConnectToMongoDb, marom_db, sql, connecteToDB} = require('./db')
 const { STUDENT_ROUTES } = require('./routes/student');
 const { ADMIN_ROUTES } = require('./routes/admin');
 const { TUTOR_ROUTES } = require('./routes/tutor');
@@ -19,6 +18,26 @@ var server = app.listen(5000,_ => console.log('app is live @',5000));
 
 
 io(server, {cors: {origin: '*'}}).on('connection', socket => {
+
+    socket.on('studentIllShorList', ({id}) => {
+
+        let deleteData = (subject,AcademyId,Student) => {
+            connecteToDB
+            .then((poolConnection) => 
+                poolConnection.request().query( `DELETE FROM StudentShortList WHERE  CONVERT(VARCHAR, Student) =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
+                .then((result) => {
+    
+                    console.log('deleted data successfully')
+    
+                    //res.status(200).send()
+                    //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+                })
+                .catch(err => console.log(err))
+            )
+        }
+        let list = id.id.split('-');
+        deleteData(list[1],list[0],list[4]);
+    })  
 
 
 

@@ -159,7 +159,7 @@ let get_tutor_subject = async(req,res) => {
     let document = []
     let subjectLength = 0
 
-    let subjects = async() =>  await connecteToDB.then(poolConnection => 
+    let subjects = async() => await connecteToDB.then(poolConnection => 
         poolConnection.request().query( `SELECT * From SubjectRates  WHERE CONVERT(VARCHAR, faculty) =  '${subject}'` )
         .then((result) => {
             subjectLength = result.recordset.length;
@@ -172,7 +172,7 @@ let get_tutor_subject = async(req,res) => {
         .catch(err => console.log(err))
     )
     
-    let edu = (subjectsBook) =>  connecteToDB.then(poolConnection => 
+    let edu = (subjectsBook) => connecteToDB.then(poolConnection => 
         poolConnection.request().query( `SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subjectsBook.AcademyId}'` )
         .then((result) => {
 
@@ -234,16 +234,15 @@ let upload_student_short_list = async(req,res) => {
 
     
 
-    let checkDuplicates = async(subject,AcademyId) => {
+    let checkDuplicates = async(subject,AcademyId,Student) => {
 
         let response  = await  connecteToDB
         .then((poolConnection) => 
-            poolConnection.request().query( `select * from StudentShortList WHERE CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
+        poolConnection.request().query( `SELECT * from StudentShortList WHERE CONVERT(VARCHAR, Student) =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'`)
             .then((result) => {
 
                 return result.recordset
-                //res.status(200).send()
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+                
             })
             .catch(err => console.log(err))
         )
@@ -255,36 +254,17 @@ let upload_student_short_list = async(req,res) => {
     let uploadData = (list) => {
         connecteToDB
         .then((poolConnection) => 
-            poolConnection.request().query( `INSERT INTO StudentShortList (Subject,AcademyId,date,ScreenName,Rate) values('${list[1]}', '${list[0]}', '${Date().toString()}', '${list[3]}', '${list[2]}')` )
+            poolConnection.request().query( `INSERT INTO StudentShortList (Subject,AcademyId,date,ScreenName,Rate,Student) values('${list[1]}', '${list[0]}', '${Date().toString()}', '${list[3]}', '${list[2]}', '${list[4]}')`)
             .then((result) => {
 
                 book.push(result.rowsAffected[0]);
+
                 if(book.subjectLength === items){
+
                     res.send(result.rowsAffected[0] === 1 ? true : false)
 
                 }
 
-                //res.status(200).send()
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
-            .catch(err => console.log(err))
-        )
-    }
-
-    let deleteData = (subject,AcademyId) => {
-        connecteToDB
-        .then((poolConnection) => 
-            poolConnection.request().query( `DELETE FROM StudentShortList WHERE CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
-            .then((result) => {
-
-                book.push(result.rowsAffected[0]);
-                if(book.subjectLength === items){
-                    res.send(result.rowsAffected[0] === 1 ? true : false)
-
-                }
-
-                //res.status(200).send()
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
         )
@@ -295,8 +275,8 @@ let upload_student_short_list = async(req,res) => {
 
         let list = item.split('-');
 
-        let bool = await checkDuplicates(list[1],list[0])
-        if(bool){ uploadData(list) } //else{deleteData(list[1],list[0])}
+        let bool = await checkDuplicates(list[1],list[0],list[4])
+        if(bool){ uploadData(list)}
 
         
 
@@ -304,63 +284,114 @@ let upload_student_short_list = async(req,res) => {
 }
 
 
-let get_student_short_list = (req,res) => {
-    let book = {}
-    let document = [];
+let get_student_short_list = async(req,res) => {
 
-    let tutors =  async() =>  await connecteToDB.then(poolConnection => 
-        poolConnection.request().query( `SELECT * From StudentShortList` )
-        .then((result) => {
-            return result.recordset;
-            //res.status(200).send()
-            //console.log(result)
-            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-        })
+    let tutorUserData = []
+    let tutorDemoLesson = []
+
+    let shortList =  (() =>
+
+        connecteToDB.then((poolConnection) => 
+            poolConnection.request().query( `SELECT * From StudentShortList  WHERE CONVERT(VARCHAR, Student) =  '${req.query.student}'` )
+            .then((result) => {
+               // console.log(result.recordset.length)
+                return result.recordset;
+                
+            })
+            .catch(err => console.log(err))
+        )
         .catch(err => console.log(err))
     )
 
-    let getTutorDemo = async(tutor) => {
-        let tutorList = await tutors();
-        tutorList.map((item, index) => {
-            connecteToDB.then(poolConnection => 
-                poolConnection.request().query( `SELECT FreeDemoLesson From TutorRates
-                WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'` )
-                .then((result) => {
+    let getTutorDemo = async(item,shortList) => (
+        //WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'
+        connecteToDB.then(poolConnection => 
+            poolConnection.request().query( `SELECT FreeDemoLesson,AcademyId From TutorRates
+            `)
+            .then((result) => {
+                //book[item.AcademyId] = [item,result.recordset[0], document[index]]
+                tutorDemoLesson.push(result.recordset)
+                /*if(tutorDemoLesson.length === shortList.length){
+                    return tutorDemoLesson;
+                }*/
+                return tutorDemoLesson;
+            })
+            .catch(err => console.log(err))
+        )
 
-                    book[item.AcademyId] = [item,result.recordset[0], tutor[index]]
+        
+    )
 
-                    if(index + 1 === tutorList.length){
-                        res.send(Object.values(book))
-                    }
-                  
-                })
-                .catch(err => console.log(err))
-            )
-        })
-    }
+
+    // WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'
+    let getTutorDataViaShortList =  ((item,shortList) => 
+
+        connecteToDB.then((poolConnection) => 
+            poolConnection.request().query(`SELECT * From TutorSetup`)
+            .then((result) => {
+                tutorUserData.push(result.recordset);
+                //console.log(result.recordset.length)
+                /*if(tutorUserData.length === shortList.length){
+                    return tutorUserData;
+                } */
+                return tutorUserData;
+            })
+            .catch(err => console.log(err))
+        )
+
+        
+
+    )
+
+    return new Promise(async(resolve, reject) => {
+        let studentShortList = await shortList()
+        resolve(studentShortList)
+    })
+    .then(async(studentShortList) => {
+        /*let tutorProfile = await studentShortList.map((item) => {
+            let response =  getTutorDataViaShortList(item,studentShortList);
+            return response
+        })*/
+        let tutorProfile = await getTutorDataViaShortList( );
+            //return response
+        return {studentShortList, tutorProfile}
+    })
+    .then(async({studentShortList,tutorProfile}) => {
+        /*let demoLesson = studentShortList.map((item) => {
+            let response =  getTutorDemo();
+            return response
+        })*/
+        let demoLesson = await  getTutorDemo();
+        return {tutorProfile, demoLesson, studentShortList}
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+    .then(({tutorProfile, demoLesson, studentShortList}) => {
+        let studentBook = [];
+
+       //console.log(demoLesson)
+       studentShortList.map((item, index) => {
+            let tutorData = tutorProfile[0].filter(tutor => tutor.AcademyId === item.AcademyId )[0]
+            let tutorDemoLesson = demoLesson[0].filter(tutor => tutor.AcademyId === item.AcademyId )[0]
+
+            let bookName = shortId.generate();
+
+            bookName = {
+                'tutorDemoLesson': tutorDemoLesson,
+                'tutorData': tutorData,
+                'tutorShortList': item
+            };
+
+            studentBook.push(bookName)
+            if(studentBook.length === studentShortList.length){
+                res.status(200).send(Object.values(studentBook))
+            }
+       })
+    })
+    
 
    
-    let getTutorData = async() => {
-
-        let tutorList = await tutors();
-        tutorList.map((item, index) => {
-            connecteToDB.then(poolConnection => 
-                poolConnection.request().query( `SELECT *  From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'` )
-                .then((result) => {
-
-                    document.push(result.recordset);
-                    if(index + 1 === tutorList.length){
-                        getTutorDemo(document)
-                    }
-                  
-                })
-                .catch(err => console.log(err))
-            )
-        })
-    }
-
-
-    getTutorData();
 
     
 }

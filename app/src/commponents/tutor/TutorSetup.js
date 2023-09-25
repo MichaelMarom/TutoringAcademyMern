@@ -30,6 +30,9 @@ const TutorSetup = () => {
     let [photo, set_photo] = useState('')
     let [video, set_video] = useState('')
 
+    let [grades, setGrades] = useState([{grade: '1st grade' },{grade: '2nd grade' },{grade: '3rd grade' },{grade: '4th grade' },{grade: '5th grade' },{grade: '6th grade' },{grade: '7th grade' },{grade: '8th grade' },{grade: '9th grade' },{grade: '10th grade' },{grade: '11th grade' },{grade: '12th grade' },{grade: 'Academic'}])
+    let [tutorGrades, setTutorGrades] = useState([])
+
     let [email_isVerified, set_email_isVerified] = useState(false)
     let {save} = useSelector(s => s.save)
 
@@ -50,6 +53,15 @@ const TutorSetup = () => {
             window.location.reload()
         }
     }, [])*/
+
+    let handleTutorGrade = e => {
+        let elem = e.target;
+        if(elem.checked){
+            setTutorGrades(item => [...item, elem.getAttribute('id')])
+        }else{
+
+        }
+    }
 
 
     useEffect(() => {
@@ -146,47 +158,54 @@ const TutorSetup = () => {
         if(document.querySelector('#tutor-save')){
             document.querySelector('#tutor-save').onclick = async() => { 
                 
-                let all_inputs = [...document.querySelectorAll('input')].filter(item => item.getAttribute('id') !== 'add2' && item.getAttribute('id') !== 'mname')
+                let all_inputs = [...document.querySelectorAll('input')].filter(item => item.getAttribute('id') !== 'add2' && item.getAttribute('id') !== 'mname' && item.getAttribute('class') !== 'grades')
                 let selects = [...document.querySelectorAll('select')]
                 let text = [...document.querySelectorAll('textarea')]
         
                 let all_select = selects.filter(item => item.className !== 'video-upload-option');
         
-                let all_values = [...all_inputs,...all_select,...text]
+                let all_values = [...all_inputs,...all_select,...text];
+                let grades = tutorGrades.length < 1 ? false : true
         
         
                 let  bool_list = []
-                let bools = all_values.map(item => {
-        
-                    if(item.dataset.type ==='file'){
-        
-                        let data = item.nextElementSibling.hasChildNodes;
-                        if(data){
-                            bool_list.push(true)
-                        }else{
-                            bool_list.push(false)
-                        }
-        
-                    }else{
-        
-                        if(item.value === ''){
-        
-                            if(item.dataset.type !=='file'){
-                                item.setAttribute('id', 'err-border');
-                            }
-                            bool_list.push(false)
-                        }else{
-                            if(item.dataset.type !=='file'){
-                                item.removeAttribute('id');
-                            }
-            
-                            bool_list.push(true)
-                        }
-                    }
+                let bools = () => { 
+                    all_values.map(item => {
+                        if(grades){
+                
+                            if(item.dataset.type ==='file'){
+                
+                                let data = item.nextElementSibling.hasChildNodes;
+                                if(data){
+                                    bool_list.push(true)
+                                }else{
+                                    bool_list.push(false)
+                                }
+                
+                            }else{
+                
+                                if(item.value === ''){
+                
+                                    if(item.dataset.type !=='file'){
+                                        item.setAttribute('id', 'err-border');
+                                    }
+                                    bool_list.push(false)
+                                }else{
+                                    if(item.dataset.type !=='file'){
+                                        item.removeAttribute('id');
+                                    }
                     
-                })
-        
-            
+                                    bool_list.push(true)
+                                }
+                            }
+                        }else{
+                            alert('Please Select At Least One Grade You Teach')
+                        }
+                        
+                    })
+                }
+                bools()
+
         
                 let result = bool_list.filter(item => item === false)
         
@@ -605,13 +624,31 @@ const TutorSetup = () => {
                         </div>
                     </div>
 
+                    <div style={{fontWeight: 'bold', margin: 'auto', textAlign: 'center', width: '60%'}}>
+                        <label s  htmlFor="headline">Grades I Teach</label><br />
+                        <div className="tutor-grades">
+                            <ul>
+                                {
+                                    grades.map(item => 
+                                        
+                                        <li>
+                                             <div className="input-cnt" style={{width: 'fit-content', cursor: 'pointer', display: 'flex', alignItems: 'center'}}>
+                                                <input style={{background: 'blue', color: 'blue', height: '25px', width: '25px'}} type='checkbox' id={item.grade} onInput={handleTutorGrade} className='grades' />&nbsp;
+                                                <label htmlFor={item.grade}>{item.grade}</label>
+                                             </div>
+                                        </li>    
+                                        
+                                    )
+                                }
+                            </ul>
+                        </div>
+                    </div>
 
                     <div style={{fontWeight: 'bold', margin: 'auto', textAlign: 'center', width: '60%'}}>
                         <label s  htmlFor="headline">Headline</label><br />
                         <input defaultValue={headline} maxLength={80} placeholder='Write A Catchy Headline.. Example: 21 years experienced nuclear science professor.' onInput={e => counter(e.target.value, e.target, set_headline, 80)} type="text" style={{width: '80%', height: '50px', margin: '0 0 10px 0'}} />
                         <div className='inputValidator'>Your have reached your max limit</div>
                     </div>
-,
 
 
 

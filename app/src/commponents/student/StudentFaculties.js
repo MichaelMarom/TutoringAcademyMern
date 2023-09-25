@@ -35,7 +35,7 @@ const StudentFaculties = () => {
     }, [])
 
     let getTutorSubject = e => {
-        let subject = e.target.dataset.id;
+        let subject = e.currentTarget.dataset.id;
 
         get_tutor_subject(subject)
         .then((result) => {
@@ -112,8 +112,11 @@ const StudentFaculties = () => {
                         document.querySelector('.tutor-popin').innerHTML = 'Data was uploaded successfully...'
                         setTimeout(() => {
                            // document.querySelector('.student-next').setAttribute('id', 'next')
-                            document.querySelector('.tutor-popin').removeAttribute('id');
-                        }, 5000);
+
+                           if(document.querySelector('.tutor-popin')){
+                                document.querySelector('.tutor-popin').removeAttribute('id');
+                           }
+                        }, 5000);   
     
                     //}
                     /*else{
@@ -239,7 +242,7 @@ const StudentFaculties = () => {
                             <li data-id='7' onClick={getTutorSubject}><a>Art </a></li>
                             <li data-id='8' onClick={getTutorSubject}><a>Social Studies </a></li>
                             <li data-id='9' onClick={getTutorSubject}><a>Programming</a></li>
-                            <li data-id='10' onClick={getTutorSubject}><a>TestProp</a></li>
+                            <li data-id='10' onClick={getTutorSubject}><a>TestPrep</a></li>
                             <li data-id='11' onClick={getTutorSubject}><a>Business</a></li>
                             <li data-id='12' onClick={getTutorSubject}><a></a></li>
                             <li data-id='13' onClick={getTutorSubject}><a></a></li>

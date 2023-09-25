@@ -45,13 +45,13 @@ const Scheduling = () => {
             className={`nav-item ${activeTab === "month" ? "active" : ""}`}
             onClick={() => handleTabClick("month")}
           >
-            <button className={`${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Months</button>
+            <button className={`${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Blocked days</button>
           </li>
           <li
             className={`nav-item ${activeTab === "day" ? "active" : ""}`}
             onClick={() => handleTabClick("day")}
           >
-            <button className={`${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Days</button>
+            <button className={`${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Blocked Hours</button>
           </li>
         </ul>
         <div className="time-period">
@@ -62,11 +62,11 @@ const Scheduling = () => {
                 id="months"
               >
                 <div className="form-scheduling-cnt-left">
-                  <h6>Black out days</h6>
+                  <h6>Blocked out days</h6>
 
                   <div className="highlight">
                     Checkbox the date that you are not tutoring. students will
-                    not be able to setup lessons for your blacked out days
+                    not be able to setup lessons for your blocked out days
                   </div>
 
                   <div

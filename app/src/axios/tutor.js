@@ -29,6 +29,28 @@ export let get_subject = () => {
 
 
 
+export let get_tutor_status = (AcademyId) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/tutor/tutor-status', {
+            params: {
+                AcademyId
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
+
+
 export let get_countries = () => {
 
     return new Promise((resolve, reject) => {

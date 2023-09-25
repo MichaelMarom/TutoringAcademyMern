@@ -9,19 +9,45 @@ const { TUTOR_ROUTES } = require('./routes/tutor');
 
 
 require('dotenv').config();
+const app = express();
+app.use(cors({origin: '*'}))
+app.use(morgan('tiny')); 
 app.use(TUTOR_ROUTES);
 app.use(ADMIN_ROUTES);
 app.use(STUDENT_ROUTES);
 
 
-var server = app.listen(5000,_ => console.log('app is live @',5000));
+var server = app.listen(process.env.PORT,_ => console.log('app is live @',process.env.PORT));
 
 
 io(server, {cors: {origin: '*'}}).on('connection', socket => {
 
+    socket.on('DeleteSubjectRate', ({AcademyId,subject}) => {
+        console.log(AcademyId,subject)
+
+
+        let deleteData = (AcademyId,subject) => {
+            connecteToDB
+            .then((poolConnection) => 
+                poolConnection.request().query( `DELETE FROM SubjectRates  WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' AND CONVERT(VARCHAR, subject) = '${subject}'` )
+                .then((result) => {
+    
+                    console.log('deleted data successfully')
+    
+                    //res.status(200).send()
+                    //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+                })
+                .catch(err => console.log(err))
+            )
+        }
+        deleteData(AcademyId,subject);
+    })  
+
+
     socket.on('studentIllShorList', ({id}) => {
 
         let deleteData = (subject,AcademyId,Student) => {
+            console.log(subject,AcademyId,Student)
             connecteToDB
             .then((poolConnection) => 
                 poolConnection.request().query( `DELETE FROM StudentShortList WHERE  CONVERT(VARCHAR, Student) =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'` )
@@ -288,7 +314,7 @@ myPeerServer.on("disconnect", function({id}) {
 
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.log('Unhandled Rejection at:', reason.stack || reason)
+  //console.log('Unhandled Rejection at:', reason.stack || reason)
   // Recommended: send the information to sentry.io
   // or whatever crash reporting service you use
 })

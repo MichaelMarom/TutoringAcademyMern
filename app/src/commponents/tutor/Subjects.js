@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { useEffect } from 'react';
 import { get_rates, get_subject, get_user_data, upload_tutor_rates } from '../../axios/tutor';
 import { COLUMNS } from '../../Tables/Subject/columns';
+import { socket } from '../../socket';
 //import left from './../../images/arrow-circle-left-svgrepo-com'
 
 
@@ -119,8 +120,16 @@ const Subjects = () => {
             elms[4].innerHTML = '' 
             elms[5].innerHTML = ''     
             elms[6].innerHTML = ''    
-            elms[7].innerHTML = ''    
+            elms[7].innerHTML = '' 
+            
+            
+            let AcademyId = window.localStorage.getItem('tutor_user_id');
+            let subject = e.target.value;
+
+            socket.emit('DeleteSubjectRate', {AcademyId,subject})
         }
+
+
     }
 
     useEffect(() => {
@@ -287,6 +296,9 @@ const Subjects = () => {
 
         result()
     }
+
+
+
     return ( 
         <>
             <div className="tutor-popin"></div>

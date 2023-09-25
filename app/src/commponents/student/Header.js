@@ -41,8 +41,8 @@ const Header = () => {
         let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
 
         deactivedElem.removeAttribute('id');
-        clickedElem.setAttribute('id', 'active')
-        nav(`student/${e.target.dataset.url}`)
+        clickedElem.setAttribute('id', 'student-tab-header-list-active')
+        nav(`student/${e.currentTarget.dataset.url}`)
  
     }
 
@@ -53,20 +53,36 @@ const Header = () => {
                 {screen_name}
             </div>
             <div className="student-tab-header shadow-sm">
-                <div className="scroller-left" onClick={handle_scroll_left}></div>
+                <div style={{margin: '0 0 0 0', display
+                        : 'flex', alignItems: 'center', justifyContent: 'center',background: '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-left" onClick={handle_scroll_left}>
+                            <div style={{opacity: '1'}}>
+                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 9L8 12M8 12L11 15M8 12H16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000"  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>   
+                            </div>           
+
+                    </div>
                     <ul>
-                        <li data-url='intro' onClick={handleTabClick} id="active">Introduction</li>
-                        <li data-url='setup' onClick={handleTabClick} >Student Setup</li>
-                        <li data-url='faculties' onClick={handleTabClick} >Faculties</li>
-                        <li data-url='short-list' onClick={handleTabClick} >Short List</li>
-                        <li data-url='accounting' onClick={handleTabClick} >Accounting</li>
-                        <li data-url='schedule' onClick={handleTabClick} >Calender Scheduling</li>
-                        <li data-url='my-students' onClick={handleTabClick} >Message Board</li>
-                        <li data-url='market-place' onClick={handleTabClick} >Market place</li>
-                        <li data-url='collaboration' onClick={handleTabClick} >Collaboration </li>
-                        <li data-url='tutor-profile' onClick={handleTabClick} >Profile</li>
+                        <li data-url='intro' onClick={handleTabClick} id="student-tab-header-list-active"><a>Introduction</a></li>
+                        <li data-url='setup' onClick={handleTabClick} ><a>Student Setup</a></li>
+                        <li data-url='faculties' onClick={handleTabClick} ><a>Faculties</a></li>
+                        <li data-url='short-list' onClick={handleTabClick} ><a>Short List</a></li>
+                        <li data-url='accounting' onClick={handleTabClick} ><a>Accounting</a></li>
+                        <li data-url='schedule' onClick={handleTabClick} ><a>Calender Scheduling</a></li>
+                        <li data-url='term-of-use' onClick={handleTabClick} ><a>Terms Of Use</a></li>
+                        <li data-url='my-students' onClick={handleTabClick} ><a>Message Board</a></li>
+                        <li data-url='market-place' onClick={handleTabClick} ><a>Market place</a></li>
+                        <li data-url='collaboration' onClick={handleTabClick} ><a>Collaboration </a></li>
+                        <li data-url='tutor-profile' onClick={handleTabClick} ><a>Profile</a></li>
                     </ul>
-                <div className="scroller-right" onClick={handle_scroll_right}></div>
+                    <div className="scroller-right" onClick={handle_scroll_right}></div>
+                    <div style={{margin: '0 0 0 0',background: '#efefef', display
+                            : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-right" onClick={handle_scroll_right}>
+                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
+                            <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+
+                    </div>
             </div>
         </>
      );

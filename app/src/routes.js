@@ -36,6 +36,7 @@ import Header from "./commponents/admin/AdminHeader";
 import Tutor_Table from "./pages/Admin/Tutor";
 import Student_Table from "./pages/Admin/Student";
 import StudentScheduling from "./pages/student/StudentScheduling";
+import StudentTermOfUse from "./pages/student/TermOfUse";
 
 
 const App = () => {
@@ -117,6 +118,7 @@ const App = () => {
                         <Route path="student/accounting" element={< StudentAccountings />}></Route>
                         <Route path="student/collaboration" element={<StudentCollaboration />}></Route>
                         <Route path="student/schedule" element={<StudentScheduling />}></Route>
+                        <Route path="student/term-of-use" element={<StudentTermOfUse />}></Route>
 
 
                     </Routes>

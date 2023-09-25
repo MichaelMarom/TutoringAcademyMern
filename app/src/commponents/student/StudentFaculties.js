@@ -202,26 +202,15 @@ const StudentFaculties = () => {
             <div className="save-overlay">
                 <span class="save_loader"></span>
             </div>
-            <div className="form-subjects">
-                <div className="form-subjects-info">
-                    {/*<input type='text' placeholder='Type your subject here' />
-                    <input type='text' placeholder='Type your faculty here' />
-                    <input type='text' placeholder='Select level' />
-                    <input type='text' placeholder='Select experience' />
-                    <input type='text' placeholder='Select Certification' />
-                    <input type='text' placeholder='Select state' />
-                    <input type='text' placeholder='Country' />
-    <input type='text' placeholder='Day state' />*/}
-
-                    <input type="submit" value="Upload" />
-                </div>
+            <div className="form-subjects" style={{overflow: 'hidden', height: 'calc(100vh - 300px)'}}>
+               
                 <div className="form-subject-alert">
                     <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 12 faculties for tutoring.</p>
                 </div>
 
                 <div id="form-subject-data-collection-table">
 
-                    <div className="form-subject-data-tabs" style={{display: 'flex', margin: 'auto', padding: '0 0 0 0', justifyContent: 'center', alignItems: 'center', overflowX: 'auto', width: '100%'}}>
+                    <div className="form-subject-data-tabs" style={{display: 'flex', margin: 'auto', padding: '0 0 0 0', justifyContent: 'center', alignItems: 'center', overflowX: 'hidden', width: '100%'}}>
                         
                         <div style={{margin: '0 0 0 0', display
                         : 'flex', alignItems: 'center', justifyContent: 'center',background: '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-left" onClick={handle_scroll_left}>
@@ -272,23 +261,20 @@ const StudentFaculties = () => {
                         <div>
                             <label style={{float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px'}} htmlFor="search"><h6>From the list below, select the subjects of interest, then click the "Save" botton. The selected subjects to be compared in the next "Short list" tab.                                                               </h6></label>
 
-                            <div className="search-bar">
-                                <input type="search" placeholder='Search Here...' id="search" tyle={{ outline: 'none', border: 'none'}} /> 
-                                <input type="button" value="Search " style={{width: '50px', outline: 'none', border: 'none'}} />
-                            </div>
+                           
                             
 
                         </div>
 
                     </div>
 
-                    <table>
+                    <table style={{height: '230px', width: '100%', overflow: 'auto', padding: '5px'}}>
                         <thead>
                             <tr>
                                 {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>)}
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody >
                             
                             
 

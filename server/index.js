@@ -6,7 +6,9 @@ const { STUDENT_ROUTES } = require('./routes/student');
 const { ADMIN_ROUTES } = require('./routes/admin');
 const { TUTOR_ROUTES } = require('./routes/tutor');
 
-
+const app = express();
+app.use(cors({origin: '*'}))
+app.use(morgan('tiny'));
 
 require('dotenv').config();
 app.use(TUTOR_ROUTES);
@@ -14,7 +16,7 @@ app.use(ADMIN_ROUTES);
 app.use(STUDENT_ROUTES);
 
 
-var server = app.listen(5000,_ => console.log('app is live @',5000));
+var server = app.listen(process.env.PORT,_ => console.log('app is live @',process.env.PORT));
 
 
 io(server, {cors: {origin: '*'}}).on('connection', socket => {

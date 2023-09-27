@@ -832,10 +832,26 @@ let get_my_edu = (req,res) => {
 
 let storeEvents = (req, res) => {
   try {
-    // TODO:
-    // write sql query to store event in events table
-    console.log("event Data", req.body);
-    res.json({ data: req.body });
+    const {end, start, title }= req.body;
+
+    marom_db(async(config) => {
+        const sql = require('mssql');
+    
+        var poolConnection = await sql.connect(config);
+        if(poolConnection){
+            console.log('poolconneciotn');
+            poolConnection.request().query(
+                `
+                   INSERT INTO EVENTS (endTime, startTime, title) VALUES ('${end}','${start}', '${title}')
+                `
+            )
+            .then((result) => {
+                res.status(200).send(result);
+            })
+            .catch(err => console.log(err, 'ERR!23'))
+        }
+    
+    })    
   } catch (error) {
     console.error("Error storing event:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -855,6 +871,32 @@ let storeDisabledDates = (req, res) => {
   }
 };
 
+
+let fetchEvents = (req, res) => {
+    try {
+      marom_db(async(config) => {
+        const sql = require('mssql');
+    
+        var poolConnection = await sql.connect(config);
+        if(poolConnection){
+            console.log('poolconneciotn');
+            poolConnection.request().query(
+                `
+                 SELECT * FROM Events
+                `
+            )
+            .then((result) => {
+                console.log(result, 'fetch result')
+                res.status(200).send(result.recordset);
+            })
+            .catch(err => console.log(err))
+        }
+    })  
+    } catch (error) {
+      console.error("Error storing dates:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
 
 module.exports = {
     subjects,
@@ -879,5 +921,6 @@ module.exports = {
     get_tutor_rates,
     get_bank_details,
     storeEvents,
-    storeDisabledDates
+    storeDisabledDates,
+    fetchEvents
 }

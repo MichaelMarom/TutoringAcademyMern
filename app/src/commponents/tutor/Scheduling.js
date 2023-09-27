@@ -3,10 +3,14 @@ import { useEffect, useState } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { days, hours } from "../../constants/constants";
 import ShowCalendar from "../common/Calendar/Calendar";
+import { getEvents } from "../../redux/tutor_store/EventSlice";
+import { useDispatch } from "react-redux";
 const Scheduling = () => {
   const [activeTab, setActiveTab] = useState("month");
   const [disabledDays, setDisabledDays] = useState([]);
   const [disabledHours, setDisabledHours] = useState([]);
+  const dispatch = useDispatch();
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
@@ -14,22 +18,26 @@ const Scheduling = () => {
     // Check if the day or hour is already disabled
     const isDayDisabled = disabledDays.includes(dayName);
     const isHourDisabled = disabledHours.includes(hourRange);
-  
-    if (isDayDisabled && isHourDisabled) {
+    if (isDayDisabled) {
       // If both day and hour are already disabled, remove them
       setDisabledDays(disabledDays.filter((day) => day !== dayName));
+    } else if (isHourDisabled) {
       setDisabledHours(disabledHours.filter((hour) => hour !== hourRange));
     } else {
       // If either day or hour is not disabled, add them
-      if (!isDayDisabled) {
-        setDisabledDays([...disabledDays, dayName]);
+      if (dayName) {
+        if (!isDayDisabled) {
+          setDisabledDays([...disabledDays, dayName]);
+        }
       }
-      if (hourRange && !isHourDisabled) {
-        setDisabledHours([...disabledHours, hourRange]);
+      if (hourRange) {
+        if (!isHourDisabled) {
+          setDisabledHours([...disabledHours, hourRange]);
+        }
       }
     }
   };
-  
+
   useEffect(() => {
     let next = document.querySelector(".tutor-next");
 
@@ -37,6 +45,12 @@ const Scheduling = () => {
       next.removeAttribute("id");
     }
   });
+
+  useEffect(() => {
+    console.log('dispatching');
+    dispatch(getEvents())
+  }, [])
+
   return (
     <>
       <div className="form-scheduling">
@@ -45,13 +59,13 @@ const Scheduling = () => {
             className={`nav-item ${activeTab === "month" ? "active" : ""}`}
             onClick={() => handleTabClick("month")}
           >
-            <button className={`${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Months</button>
+            <button className={`${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Block out days </button>
           </li>
           <li
             className={`nav-item ${activeTab === "day" ? "active" : ""}`}
             onClick={() => handleTabClick("day")}
           >
-            <button className={`${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Days</button>
+            <button className={`${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}>Block out hours</button>
           </li>
         </ul>
         <div className="time-period">
@@ -65,8 +79,8 @@ const Scheduling = () => {
                   <h6>Black out days</h6>
 
                   <div className="highlight">
-                    Checkbox the date that you are not tutoring. students will
-                    not be able to setup lessons for your blacked out days
+                    Checkbox the isDayDisabled that you are not tutoring. Students will
+                    not be able to book lessons for your blocked out days.
                   </div>
 
                   <div
@@ -100,7 +114,7 @@ const Scheduling = () => {
                   </div>
 
                   <div className="highlight">
-                    Double click on a blocke dout day or hour. Will unblock the
+                    Double click on a blocked out day or hour, Will unblock the
                     day or hour for that day or time.
                   </div>
                 </div>
@@ -114,7 +128,7 @@ const Scheduling = () => {
 
                   <div className="highlight">
                     CheckBox the Hours that you are not tutoring. students will
-                    not be able to setup lessons for your blacked out hours
+                    not be able to book lessons for your blocked out hours
                   </div>
 
                   <div className="form-scheduling-hours">
@@ -138,7 +152,7 @@ const Scheduling = () => {
                   </div>
 
                   <div className="highlight mt-3">
-                    Double click on a blocke dout day or hour. Will unblock the
+                    Double click on a blocked out day or hour. Will unblock the
                     day or hour for that day or time.
                   </div>
                 </div>

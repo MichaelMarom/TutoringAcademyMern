@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.disabled-date.rbc-day-slot.rbc-time-column {
+  pointer-events: auto !important;
+}
+.rbc-time-slot.enable-slot{
+  background-color: white !important;
+}

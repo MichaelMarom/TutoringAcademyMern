@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: "http://localhost:5000", // Adjust the base URL to match your backend API endpoint
+  baseURL: "http://localhost:9876", // Adjust the base URL to match your backend API endpoint
   headers: {
     "Content-Type": "application/json",
   },
@@ -396,13 +396,29 @@ export let get_tutor_setup = (AcademyId) => {
 
 export const storeEventAPI = async (eventDetails) => {
   try {
-    console.log(eventDetails);
-    const response = await instance.post("/api/store-event", eventDetails);
+    console.log(eventDetails,'dataformat');
+    const newEvent = {
+        title: eventDetails.title,
+        allDay: eventDetails.allDay,
+        start: eventDetails.start,
+        end: eventDetails.end,
+      };
+    const response = await instance.post("/api/store-event", newEvent);
     return response.data;
   } catch (error) {
     console.error("Error:", error);
  }
 };
+
+export const fetchEvents = async () => {
+    try {
+      const response = await instance.get("api/events/list");
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+   }
+  };
 
 export const addDisabledDates = async (date) => {
     try {

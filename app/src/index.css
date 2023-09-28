@@ -15,6 +15,17 @@ code {
 .disabled-date.rbc-day-slot.rbc-time-column {
   pointer-events: auto !important;
 }
-.rbc-time-slot.enable-slot{
+
+.rbc-time-slot.enable-slot {
   background-color: white !important;
+}
+
+.rbc-day-slot.rbc-time-column.rbc-now.rbc-today .enable-slot {
+  background-color: #eaf6ff !important;
+}
+
+.rbc-time-slot.disable-slot,
+.rbc-day-bg.disabled-date.rbc-today,
+.disabled-date.rbc-day-slot.rbc-time-column.rbc-now.rbc-today {
+  background-color: orange !important;
 }

@@ -6,7 +6,9 @@ const { STUDENT_ROUTES } = require('./routes/student');
 const { ADMIN_ROUTES } = require('./routes/admin');
 const { TUTOR_ROUTES } = require('./routes/tutor');
 
-
+const app = express();
+app.use(cors({origin: '*'}))
+app.use(morgan('tiny'));
 
 require('dotenv').config();
 const app = express();

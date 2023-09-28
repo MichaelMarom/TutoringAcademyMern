@@ -147,11 +147,11 @@ export let get_response = () => {
 
 
 
-export let upload_form_one = (fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video) => {
+export let upload_form_one = (fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video,grades) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/form-one', {
-            fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video
+            fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video,grades
         })
         .then((result) => {
             resolve(result.data)

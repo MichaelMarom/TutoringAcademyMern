@@ -87,11 +87,11 @@ const Header = () => {
                     </div>           
 
                 </div>
-                <ul>
+                <ul id="tutor-header-menus">
                     <li data-url='intro' onClick={handleTabClick} id="tutor-tab-header-list-active"><a>Introduction</a></li>
                     <li data-url='setup' onClick={handleTabClick} ><a>Tutor Setup</a></li>
                     <li data-url='education' onClick={handleTabClick} ><a>Education</a></li>
-                    <li data-url='rates' onClick={handleTabClick} ><a>My Rates</a></li>
+                    <li data-url='rates' onClick={handleTabClick} ><a>Motivate</a></li>
                     <li data-url='accounting' onClick={handleTabClick} ><a>Accounting</a></li>
                     <li data-url='subjects' onClick={handleTabClick} ><a>Subjects</a></li>
                     <li data-url='my-students' onClick={handleTabClick} ><a>My students</a></li>

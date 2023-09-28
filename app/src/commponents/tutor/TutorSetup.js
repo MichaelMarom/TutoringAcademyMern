@@ -1,7 +1,7 @@
 import {motion} from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { get_countries, get_gmt, get_response, get_state, get_tutor_setup, upload_form_one } from '../../axios/tutor';
+import { get_countries, get_gmt, get_rates, get_response, get_state, get_tutor_setup, upload_form_one } from '../../axios/tutor';
 import { socket } from '../../socket';
 import containerVariants from '../constraint';
 import { useDispatch } from 'react-redux';
@@ -56,18 +56,21 @@ const TutorSetup = () => {
 
     let handleTutorGrade = e => {
         let elem = e.target;
+        console.log(tutorGrades)
         if(elem.checked){
             setTutorGrades(item => [...item, elem.getAttribute('id')])
         }else{
-
+            let list = tutorGrades.filter(item => item !== elem.getAttribute('id'))
+            setTutorGrades(list)
         }
     }
+
+
 
 
     useEffect(() => {
         get_tutor_setup(window.localStorage.getItem('tutor_user_id'))
         .then((result) => {
-            console.log(result)
             let data = result[0]
             set_fname(data.FirstName)
             set_sname(data.LastName)
@@ -88,6 +91,15 @@ const TutorSetup = () => {
             set_headline(data.HeadLine)
             set_add1(data.Address1)
             set_add2(data.Address2)
+            setTutorGrades((ITEM) => [...ITEM, data.Grades])
+
+            console.log(data.Grades)
+
+            let gradeList = data.Grades.split(',');
+            grades.map(item => { 
+                gradeList.map(grade =>  item.grade === grade ? item.ex = true : '')
+
+            })
 
             
 
@@ -153,6 +165,15 @@ const TutorSetup = () => {
 
     }, []);
 
+    useEffect(() => {
+        if(document.querySelector('#fname').value !== ''){
+        
+            document.querySelector('#tutor-save').style.opacity = '.3'
+            document.querySelector('#tutor-save').style.pointerEvents = 'none'
+        }
+
+    }, [])
+
     //useEffect(() => {
         
         if(document.querySelector('#tutor-save')){
@@ -199,7 +220,8 @@ const TutorSetup = () => {
                                 }
                             }
                         }else{
-                            alert('Please Select At Least One Grade You Teach')
+                            bool_list.push(false)
+                            //alert('Please Select At Least One Grade That You Teach')
                         }
                         
                     })
@@ -235,8 +257,8 @@ const TutorSetup = () => {
                             }, 5000);
         
                         }else{
-                            window.localStorage.setItem('tutor_user_id', response.user);
-                            window.localStorage.setItem('tutor_screen_name', response.screen_name);
+                            //window.localStorage.setItem('tutor_user_id', response.user);
+                            //window.localStorage.setItem('tutor_screen_name', response.screen_name);
                             setTimeout(() => {
                                 document.querySelector('.save-overlay').removeAttribute('id');
                             }, 1000);
@@ -266,6 +288,8 @@ const TutorSetup = () => {
                     }
         
                     
+                }else{
+                    alert('Please Ensure No Field Is Empty')
                 }
         
         
@@ -279,6 +303,8 @@ const TutorSetup = () => {
         if(document.querySelector('#tutor-edit')){
 
             document.querySelector('#tutor-edit').onclick = async() => {
+
+
                 let input = [...document.querySelectorAll('input')].filter(item => item.id !== 'fname' && item.id !== 'mname' && item.id !== 'sname');
                 let select = [...document.querySelectorAll('select')];
                 let textarea = [...document.querySelectorAll('textarea')];
@@ -291,6 +317,18 @@ const TutorSetup = () => {
                     item.style.opacity = 1;
                     item.style.pointerEvents = 'all';
                 })
+
+                function trackChanges(inputs,selects,textareas){
+                    let list = [...inputs,...selects,...textareas];
+                    list.map(item => {
+                        item.onChange = () => {
+                            document.querySelector('#tutor-save').style.opacity = '1'
+                            document.querySelector('#tutor-save').style.pointerEvents = 'all'
+                        }
+                    })
+                }
+
+                trackChanges([...document.querySelectorAll('input')],[...document.querySelectorAll('select')],[...document.querySelectorAll('textarea')])
         
         
             }
@@ -300,7 +338,7 @@ const TutorSetup = () => {
     //}, [])
 
     let saver = async () => {
-        let response = await upload_form_one(fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video)
+        let response = await upload_form_one(fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video,tutorGrades)
         //console.log(fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline)
 
         return response;
@@ -594,7 +632,7 @@ const TutorSetup = () => {
                             </div>
 
                             <div style={{display: 'flex', width: '100%',  justifyContent: 'center', alignItems: 'center', margin: '0 0 10px 0', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                <label style={{width: '30%'}} htmlFor=''>Response Zone</label> &nbsp;&nbsp;
+                                <label style={{width: '30%'}} htmlFor=''>Response Time</label> &nbsp;&nbsp;
 
                                 <select  onInput={e => set_response_zone(e.target.value)} defaultValue={response_zone} id="resZone" style={{float: 'right', width: '70%', margin: '2.5px 0 0 0', padding: '5px 5px 5px 5px', margin: '0 0 10px 0'}}>
                                     {response_list}
@@ -625,20 +663,29 @@ const TutorSetup = () => {
                     </div>
 
                     <div style={{fontWeight: 'bold', margin: 'auto', textAlign: 'center', width: '60%'}}>
-                        <label s  htmlFor="headline">Grades I Teach</label><br />
+                        <label s  htmlFor="headline">Grades I teach</label><br />
                         <div className="tutor-grades">
                             <ul>
                                 {
-                                    grades.map(item => 
-                                        
-                                        <li>
-                                             <div className="input-cnt" style={{width: 'fit-content', cursor: 'pointer', display: 'flex', alignItems: 'center'}}>
-                                                <input style={{background: 'blue', color: 'blue', height: '25px', width: '25px'}} type='checkbox' id={item.grade} onInput={handleTutorGrade} className='grades' />&nbsp;
-                                                <label htmlFor={item.grade}>{item.grade}</label>
-                                             </div>
-                                        </li>    
-                                        
-                                    )
+                                    grades.map(item => {
+                                        return(
+                                            <li>
+                                                <div className="input-cnt" style={{width: 'fit-content', cursor: 'pointer', display: 'flex', alignItems: 'center'}}>
+                                                    {
+                                                    item.ex 
+                                                    ?
+                                                    <input style={{background: 'blue', color: 'blue', height: '25px', width: '25px'}} defaultChecked type='checkbox' id={item.grade} onInput={handleTutorGrade} className='grades' />
+                                                    : 
+                                                    <input style={{background: 'blue', color: 'blue', height: '25px', width: '25px'}} type='checkbox' id={item.grade} onInput={handleTutorGrade} className='grades' />
+                                                    }
+
+                                                    &nbsp;
+                                                    
+                                                    <label htmlFor={item.grade}>{item.grade}</label>
+                                                </div>
+                                            </li>   
+                                        )
+                                    })
                                 }
                             </ul>
                         </div>
@@ -647,7 +694,7 @@ const TutorSetup = () => {
                     <div style={{fontWeight: 'bold', margin: 'auto', textAlign: 'center', width: '60%'}}>
                         <label s  htmlFor="headline">Headline</label><br />
                         <input defaultValue={headline} maxLength={80} placeholder='Write A Catchy Headline.. Example: 21 years experienced nuclear science professor.' onInput={e => counter(e.target.value, e.target, set_headline, 80)} type="text" style={{width: '80%', height: '50px', margin: '0 0 10px 0'}} />
-                        <div className='inputValidator'>Your have reached your max limit</div>
+                        <div className='inputValidator'>Your have reached the max limit of 80 characters.</div>
                     </div>
 
 
@@ -662,17 +709,17 @@ const TutorSetup = () => {
                             <textarea defaultValue={intro} maxLength={500} placeholder='Writw An Introduction Here... e.g(My name is Fabian and i am a graduate of Harvard University in Boston...)' onInput={e => counter(e.target.value, e.target, set_intro, 500)} style={{width: '80%', padding: '10px',height: '160px'}} name="" id="">
                                 
                             </textarea>
-                            <div className='inputValidator'>Your have reached your max limit</div>
+                            <div className='inputValidator'>Your have reached the max limit of 500 characters.</div>
 
                         </div>
 
 
                         <div className="profile-motivation" style={{textAlign: 'center', float: 'right'}}>
                             <label style={{fontWeight: 'bold'}} htmlFor="intro">Motivate</label><br />
-                            <textarea defaultValue={motivation} maxLength={500}  placeholder='Write Something That will Motivate Your Students. Use the "My Rates" tab to set up your promotions. Like free introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...' onInput={e => counter(e.target.value, e.target, set_motivation)} style={{width: '80%', padding: '10px',height: '160px'}} name="" id="">
+                            <textarea defaultValue={motivation} maxLength={500}  placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  ' onInput={e => counter(e.target.value, e.target, set_motivation)} style={{width: '80%', padding: '10px',height: '160px'}} name="" id="">
                                 
                             </textarea>
-                            <div className='inputValidator'>Your have reached your max limit</div>
+                            <div className='inputValidator'>Your have reached the max limit of 500 characters.</div>
                             
                             
                         </div>

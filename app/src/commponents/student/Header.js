@@ -49,7 +49,7 @@ const Header = () => {
 
     return ( 
         <>
-            <div className="screen-name btn-primary rounded" style={{display: screen_name === 'null' ? 'none': 'flex',position: 'fixed', top: '15px', zIndex: '1000', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height:'30px'}}>
+            <div className="screen-name btn-primary rounded" style={{display: screen_name === 'null' ? 'none': 'flex',position: 'fixed', top: '15px', zIndex: '1000', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0 5px', height:'30px'}}>
                 {screen_name}
             </div>
             <div className="student-tab-header shadow-sm">

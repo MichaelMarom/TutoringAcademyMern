@@ -75,7 +75,7 @@ const TPanel = () => {
             <div className="mssg-panel shadow-sm">
                 
 
-                <textarea style={{float: 'left', height: '60px', outline: 'none', padding: '10px 10px 5px 20px', border: 'none', fontSize: '2.5vh', resize: 'none', width: '350px'}} onInput={handleMssgInput} placeholder='Type Message Here' name="" id="" ></textarea>
+                <textarea style={{float: 'left', height: '50px', outline: 'none', padding: '10px 10px 5px 20px', border: 'none', fontSize: '2.5vh', resize: 'none', width: '350px'}} onInput={handleMssgInput} placeholder='Type Message Here' name="" id="" ></textarea>
 
                 <div className="mic" data-handler={handler} onClick={e => e.currentTarget.dataset.handler === 'message' ? handleMessenger(e) : console.log('recording')}>
                     <img src={mssgImage} style={{height: '60%', rotate: '-45deg', width: '60%'}} alt="..." />

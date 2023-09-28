@@ -10,6 +10,7 @@ import { get_my_data, get_rates } from '../../axios/tutor';
 const TutorProfile = () => {
 
     let [photo,  setphoto] = useState('loading...')
+    let [GMT,  setGMT] = useState('0')
     let [video,  setvideo] = useState('loading...')
     let [intro,  setIntro] = useState('loading...')
     let [headline,  setHeadline] = useState('loading...')
@@ -39,9 +40,10 @@ const TutorProfile = () => {
 
 
             let files = [...response_0[0], ...response_1[0], ...response_2[0]];
-            let me = {...files[0], ...files[1], ...files[2]}
-            console.log(files)
-
+            let me = {...files[0], ...files[1], ...files[2], ...files[3]}
+           
+            console.log(new Set(files))
+            console.log(me)
 
             setvideo(me.Video) 
             setphoto(me.Photo)
@@ -60,7 +62,9 @@ const TutorProfile = () => {
             setResHrs(me.ResponseHrs)
             setLang(me.NativeLang)
             setState(me.StateProvince)
-            setState(me.StateProvince)
+            setState(me.StateProvince);
+            setGMT(me.GMT) 
+
 
         })
         .catch((err) => console.log(err))
@@ -73,6 +77,23 @@ const TutorProfile = () => {
     }, [])
 
 
+    function calcTime(offset) {
+
+        // create Date object for current location
+       
+
+        var start = new Date().toUTCString();
+        let time = start.split(' ').splice(3, 4)[1].split(':').splice(0,2).join(':');
+
+
+
+       
+        //console.log(time); 
+        //calcTime(GMT.split('').splice(1, GMT.length).join(''))
+       
+        // return time as a string
+        return  start.split(' ').splice(3, 4)[1];
+    }
 
  
     return ( 
@@ -85,14 +106,14 @@ const TutorProfile = () => {
                             <input style={{height: '30px', width: '30px', margin: '0 10px 0 0 '}} type="checkbox" name="" id="" />
                             <span>Verified</span>
                         </li>
-                        <li style={{width: '33%'}}> 
+                        {/*<li style={{width: '33%'}}> 
                             <p>Status</p>
                             <input style={{height: '30px', width: '150px', margin: '0 10px 0 0 '}} type="text" name="" id="" />
                         </li>
                         <li style={{width: '33%'}}> 
                             <p>Profile page</p>
                             <input style={{height: '40px'}} type="range" name="" id="" />
-                        </li>
+    </li>*/}
                     </ul>
                 </div>
 
@@ -100,10 +121,10 @@ const TutorProfile = () => {
                     <div className="tutor-intel1">
 
                         <div style={{height: '230px', width: '180px', margin: '0 0 0 40px', position: 'relative'}}>
-                            <div><b>{new Date().toLocaleTimeString()}</b></div>
+                            <div><b>{calcTime()}</b></div>
                             <img src={photo} style={{height: '180px', width: '180px'}} alt="" />
                         </div>
-                        
+                         
 
                         <div className="education-intel">
                             <h6>Education</h6>
@@ -167,7 +188,7 @@ const TutorProfile = () => {
                     </div>
 
                     <div className="tutor-intel3">
-                        <div>GMT</div>
+                        <div>{GMT}</div>
                         <video controls src={video} autoPlay  style={{height: '250px', width: '300px', margin: '0 0 0 90px', background: '#000'}} alt="" />
                         <button style={{height: '40px', margin: 'auto', marginLeft: '90px', marginTop: '10px', marginBottom: '20px', width: '250px', padding: '5px'}}>Click to view</button>
 

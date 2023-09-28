@@ -58,15 +58,15 @@ const Footer = () => {
 
             <div className="tutor-footer">
                 <ul>
-                    <li style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}} onClick={back}>back</button></li>
+                    <li className="p-1" ><button className="btn btn-primary fs-4 m-0"  onClick={back}>back</button></li>
                     
-                    <li id="student-clear" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}} onClick={clear}>Clear records</button></li>
+                    <li className="p-1" id="student-clear" ><button className="btn btn-danger fs-4 m-0"  onClick={clear}>Clear records</button></li>
 
-                    <li id="student-edit" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}}>edit</button></li>
+                    <li className="p-1" id="student-edit" ><button className="btn btn-secondary fs-4 m-0" >edit</button></li>
                     
-                    <li id="student-save" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}} >save</button></li>
+                    <li className="p-1" id="student-save" ><button className="btn btn-success fs-4 m-0"  >save</button></li>
 
-                    <li className="next" style={{padding: '5px', color: '#fff', margin: '0 25px 0 25px'}}><button style={{padding: '7px 25px 7px 25px', cursor: 'pointer', color: '#fff', background: 'blue', fontSize: 'large', fontWeight: '500', textTransform: 'capitalize'}} onClick={next}>next</button></li>
+                    <li className="next p-1" ><button className="btn btn-secondary fs-4 m-0"  onClick={next}>next</button></li>
                 </ul>
             </div>
         </>

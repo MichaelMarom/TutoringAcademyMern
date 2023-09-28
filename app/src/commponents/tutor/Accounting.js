@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { get_bank_details, upload_form_four, upload_form_three } from '../../axios/tutor';
+import Acad_Commission from './Acad_Commission._Table';
 
  
 const Accounting = () => {
@@ -175,14 +176,24 @@ const Accounting = () => {
             <div className="tutor-tab-accounting">
 
                 <div className="tutor-tab-acct-start-day">
-                    <h6>Tutor's Start Day</h6>
+                    <h6>Tutor's Start Day (First tutoring lesson)</h6>
                     <input style={{pointerEvents: 'none'}} value={date}  placeHolder='Tuesday' />
+
+                    <div className="tutor-tab-rates-btm-options" style={{height: '400px', display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', margin: 'auto', marginTop: '80px'}}>
+
+                            <div className="highlight">
+                                Hours are accumulated on annual bases that will start counting from your enrollment.
+                            </div>
+
+                            <Acad_Commission />
+
+                    </div>
                 </div>
 
                 <div className="tutor-tab-acct-pay-option">
-                    <h6>How do you want to be paid</h6>
+                    <h6>How do you want to be paid?</h6>
                     <div className="highlight">
-                        Tutor academy pays every second friday for the lessons pertutor-tabed up to the previous friday midnight, Please select below the tutor-tab payment you prefer. Keep in mind that it can take 1-3 days until you see the funds in your account
+                        Tutor academy pays every second Friday for the lessons performed up to the previous Friday midnight (GMT-5), Please select below the payment Payment you prefer. Keep in mind that it can take 1-3 days until you see the funds in your account
                     </div>
 
                     <div style={{display: 'inline-block', width: '100%', padding: '0'}}>
@@ -194,12 +205,12 @@ const Accounting = () => {
 
                         <div  style={{float: 'left', margin: '0 0 20px 0', width: '50%'}}>
                             <input defaultChecked={payment_option === 'Zale' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" onInput={handle_bank} value='Zale' name='p-method' id="" />   
-                            <span>Zale</span>
+                            <span>Zell</span>
                         </div>
                         
                         <div  style={{float: 'left', margin: '0 0 20px 0', width: '50%'}}>
                             <input defaultChecked={payment_option === 'Bank' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" value='Bank' onInput={handle_bank} name='p-method' id="" />    
-                            <span>Bank</span>
+                            <span>Bank account</span>
                         </div>
 
                     </div>
@@ -253,7 +264,7 @@ const Accounting = () => {
                     <br />
 
                     <div className="highlight">
-                        Social security is to be provided from US residents for accounts over $50 and from 1099 over $600 annual
+                        Social security needs to be provided only from US residents for accounts over $50 and for 1099 form over $600 annually.
                     </div>
                     <br />
                     <br />

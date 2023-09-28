@@ -202,7 +202,7 @@ const StudentFaculties = () => {
             <div className="save-overlay">
                 <span class="save_loader"></span>
             </div>
-            <div className="form-subjects" style={{overflow: 'hidden', height: 'calc(100vh - 300px)'}}>
+            <div className="form-subjects" style={{overflow: 'hidden', height: 'calc(100vh - 50px)'}}>
                
                 <div className="form-subject-alert">
                     <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 12 faculties for tutoring.</p>
@@ -254,78 +254,70 @@ const StudentFaculties = () => {
                     
 
                     <div className="highlight" style={{width: '100%'}}>
-                        Click on the faculty above to show all subjects as being tought by the Tutors. Check box the Tutor(s) of interest and "save" to your "Short" list to compare.``  
+                        Click on the faculty above to view all subjects as being tought by the Tutors. Check box the Tutor(s) of interest, and "save" to your "Short" list to compare.``  
                     </div>
 
                     <div className="form-subject-search-bar">
                         <div>
-                            <label style={{float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px'}} htmlFor="search"><h6>From the list below, select the subjects of interest, then click the "Save" botton. The selected subjects to be compared in the next "Short list" tab.                                                               </h6></label>
-
-                           
-                            
-
+                            <label style={{float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px'}} htmlFor="search"><h6>From the list below, select the subjects of interest, then click the "Save" botton. The selected subjects can be compared in the next "Short list" tab.                                                               </h6></label>
                         </div>
+                    </div>
+
+
+                    <div className="tables" style={{height: '600px', width: '100%', overflow: 'auto', padding: '5px'}}>
+                    
+                        <table>
+                            <thead>
+                                <tr>
+                                    {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>)}
+                                </tr>
+                            </thead>
+
+                            {
+                                response.length > 0 
+                                ?
+                                <tbody >
+                                    {
+                                       
+                                        response.map((item) => 
+                                            <tr>
+                                                <td id='student-tutor' data-id={`${item[0].AcademyId}-${item[0].subject}-${item[0].rate}-${item[2].TutorScreenname}-${window.localStorage.getItem('student_user_id')}`}>
+
+                                                    <input onInput={handleBadData} type='checkbox' style={{height: '20px', width: '20px'}}  />
+                                                </td>
+
+                                                <td>{item[0].subject}</td> 
+                                                <td>
+                                                    {item.splice(-1)[0].TutorScreenname}
+                                                </td>
+                                                <td>
+                                                    {item[1].EducationalLevelExperience}
+                                                </td>
+                                                <td>
+                                                    {item[1].Certificate}
+                                                </td>
+                                                <td>
+                                                    {item[1].CertificateState}
+                                                </td>
+                                                <td>
+                                                    {new Date(item[1].CertificateExpiration).toLocaleDateString()}
+                                                </td>
+                                                <td>{item[0].rate}</td>
+                                            </tr>
+                                        )
+                                        
+                                    }
+                                    
+                                    
+                                </tbody>
+                                :
+                                <div style={{position: 'absolute', width: '100%', textAlign: 'center', fontSize: 'large', paddingTop: '20px', fontWeight: 'bold'}}>We Are Sorry, There Are No Tutor(s) Available For This Faculty. Please check later, since new tutors register every day.</div>
+                            }
+                        </table>
 
                     </div>
 
-                    <table style={{height: '230px', width: '100%', overflow: 'auto', padding: '5px'}}>
-                        <thead>
-                            <tr>
-                                {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>)}
-                            </tr>
-                        </thead>
-                        <tbody >
-                            
-                            
 
-                                
-                            {
-
-                                response.map((item) => 
-                                    <tr>
-                                        <td id='student-tutor' data-id={`${item[0].AcademyId}-${item[0].subject}-${item[0].rate}-${item[2].TutorScreenname}-${window.localStorage.getItem('student_user_id')}`}>
-
-                                            <input onInput={handleBadData} type='checkbox' style={{height: '20px', width: '20px'}}  />
-                                        </td>
-
-                                        <td>{item[0].subject}</td> 
-                                        <td>
-                                            {item.splice(-1)[0].TutorScreenname}
-                                        </td>
-                                        <td>
-                                            {item[1].EducationalLevelExperience}
-                                        </td>
-                                        <td>
-                                            {item[1].Certificate}
-                                        </td>
-                                        <td>
-                                            {item[1].CertificateState}
-                                        </td>
-                                        <td>
-                                            {new Date(item[1].CertificateExpiration).toLocaleDateString()}
-                                        </td>
-                                        <td>{item[0].rate}</td>
-                                    </tr>
-                                 )
-
-                                
-                                //subscription_dicount.map((item, index) => 
-                                    //<tr key={index}>
-                                       // <td>{(index + 1) * 4 }</td>
-
-                                        //<td>
-                                            //<input  onInput={e => setSubscriptionPlan(e.target.value)} type='radio'/*onInput={e => item === document.querySelector('#custom-rate') ? document.querySelector('#custom-rate').value : item}*/ name='student-subscription' id='student-subscription' style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}}/>
-                                        //</td>
-
-                                        //</tbody><td>{item}</td>
-                                   // </tr>
-                                //)
-                                
-                            }
-                            
-                            
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </>

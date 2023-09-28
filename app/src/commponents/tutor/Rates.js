@@ -380,16 +380,7 @@ const Rates = () => {
                             </table>
                         </div>
 
-                        <div className="tutor-tab-rates-btm-options" style={{height: '600px', display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', margin: 'auto'}}>
-                            <h6 className='text-primary'>Multi Student Hourly Rate</h6>
-
-                            <div className="highlight">
-                                Hours are accumulated on annual bases that will start counting from your enrollment
-                            </div>
-
-                            <Acad_Commission />
-
-                        </div>
+                        
                     </div>
 
                 </div>

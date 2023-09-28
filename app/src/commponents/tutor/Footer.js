@@ -22,7 +22,10 @@ const Footer = () => {
         }
     }, [location])
 
-    let next = () => {
+    let next = (e) => {
+
+        e.target.disabled = true;
+
         if(eval(window.localStorage.getItem('tutor_tab_index') <= 11 && window.localStorage.getItem('tutor_tab_index')) < 12){
             let index = eval(window.localStorage.getItem('tutor_tab_index'))
             let new_index = index + 1;
@@ -31,20 +34,42 @@ const Footer = () => {
             let userData = window.localStorage.getItem('tutor_screen_name');
             if(userData !== null){
                 navigate(`tutor/${urls[new_index]}`)
+                let h = [...document.querySelector('#tutor-header-menus').children];
+                let aElem = h.filter(item => item.hasAttribute('id'))[0]
+                aElem.removeAttribute('id')
+                aElem.nextElementSibling.setAttribute('id', 'tutor-tab-header-list-active')
             }else{
                 alert('Please Save Data')
             }
             
         }
+
+        setTimeout(() => {
+            e.target.disabled = false;
+
+        }, 3500)
+
+
     }
 
-    let back = () => {
+    let back = (e) => {
+        e.target.disabled = true;
+
         if(eval(window.localStorage.getItem('tutor_tab_index')) >= 1){
             let index = eval(window.localStorage.getItem('tutor_tab_index'))
             let new_index = index - 1;
             window.localStorage.setItem('tutor_tab_index', new_index)
             navigate(-1)
+            let h = [...document.querySelector('#tutor-header-menus').children];
+            let aElem = h.filter(item => item.hasAttribute('id'))[0]
+            aElem.removeAttribute('id')
+            aElem.previousElementSibling.setAttribute('id', 'tutor-tab-header-list-active')
         } 
+
+        setTimeout(() => {
+            e.target.disabled = false;
+
+        }, 3500)
     }
 
     let clear = e => {

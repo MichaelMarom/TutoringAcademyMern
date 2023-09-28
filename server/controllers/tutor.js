@@ -27,11 +27,11 @@ let subjects = (req,res) => {
 
 let post_form_one = (req,res) => {
     
-    let {fname,mname,sname,email,pwd,acadId,cell,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video} = req.body;
+    let {fname,mname,sname,email,pwd,acadId,cell,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video,grades} = req.body;
 
     let UserId = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] + shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
     let screenName = mname.length > 0 ?  fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] : fname + '.' + ' ' + sname[0]
-
+console.log(grades)
 
     let action = cb => {
         marom_db(async(config) => {
@@ -104,8 +104,8 @@ let post_form_one = (req,res) => {
     }
 
     let insert_rates = async(poolConnection) => {
-        let records = await poolConnection.request().query(`INSERT INTO TutorSetup(Photo, Video, FirstName, MiddleName, LastName, Address1, Address2, CityTown, StateProvince, ZipCode, Country, Email, CellPhone, GMT, ResponseHrs, TutorScreenname, HeadLine, Introduction, Motivate, Password, IdVerified, BackgroundVerified, AcademyId)
-        VALUES ('${photo}', '${video}', '${fname}','${mname}','${sname}','${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${email}','${cell}','${timeZone}','${response_zone}','${screenName}','${headline}','${intro}','${motivation}','${pwd}','${null}','${null}', '${UserId}')`)
+        let records = await poolConnection.request().query(`INSERT INTO TutorSetup(Photo, Video, FirstName, MiddleName, LastName, Address1, Address2, CityTown, StateProvince, ZipCode, Country, Email, CellPhone, GMT, ResponseHrs, TutorScreenname, HeadLine, Introduction, Motivate, Password, IdVerified, BackgroundVerified, AcademyId, Grades)
+        VALUES ('${photo}', '${video}', '${fname}','${mname}','${sname}','${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${email}','${cell}','${timeZone}','${response_zone}','${screenName}','${headline}','${intro}','${motivation}','${pwd}','${null}','${null}', '${UserId}', '${grades}')`)
 
         let result =  await records.rowsAffected[0] === 1 ? true : false
         //console.log(result, 'boolean...')
@@ -113,7 +113,7 @@ let post_form_one = (req,res) => {
     }
 
     let update_rates = async(poolConnection) => {
-        let records = await poolConnection.request().query(`UPDATE "TutorSetup" set Photo = '${photo}', Video = '${video}', Address1 = '${add1}', Address2 = '${add2}', CityTown = '${city}', StateProvince = '${state}', ZipCode = '${zipCode}', Country = '${country}', Email = '${email}', CellPhone = '${cell}', GMT = '${timeZone}', ResponseHrs = '${response_zone}', TutorScreenname = '${screenName}', HeadLine = '${headline}', Introduction = '${intro}', Motivate = '${motivation}', Password = '${pwd}', IdVerified = '${null}', BackgroundVerified = '${null}' WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
+        let records = await poolConnection.request().query(`UPDATE "TutorSetup" set Photo = '${photo}', Video = '${video}',  Grades = '${grades}', Address1 = '${add1}', Address2 = '${add2}', CityTown = '${city}', StateProvince = '${state}', ZipCode = '${zipCode}', Country = '${country}', Email = '${email}', CellPhone = '${cell}', GMT = '${timeZone}', ResponseHrs = '${response_zone}', TutorScreenname = '${screenName}', HeadLine = '${headline}', Introduction = '${intro}', Motivate = '${motivation}', Password = '${pwd}', IdVerified = '${null}', BackgroundVerified = '${null}' WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
 
         let result =  await records.rowsAffected[0] === 1 ? true : false
         return(result);

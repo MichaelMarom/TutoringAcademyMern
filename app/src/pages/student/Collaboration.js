@@ -386,8 +386,10 @@ const Class = () => {
     }
 
     useEffect(() => {
-        document.querySelector('.reqBtn').onclick = e => {
-            socket.emit('permissiontoUseBoardTools', location.pathname.split('/').splice(-1)[0]);
+            if(document.querySelector('.reqBtn')){
+            document.querySelector('.reqBtn').onclick = e => {
+                socket.emit('permissiontoUseBoardTools', location.pathname.split('/').splice(-1)[0]);
+            }
         }
         
     },[location])
@@ -736,7 +738,7 @@ const Class = () => {
 
             
 
-            <div className="class-room" >
+            <div className="class-room" style={{position: 'relative'}}>
 
                 
                 {shapesCnt}

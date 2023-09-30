@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
+.rbc-allday-cell {
+  display: none;
+}
+
 .disabled-date.rbc-day-slot.rbc-time-column {
   pointer-events: auto !important;
 }

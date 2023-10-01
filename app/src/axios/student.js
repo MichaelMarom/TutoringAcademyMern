@@ -60,6 +60,22 @@ export let get_student_grade = () => {
     })
 }
 
+export let get_student_market_data = (id) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/student/market-data', { params: {id} })
+        .then((result) => {
+            resolve(result.data) 
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
 
 export let get_tutor_subject = (subject) => {
 

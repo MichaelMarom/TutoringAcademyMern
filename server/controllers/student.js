@@ -414,6 +414,115 @@ let get_student_short_list_data = (req,res) => {
     
 }
 
+let get_student_market_data = async(req,res) => {
+
+    let {id} = req.query;
+
+
+    let StudentData = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * From StudentSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
+
+    let Exprience = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * FROM Experience` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
+
+    let EducationalLevel = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * FROM EducationalLevel` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
+
+    let CertificateTypes = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * FROM CertificateTypes` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
+
+    let Subjects = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT Id,FacultyId,SubjectName FROM Subjects` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
+
+    let Faculty = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * FROM Faculty` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
+
+    new Promise((resolve, reject) => {
+        resolve(StudentData)
+    })
+    .then((StudentData) => {
+        return {StudentData, Exprience}
+    })
+    .then(({StudentData, Exprience}) => {
+        return {StudentData, EducationalLevel, Exprience}
+    })
+    .then(({StudentData, EducationalLevel, Exprience}) => {
+        return {StudentData, EducationalLevel, Exprience, CertificateTypes}
+    })
+    .then(( {StudentData, EducationalLevel, Exprience, CertificateTypes}) => {
+        return {StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects}
+    })
+    .then(({StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects}) => {
+        return {StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty}
+    })
+    .then((result) => {
+        console.log(result)
+        res.send(result)
+    })
+
+    
+}
+
 
 module.exports = {
     upload_form_one,
@@ -422,6 +531,7 @@ module.exports = {
     get_tutor_subject,
     get_student_short_list,
     upload_student_short_list,
-    get_student_short_list_data
+    get_student_short_list_data,
+    get_student_market_data
 }
 

@@ -1,4 +1,7 @@
 const StudentMarketPlace = () => {
+
+
+    
     return ( 
         <>
             <div className="student-market-place-cnt">
@@ -16,21 +19,7 @@ const StudentMarketPlace = () => {
                     <label htmlFor="reportAd"><b>Report Ad</b></label>
                 </div>
 
-                <div className="student-market-place-top-form">
-                    <div className="input-cnt">
-                        <input type="radio" name="" id="Ad" />
-                        &nbsp;&nbsp;
-                        <label htmlFor="Ad">The Ad Will Appear For or 15 Days</label>
-                    </div>
-                    &nbsp;
-                    &nbsp;
-                    &nbsp;
-                    <div className="input-cnt">
-                        <input type="radio" name="" id="RepeatAd" />
-                        &nbsp;&nbsp;
-                        <label htmlFor="RepeatAd">Repeat Ad</label>
-                    </div>
-                </div>
+           
 
                 <br />
 

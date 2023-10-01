@@ -105,7 +105,7 @@ const StudentMarketPlace = () => {
                             <input type="text" name="" id="Ad" />
                         </div>
 
-                        <textarea style={{height: '200px', width: '400px'}}></textarea>
+                        <textarea style={{height: '200px', width: '400px', padding: '10px'}}></textarea>
 
                     </div>
 

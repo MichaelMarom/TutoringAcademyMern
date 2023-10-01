@@ -10,22 +10,32 @@ const StudentMarketPlace = () => {
                     </ul>
                 </div>
 
-                <div className="student-market-place-body">
-                    <div className="student-market-place-top-form">
-                        <div className="input-cnt">
-                            <input type="radio" name="" id="Ad" />
-                            &nbsp;&nbsp;
-                            <label htmlFor="Ad">The Ad Will Appear For or 15 Days</label>
-                        </div>
-                        &nbsp;
-                        &nbsp;
-                        &nbsp;
-                        <div className="input-cnt">
-                            <input type="radio" name="" id="RepeatAd" />
-                            &nbsp;&nbsp;
-                            <label htmlFor="RepeatAd">Repeat Ad</label>
-                        </div>
+                <br />
+                <div className="student-market-place-report-ad">
+                    <input style={{width: '20px', height: '20px', margin: '0'}} type="checkbox" name="" id="reportAd" />
+                    &nbsp;
+                    <label htmlFor="reportAd"><b>Report Ad</b></label>
+                </div>
+
+                <div className="student-market-place-top-form">
+                    <div className="input-cnt">
+                        <input type="radio" name="" id="Ad" />
+                        &nbsp;&nbsp;
+                        <label htmlFor="Ad">The Ad Will Appear For or 15 Days</label>
                     </div>
+                    &nbsp;
+                    &nbsp;
+                    &nbsp;
+                    <div className="input-cnt">
+                        <input type="radio" name="" id="RepeatAd" />
+                        &nbsp;&nbsp;
+                        <label htmlFor="RepeatAd">Repeat Ad</label>
+                    </div>
+                </div>
+                <br />
+
+                <div className="student-market-place-body">
+                    
 
                     <div className="student-market-place-body-form">
                         <div className="input-cnt">
@@ -68,32 +78,34 @@ const StudentMarketPlace = () => {
 
                     </div>
                     
-                    <h4>Student's Requirements</h4>
+                    
 
                     <div className="student-market-place-btm-form">
-
+                        <h4>Student's Requirements</h4>
                         <div className="input-cnt">
-                            <label htmlFor="">Country</label>
+                            <label htmlFor="">Educational Level</label>
                             <input type="text" name="" id="Ad" />
                         </div>
 
                         <div className="input-cnt">
-                            <label htmlFor="">Student Language</label>
+                            <label htmlFor="">Teaching Experience</label>
                             <input type="text" name="" id="Ad" />
                         </div>
                         <div className="input-cnt">
-                            <label htmlFor="">Student Country</label>
+                            <label htmlFor="">Teacher's Certificate</label>
                             <input type="text" name="" id="Ad" />
                         </div>
 
                         <div className="input-cnt">
-                            <label htmlFor="">Need Help From Faculty</label>
+                            <label htmlFor="">Native Language</label>
                             <input type="text" name="" id="Ad" />
                         </div>
                         <div className="input-cnt">
-                            <label htmlFor="">Subject</label>
+                            <label htmlFor="">UTC (Time + Date)</label>
                             <input type="text" name="" id="Ad" />
                         </div>
+
+                        <textarea style={{height: '200px', width: '400px'}}></textarea>
 
                     </div>
 

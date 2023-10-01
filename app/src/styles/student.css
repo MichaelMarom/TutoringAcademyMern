@@ -210,15 +210,33 @@
 
       .student-market-place-header ul{
         list-style-type: none;
+        height: 100%;
+        margin: 0;
+        padding: 2.5px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-color: #2471A3;
       }
 
       .student-market-place-header ul li{
-        padding: 5px;
+        padding: 5px 10px 5px 10px;
+        margin: 0 10px 0 10px;
+        height: 100%;
+        border-radius: 5px;
+        background-color: #2471A3;
+        color: #fff;
+      }
+
+      .student-market-place-header ul li:hover{
+        background-color: #212F3D;
       }
 
       .student-market-place-body{
         height: 100%;
         width: 100%;
+        padding: 0 0 0 40px;
+        
       }
 
       .student-market-place-top-form{
@@ -241,16 +259,27 @@
 
       .student-market-place-top-form{
 
-        height: 20%;
+        height: 6%;
         display: flex;
         align-items: center;
         justify-content: center;
-        flex-direction: column;
+        flex-direction: row;
+        white-space: nowrap;
       }
 
       .student-market-place-body-form{
         height: 40%;
+        width: 50%;
+        float: left;
+      }
+
+      .student-market-place-report-ad{
+        height: fit-content;
+        display: flex;
         width: 100%;
+        padding-left: 20px;
+        align-items: center;
+        justify-content: flex-start;
       }
 
       .input-cnt{
@@ -274,7 +303,8 @@
 
       .student-market-place-btm-form{
         height: 40%;
-        width: 100%;
+        width: 50%;
+        float: right;
       }
 
 }

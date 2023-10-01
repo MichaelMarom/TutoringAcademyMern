@@ -206,6 +206,7 @@
       .student-market-place-header{
         height: 50px;
         width: 100%;
+        margin-bottom: 10px;
       }
 
       .student-market-place-header ul{
@@ -233,10 +234,30 @@
       }
 
       .student-market-place-body{
-        height: 100%;
+        height: calc(100% - 150px);
         width: 100%;
+        overflow: auto;
+        position: relative;
         padding: 0 0 0 40px;
         
+      }
+
+      .student-market-place-buttons{
+        height: 1%;
+        width: 100%;
+        float: left;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+
+      .student-market-place-btns button{
+        height: 50px;
+        width: 100px;
       }
 
       .student-market-place-top-form{
@@ -252,9 +273,14 @@
         width: 20px;
       }
 
+      .student-market-place-top-form .input-cnt select{
+        height: 20px;
+        width: 300px;
+      }
+
       .student-market-place-top-form .input-cnt input[type=text]{
         height: 50px;
-        width: 250px;
+        width: 300px;
       }
 
       .student-market-place-top-form{
@@ -298,7 +324,7 @@
 
       .input-cnt input{
         float: right;
-        width: 40%;
+        width: 300px;
       }
 
       .student-market-place-btm-form{

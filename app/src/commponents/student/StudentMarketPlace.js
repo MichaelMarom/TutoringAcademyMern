@@ -10,7 +10,6 @@ const StudentMarketPlace = () => {
                     </ul>
                 </div>
 
-                <br />
                 <div className="student-market-place-report-ad">
                     <input style={{width: '20px', height: '20px', margin: '0'}} type="checkbox" name="" id="reportAd" />
                     &nbsp;
@@ -32,6 +31,7 @@ const StudentMarketPlace = () => {
                         <label htmlFor="RepeatAd">Repeat Ad</label>
                     </div>
                 </div>
+
                 <br />
 
                 <div className="student-market-place-body">
@@ -62,18 +62,24 @@ const StudentMarketPlace = () => {
                             <input type="text" name="" id="Ad" />
                         </div>
 
-                        <div className="input-cnt">
+                        <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Need Help From Faculty</label>
-                            <input type="text" name="" id="Ad" />
+                            <select>
+                                <option value={''}>Select</option>
+                            </select>
                         </div>
-                        <div className="input-cnt">
+                        <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Subject</label>
-                            <input type="text" name="" id="Ad" />
+                            <select>
+                                <option value={''}>Select</option>
+                            </select>
                         </div>
 
-                        <div className="input-cnt">
+                        <div className="input-cnt" style={{display: 'flex', alignItems: 'center', justifyContent: 'left'}}>
                             <label htmlFor="">Price Range</label>
-                            <input type="text" name="" id="Ad" />
+                            <input  style={{width: '30%'}} type="number" name="" id="Ad" />
+                            &nbsp; <b>To</b> &nbsp;
+                            <input  style={{width: '30%'}} type="number" name="" id="Ad" />
                         </div>
 
                     </div>
@@ -82,31 +88,60 @@ const StudentMarketPlace = () => {
 
                     <div className="student-market-place-btm-form">
                         <h4>Student's Requirements</h4>
-                        <div className="input-cnt">
+                        <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Educational Level</label>
-                            <input type="text" name="" id="Ad" />
+                            <select>
+                                <option value={''}>Select</option>
+                            </select>
                         </div>
+                        
 
-                        <div className="input-cnt">
+                        <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Teaching Experience</label>
-                            <input type="text" name="" id="Ad" />
+                            <select>
+                                <option value={''}>Select</option>
+                            </select>
                         </div>
-                        <div className="input-cnt">
+                        
+                        <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Teacher's Certificate</label>
-                            <input type="text" name="" id="Ad" />
+                            <select>
+                                <option value={''}>Select</option>
+                            </select>
                         </div>
+                        
 
-                        <div className="input-cnt">
+                        <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Native Language</label>
-                            <input type="text" name="" id="Ad" />
+                            <select>
+                                <option value={''}>Select</option>
+                            </select>
                         </div>
-                        <div className="input-cnt">
+                        
+                        <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">UTC (Time + Date)</label>
-                            <input type="text" name="" id="Ad" />
+                            <select>
+                                <option value={''}>Select</option>
+                            </select>
+                        </div>
+                        
+
+                        <textarea style={{height: '100px', width: '400px'}}></textarea>
+
+                    </div>
+
+
+                    <div className="student-market-place-buttons">
+                        <div className="input-cnt">
+                            <input style={{width: '20px', height: '20px', margin: '0'}} type="checkbox" name="" id="" />
+                            &nbsp;&nbsp;
+                            <label htmlFor=""><b>Let the system find my tutor</b></label>
                         </div>
 
-                        <textarea style={{height: '200px', width: '400px'}}></textarea>
-
+                        <div className="student-market-place-btns">
+                            <button style={{background: 'red', color: '#fff'}}>Delete Ad</button>
+                            <button style={{background: 'yellow', color: '#fff'}}>Submit Ad</button>
+                        </div>
                     </div>
 
                 </div>

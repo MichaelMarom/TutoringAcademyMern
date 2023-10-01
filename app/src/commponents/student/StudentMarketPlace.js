@@ -1,6 +1,18 @@
+import { useEffect } from "react";
+import { get_student_market_data } from "../../axios/student";
+
 const StudentMarketPlace = () => {
 
+    useEffect(() => {
 
+        if(window.localStorage.getItem('student_user_id') !== null){
+            get_student_market_data(window.localStorage.getItem('student_user_id'))
+            .then((result) => {
+                console.log(result)
+            })
+            .catch(err => console.log(err))
+        }
+    }, [])
     
     return ( 
         <>

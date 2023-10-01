@@ -61,6 +61,40 @@ const StudentMarketPlace = () => {
                             <input type="text" name="" id="Ad" />
                         </div>
 
+                        <div className="input-cnt">
+                            <label htmlFor="">Price Range</label>
+                            <input type="text" name="" id="Ad" />
+                        </div>
+
+                    </div>
+                    
+                    <h4>Student's Requirements</h4>
+
+                    <div className="student-market-place-btm-form">
+
+                        <div className="input-cnt">
+                            <label htmlFor="">Country</label>
+                            <input type="text" name="" id="Ad" />
+                        </div>
+
+                        <div className="input-cnt">
+                            <label htmlFor="">Student Language</label>
+                            <input type="text" name="" id="Ad" />
+                        </div>
+                        <div className="input-cnt">
+                            <label htmlFor="">Student Country</label>
+                            <input type="text" name="" id="Ad" />
+                        </div>
+
+                        <div className="input-cnt">
+                            <label htmlFor="">Need Help From Faculty</label>
+                            <input type="text" name="" id="Ad" />
+                        </div>
+                        <div className="input-cnt">
+                            <label htmlFor="">Subject</label>
+                            <input type="text" name="" id="Ad" />
+                        </div>
+
                     </div>
 
                 </div>

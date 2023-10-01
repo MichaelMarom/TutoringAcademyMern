@@ -240,10 +240,41 @@
       }
 
       .student-market-place-top-form{
+
+        height: 20%;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
+      }
+
+      .student-market-place-body-form{
+        height: 40%;
+        width: 100%;
+      }
+
+      .input-cnt{
+        width: 400px;
+        height: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .input-cnt label{
+        float: left;
+        width: 55%;
+      }
+
+
+      .input-cnt input{
+        float: right;
+        width: 40%;
+      }
+
+      .student-market-place-btm-form{
+        height: 40%;
+        width: 100%;
       }
 
 }

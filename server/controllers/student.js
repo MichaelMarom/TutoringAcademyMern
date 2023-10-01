@@ -497,6 +497,19 @@ let get_student_market_data = async(req,res) => {
         .catch(err => console.log(err))
     )
 
+    let GMT = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * FROM GMT` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
+
     new Promise((resolve, reject) => {
         resolve(StudentData)
     })
@@ -514,6 +527,9 @@ let get_student_market_data = async(req,res) => {
     })
     .then(({StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects}) => {
         return {StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty}
+    })
+    .then(({StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects}) => {
+        return {StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT}
     })
     .then((result) => {
         console.log(result)

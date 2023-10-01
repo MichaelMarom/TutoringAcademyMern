@@ -7,7 +7,7 @@ import { getEvents } from "../../redux/tutor_store/EventSlice";
 import { useDispatch } from "react-redux";
 const Scheduling = () => {
   const [activeTab, setActiveTab] = useState("month");
-  const [disableWeekdDays, setDisabledWeekDays] = useState([]);
+  const [disableWeekDays, setDisabledWeekDays] = useState([]);
   const [disabledHours, setDisabledHours] = useState([]);
   const dispatch = useDispatch();
 
@@ -16,18 +16,18 @@ const Scheduling = () => {
   };
   const handleCheckboxClick = (dayName, hourRange) => {
     // Check if the day or hour is already disabled
-    const isDayDisabled = disableWeekdDays.includes(dayName);
+    const isDayDisabled = disableWeekDays.includes(dayName);
     const isHourDisabled = disabledHours.includes(hourRange);
     if (isDayDisabled) {
       // If both day and hour are already disabled, remove them
-      setDisabledWeekDays(disableWeekdDays.filter((day) => day !== dayName));
+      setDisabledWeekDays(disableWeekDays.filter((day) => day !== dayName));
     } else if (isHourDisabled) {
       setDisabledHours(disabledHours.filter((hour) => hour !== hourRange));
     } else {
       // If either day or hour is not disabled, add them
       if (dayName) {
         if (!isDayDisabled) {
-          setDisabledWeekDays([...disableWeekdDays, dayName]);
+          setDisabledWeekDays([...disableWeekDays, dayName]);
         }
       }
       if (hourRange) {
@@ -96,7 +96,7 @@ const Scheduling = () => {
                           type="checkbox"
                           id={day.toLowerCase()}
                           className="form-check-input"
-                          checked={disableWeekdDays.includes(day)}
+                          checked={disableWeekDays.includes(day)}
                           onChange={() => handleCheckboxClick(day)}
                         />
                         <label
@@ -156,7 +156,7 @@ const Scheduling = () => {
             </div>
 
             <div className="form-scheduling-cnt-right">
-              <ShowCalendar disableWeekdDays={disableWeekdDays} disabledHours={disabledHours} />
+              <ShowCalendar disableWeekDays={disableWeekDays} disabledHours={disabledHours} setDisabledWeekDays={setDisabledWeekDays} setDisabledHours={setDisabledHours} />
             </div>
           </div>
 

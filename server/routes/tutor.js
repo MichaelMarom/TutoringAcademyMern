@@ -1,4 +1,4 @@
-const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details, storeEvents, storeDisabledDates, fetchEvents } = require('../controllers/tutor');
+const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details, storeEvents, storeDisabledDates, fetchEvents, get_tutor_status, faculties } = require('../controllers/tutor');
 const {express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt} = require('../modules');
 
 
@@ -8,6 +8,7 @@ const TUTOR_ROUTES = express.Router();
 
 TUTOR_ROUTES.get('/tutor/tutor-status', get_tutor_status)
 TUTOR_ROUTES.get('/tutor/subjects', subjects)
+TUTOR_ROUTES.get('/tutor/faculties', faculties)
 TUTOR_ROUTES.get('/tutor/countries', get_countries)
 TUTOR_ROUTES.get('/tutor/state', get_state)
 TUTOR_ROUTES.get('/tutor/gmt', get_gmt)

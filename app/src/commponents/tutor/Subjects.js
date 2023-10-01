@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {AnimatePresence} from 'framer-motion'
 import { useMemo } from 'react';
 import { useEffect } from 'react';
-import { get_rates, get_subject, get_user_data, upload_tutor_rates } from '../../axios/tutor';
+import { get_faculty, get_rates, get_subject, get_user_data, upload_tutor_rates } from '../../axios/tutor';
 import { COLUMNS } from '../../Tables/Subject/columns';
 import { socket } from '../../socket';
 //import left from './../../images/arrow-circle-left-svgrepo-com'
@@ -13,10 +13,10 @@ const Subjects = () => {
 
     const [data, set_data] = useState([]);
     const [data_ready, set_data_ready] = useState(false);
-    //let [courses, set_courses] = useState([]);
+    let [newSubjectFaculty, setNewSubjectFaculty] = useState([]);
 
     
-    
+    let [newSubject, setNewSubject] = useState(false)
     let [math_courses, set_math_courses] = useState([])
     let [software_courses, set_software_courses] = useState([])
     let [eng_courses, set_eng_courses] = useState([])
@@ -204,13 +204,28 @@ const Subjects = () => {
 
     }
 
+    useEffect(() => {
+        get_faculty()
+        .then((result) => {
+            let list = result.map(item => {
+                return(
+                    <option data-id={item.id}>{item.Faculty}</option>
+                )
+            })
+
+            setNewSubjectFaculty(list)
+        })
+        .catch(err => console.log(err))
+    })
+
+
     let handle_scroll_right = () => {
 
         let div = document.querySelector('.tutor-tab-subject-data-tabs');
         let scroll_elem = div.children[1];
         console.log(scroll_elem) 
         let w = scroll_elem.offsetWidth;
-        scroll_elem.scrollLeft = w;
+        scroll_elem.scrollLeft = '10px';
 
     }
 
@@ -297,6 +312,28 @@ const Subjects = () => {
         result()
     }
 
+    let newSubjectCheckBox = e => {
+
+        let user_id = window.localStorage.getItem('tutor_user_id');
+
+            console.log(user_id)
+        if(e.target.checked){
+            setNewSubject(true)
+            get_user_data(user_id)
+            .then((result) => {
+                let data = result;
+                //console.log([...e.target.parentElement.parentElement.children][2].innerHTML)
+
+                let elms = [...e.target.nextElementSibling.children];
+
+                
+            })
+            
+        }else{
+            setNewSubject(false)
+        }
+    }
+
 
 
     return ( 
@@ -306,21 +343,49 @@ const Subjects = () => {
                 <span class="save_loader"></span>
             </div>
             <div className="tutor-tab-subjects">
-                <div className="tutor-tab-subjects-info">
-                    <input type='text' placeholder='Type your subject here' />
-                    <input type='text' placeholder='Type your faculty here' />
-                    <input type='text' placeholder='Select level' />
-                    <input type='text' placeholder='Select experience' />
-                    <input type='text' placeholder='Select Certification' />
-                    <input type='text' placeholder='Select state' />
-                    <input type='text' placeholder='Country' />
-                    <input type='text' placeholder='Day state' />
-
-                    <input type="submit" value="Upload" />
-                </div>
                 <div className="tutor-tab-subject-alert">
                     <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 15 faculties for tutoring. Didn't find your subject? List your expertise above and submit for review. We may list your subject after examination.</p>
                 </div>
+                <div className="tutor-tab-subjects-info" style={{display: 'flex', flexDirection: 'column',background: '#e7e7e7', position: 'relative', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', margin: 'auto'}}>
+
+                    <input onInput={newSubjectCheckBox} type='checkbox' style={{height: '30px',position:'absolute', left: '15px', top: '8px',width: '30px', margin: '10px 0 0 0', cursor: 'pointer'}} />
+                    
+                    <div style={{width: '70%', margin: 'auto', opacity: newSubject ? '1' : '.5', pointerEvents:newSubject ? 'all' : 'none' }}>
+                        <div style={{width: '45%', padding: '5px', display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 'auto,', float: 'left', height: '100%'}}>
+                       
+                            <input style={{float: 'left',ontSize: 'small',background:'#fff',width: '180px', height: '60px', margin: '0 0 0 0'}} type='text' placeholder='Type your subject here' />
+                            <select style={{float: 'right',ontSize: 'small',background:'#fff',width: '180px', height: '60px', margin: '0 0 0 0'}} type='text' >
+                                {newSubjectFaculty}
+                            </select>
+
+                        </div>
+                        
+                       
+
+                        <div style={{width: '50%', height: '100%',display: 'flex', flexDirection: 'row', alignItems: 'center',  margin: 'auto', padding: '5px', float: 'right'}}>
+                            <textarea style={{width: '100%', height: '60px', background: '#fff', padding: '10px'}} placeholder='Summarize Your Reason In Not More Than 700 Characters For Adding This Subject '>
+
+                            </textarea>
+                        </div>
+
+                        
+
+                        
+                       {/* <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select level' />
+                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select experience' />
+                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select Certification' />
+                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select state' />
+                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Country' />
+    <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Day state' />*/}
+                    </div>
+
+                   
+
+                    <input   style={{fontSize: 'small', background: 'green', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', width: '80px', margin: '0 5px 0 5px',position:'absolute', right: '15px', top: '15px'}} type="submit" value="Upload" />
+                </div>
+
+                <br />
+                
 
 
                 <div className="tutor-tab-subject-data-collection-table">
@@ -371,19 +436,7 @@ const Subjects = () => {
                         Checkbox any subject in any faculty where you are proficient enough to tutor, Ultimately you are being rated by the students feedback, if students feedback is only 2 stars then its free checkbox the subject then select the certificate, state expiration if available. Then click on the rate button which will pop up a table to select your rate
                     </div>
 
-                    <div className="tutor-tab-subject-search-bar">
-                        <div onClick={e => set_active_course()}>
-                            <label style={{float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px'}} htmlFor="search"><h6>Search accross all faculties. type the subject of interest then checkbox to select</h6></label>
-
-                            <div className="search-bar">
-                                <input  style={{height: '50px', width: '300', margin: '0 5px 0 5px'}} type="search" placeholder='Search Here...' id="search"  /> 
-                                <input  style={{height: '50px', width: '150px', margin: '0 0 0 5px'}} type="button" value="Search" />
-                            </div>
-                            
-
-                        </div>
-
-                    </div>
+                  
 
                        
                     <div className="tables" style={{height: '430px', width: '100%', overflow: 'auto', padding: '5px'}}>

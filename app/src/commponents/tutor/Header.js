@@ -73,7 +73,7 @@ const Header = () => {
     return ( 
         <>
 
-        <div className="screen-name btn-success rounded" style={{display: screen_name === 'null' ? 'none': 'flex',position: 'fixed', top: '15px', zIndex: '1000', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height:'30px'}}>
+        <div className="screen-name btn-success rounded" style={{display: screen_name === 'null' ? 'none': 'flex',position: 'fixed', top: '15px', zIndex: '2400', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height:'30px',background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red',color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff'}}>
             {screen_name}
         </div>
 
@@ -103,9 +103,9 @@ const Header = () => {
                     <li data-url='tutor-profile' onClick={handleTabClick} ><a>Tutor Profile</a></li>
                 </ul>
 
-                <div className="tutor-status" style={{padding: '5px',height: '30px',background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red',color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff'}}>
+                {/*<div className="tutor-status" style={{padding: '5px',height: '30px',background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red',color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff'}}>
                     {tutorState}
-                </div>
+    </div>*/}
 
                 <div className="scroller-right" onClick={handle_scroll_right}></div>
                 <div style={{margin: '0 0 0 0',background: '#efefef', display

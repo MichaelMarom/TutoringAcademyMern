@@ -58,11 +58,11 @@ const Scheduling = () => {
 
           <button className={`btn-sm ${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}
             onClick={() => handleTabClick("month")}
-          >Block out days </button>
+          >Block days </button>
 
           <button className={`btn-sm ${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}
 
-            onClick={() => handleTabClick("day")}>Block out hours</button>
+            onClick={() => handleTabClick("day")}>Block hours</button>
         </ul>
         <div className="time-period">
           <div id="form-scheduling-cnt" className="form-scheduling-cnt-month">
@@ -72,11 +72,11 @@ const Scheduling = () => {
                 id="months"
               >
                 <div className="form-scheduling-cnt-left">
-                  <h6>Blocked out days</h6>
+                  <h6>Block days</h6>
 
                   <div className="highlight small lh-sm">
-                    Checkbox the isDayDisabled that you are not tutoring. Students will
-                    not be able to book lessons for your blocked out days.
+                    Checkbox the Day you are not tutoring. Students will
+                    not be able to book lessons for your blocked day(s).
                   </div>
 
                   <div
@@ -110,8 +110,8 @@ const Scheduling = () => {
                   </div>
 
                   <div className="highlight small lh-sm">
-                    Double click on a blocked out day or hour, Will unblock the
-                    day or hour for that day or time.
+                    Double click on a blocked day or hour, Will unblock the
+                    day or hour for that full day or specific hour.
                   </div>
                 </div>
               </div>
@@ -120,11 +120,11 @@ const Scheduling = () => {
                 id="days"
               >
                 <div className="form-scheduling-cnt-left">
-                  <h6>Black out hours</h6>
+                  <h6>Black hours</h6>
 
                   <div className="highlight small lh-sm">
-                    CheckBox the Hours that you are not tutoring. students will
-                    not be able to book lessons for your blocked out hours
+                    CheckBox the hours that you are not tutoring. students will
+                    not be able to book lessons for your blocked hours
                   </div>
 
                   <div className="form-scheduling-hours  ">
@@ -148,8 +148,8 @@ const Scheduling = () => {
                   </div>
 
                   <div className="highlight small lh-sm">
-                    Double click on a blocked out day or hour. Will unblock the
-                    day or hour for that day or time.
+                    Double click on a blocked day or hour. Will unblock the
+                    day or hour for that full day or specific hour.
                   </div>
                 </div>
               </div>

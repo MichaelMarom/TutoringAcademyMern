@@ -756,6 +756,30 @@ let get_tutor_rates = (req,res) => {
     })
 }
 
+let faculties = (req,res) => {
+    marom_db(async(config) => {
+        const sql = require('mssql');
+    
+        var poolConnection = await sql.connect(config);
+       // console.log(poolConnection._connected)
+        if(poolConnection){
+            poolConnection.request().query(
+                `
+                    SELECT * From Faculty  
+                `
+            )
+            .then((result) => {
+                console.log(result.recordset)
+                res.status(200).send(result.recordset)
+                //result.recordset.map(item => item.AcademyId === user_id ? item : null)
+            })
+            .catch(err => console.log(err))
+
+        }
+    
+    })
+}
+
 let get_bank_details = (req,res) => {
     let {AcademyId} = req.query;
     console.log(AcademyId)
@@ -930,6 +954,7 @@ let fetchEvents = (req, res) => {
 
 module.exports = {
     subjects,
+    faculties,
     post_form_one,
     post_form_two,
     post_form_three,
@@ -952,5 +977,6 @@ module.exports = {
     get_bank_details,
     storeEvents,
     storeDisabledDates,
-    fetchEvents
+    fetchEvents,
+    get_tutor_status
 }

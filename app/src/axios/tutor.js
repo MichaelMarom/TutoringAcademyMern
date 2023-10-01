@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from "axios";
 
 const instance = axios.create({
   baseURL: "http://localhost:9876", // Adjust the base URL to match your backend API endpoint
@@ -6,6 +6,8 @@ const instance = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+
   
 export let get_subject = () => {
 
@@ -13,6 +15,28 @@ export let get_subject = () => {
 
     
         axios.get('http://localhost:9876/tutor/subjects', {
+            params: {
+                 
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
+
+  
+export let get_faculty = () => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/tutor/faculty', {
             params: {
                  
             }

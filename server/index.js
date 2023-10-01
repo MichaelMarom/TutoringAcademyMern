@@ -11,7 +11,6 @@ app.use(cors({origin: '*'}))
 app.use(morgan('tiny'));
 
 require('dotenv').config();
-const app = express();
 app.use(cors({origin: '*'}))
 app.use(morgan('tiny')); 
 app.use(TUTOR_ROUTES);
@@ -316,7 +315,7 @@ myPeerServer.on("disconnect", function({id}) {
 
 
 process.on('unhandledRejection', (reason, promise) => {
-  //console.log('Unhandled Rejection at:', reason.stack || reason)
+  console.log('Unhandled Rejection at:', reason.stack || reason)
   // Recommended: send the information to sentry.io
   // or whatever crash reporting service you use
 })

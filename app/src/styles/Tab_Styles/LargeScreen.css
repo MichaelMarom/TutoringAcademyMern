@@ -166,11 +166,11 @@ html,body{
         font-family: cursive;
         position: relative;
         background: #212F3D;
-
+        scroll-behavior: smooth;
     }
 
     .tutor-tab-header ul::-webkit-scrollbar {
-        display: none;
+        display: block;
     }
 
     .tutor-tab-header ul {
@@ -333,7 +333,7 @@ html,body{
         text-align: center;
         height: 40px;
         top: 0;
-        color: #fff;
+        color: #000;
         position: sticky;
         background: white;
 
@@ -678,6 +678,7 @@ html,body{
         position: relative;
         width: 100%;
         overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .tutor-tab-subjects-info {
@@ -712,10 +713,7 @@ html,body{
         padding: 0 40px 0 40px;
     }
 
-    .tutor-tab-subject-data-tabs::-webkit-scrollbar {
-        display: none;
-    }
-
+   
     #table_options_menu {
         background: #2471A3;
         color: #F7F9F9;
@@ -734,7 +732,7 @@ html,body{
     }
 
     .tutor-tab-subject-data-tabs ul::-webkit-scrollbar {
-        display: none;
+        display: block;
     }
 
 

@@ -2,11 +2,20 @@
     *{
         box-sizing: border-box;
     }
-
+    .ReactModal__Overlay {
+        z-index: 11;
+        height: fit-content;
+    }
+    .disabled-date,.disabled-slot {
+        background-color: orange; /* Example: Gray background for disabled dates */
+        color: #888; /* Example: Gray text color for disabled dates */
+        pointer-events: none; /* Example: Make disabled dates non-clickable */
+      }
+      
     html,body{
         height: 100%;
         width: 100%;
-        overflow: none;
+        overflow: scroll;
         padding: 0;
         margin: 0;
         user-select: none;
@@ -18,27 +27,7 @@
         background-color: #6babff;
     }
 
-    /* width */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
     
-    /* Track */
-    ::-webkit-scrollbar-track {
-        background: #fff;
-    }
-    
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-        background: rgb(163, 163, 163);
-    }
-    
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: #e2f3ff;
-    }
-  
-    /*
 
     CLASS ROOM STYLES
     CLASS ROOM STYLES
@@ -56,7 +45,7 @@
 
     .class-room{
         width: 100vw;
-        height: 100vh;
+        height: calc(100vh - 200px);
         position: relative;
     }
 
@@ -66,7 +55,7 @@
         position: absolute;
         top: 0;
         width: 100%;
-        z-index: 20;
+        z-index: 2000;
         border-bottom: 1px solid #e7e7e7;
         background-color: #ffffff;
     }
@@ -149,7 +138,11 @@
         background-color: #e7e7e7;
     }
 
-  
+    .class-room{
+        width: 100vw;
+        height: calc(100vh - 120px);
+        position: relative;
+    }
 
     .conference-box{
         height: calc(100vh - 50px);
@@ -338,7 +331,7 @@
     }
 
     .conference-box{
-        height: calc(100vh - 150px);
+        height: calc(100vh - 200px);
         width: 400px;
         position: fixed;
         top: 55px;
@@ -359,7 +352,7 @@
 
     .mssg-bx{
         position: relative;
-        height: calc(100vh - 405px);
+        height: 410px;
         width: 100%;
         padding: 5px 0 15px 0;
         overflow: auto;
@@ -1062,5 +1055,6 @@
         border-radius: 50%;
       }
 
+      
 
 }

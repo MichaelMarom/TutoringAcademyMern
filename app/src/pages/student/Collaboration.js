@@ -10,7 +10,7 @@ import eraserImage from '../../images/eraser-svgrepo-com.svg';
 import triangleImage from '../../images/triangle-svgrepo-com (1).svg';
 import rectImage from '../../images/rectangle-svgrepo-com.svg'
 
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react';
 import {Peer} from 'peerjs';
 import uniqid from 'uniqid';
 import { setToolTo } from '../../redux/student_store/Tool';
@@ -386,8 +386,10 @@ const Class = () => {
     }
 
     useEffect(() => {
-        document.querySelector('.reqBtn').onclick = e => {
-            socket.emit('permissiontoUseBoardTools', location.pathname.split('/').splice(-1)[0]);
+            if(document.querySelector('.reqBtn')){
+            document.querySelector('.reqBtn').onclick = e => {
+                socket.emit('permissiontoUseBoardTools', location.pathname.split('/').splice(-1)[0]);
+            }
         }
         
     },[location])
@@ -736,7 +738,7 @@ const Class = () => {
 
             
 
-            <div className="class-room" >
+            <div className="class-room" style={{position: 'relative'}}>
 
                 
                 {shapesCnt}

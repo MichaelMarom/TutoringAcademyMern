@@ -1,6 +1,14 @@
-import axios from 'axios'
+import axios from "axios";
+
+const instance = axios.create({
+  baseURL: "http://localhost:9876", // Adjust the base URL to match your backend API endpoint
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 
+  
 export let get_subject = () => {
 
     return new Promise((resolve, reject) => {
@@ -9,6 +17,50 @@ export let get_subject = () => {
         axios.get('http://localhost:9876/tutor/subjects', {
             params: {
                  
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
+
+  
+export let get_faculty = () => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/tutor/faculty', {
+            params: {
+                 
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
+
+
+export let get_tutor_status = (AcademyId) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/tutor/tutor-status', {
+            params: {
+                AcademyId
             }
         })
         .then((result) => {
@@ -119,11 +171,30 @@ export let get_response = () => {
 
 
 
-export let upload_form_one = (fname,lname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline) => {
+export let upload_form_one = (fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video,grades) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/form-one', {
-            fname,lname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline
+            fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline,photo,video,grades
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })  
+        
+                 
+
+    })
+}
+
+
+export let upload_form_two = (level,university1,university2,degree,certificate,language,state2,state3,state4,state5,state6,experience,graduagteYr1,graduagteYr2,graduagteYr3,expiration,otherang,workExperience,user_id) => {
+    return new Promise((resolve, reject) => {
+
+        axios.post('http://localhost:9876/tutor/form-two', {
+            level,university1,university2,degree,certificate,language,state2,state3,state4,state5,state6,experience,graduagteYr1,graduagteYr2,graduagteYr3,expiration,otherang,workExperience,user_id
         })
         .then((result) => {
             resolve(result.data)
@@ -135,12 +206,11 @@ export let upload_form_one = (fname,lname,mname,sname,email,pwd,cell,acadId,add1
     })
 }
 
-
-export let upload_form_two = (level,university1,university2,degree,certificate,language,state2,state3,state4,state5,state6,experience,graduagteYr1,graduagteYr2,graduagteYr3,expiration,otherang,workExperience,user_id) => {
+export let upload_form_three = (MutiStudentHourlyRate,MutiStudentOption,CancellationPolicy,FreeDemoLesson,ConsentRecordingLesson,ActivateSubscriptionOption,SubscriptionPlan,AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.post('http://localhost:9876/tutor/form-two', {
-            level,university1,university2,degree,certificate,language,state2,state3,state4,state5,state6,experience,graduagteYr1,graduagteYr2,graduagteYr3,expiration,otherang,workExperience,user_id
+        axios.post('http://localhost:9876/tutor/form-three', {
+            MutiStudentHourlyRate,MutiStudentOption,CancellationPolicy,FreeDemoLesson,ConsentRecordingLesson,ActivateSubscriptionOption,SubscriptionPlan,AcademyId
         })
         .then((result) => {
             resolve(result.data)
@@ -205,6 +275,7 @@ export let get_certificates = () => {
 
 
 export let get_user_data = (user_id) => {
+    console.log(user_id)
     return new Promise((resolve, reject) => {
 
         axios.get('http://localhost:9876/tutor/education', {
@@ -259,11 +330,67 @@ export let get_my_data = (AcademyId) => {
     })
 }
 
+export let get_my_edu = (AcademyId) => {
+    return new Promise((resolve, reject) => {
+
+        axios.get('http://localhost:9876/tutor/my-edu', {
+            params: {
+                AcademyId
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })           
+
+    })
+}
+
 
 export let get_rates = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
         axios.get('http://localhost:9876/tutor/my-rate', {
+            params: {
+                AcademyId
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })           
+
+    })
+}
+
+
+
+export let get_bank_details = (AcademyId) => {
+    return new Promise((resolve, reject) => {
+
+        axios.get('http://localhost:9876/tutor/tutor-bank-details', {
+            params: {
+                AcademyId 
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })           
+
+    })
+}
+
+export let get_tutor_rates = (AcademyId) => {
+    return new Promise((resolve, reject) => {
+
+        axios.get('http://localhost:9876/tutor/tutor-rate', {
             params: {
                 AcademyId
             }
@@ -293,3 +420,57 @@ export let upload_form_four = (start_day,acct_name,acct_type,bank_name,acct,rout
 
     })
 }
+
+
+export let get_tutor_setup = (AcademyId) => {
+    return new Promise((resolve, reject) => {
+
+        axios.get('http://localhost:9876/tutor/tutor-setup', {
+            params: {
+                AcademyId
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })           
+
+    })
+}
+
+export const storeEventAPI = async (eventDetails) => {
+  try {
+    console.log(eventDetails,'dataformat');
+    const newEvent = {
+        title: eventDetails.title,
+        allDay: eventDetails.allDay,
+        start: eventDetails.start,
+        end: eventDetails.end,
+      };
+    const response = await instance.post("/api/store-event", newEvent);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+ }
+};
+
+export const fetchEvents = async () => {
+    try {
+      const response = await instance.get("api/events/list");
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+   }
+  };
+
+export const addDisabledDates = async (date) => {
+    try {
+      const response = await instance.post("/api/store-disabled-dates", date);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+   }
+  };

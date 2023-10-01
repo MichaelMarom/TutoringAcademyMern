@@ -9,7 +9,8 @@ import asideReq from './student_store/asideReq.js';
 import modeReducer from './tutor_store/Mode';
 import BoardAccessReducer from './tutor_store/BoardAccess';
 import save from './tutor_store/save';
-
+import ScreenName from './tutor_store/ScreenName';
+import EventReducer from './tutor_store/EventSlice';
 
 let store = configureStore({
   reducer: {
@@ -23,9 +24,11 @@ let store = configureStore({
     BoardUser: BoardAccessReducer,
     save: save,
 
+    screenName: ScreenName,
+
     toolReq: toolReq,
     asideReq: asideReq,
-
+    event: EventReducer
 
   }
 

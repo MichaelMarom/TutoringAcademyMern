@@ -2,6 +2,8 @@ import { Route, Link, useLocation, Routes, useNavigate } from "react-router-dom"
 import{motion,AnimatePresence} from 'framer-motion';
 
 import './styles/Tab_Styles/LargeScreen.css';
+import './styles/student.css';
+import './styles/admin.css';
 import './styles/Collaboration_Styles/LargeScreen.css';
 
 
@@ -28,7 +30,14 @@ import { useEffect, useState } from "react";
 import StudentFaculty from "./pages/student/StudentFaculty";
 import StudentShortLists from "./pages/student/StudentShortList";
 import StudentAccountings from "./pages/student/StudentAccounting";
+import StudentFooter from "./commponents/student/Footer";
 import Footer from "./commponents/tutor/Footer";
+import Header from "./commponents/admin/AdminHeader";
+import Tutor_Table from "./pages/Admin/Tutor";
+import Student_Table from "./pages/Admin/Student";
+import StudentScheduling from "./pages/student/StudentScheduling";
+import StudentTermOfUse from "./pages/student/TermOfUse";
+import StudentMarketPlace from "./commponents/student/StudentMarketPlace";
 
 
 const App = () => {
@@ -36,22 +45,27 @@ const App = () => {
     let location = useLocation();
     let navigate = useNavigate();
 
-    let [tutor, setTutor] = useState(false)
+    let [role, setRole] = useState(false)
 
     useEffect(() => {
         if(location.pathname.split('/').splice(-2)[0] === 'tutor'){
-            setTutor(true)
+            setRole('tutor')
+        }else if(location.pathname.split('/').splice(-2)[0] === 'student'){
+            setRole('student')
         }else{
-            setTutor(false)
+            setRole('admin')
         }
     }, [location]);
 
     useEffect(() => {
         if(location.pathname.split('/').splice(-2)[0] === 'tutor'){
             navigate('tutor/intro')
-            window.localStorage.setItem('tab_index', 0)
-        }else{
+            window.localStorage.setItem('tutor_tab_index', 0)
+        }else if(location.pathname.split('/').splice(-2)[0] === 'student'){
             navigate('student/intro')
+            window.localStorage.setItem('student_tab_index', 0)
+        }else{
+            navigate('admin/tutor-data')
         }
     }, [])
     
@@ -61,7 +75,7 @@ const App = () => {
 
 
             {
-                tutor === true
+                role === 'tutor'
                 ?
                 <>
                     <TutorHeader />
@@ -69,7 +83,7 @@ const App = () => {
                             {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
                             <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
                             <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
-                            <Route path="tutor/intro" element={<Intro />}></Route>
+                            <Route path="w `-+" element={<Intro />}></Route>
                             <Route path="tutor/setup" element={<TutorSetup />}></Route>
                             <Route path="tutor/education" element={<Education />}></Route>
                             <Route path="tutor/rates" element={<Rates />}></Route>
@@ -88,6 +102,9 @@ const App = () => {
 
                 :
 
+                role === 'student'
+                ?
+
                 <>
                     <StudentHeader />
                     <Routes location={location} key={location.key}> 
@@ -95,11 +112,33 @@ const App = () => {
                         <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
                         <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
 
+                        <Route path="student/" element={< StudentSetup/>}></Route>
                         <Route path="student/setup" element={< StudentSetup/>}></Route>
                         <Route path="student/faculties" element={< StudentFaculty/>}></Route>
                         <Route path="student/short-list" element={< StudentShortLists/>}></Route>
                         <Route path="student/accounting" element={< StudentAccountings />}></Route>
                         <Route path="student/collaboration" element={<StudentCollaboration />}></Route>
+                        <Route path="student/market-place" element={<StudentMarketPlace />}></Route>
+                        <Route path="student/schedule" element={<StudentScheduling />}></Route>
+                        <Route path="student/term-of-use" element={<StudentTermOfUse />}></Route>
+
+
+                    </Routes>
+                    <StudentFooter />
+                </>
+
+                :
+
+                 <>
+                    <Header />
+                    <Routes location={location} key={location.key}> 
+                        {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
+                        <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
+                        <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
+
+                        
+                        <Route path="admin/tutor-data" element={<Tutor_Table />}></Route>
+                        <Route path="admin/student-data" element={<Student_Table />}></Route>
 
 
                     </Routes>

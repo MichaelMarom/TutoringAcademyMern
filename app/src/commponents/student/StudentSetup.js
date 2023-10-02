@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { get_countries, get_gmt, get_state } from '../../axios/tutor';
 import { socket } from '../../socket';
 import { get_student_grade, get_student_setup, upload_form_one } from '../../axios/student';
+import { convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
 
 const StudentSetup = () => {
 
@@ -46,7 +47,7 @@ const StudentSetup = () => {
     let [GradeList, setGradeList] = useState('')
 
     let [data, set_data] = useState(false);
-
+    const [dateTime, setDateTime] = useState('')
 
     let saver = async () => {
 
@@ -428,7 +429,10 @@ const StudentSetup = () => {
         }
     } 
 
-    
+    useEffect(() => {
+        const localTime = convertGMTOffsetToLocalString(timeZone);
+        setDateTime(localTime)
+    }, [timeZone])
     
     return ( 
         <>
@@ -441,6 +445,7 @@ const StudentSetup = () => {
                     <div className="tutor-setup-top-field" style={{height: '100%'}}>
                     
                         <div className="profile-photo-cnt">
+                            <p>{typeof dateTime === 'object' ? '' : dateTime}</p>
 
                             <h5 style={{whiteSpace: 'nowrap'}}>Profile Photo</h5> 
                             <input type="file" data-type='file' onChange={handleImage} style={{display: 'none'}} id="photo" />

@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { get_tutor_data, set_tutor_status } from '../../axios/admin';
 import { COLUMNS } from '../../Tables/Admin/column';
+import moment from 'moment'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
+import { conevrtGMTOffsetToLocalString, convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
 
 
 const TutorTable = () => {
@@ -51,6 +53,7 @@ const TutorTable = () => {
         window.localStorage.setItem('user_role', 'admin');
         navigate('/tutor/setup')
     }
+
     return (  
         <> 
             {/*<div className='admin-tutor-data-info' style={{height: '50px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
@@ -105,7 +108,7 @@ const TutorTable = () => {
                                 <td data-src={item.FirstName + ' ' + item.LastName}>{item.FirstName + ' ' + item.LastName}</td>
                                 <td data-src={item.Email}>{item.Email}</td>
                                 <td data-src={item.CellPhone}>{item.CellPhone}</td>
-                                <td data-src={item.GMT}>{item.GMT}</td>
+                                <td data-src={item.GMT}>{convertGMTOffsetToLocalString(item.GMT)}</td>
                                 <td data-src={item.ResponseHrs}>{item.ResponseHrs}</td>
                                 <td data-src={null}>{null}</td>
                                 <td data-src={null}>{null}</td>

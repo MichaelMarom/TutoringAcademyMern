@@ -1,11 +1,13 @@
 import {motion} from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import moment from 'moment'
 import { get_countries, get_gmt, get_rates, get_response, get_state, get_tutor_setup, upload_form_one } from '../../axios/tutor';
 import { socket } from '../../socket';
 import containerVariants from '../constraint';
 import { useDispatch } from 'react-redux';
 import { setscreenNameTo } from '../../redux/tutor_store/ScreenName';
+import { convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
 const TutorSetup = () => {
 
     let [fname, set_fname] = useState('')
@@ -22,7 +24,8 @@ const TutorSetup = () => {
     let [state, set_state] = useState('')
     let [zipCode, set_zipCode] = useState('')
     let [country, set_country] = useState('')
-    let [timeZone, set_timeZone] = useState('')
+    let [timeZone, set_timeZone] = useState('');
+    let [dateTime, setDateTime] = useState(moment());
     let [response_zone, set_response_zone] = useState('')
     let [intro, set_intro] = useState('')
     let [motivation, set_motivation] = useState('')
@@ -48,11 +51,7 @@ const TutorSetup = () => {
     let dispatch = useDispatch()
 
 
-    /*useEffect(() => {
-        if(window.localStorage.getItem('user_role') === 'admin'){
-            window.location.reload()
-        }
-    }, [])*/
+  
 
     let handleTutorGrade = e => {
         let elem = e.target;
@@ -515,7 +514,10 @@ const TutorSetup = () => {
         }
     }
 
-
+    useEffect(() => {
+        const localTime = convertGMTOffsetToLocalString(timeZone);
+        setDateTime(localTime)
+    }, [timeZone])
     return ( 
         <>
             <div className="tutor-popin"></div>
@@ -528,7 +530,7 @@ const TutorSetup = () => {
 
                     <div className="tutor-setup-top-field" >
                         <div className="profile-photo-cnt">
-
+                            <p>{typeof dateTime === 'object' ? '' : dateTime}</p>
                             <h5 style={{whiteSpace: 'nowrap'}}>Profile Photo</h5> 
                             <input type="file" data-type='file' onChange={handleImage} style={{display: 'none'}} id="photo" />
                             <div className="tutor-tab-photo-frame">

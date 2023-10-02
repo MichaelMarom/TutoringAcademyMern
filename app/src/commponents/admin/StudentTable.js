@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { get_student_data, set_student_status } from '../../axios/admin';
 import { COLUMNS } from '../../Tables/Admin/column_0';
+import { convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
 
 
 const StudentTable = () => {
@@ -100,7 +101,7 @@ const StudentTable = () => {
                                     <td data-src={item.FirstName + ' ' + item.LastName}>{item.FirstName + ' ' + item.LastName}</td>
                                     <td data-src={item.Email}>{item.Email}</td>
                                     <td data-src={item.Cell}>{item.Cell}</td>
-                                    <td data-src={item.GMT}>{item.GMT}</td>
+                                    <td data-src={item.GMT}>{convertGMTOffsetToLocalString(item.GMT)}</td>
                                     <td data-src={item.ResponseHrs}>{item.ResponseHrs}</td>
                                     <td data-src={null}>{null}</td>
                                     <td data-src={null}>{null}</td>

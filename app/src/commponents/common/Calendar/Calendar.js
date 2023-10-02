@@ -7,6 +7,8 @@ import { addEvent, storeEvent } from "../../../redux/tutor_store/EventSlice";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { get_tutor_setup } from "../../../axios/tutor";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 moment.locale("en-GB");
 const localizer = momentLocalizer(moment);
 
@@ -15,10 +17,9 @@ const views = {
   DAY: 'day',
   MONTH: 'month'
 }
-const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-console.log(timeZone);
 
 const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
+
   const { events: stateEvents } = useSelector(state => state.event);
   const [activeView, setActiveView] = useState(views.MONTH)
   const dispatch = useDispatch();
@@ -51,8 +52,6 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
   }
   const getTutorSetup = async () => {
     const [result] = await get_tutor_setup('Kolin. P. C1501fa');
-    console.log(result.enableHourSlots, result.enabledDays, result.disableDates, result.disableHourSlots, result.disableWeekDays, result.disableHoursRange, 'set to true')
-
     setEnableHourSlots(JSON.parse(result.enableHourSlots));
     setEnabledDays(JSON.parse(result.enabledDays))
     setDisableDates(JSON.parse(result.disableDates));
@@ -60,7 +59,6 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
     setDisabledWeekDays(JSON.parse(result.disableWeekDays));
     setDisabledHours(JSON.parse(result.disableHoursRange));
     setDataFetched(true);
-
   }
 
   useEffect(() => {
@@ -87,6 +85,10 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
 
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
     if (clickedUpperSlot && activeView != views.MONTH) return;
+    if (clickedDate.getTime() < new Date(new Date().setHours(0, 0, 0, 0))) {
+      toast.warning("Cannot Disable/Enable Older Slots");
+      return
+    }
     if (slotInfo.action === "doubleClick") {
       if (user === "tutor") {
         if (disableWeekDays && disableWeekDays.includes(dayName)) {
@@ -221,7 +223,7 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
         const storedMomentDate = moment(storeDate);
         return storedMomentDate.isSame(slotDateMoment, 'day')
       })
-      if (disableWeekDays && disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+      if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
         return {
           className: "disabled-date",
           onClick: (e) => {
@@ -254,13 +256,15 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
 
       const existInEnableSlots = enableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime())
 
-      const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime())
+      const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime());
+
+      if(date.getTime() >= (new Date()).getTime() ) console.log('true for ', date)
       if (existInDisableHourSlots) {
         return {
           className: 'disable-slot',
         }
       }
-      else if (disabledHours && disabledHours.some((timeRange) => {
+      else if ( date.getTime() < (new Date()).getTime() && disabledHours && disabledHours.some((timeRange) => {
         const [start, end] = timeRange;
         return formattedTime === start;
       }) && !existInEnableSlots && !existInDisableHourSlots) {

@@ -4,18 +4,21 @@ import './index.css';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, HashRouter } from "react-router-dom";
 import store from './redux/store';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import App from './routes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Provider store={store}>
+  <>
+    <Provider store={store}>
+      <Router>
+        <App />
+      </Router>
 
-    <Router>
-      <App/>
-    </Router>
-      
-  </Provider>
+    </Provider>
+  </>
 );
 
 // If you want to start measuring performance in your app, pass a function

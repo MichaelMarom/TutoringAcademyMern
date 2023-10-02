@@ -33,3 +33,8 @@ code {
 .disabled-date.rbc-day-slot.rbc-time-column.rbc-now.rbc-today {
   background-color: orange !important;
 }
+
+.Toastify__toast {
+  background: black !important;
+  color: #fff !important;
+}

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-// import Calendar from 'react-calendar';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { days, hours } from "../../constants/constants";
 import ShowCalendar from "../common/Calendar/Calendar";
 import { getEvents } from "../../redux/tutor_store/EventSlice";
 import { useDispatch } from "react-redux";
+import { ToastContainer } from "react-toastify";
 const Scheduling = () => {
   const [activeTab, setActiveTab] = useState("month");
   const [disableWeekDays, setDisabledWeekDays] = useState([]);
@@ -47,12 +47,12 @@ const Scheduling = () => {
   });
 
   useEffect(() => {
-    console.log('dispatching');
     dispatch(getEvents())
   }, [dispatch])
 
   return (
     <>
+      <ToastContainer />
       <div className="form-scheduling">
         <ul className="nav nav-tabs overflow-hidden">
 

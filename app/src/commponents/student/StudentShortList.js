@@ -44,7 +44,6 @@ const StudentShortList = () => {
     function convertGMTToLocalTime(gmtOffset) {
         const utcTime = new Date();
         const localTime = new Date(utcTime.getTime() + gmtOffset * 60 * 60 * 1000);
-        console.log(localTime)
         return localTime;
     }
     let multi_student_cols = [{ Header: 'Photo' }, { Header: 'Demo Lesson' }, { Header: 'Subject' }, { Header: 'Tutor' }, { Header: 'Country' }, { Header: 'GMT' }, { Header: 'Invite' }, { Header: 'Hire' }, { Header: 'Rate', }]

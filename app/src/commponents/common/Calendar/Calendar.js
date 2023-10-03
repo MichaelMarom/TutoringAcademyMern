@@ -182,8 +182,16 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
           //slots week/days
           const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === clickedDate.getTime());
           const existInEnableSlots = enableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === clickedDate.getTime())
+
+          //student general
+          const existInReservedSlots = reservedSlots.some(dateTime => convertToDate(dateTime).getTime() === clickedDate.getTime())
           if (existInEnableSlots) {
-            setReservedSlots([...reservedSlots, clickedDate, endTime])
+            if (existInReservedSlots) {
+              const removeReservedSlots = reservedSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
+              )
+              setReservedSlots(removeReservedSlots)
+            }
+            else setReservedSlots([...reservedSlots, clickedDate, endTime])
           }
           else if (disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
             alert("This slot is disabled.");
@@ -195,7 +203,12 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
             alert("This slot is disabled.");
           }
           else {
-            setReservedSlots([...reservedSlots, clickedDate, endTime])
+            if (existInReservedSlots) {
+              const removeReservedSlots = reservedSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
+              )
+              setReservedSlots(removeReservedSlots)
+            }
+            else setReservedSlots([...reservedSlots, clickedDate, endTime])
           }
         }
       }

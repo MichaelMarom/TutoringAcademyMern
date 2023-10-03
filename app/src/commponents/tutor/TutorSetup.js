@@ -522,7 +522,7 @@ const TutorSetup = () => {
         <>
             <div className="tutor-popin"></div>
             <div className="save-overlay">
-                <span class="save_loader"></span>
+                <span className="save_loader"></span>
             </div>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="tutor-tab-setup">
                 

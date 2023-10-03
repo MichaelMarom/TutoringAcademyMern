@@ -340,7 +340,7 @@ const Subjects = () => {
         <>
             <div className="tutor-popin"></div>
             <div className="save-overlay">
-                <span class="save_loader"></span>
+                <span className="save_loader"></span>
             </div>
             <div className="tutor-tab-subjects">
                 <div className="tutor-tab-subject-alert">

@@ -4,8 +4,9 @@ import { days, hours } from "../../constants/constants";
 import ShowCalendar from "../common/Calendar/Calendar";
 import { getEvents } from "../../redux/tutor_store/EventSlice";
 import { useDispatch } from "react-redux";
-import { ToastContainer } from "react-toastify";
+
 const Scheduling = () => {
+
   const [activeTab, setActiveTab] = useState("month");
   const [disableWeekDays, setDisabledWeekDays] = useState([]);
   const [disabledHours, setDisabledHours] = useState([]);
@@ -52,18 +53,7 @@ const Scheduling = () => {
 
   return (
     <>
-      <ToastContainer />
       <div className="form-scheduling">
-        <ul className="nav nav-tabs overflow-hidden">
-
-          <button className={`btn-sm ${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}
-            onClick={() => handleTabClick("month")}
-          >Block days </button>
-
-          <button className={`btn-sm ${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}
-
-            onClick={() => handleTabClick("day")}>Block hours</button>
-        </ul>
         <div className="time-period">
           <div id="form-scheduling-cnt" className="form-scheduling-cnt-month">
             <div className="tab-content">
@@ -72,8 +62,12 @@ const Scheduling = () => {
                 id="months"
               >
                 <div className="form-scheduling-cnt-left">
-                  <h6>Block days</h6>
+                  {/* <h6 className="d-inline">Block days</h6> */}
 
+                  <button className={`btn-sm ${activeTab === "day" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}
+
+                    onClick={() => handleTabClick("day")}>Block hours</button>
+                  {/* </ul> */}
                   <div className="highlight small lh-sm">
                     Checkbox the Day you are not tutoring. Students will
                     not be able to book lessons for your blocked day(s).
@@ -120,11 +114,13 @@ const Scheduling = () => {
                 id="days"
               >
                 <div className="form-scheduling-cnt-left">
-                  <h6>Black hours</h6>
-
+                  {/* <h6 className="d-inline">Black hours</h6> */}
+                  <button className={`btn-sm ${activeTab === "month" ? "btn btn-primary" : "btn btn-light btn-outline-dark"}`}
+                    onClick={() => handleTabClick("month")}
+                  >Block days </button>
                   <div className="highlight small lh-sm">
-                    CheckBox the hours that you are not tutoring. students will
-                    not be able to book lessons for your blocked hours
+                    CheckBox the hours that you are not tutoring. Students will
+                    not be able to book lessons for your blocked hours.
                   </div>
 
                   <div className="form-scheduling-hours  ">
@@ -156,7 +152,7 @@ const Scheduling = () => {
             </div>
 
             <div className="form-scheduling-cnt-right">
-              <ShowCalendar disableWeekDays={disableWeekDays} disabledHours={disabledHours} setDisabledWeekDays={setDisabledWeekDays} setDisabledHours={setDisabledHours} />
+              <ShowCalendar activeTab={activeTab} disableWeekDays={disableWeekDays} disabledHours={disabledHours} setDisabledWeekDays={setDisabledWeekDays} setDisabledHours={setDisabledHours} />
             </div>
           </div>
 

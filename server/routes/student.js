@@ -10,7 +10,6 @@ STUDENT_ROUTES.post('/student/short-list', parser, upload_student_short_list)
 STUDENT_ROUTES.get('/student/short-list', get_student_short_list)
 STUDENT_ROUTES.get('/student/short-list-data', get_student_short_list_data)
 STUDENT_ROUTES.get('/student/market-data', get_student_market_data)
-
 STUDENT_ROUTES.post('/student/setup', parser, upload_form_one)
 
 module.exports = {

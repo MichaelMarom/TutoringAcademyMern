@@ -197,7 +197,7 @@ const THeader = () => {
 
             
             let noteCnt = 
-            `<textarea class="fillText-cnt" placeholder="Write Something Here..." style="left: ${l}px; top: ${t}px;" ></textarea>`   
+            `<textarea className="fillText-cnt" placeholder="Write Something Here..." style="left: ${l}px; top: ${t}px;" ></textarea>`   
 
             document.querySelector('.class-room').insertAdjacentHTML('beforeend', noteCnt)
 
@@ -211,7 +211,7 @@ const THeader = () => {
             let t = Math.floor(Math.random() * 21) + 90 
 
             let imgCnt = 
-            `<div class="fillimg-cnt" style="left: ${l}px; top: ${t}px;" contentEditable> 
+            `<div className="fillimg-cnt" style="left: ${l}px; top: ${t}px;" contentEditable> 
                 <img src='' alt="" style="height: 100%; width: 100%;" />
 
             </div>  ` 

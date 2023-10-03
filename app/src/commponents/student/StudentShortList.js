@@ -46,7 +46,7 @@ const StudentShortList = () => {
         const localTime = new Date(utcTime.getTime() + gmtOffset * 60 * 60 * 1000);
         return localTime;
     }
-    let multi_student_cols = [{ Header: 'Photo' }, { Header: 'Demo Lesson' }, { Header: 'Subject' }, { Header: 'Tutor' }, { Header: 'Country' }, { Header: 'GMT' }, { Header: 'Invite' }, { Header: 'Hire' }, { Header: 'Rate', }]
+    let multi_student_cols = [{ Header: 'Photo' }, { Header: 'Demo Lesson @50%' }, { Header: 'Subject' }, { Header: 'Tutor Name' }, { Header: 'Country' }, { Header: 'Tutor Time' }, { Header: 'Tutor Schedule' }, { Header: 'Tutor Profile' }, { Header: 'Rate' }, { Header: 'Hire' }]
 
     let redirect_to_tutor_profile = tutor_user_id => {
         window.localStorage.setItem('tutor_user_id', tutor_user_id);
@@ -57,14 +57,15 @@ const StudentShortList = () => {
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
                 <div className="form-into-prompt shadow-sm" style={{ padding: '20px' }}>
-                    <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'larger', fontWeight: 'bold' }}> To view complete tutor's profile include presentation video, double click on his/hers picture.</div>
+                    <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> To view complete tutor's profile include presentation video, double click on his/hers picture.</div>
 
                     <div className="tables" style={{ height: '800px', width: '100%', overflow: 'auto', padding: '5px' }}>
 
                         <table>
                             <thead>
                                 <tr>
-                                    {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>)}
+                                    {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,8 +76,9 @@ const StudentShortList = () => {
                                     response.length > 0
                                         ?
 
-                                        response.map((item, index) =>
-                                            <tr onDoubleClick={e => redirect_to_tutor_profile(item.AcademyId)} key={index}>
+                                        response.map((item, index) => {
+                                            console.log(item)
+                                            return <tr onDoubleClick={e => redirect_to_tutor_profile(item.AcademyId)} key={index}>
 
                                                 <td>{<img src={item.tutorData.Photo} style={{ height: '100px', width: '120px' }} />}</td>
                                                 <td>
@@ -94,10 +96,19 @@ const StudentShortList = () => {
                                                 <td>
                                                     {convertGMTToLocalTime(item.tutorData.GMT).toLocaleString()}
                                                 </td>
-                                                <td><input style={{ height: '20px', width: '20px' }} type='checkbox' /></td>
-                                                <td><input style={{ height: '20px', width: '20px' }} type='radio' /></td>
+                                                <td>
+                                                    <button className='btn btn-outline-primary' onClick={() => navigate(`/student/schedule`, { state: { id: item.tutorData.SID, academyId: item.tutorData.AcademyId, GMT: item.tutorData.GMT, name: `${item.tutorData.FirstName} ${item.tutorData.LastName}` } })}>View Schedule</button>
+                                                </td>
+                                                <td>
+                                                    <button className='btn btn-outline-primary' onClick={() => navigate(`/student/setup`)}>View Profile</button>
+                                                </td>
                                                 <td>{item.tutorShortList.Rate}</td>
+                                                <td>
+                                                    <input style={{ height: '20px', width: '20px' }} type='radio' />
+                                                </td>
+
                                             </tr>
+                                        }
                                         )
                                         :
                                         ''

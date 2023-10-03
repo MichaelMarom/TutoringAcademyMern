@@ -118,7 +118,7 @@
     }
 
     .student-tab-header ul::-webkit-scrollbar{
-        display: none; 
+        display: block; 
     }
 
     
@@ -206,6 +206,7 @@
       .student-market-place-header{
         height: 50px;
         width: 100%;
+        margin-top: 20px;
         margin-bottom: 10px;
       }
 
@@ -217,24 +218,38 @@
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        background-color: #2471A3;
+        background-color: #002036;
       }
 
       .student-market-place-header ul li{
         padding: 5px 10px 5px 10px;
         margin: 0 10px 0 10px;
+        transform: skew(-40deg);
         height: 100%;
         border-radius: 5px;
-        background-color: #2471A3;
+        background-color: #002036;
         color: #fff;
       }
 
+      .student-market-place-header ul li a {
+        display: block;
+        transform: skew(40deg);
+        transition: all .2s ease-in;
+        background: transparent;
+}
+
+#student-market-place-header-active{
+    background: #2471A3;
+      color: #fff;
+}
+
       .student-market-place-header ul li:hover{
-        background-color: #212F3D;
-      }
+        background: #2471A3;
+          color: #F7F9F9;
+    }
 
       .student-market-place-body{
-        height: calc(100% - 150px);
+        height: calc(100% - 200px);
         width: 100%;
         overflow: auto;
         position: relative;
@@ -251,7 +266,7 @@
         justify-content: center;
         flex-direction: column;
         position: absolute;
-        bottom: 0;
+        bottom: 45px;
         left: 0;
       }
 

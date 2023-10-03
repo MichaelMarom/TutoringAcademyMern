@@ -160,7 +160,7 @@ const StudentFaculties = () => {
 
     
     useEffect(() => {
-        get_student_short_list_data()
+        get_student_short_list_data(window.localStorage.getItem('student_user_id'))
         .then((result) => {
             let list = [...document.querySelectorAll('#student-tutor')];
 
@@ -200,7 +200,7 @@ const StudentFaculties = () => {
 
             <div className="tutor-popin"></div>
             <div className="save-overlay">
-                <span class="save_loader"></span>
+                <span className="save_loader"></span>
             </div>
             <div className="form-subjects" style={{overflow: 'hidden', height: 'calc(100vh - 50px)'}}>
                

@@ -293,7 +293,7 @@ const Education = () => {
         <>
             <div className="tutor-popin"></div>
             <div className="save-overlay">
-                <span class="save_loader"></span>
+                <span className="save_loader"></span>
             </div>
             <div className="tutor-tab-education">
                 <form action="">
@@ -302,7 +302,7 @@ const Education = () => {
                         <h3>Education</h3>
 
                         <h6 className='tutor-tab-education-notice highlight' >
-                        Tutor does not have to be academic graduate in order to pass his knowledge. However, when you select an academic background, you musted uplaod your credentials. You have 7 days doing that. Until your diploma or teacher's cerificate uploaded, a "X" icon is being shown near the appropriate field.. When your documentaions are uploaded, the icon be changed to a green "verified" logo. The studen or parents are able to see your status when making their decision of selecting you.
+                        Tutor does not have to be academic graduate in order to pass his knowledge. However, when you select your academic background, you must uplaod your credentials. You have 7 days doing that. Until your diploma or teacher's cerificate uploaded, "X" icon is being shown near the appropriate field. When your documentaions are uploaded, the icon be changed to a green "Verified" logo. The student, or parents are able to see your status when making their decision of selecting you.
                         </h6>
 
                         

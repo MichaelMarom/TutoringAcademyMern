@@ -34,6 +34,10 @@ code {
   background-color: orange !important;
 }
 
+.reserved-slot {
+  background-color: yellow !important;
+}
+
 .Toastify__toast {
   background: black !important;
   color: #fff !important;

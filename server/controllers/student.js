@@ -285,6 +285,7 @@ let upload_student_short_list = async(req,res) => {
 
 
 let get_student_short_list = async(req,res) => {
+    console.log(req.query)
 
     let tutorUserData = []
     let tutorDemoLesson = []
@@ -369,12 +370,11 @@ let get_student_short_list = async(req,res) => {
     })
     .then(({tutorProfile, demoLesson, studentShortList}) => {
         let studentBook = [];
+        console.log(studentShortList)
 
-       //console.log(demoLesson)
        studentShortList.map((item, index) => {
             let tutorData = tutorProfile[0].filter(tutor => tutor.AcademyId === item.AcademyId )[0]
             let tutorDemoLesson = demoLesson[0].filter(tutor => tutor.AcademyId === item.AcademyId )[0]
-
             let bookName = shortId.generate();
 
             bookName = {
@@ -384,6 +384,7 @@ let get_student_short_list = async(req,res) => {
             };
 
             studentBook.push(bookName)
+
             if(studentBook.length === studentShortList.length){
                 res.status(200).send(Object.values(studentBook))
             }
@@ -400,7 +401,7 @@ let get_student_short_list = async(req,res) => {
 let get_student_short_list_data = (req,res) => {
 
     connecteToDB.then(poolConnection => 
-        poolConnection.request().query( `SELECT * From StudentShortList` )
+        poolConnection.request().query( `SELECT * From StudentShortList WHERE CONVERT(VARCHAR, Student) =  '${req.query.id}'` )
         .then((result) => {
 
             res.send(result.recordset);

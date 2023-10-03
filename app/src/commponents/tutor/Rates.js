@@ -237,7 +237,7 @@ const Rates = () => {
         <>
             <div className="tutor-popin"></div>
             <div className="save-overlay">
-                <span class="save_loader"></span>
+                <span className="save_loader"></span>
             </div>
             <div className="tutor-tab-rates" >
                 <div className="tutor-tab-rate-section">
@@ -318,7 +318,7 @@ const Rates = () => {
                                 </select>
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', marginBottom: '5px',  justifyContent: 'center'}}>
-                                <label htmlFor=""><h6>30 mins free demo lesson &nbsp;</h6></label>
+                                <label htmlFor=""><h6>Demo lesson at 50% off &nbsp;</h6></label>
                                 <input onInput={e => setFreeDemoLesson(e.target.value)}  style={{cursor: 'pointer', height: '20px', width: '20px'}} type="radio" name="30-mins-free-demo-lesson" id='freeDemoYes' value={'yes'} />&nbsp; <h6>Yes</h6> &nbsp;
                                 <input onInput={e => setFreeDemoLesson(e.target.value)} style={{cursor: 'pointer', height: '20px', width: '20px'}} id='freeDemoNo' type="radio" name="30-mins-free-demo-lesson" value={'no'} />&nbsp; <h6>No</h6> 
                             </div>

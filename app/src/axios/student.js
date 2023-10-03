@@ -127,12 +127,12 @@ export let get_student_short_list = (student) => {
     })
 }
 
-export let get_student_short_list_data = () => {
+export let get_student_short_list_data = (id) => {
 
     return new Promise((resolve, reject) => {
 
     
-        axios.get('http://localhost:9876/student/short-list-data', {  })
+        axios.get('http://localhost:9876/student/short-list-data', { params: {id} })
         .then((result) => {
             resolve(result.data) 
         })

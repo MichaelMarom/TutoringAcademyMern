@@ -94,7 +94,7 @@ const Footer = () => {
                 <ul>
                     <li id="tutor-clear" className="p-1"><button type="button" className="btn btn-danger fs-4 m-0" onClick={clear}>Clear records</button></li>
                     
-                    <li className="p-1"><button type="button" class="btn btn-primary fs-4 m-0" onClick={back}>back</button></li>
+                    <li className="p-1"><button type="button" className="btn btn-primary fs-4 m-0" onClick={back}>back</button></li>
 
                     <li id="tutor-edit" className="p-1"><button type="button" className="btn btn-secondary fs-4 m-0">edit</button></li>
                     

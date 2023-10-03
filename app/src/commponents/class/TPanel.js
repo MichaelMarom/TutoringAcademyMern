@@ -48,7 +48,7 @@ const TPanel = () => {
         let item = 
         `
         <div id='x-position-positive' style='height: fit-content; width: 100%; position: relative; display: flex;'>
-            <p class='mychat' >${chat}</p>
+            <p className='mychat' >${chat}</p>
         </div>
         `
 

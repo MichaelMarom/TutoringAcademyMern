@@ -333,9 +333,9 @@ html,body{
         text-align: center;
         height: 40px;
         top: 0;
-        color: #000;
+        color: #fff;
         position: sticky;
-        background: white;
+        background: #2471A3;
 
     }
 
@@ -836,6 +836,7 @@ html,body{
     .form-scheduling-cnt-month,
     .form-scheduling-cnt-day {
         /* height: calc(100vh - 50px); */
+        margin-top: 20px;
         width: 100%;
         display: none;
     }

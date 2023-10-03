@@ -18,7 +18,7 @@ const views = {
   MONTH: 'month'
 }
 
-const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
+const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
 
   const { events: stateEvents } = useSelector(state => state.event);
   const [activeView, setActiveView] = useState(views.MONTH)
@@ -31,7 +31,9 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
     end: null,
   });
 
-  const [user, setuser] = useState("tutor");
+  // const [user, setUser] = useState({role:'tutor', id:"Kolin. P. C1501fa", SID:"2"});
+  const [user, setUser] = useState({ role: 'student', id: "Rosemary. W. Cab1220", SID: "2" });
+  // const [currentTutor, setCurrentTutor] = useState({ id: "Kolin. P. C1501fa", SID: "2" });
 
   const [enabledDays, setEnabledDays] = useState([]);
   const [disableDates, setDisableDates] = useState([]);
@@ -40,8 +42,12 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
   const [disableHourSlots, setDisableHourSlots] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
 
+
+  //student states
+  const [reservedSlots, setReservedSlots] = useState([]);
+
   const updateTutorDisableRecord = async () => {
-    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/2`, {
+    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${user.SID}`, {
       enableHourSlots,
       disableDates,
       disableWeekDays,
@@ -51,13 +57,14 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
     });
   }
   const getTutorSetup = async () => {
-    const [result] = await get_tutor_setup('Kolin. P. C1501fa');
+    const [result] = await get_tutor_setup(currentTutor.id);
     setEnableHourSlots(JSON.parse(result.enableHourSlots));
     setEnabledDays(JSON.parse(result.enabledDays))
     setDisableDates(JSON.parse(result.disableDates));
     setDisableHourSlots(JSON.parse(result.disableHourSlots));
     setDisabledWeekDays(JSON.parse(result.disableWeekDays));
     setDisabledHours(JSON.parse(result.disableHoursRange));
+    console.log(result, 'results')
     setDataFetched(true);
   }
 
@@ -66,13 +73,14 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
   }, [])
 
   useEffect(() => {
-    if (dataFetched)
+    (activeTab === views.MONTH) ? setActiveView(views.MONTH) : setActiveView(views.WEEK)
+  }, [activeTab])
+
+  useEffect(() => {
+    if (dataFetched && user.role === 'tutor')
       updateTutorDisableRecord();
   }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched]);
 
-  let formats = {
-    timeGutterFormat: 'HH:mm',
-  }
   const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
   const handleDateClick = (slotInfo) => {
@@ -85,12 +93,12 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
 
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
     if (clickedUpperSlot && activeView != views.MONTH) return;
-    if (clickedDate.getTime() < new Date(new Date().setHours(0, 0, 0, 0))) {
-      toast.warning("Cannot Disable/Enable Older Slots");
+    if (clickedDate.getTime() < (new Date()).getTime()) {
+      toast.warning(`Cannot ${user.role === 'tutor' ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
       return
     }
     if (slotInfo.action === "doubleClick") {
-      if (user === "tutor") {
+      if (user.role === "tutor") {
         if (disableWeekDays && disableWeekDays.includes(dayName)) {
           if (activeView !== views.MONTH) {
 
@@ -156,25 +164,45 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
             }
           }
         }
-      } else if (user === "student") {
+      } else if (user.role === "student") {
+        if (activeView !== views.MONTH) {
+          //slots/month
+          const existsinEnabledInMonth = enabledDays.some((arrayDate) => convertToDate(arrayDate).getTime() === clickedDate.getTime());
+          const existsinEnabledInWeek = enabledDays.some((arrayDate) => {
+            const slotDateMoment = moment(clickedDate);
+            const arrayMomentDate = moment(arrayDate);
+            return arrayMomentDate.isSame(slotDateMoment, 'day')
+          });
+
+          const isDisableDate = disableDates.some(storeDate => {
+            const slotDateMoment = moment(clickedDate);
+            const storedMomentDate = moment(storeDate);
+            return storedMomentDate.isSame(slotDateMoment, 'day')
+          })
+          //slots week/days
+          const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === clickedDate.getTime());
+          const existInEnableSlots = enableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === clickedDate.getTime())
+          if (existInEnableSlots) {
+            setReservedSlots([...reservedSlots, clickedDate, endTime])
+          }
+          else if (disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+            alert("This slot is disabled.");
+          }
+          else if (existInDisableHourSlots || !existInEnableSlots && disabledHours.some((timeRange) => {
+            const [start, end] = timeRange;
+            return formattedTime === start;
+          })) {
+            alert("This slot is disabled.");
+          }
+          else {
+            setReservedSlots([...reservedSlots, clickedDate, endTime])
+          }
+        }
       }
+
       return;
     } else if (slotInfo.action === "click") {
-      if (user === "student") {
-        if (disableWeekDays && disableWeekDays.includes(dayName)) {
-          alert("This day is disabled.");
-          return;
-        }
-        if (
-          disabledHours &&
-          disabledHours.some((timeRange) => {
-            const [start, end] = timeRange;
-            return formattedTime >= start && formattedTime < end;
-          })
-        ) {
-          alert("This slot is disabled.");
-          return;
-        }
+      if (user.role === "student") {
       }
     }
   };
@@ -253,18 +281,24 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
   const slotPropGetter = useCallback((date) => {
     if (date && moment(date).isSame(moment(date), 'day')) {
       const formattedTime = moment(date).format('h:00 a');
+      //student checks
+      const existsinReservedSlots = reservedSlots.some(slot => convertToDate(slot).getTime() === date.getTime())
 
+      //tutor checks
       const existInEnableSlots = enableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime())
 
       const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime());
-
-      if(date.getTime() >= (new Date()).getTime() ) console.log('true for ', date)
-      if (existInDisableHourSlots) {
+      if (existsinReservedSlots) {
+        return {
+          className: 'reserved-slot'
+        }
+      }
+      else if (existInDisableHourSlots) {
         return {
           className: 'disable-slot',
         }
       }
-      else if ( date.getTime() < (new Date()).getTime() && disabledHours && disabledHours.some((timeRange) => {
+      else if (date.getTime() >= (new Date()).getTime() && disabledHours && disabledHours.some((timeRange) => {
         const [start, end] = timeRange;
         return formattedTime === start;
       }) && !existInEnableSlots && !existInDisableHourSlots) {
@@ -281,7 +315,7 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
 
     }
     return {};
-  }, [disabledHours, enableHourSlots, disableHourSlots]);
+  }, [disabledHours, enableHourSlots, disableHourSlots, reservedSlots]);
 
   const handleViewChange = (view) => {
     setActiveView(view)
@@ -290,7 +324,7 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
   if (!dataFetched)
     return (
       <div className="d-flex justify-content-center align-items-center h-100">
-        <div class="spinner-border" role="status">
+        <div className="spinner-border" role="status">
         </div>
       </div>
     )
@@ -300,8 +334,8 @@ const ShowCalendar = ({ disableWeekDays, disabledHours, setDisabledWeekDays, set
         views={["day", "week", "month"]}
         localizer={localizer}
         selectable={true}
-        formats={formats}
-        defaultView="month"
+        defaultView={activeView}
+        view={activeView}
         startAccessor="start"
         endAccessor="end"
         style={{ height: "60vh", width: "100%" }}

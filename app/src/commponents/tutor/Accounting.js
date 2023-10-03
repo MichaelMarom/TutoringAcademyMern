@@ -171,7 +171,7 @@ const Accounting = () => {
         <>
             <div className="tutor-popin"></div>
             <div className="save-overlay">
-                <span class="save_loader"></span>
+                <span className="save_loader"></span>
             </div>
             <div className="tutor-tab-accounting">
 

@@ -38,6 +38,8 @@ import Student_Table from "./pages/Admin/Student";
 import StudentScheduling from "./pages/student/StudentScheduling";
 import StudentTermOfUse from "./pages/student/TermOfUse";
 import StudentMarketPlace from "./commponents/student/StudentMarketPlace";
+import NewSubject from "./pages/Admin/NewSubject";
+import TutorNewSubject from "./pages/Admin/NewSubject";
 
 
 const App = () => {
@@ -139,6 +141,7 @@ const App = () => {
                         
                         <Route path="admin/tutor-data" element={<Tutor_Table />}></Route>
                         <Route path="admin/student-data" element={<Student_Table />}></Route>
+                        <Route path="admin/new-subject" element={<TutorNewSubject />}></Route>
 
 
                     </Routes>

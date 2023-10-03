@@ -8,11 +8,11 @@ const instance = axios.create({
 });
 
 
-export let upload_new_subject = (AcademyId) => {
+export let upload_new_subject = (faculty, subject, reason, AcademyId) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/new-subject', {
-            AcademyId
+            faculty, subject, reason, AcademyId
         })
         .then((result) => {
             resolve(result.data)

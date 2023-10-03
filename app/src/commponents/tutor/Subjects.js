@@ -214,7 +214,7 @@ const Subjects = () => {
         .then((result) => {
             let list = result.map(item => {
                 return(
-                    <option data-id={item.id}>{item.Faculty}</option>
+                    <option data-id={item.id} value={item.Faculty}>{item.Faculty}</option>
                 )
             })
             console.log(result)
@@ -344,6 +344,8 @@ const Subjects = () => {
 
         let saver = () => {
             let user_id = window.localStorage.getItem('tutor_user_id');
+
+
             upload_new_subject(newSubjectFacultyData, newSubjectData, newSubjectReasonData, user_id)
             .then((result) => {
                 if(result){
@@ -356,6 +358,9 @@ const Subjects = () => {
                     setTimeout(() => {
                         document.querySelector('.tutor-popin').removeAttribute('id');
                     }, 2000);
+                    let list= [...document.querySelectorAll('#new-sub')]
+                    let validate = list.map(item => item.value = '');
+                    document.querySelector('#new_sub_check_box').checked = false
                 }else{
                     
                     document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
@@ -373,6 +378,7 @@ const Subjects = () => {
 
         let list= [...document.querySelectorAll('#new-sub')]
         let validate = list.filter(item => item.value === '');
+        let ll = list.filter(item => item.value === '');
 
         if(validate.length > 0){
 
@@ -380,9 +386,11 @@ const Subjects = () => {
             alert('Please Ensure No Field Is Empty')
 
         }else{
-            validate.map(item => item.style.border = '1px solid #000');
-
-            document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+            validate.forEach(item => console.log(item.style));
+            console.log()
+            let list = [...document.querySelectorAll('#new-sub')]
+            list.map(item => item.style.border = '1px solid black')
+            document.querySelector('.save-overlay').setAttribute('id', 'save-overlay');
             saver()
 
         }
@@ -408,7 +416,7 @@ const Subjects = () => {
                 </div>
                 <div className="tutor-tab-subjects-info" style={{display: 'flex', flexDirection: 'column',background: '#e7e7e7', position: 'relative', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', margin: 'auto'}}>
 
-                    <input onInput={newSubjectCheckBox} type='checkbox' style={{height: '30px',position:'absolute', left: '45px', top: '8px',width: '30px', margin: '10px 0 0 0', cursor: 'pointer'}} />
+                    <input onInput={newSubjectCheckBox} id='new_sub_check_box' type='checkbox' style={{height: '30px',position:'absolute', left: '45px', top: '8px',width: '30px', margin: '10px 0 0 0', cursor: 'pointer'}} />
                     
                     <div style={{width: '70%', margin: 'auto', opacity: newSubject ? '1' : '.5', pointerEvents:newSubject ? 'all' : 'none' }}>
                         <div  style={{width: '45%', padding: '5px', display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 'auto,', float: 'left', height: '100%'}}>

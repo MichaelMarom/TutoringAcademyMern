@@ -8,6 +8,21 @@ const instance = axios.create({
 });
 
 
+export let upload_new_subject = (AcademyId) => {
+    return new Promise((resolve, reject) => {
+
+        axios.post('http://localhost:9876/tutor/new-subject', {
+            AcademyId
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })           
+
+    })
+}
   
 export let get_subject = () => {
 
@@ -53,14 +68,14 @@ export let get_faculty = () => {
 
 
 
-export let get_tutor_status = (AcademyId) => {
+export let get_tutor_status = (faculty, subject, reason, AcademyId) => {
 
     return new Promise((resolve, reject) => {
 
     
         axios.get('http://localhost:9876/tutor/tutor-status', {
             params: {
-                AcademyId
+                faculty, subject, reason, AcademyId
             }
         })
         .then((result) => {

@@ -4,6 +4,45 @@ const { shortId } = require('../modules');
 const { insert, updateById, getAll } = require('../helperfunctions/crud_queries');
 
 
+
+let post_new_subject = (req, res) => {
+
+
+    let {faculty, subject, reason, AcademyId } = req.body;
+
+    let date = new Date();
+
+    marom_db(async (config) => {
+        const sql = require('mssql');
+        console.log('uploading data...')
+
+        var poolConnection = await sql.connect(config);
+        if (poolConnection) {
+            var resultSet = poolConnection.request().query(
+                `
+                    INSERT INTO "NewTutorSubject"(faculty, subject, date, AcademyId, reason)
+                    VALUES ('${faculty}', '${subject}', '${date}', '${AcademyId}', '${reason}')
+                    `
+            )
+
+            resultSet.then((result) => {
+
+                result.rowsAffected[0] === 1
+                    ?
+                    res.send({ bool: true, mssg: 'Data Was Successfully Saved' })
+                    :
+                    res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
+
+            })
+                .catch((err) => {
+                    console.log(err);
+                    res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
+                })
+
+        }
+
+    })
+}
 let subjects = (req, res) => {
     marom_db(async (config) => {
         const sql = require('mssql');
@@ -971,6 +1010,7 @@ module.exports = {
     post_form_three,
     get_countries,
     get_gmt,
+    post_new_subject,
     get_state,
     get_experience,
     get_degree,

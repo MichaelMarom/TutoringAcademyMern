@@ -17,7 +17,8 @@
         display: flex;
         align-items: center;
         justify-content: left;
-        overflow: auto;
+        overflow-x: auto;
+        overflow-y: none;
         padding: 0 50px 0 50px;
         background: #212F3D;
         scroll-behavior: smooth;
@@ -25,7 +26,8 @@
     }
 
     .form-subject-data-tabs ul::-webkit-scrollbar{
-        display: none;
+        display: block;
+        margin-top: -80px;
     }
 
     .form-subject-data-tabs ul li{

@@ -212,11 +212,12 @@ const Subjects = () => {
                     <option data-id={item.id}>{item.Faculty}</option>
                 )
             })
+            console.log(result)
 
             setNewSubjectFaculty(list)
         })
         .catch(err => console.log(err))
-    })
+    },[])
 
 
     let handle_scroll_right = () => {
@@ -348,13 +349,15 @@ const Subjects = () => {
                 </div>
                 <div className="tutor-tab-subjects-info" style={{display: 'flex', flexDirection: 'column',background: '#e7e7e7', position: 'relative', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', margin: 'auto'}}>
 
-                    <input onInput={newSubjectCheckBox} type='checkbox' style={{height: '30px',position:'absolute', left: '15px', top: '8px',width: '30px', margin: '10px 0 0 0', cursor: 'pointer'}} />
+                    <input onInput={newSubjectCheckBox} type='checkbox' style={{height: '30px',position:'absolute', left: '45px', top: '8px',width: '30px', margin: '10px 0 0 0', cursor: 'pointer'}} />
                     
                     <div style={{width: '70%', margin: 'auto', opacity: newSubject ? '1' : '.5', pointerEvents:newSubject ? 'all' : 'none' }}>
                         <div style={{width: '45%', padding: '5px', display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 'auto,', float: 'left', height: '100%'}}>
                        
                             <input style={{float: 'left',ontSize: 'small',background:'#fff',width: '180px', height: '60px', margin: '0 0 0 0'}} type='text' placeholder='Type your subject here' />
+                            &nbsp;&nbsp;&nbsp;&nbsp;
                             <select style={{float: 'right',ontSize: 'small',background:'#fff',width: '180px', height: '60px', margin: '0 0 0 0'}} type='text' >
+                                <option value={''}>Select Faculty</option>
                                 {newSubjectFaculty}
                             </select>
 
@@ -381,7 +384,7 @@ const Subjects = () => {
 
                    
 
-                    <input   style={{fontSize: 'small', background: 'green', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', width: '80px', margin: '0 5px 0 5px',position:'absolute', right: '15px', top: '15px'}} type="submit" value="Upload" />
+                    <input   style={{fontSize: 'small', background: 'green', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', width: '80px', margin: '0 5px 0 5px',position:'absolute', right: '45px', top: '15px'}} type="submit" value="Upload" />
                 </div>
 
                 <br />

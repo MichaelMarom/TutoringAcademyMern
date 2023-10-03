@@ -77,8 +77,7 @@ const StudentShortList = () => {
                                         ?
 
                                         response.map((item, index) => {
-                                            console.log(item)
-                                            return <tr onDoubleClick={e => redirect_to_tutor_profile(item.AcademyId)} key={index}>
+                                            return <tr onDoubleClick={e => redirect_to_tutor_profile(item.tutorData.AcademyId)} key={index}>
 
                                                 <td>{<img src={item.tutorData.Photo} style={{ height: '100px', width: '120px' }} />}</td>
                                                 <td>
@@ -100,7 +99,7 @@ const StudentShortList = () => {
                                                     <button className='btn btn-outline-primary' onClick={() => navigate(`/student/schedule`, { state: { id: item.tutorData.SID, academyId: item.tutorData.AcademyId, GMT: item.tutorData.GMT, name: `${item.tutorData.FirstName} ${item.tutorData.LastName}` } })}>View Schedule</button>
                                                 </td>
                                                 <td>
-                                                    <button className='btn btn-outline-primary' onClick={() => navigate(`/student/setup`)}>View Profile</button>
+                                                    <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(item.tutorData.AcademyId)}>View Profile</button>
                                                 </td>
                                                 <td>{item.tutorShortList.Rate}</td>
                                                 <td>

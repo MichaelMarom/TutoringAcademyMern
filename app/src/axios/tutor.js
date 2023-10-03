@@ -36,7 +36,7 @@ export let get_faculty = () => {
     return new Promise((resolve, reject) => {
 
     
-        axios.get('http://localhost:9876/tutor/faculty', {
+        axios.get('http://localhost:9876/tutor/faculties', {
             params: {
                  
             }

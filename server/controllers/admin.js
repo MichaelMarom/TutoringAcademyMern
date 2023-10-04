@@ -153,10 +153,39 @@ let get_tutor_new_subject = async(req,res) => {
 }
 
 
+let accept_new_subject = (req, res) => {
+    let{Id, Status} = req.body;
+    marom_db(async(config) => {
+        const sql = require('mssql');
+    
+        var poolConnection = await sql.connect(config);
+       // console.log(poolConnection._connected)
+        if(poolConnection){
+            poolConnection.request().query(
+                `
+                    INSERT INTO Faculty(FacultyId, SubjectName, CreatedOn) values('${id}','${subject}','${date}')
+                `
+            )
+            .then((result) => {
+                
+                result.rowsAffected[0] === 1 ? res.status(200).send({bool: true, mssg: 'Student status was updated successfully'}) : res.status(200).send({bool: false, mssg: 'Tutor status was not updated successfully please try'})
+
+                //result.recordset.map(item => item.AcademyId === user_id ? item : null)
+            })
+            .catch(err =>
+                res.status(200).send({bool: false, mssg: 'Database Error, Please Try Again...'})
+            )
+
+        }
+    
+    })
+}
+
 module.exports = {
     get_tutor_data,
     get_student_data,
     set_tutor_status,
     set_student_status,
-    get_tutor_new_subject
+    get_tutor_new_subject,
+    accept_new_subject
 }

@@ -12,6 +12,7 @@ ADMIN_ROUTES.get('/admin/tutor-new-subject', get_tutor_new_subject)
 
 ADMIN_ROUTES.post('/admin/set-tutor-status', parser, set_tutor_status);
 ADMIN_ROUTES.post('/admin/set-student-status', parser, set_student_status);
+ADMIN_ROUTES.post('/admin/accept-new-subject', parser, accept_new_subject);
 
 module.exports = {
     ADMIN_ROUTES

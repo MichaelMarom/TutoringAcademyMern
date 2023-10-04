@@ -9,6 +9,8 @@ import axios from "axios";
 import { get_tutor_setup } from "../../../axios/tutor";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid'; 
+import CustomEvent from "./Event";
 moment.locale("en-GB");
 const localizer = momentLocalizer(moment);
 
@@ -45,6 +47,21 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
 
   //student states
   const [reservedSlots, setReservedSlots] = useState([]);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const [isPaymentDone, setIsPaymentDone] = useState(false)
+
+  const events2 = [
+    {
+      id: 2,
+      title: 'Booked',
+      createdAt: new Date(2023, 9, 4, 4, 0),
+      start: new Date(2023, 10, 2, 15, 0),
+      end: new Date(2023, 10, 2, 16, 0),
+      type: 'booked',
+      studentName: "jhony"
+    },
+  ];
+
 
   const updateTutorDisableRecord = async () => {
     await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${user.SID}`, {
@@ -64,7 +81,6 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     setDisableHourSlots(JSON.parse(result.disableHourSlots));
     setDisabledWeekDays(JSON.parse(result.disableWeekDays));
     setDisabledHours(JSON.parse(result.disableHoursRange));
-    console.log(result, 'results')
     setDataFetched(true);
   }
 
@@ -81,7 +97,26 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       updateTutorDisableRecord();
   }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched]);
 
+  useEffect(() => {
+    if (isPaymentDone) {
+      // setBookedSlots()
+    }
+  }, [isPaymentDone])
   const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
+
+  const handleCreateEvent = (newEventDetails) => {
+    const newEvent = {
+      title: "Reserved",
+      start: newEventDetails.start,
+      end: newEventDetails.end,
+      studentName: newEventDetails.name,
+      createdAt: newEventDetails.createdAt,
+      type: newEventDetails.type
+    };
+
+    setReservedSlots([...reservedSlots, newEvent]);
+  };
+
 
   const handleDateClick = (slotInfo) => {
     const clickedDate = slotInfo.start;
@@ -90,6 +125,11 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
 
     const secSlot = moment(slotInfo.start).minutes() === 30;
     let endTime = secSlot ? moment(slotInfo.start).subtract(30, 'minutes').toDate() : slotInfo.end;
+    //student
+    const momentStartTime = moment(clickedDate);
+    let startEventTime = momentStartTime.minute(0);
+    let endEventTime = momentStartTime.clone().minute(0).add(1, 'hour')
+
 
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
     if (clickedUpperSlot && activeView != views.MONTH) return;
@@ -191,7 +231,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
               )
               setReservedSlots(removeReservedSlots)
             }
-            else setReservedSlots([...reservedSlots, clickedDate, endTime])
+            else handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "asiya", createdAt: moment().subtract(1, "minutes").toDate() })
           }
           else if (disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
             alert("This slot is disabled.");
@@ -208,7 +248,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
               )
               setReservedSlots(removeReservedSlots)
             }
-            else setReservedSlots([...reservedSlots, clickedDate, endTime])
+            else handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony", createdAt: moment().subtract(59, "minutes").toDate() })
           }
         }
       }
@@ -219,34 +259,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       }
     }
   };
-  // const handleCreateEvent = (newEventDetails) => {
-  //   const newEvent = {
-  //     title: newEventDetails.title,
-  //     allDay: newEventDetails.allDay,
-  //     start: newEventDetails.start,
-  //     end: newEventDetails.end,
-  //   };
 
-  //   // Add API Call Here
-
-
-  //   setEvents([...events, newEvent]);
-  //   setEventDetails({
-  //     title: "",
-  //     allDay: true,
-  //     start: null,
-  //     end: null,
-  //   });
-  // };
-  const handleCreateEvent = async (newEventDetails) => {
-    const result = await dispatch(addEvent(newEventDetails));
-    setEventDetails({
-      title: "",
-      allDay: true,
-      start: null,
-      end: null,
-    });
-  };
 
   const dayPropGetter = useCallback(
     (date) => {
@@ -277,19 +290,13 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     [disableWeekDays, enabledDays, disableDates]
   );
   const handleEventClick = (event) => {
-    // 'event' will contain details of the clicked event
-    // Convert event.start and event.end to Date objects
-    const startDate = new Date(event.start);
-    const endDate = new Date(event.end);
-    // Create a string to display event details in ISO 8601 format
-    const eventDetailsString = `
-      Event Title: ${event.title}
-      Start: ${startDate.toLocaleString()}
-      End: ${endDate.toLocaleString()}
-    `;
-    // Display event details in an alert or a modal
-    alert(eventDetailsString);
-    // You can also customize the way you want to display the details, such as in a modal dialog
+    const message = `Are you sure you want to pay for ${event.start}?`;
+    const result = window.confirm(message);
+    if (result) {
+      setReservedSlots(reservedSlots.filter(slot => slot.id !== event.id))
+      setBookedSlots([...bookedSlots, { ...event, title: "Booked", type: 'booked' }])
+    }
+
   };
   const slotPropGetter = useCallback((date) => {
     if (date && moment(date).isSame(moment(date), 'day')) {
@@ -334,6 +341,26 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     setActiveView(view)
   }
 
+  const eventPropGetter = (event) => {
+    if (event.type === 'reserved') {
+      return {
+        className: 'reserved-event',
+        style: {
+          backgroundColor: 'yellow',
+          color: "black"
+        },
+      };
+    } else if (event.type === 'booked') {
+      return {
+        className: 'booked-event',
+        style: {
+          backgroundColor: 'green',
+        },
+      };
+    }
+    return {};
+  };
+
   if (!dataFetched)
     return (
       <div className="d-flex justify-content-center align-items-center h-100">
@@ -348,6 +375,20 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
         localizer={localizer}
         selectable={true}
         defaultView={activeView}
+        events={reservedSlots.concat(bookedSlots)}
+        eventPropGetter={eventPropGetter}
+        components={{
+          event: event => (
+            <CustomEvent
+              {...event}
+              setReservedSlots={setReservedSlots}
+              reservedSlots={reservedSlots}
+              setIsPaymentDone={setIsPaymentDone}
+              setBookedSlots={setBookedSlots}
+              handleEventClick={handleEventClick}
+            />
+          ),
+        }}
         view={activeView}
         startAccessor="start"
         endAccessor="end"
@@ -356,7 +397,6 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
         onSelectSlot={handleDateClick}
         dayPropGetter={dayPropGetter}
         slotPropGetter={slotPropGetter}
-        onSelectEvent={handleEventClick}
         onView={handleViewChange}
       />
       {/* <EventModal

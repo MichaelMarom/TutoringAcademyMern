@@ -4,6 +4,7 @@ import moment from 'moment'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { conevrtGMTOffsetToLocalString, convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
+import { get_tutor_new_subject } from '../../axios/admin';
 
 
 const TutorTable = () => {
@@ -41,7 +42,15 @@ const TutorTable = () => {
     let navigate = useNavigate();
 
    
-    
+    useEffect(() => {
+        get_tutor_new_subject()
+        .then((result) => {
+            setData(result)
+            console.log(Object.values(result[0])[0])
+
+        })
+        .catch((err) => console.log(err))
+    }, [])
     
 
     return (  
@@ -65,11 +74,16 @@ const TutorTable = () => {
                             
                             <tr key={item.SID} >
                                
-                                <td data-src={''}>{item.AcademyId}</td>
-                                <td data-src={''}>{''}</td>
-                                <td data-src={''}>{''}</td>
-                                <td data-src={''}>{''}</td>
-                                <td data-src={''}><input type='checkbox' /></td>
+                                <td data-src={''}>{item.tutor}</td>
+                                <td data-src={''}>{Object.values(item)[0].subject}</td>
+                                <td data-src={''}>{Object.values(item)[0].faculty}</td>
+                                <td data-src={''}>{Object.values(item)[0].reason}</td>
+                                <td data-src=''>
+                                    <>
+                                    <button style={{background: 'green', color: '#fff', borderRadius: '2px', padding: '10px'}}>Accept</button>
+                                    <button style={{background: 'red', color: '#fff', borderRadius: '2px', padding: '10px'}}>Decline</button>
+                                    </>
+                                </td>
                                 
                             </tr>
                         )

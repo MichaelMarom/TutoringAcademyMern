@@ -1,4 +1,4 @@
-const { marom_db } = require('../db');
+const { marom_db, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
 
 
@@ -106,10 +106,57 @@ let set_student_status = (req, res) => {
     })
 }
 
+let get_tutor_new_subject = async(req,res) => {
+    
+
+    let newSub = await connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT * From NewTutorSubject ` )
+        .then((result) => {
+
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+    )
+
+    let book = []
+
+    let tutorName = ( id ) => connecteToDB.then(poolConnection => 
+        poolConnection.request().query( `SELECT FirstName, LastName FROM TutorSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'` )
+        .then((result) => {
+
+            
+            return(result.recordset);
+            //res.status(200).send()
+            //console.log(result)
+            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+        })
+        .catch(err => console.log(err))
+    )
+
+    async function setUpDoc(){
+        newSub.map(async(item) => {
+            let tutor = await tutorName(item.AcademyId);
+            book.push({item: item, tutor: tutor[0].FirstName + ' ' + tutor[0].LastName}) 
+
+
+            if(newSub.length === book.length){
+                res.send(book)
+            }
+        })
+    }
+    setUpDoc()
+
+
+}
+
 
 module.exports = {
     get_tutor_data,
     get_student_data,
     set_tutor_status,
-    set_student_status
+    set_student_status,
+    get_tutor_new_subject
 }

@@ -3,6 +3,22 @@ import axios from "axios"
 
 
 
+export let get_tutor_new_subject = () => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/admin/tutor-new-subject', {})
+        .then((result) => {
+            resolve(result.data) 
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+}
+
 export let get_tutor_data = () => {
 
     return new Promise((resolve, reject) => {

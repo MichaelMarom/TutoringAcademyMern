@@ -1,180 +1,92 @@
-import React from "react";
-import Modal from "react-modal";
-
-// Initialize the modal root element (put it in your index.js or App.js)
-Modal.setAppElement("#root");
+import React, { useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
+import LeftSideBar from "../LeftSideBar";
 
 const customStyles = {
   content: {
     zIndex: "111",
     height: "fit-content",
+    width: "20rem",
+    left: 0,
+    top: "5rem"
   },
 };
-
-function isTimestampWithinRange(x, min, max) {
-  return x >= min && x <= max;
-}
 
 function EventModal({
   isOpen,
   onRequestClose,
-  selectedDate,
-  eventDetails,
-  setEventDetails,
-  onCreateEvent,
+  selectedSlots,
+  handleCreateEvent,
+  reservedSlots,
+  bookedSlots
 }) {
-  // ...
+  const [selectedType, setSelectedType] = useState("booked");
 
-  const handleSave = () => {
-    let startDateTime = eventDetails.start;
-    let endDateTime = eventDetails.end;
-    if (!eventDetails.title) {
-      alert("Please fill in the event title.");
-      return;
+  const ifEventAlreadyExist = () => {
+    const events = reservedSlots.concat(bookedSlots);
+    return events.some(event => event.start.getTime() === selectedSlots.start.getTime() || event.end.getTime() === selectedSlots.start.getTime());
+  }
+
+  const hasIntroEvent = () => {
+    const events = reservedSlots.concat(bookedSlots);
+    return events.some(event => event.type === 'intro');
+  }
+
+  useEffect(() => {
+    if (!hasIntroEvent() && selectedType !== 'intro' && selectedSlots.start) {
+      alert('Can not reserve or book lesson before the introduction')
     }
-
-    startDateTime = new Date(selectedDate); // Start of the selected day
-    endDateTime = new Date(selectedDate); // End of the selected day
-    endDateTime.setHours(23, 59, 59); // Set the end time to 11:59:59 PM
-    if (eventDetails.allDay) {
-    } else {
-      // Check for empty start and end times only if it's not an "All Day" event
-      if (!eventDetails.startTime || !eventDetails.endTime) {
-        alert("Please fill in both start and end times.");
-        return;
-      }
-      startDateTime.setHours(
-        parseInt(eventDetails.startTime.split(":")[0]),
-        parseInt(eventDetails.startTime.split(":")[1])
-      );
-      endDateTime.setHours(
-        parseInt(eventDetails.endTime.split(":")[0]),
-        parseInt(eventDetails.endTime.split(":")[1])
-      );
-    }
-
-
-    // Check if the event falls within the disabled date range
-    // let EventDetailsStartTimeStamp = startDateTime.getTime();
-    // let EventDetailsEndTimeStamp = endDateTime.getTime();
-    // let DisabledDateStartTimeStamp = disabledDateRange.start.getTime();
-    // let DisabledDateEndTimeStamp = disabledDateRange.end.getTime();
-
-    // if (
-    //   isTimestampWithinRange(
-    //     EventDetailsStartTimeStamp,
-    //     DisabledDateStartTimeStamp,
-    //     DisabledDateEndTimeStamp
-    //   ) ||
-    //   isTimestampWithinRange(
-    //     EventDetailsEndTimeStamp,
-    //     DisabledDateStartTimeStamp,
-    //     DisabledDateEndTimeStamp
-    //   )
-    // ) {
-    //   alert("This date or time is disabled. Choose another one.");
-    //   return;
-    // }
-
-    onCreateEvent({
-      title: eventDetails.title,
-      start: startDateTime,
-      end: endDateTime,
-    });
-  };
+  }, [reservedSlots, selectedType])
 
   return (
-    <Modal
+    <LeftSideBar
       isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      contentLabel="Date Modal"
-      style={customStyles}
+      onClose={onRequestClose}
     >
-      <div className="modal-content">
+      <div className="">
         <div className="modal-header">
-          <h5 className="modal-title">Add Event on {selectedDate}</h5>
-          <button type="button" className="close" onClick={onRequestClose}>
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <h4 className="modal-title" style={{ width: '80%' }}>Selected Slots</h4>
+
         </div>
-        <div className="modal-body">
-          <form>
-            <div className="form-group">
-              <label>Title:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={eventDetails?.title || ""}
-                onChange={(e) =>
-                  setEventDetails({ ...eventDetails, title: e.target.value })
-                }
-              />
-            </div>
-            <div className="form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                checked={eventDetails?.allDay || false}
-                onChange={(e) =>
-                  setEventDetails({ ...eventDetails, allDay: e.target.checked })
-                }
-              />
-              <label className="form-check-label">All Day</label>
-            </div>
-            {!eventDetails.allDay && ( // Conditionally render time inputs
-              <div>
-                <div className="form-group">
-                  <label>Start Time:</label>
-                  
-                  <input
-                    type="time"
-                    className="form-control"
-                    value={eventDetails.startTime || ""}
-                    onChange={(e) =>
-                      setEventDetails({
-                        ...eventDetails,
-                        startTime: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="form-group">
-                  <label>End Time:</label>
-                  
-                  <input
-                    type="time"
-                    className="form-control"
-                    value={eventDetails.endTime || ""}
-                    onChange={(e) =>
-                      setEventDetails({
-                        ...eventDetails,
-                        endTime: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            )}
-          </form>
+        <div className="">
+
+          <div>
+            {/* <SlotPill /> */}
+          </div>
+
+          <div className="form-group d-flex flex-column">
+            <button type="button" className={`btn btn-primary btn-sm `} onClick={() => setSelectedType("intro")} disabled={ifEventAlreadyExist()}>Introduction</button>
+            <button type="button" className="btn btn-success btn-sm" disabled={ifEventAlreadyExist()} onClick={() => setSelectedType("booked")}>Booked</button>
+            <button type="button" className="btn  btn-sm" style={{ background: "yellow" }} disabled={ifEventAlreadyExist()} onClick={() => setSelectedType("reserved")}>Reserved</button>
+            <button type="button" className="btn btn-danger btn-sm" onClick={() => setSelectedType("delete")}>Delete</button>
+          </div>
         </div>
         <div className="modal-footer">
           <button
             type="button"
-            className="btn btn-primary"
-            onClick={handleSave}
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              handleCreateEvent({
+                ...selectedSlots,
+                type: selectedType,
+                id: uuidv4(),
+                createdAt: new Date(),
+              });
+              onRequestClose()
+            }}
           >
             Save
           </button>
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-secondary btn-sm"
             onClick={onRequestClose}
           >
             Cancel
           </button>
         </div>
       </div>
-    </Modal>
+    </LeftSideBar>
   );
 }
 

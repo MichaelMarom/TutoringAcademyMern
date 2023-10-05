@@ -4,7 +4,7 @@ import moment from 'moment'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { conevrtGMTOffsetToLocalString, convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
-import { get_tutor_new_subject } from '../../axios/admin';
+import { get_tutor_new_subject, post_new_subject } from '../../axios/admin';
 
 
 const TutorTable = () => {
@@ -53,6 +53,24 @@ const TutorTable = () => {
     }, [])
     
 
+    let acceptNewSubject = ( ) => {
+        post_new_subject()
+        .then(() => {
+            
+        })
+        .catch((err) => console.log(err))
+
+    }
+
+    let declineNewSubject = ( ) => {
+        post_new_subject()
+        .then(() => {
+            
+        })
+        .catch((err) => console.log(err))
+
+    }
+
     return (  
         <> 
            
@@ -80,8 +98,8 @@ const TutorTable = () => {
                                 <td data-src={''}>{Object.values(item)[0].reason}</td>
                                 <td data-src=''>
                                     <>
-                                    <button style={{background: 'green', color: '#fff', borderRadius: '2px', padding: '10px'}}>Accept</button>
-                                    <button style={{background: 'red', color: '#fff', borderRadius: '2px', padding: '10px'}}>Decline</button>
+                                    <button onClick={acceptNewSubject} style={{background: 'green', color: '#fff', borderRadius: '2px', padding: '10px'}}>Accept</button>
+                                    <button onClick={declineNewSubject} style={{background: 'red', color: '#fff', borderRadius: '2px', padding: '10px'}}>Decline</button>
                                     </>
                                 </td>
                                 

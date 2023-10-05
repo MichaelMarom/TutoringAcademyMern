@@ -205,7 +205,7 @@ const StudentFaculties = () => {
             <div className="form-subjects" style={{overflow: 'hidden', height: 'calc(100vh - 50px)'}}>
                
                 <div className="form-subject-alert">
-                    <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 12 faculties for tutoring.</p>
+                    <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 29 faculties for tutoring.</p>
                 </div>
 
                 <div id="form-subject-data-collection-table">

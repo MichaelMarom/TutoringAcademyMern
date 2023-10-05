@@ -18,6 +18,7 @@ const Subjects = () => {
     let [newSubjectFacultyData, setNewSubjectFacultyData] = useState('');
     let [newSubjectData, setNewSubjectData] = useState('');
     let [newSubjectReasonData, setNewSubjectReasonData] = useState('');
+    let [newSubjectFacultyIdData, setNewSubjectFacultyIdData] = useState('')
 
 
     
@@ -38,7 +39,7 @@ const Subjects = () => {
     let [pending_courses, set_pending_courses] = useState([])
     let [aviation_courses, set_aviation_courses] = useState([])
     let [engineering_courses, set_engineering_courses] = useState([])
-
+    let [chemistry_courses,set_chemistry_courses]=useState([])
 
     let [active_course, set_active_course] = useState([])
 
@@ -88,7 +89,6 @@ const Subjects = () => {
         let response = await get_subject()
         .then((result) => result.recordset)
         .catch((err) =>  err) 
-
         cb(response);
     }
 
@@ -138,7 +138,6 @@ const Subjects = () => {
     }
 
     useEffect(() => {
-
         courses((data) => {
 
             data.map((item) => {
@@ -175,11 +174,12 @@ const Subjects = () => {
                     set_aviation_courses(old_list => [...old_list, item])
                 }else if(id === 16){
                     set_engineering_courses(old_list => [...old_list, item])
+                }else if(id === 22){
+                    set_chemistry_courses(old_list => [...old_list, item])
                 }
             })
 
         })
-
     }, []);
     
 
@@ -192,11 +192,10 @@ const Subjects = () => {
         let tables = [...document.querySelectorAll('table')];
         let active_table = tables.filter(item => !item.hasAttribute('id'));
         active_table[0].setAttribute('id', 'hide_table');
-
-
         let index_of_elem = [...elem.parentElement.children].indexOf(elem);
-        console.log(tables[index_of_elem])
-        console.log(index_of_elem)
+        console.log(tables,index_of_elem)
+        console.log("table",tables[index_of_elem])
+        console.log( tables[index_of_elem],index_of_elem, 'tables')
         tables[index_of_elem].removeAttribute('id');
 
 
@@ -214,7 +213,7 @@ const Subjects = () => {
         .then((result) => {
             let list = result.map(item => {
                 return(
-                    <option data-id={item.id} value={item.Faculty}>{item.Faculty}</option>
+                    <option data-id={item.id} value={`${item.Faculty}-${item.Id}`}>{item.Faculty}</option>
                 )
             })
             console.log(result)
@@ -346,7 +345,7 @@ const Subjects = () => {
             let user_id = window.localStorage.getItem('tutor_user_id');
 
 
-            upload_new_subject(newSubjectFacultyData, newSubjectData, newSubjectReasonData, user_id)
+            upload_new_subject(newSubjectFacultyData.split('-')[0], newSubjectData, newSubjectReasonData, user_id, newSubjectFacultyData.split('-')[1])
             .then((result) => {
                 if(result){
                     setTimeout(() => {
@@ -412,7 +411,7 @@ const Subjects = () => {
             </div>
             <div className="tutor-tab-subjects">
                 <div className="tutor-tab-subject-alert">
-                    <p style={{fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 15 faculties for tutoring. Didn't find your subject? List your expertise above and submit for review. We may list your subject after examination.</p>
+                    <p style={{fontSize: 'medium', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center'}}>400+ subjects to select from across 29 faculties for tutoring. Didn't find your subject? List your expertise above and submit for review. We may list your subject after examination.</p>
                 </div>
                 <div className="tutor-tab-subjects-info" style={{display: 'flex', flexDirection: 'column',background: '#e7e7e7', position: 'relative', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', margin: 'auto'}}>
 
@@ -481,14 +480,28 @@ const Subjects = () => {
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Elementary Edu...</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Science</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Art</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>AI</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Social Study</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Programming</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Test Prep</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Business</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Health </a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Life Skills</a></li>
-                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>?</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>History</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Statistics</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Chemistry</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Biology</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Physics</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Geogrphy</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Psychology</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Photography</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Music</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Graphic Design</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Geometry</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Business & Management</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Litrature</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Aviation</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Biology</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Engineering</a></li>
                             
                         </ul>
@@ -992,7 +1005,36 @@ const Subjects = () => {
                                 
                             </tbody>
                         </table>
+                        
+                        <table id='hide_table'>
+                            <thead>
+                                <tr>
+                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    
+                                {
 
+                                    chemistry_courses.map((item, index) => 
+                                        <tr key={index}>
+                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
+
+                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
+
+                                            <td data-src={item.FacultyId}></td>
+                                            <td data-src={item.FacultyId}></td>
+                                            <td data-src={item.FacultyId}></td>
+                                            <td data-src={item.FacultyId}></td>
+                                            <td data-src={item.FacultyId}></td>
+                                            <td data-src={item.FacultyId}></td>
+                                        </tr>
+                                    )
+                                }
+                                
+                                
+                            </tbody>
+                        </table>
                     </div>
 
                 </div>

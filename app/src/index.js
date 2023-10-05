@@ -2,10 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, HashRouter } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import store from './redux/store';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+// import Modal from 'react-modal';
+
+// Modal.setAppElement('#root');
 
 import App from './routes';
 

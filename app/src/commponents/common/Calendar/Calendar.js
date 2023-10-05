@@ -9,7 +9,7 @@ import axios from "axios";
 import { get_tutor_setup } from "../../../axios/tutor";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { v4 as uuidv4 } from 'uuid'; 
+import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
 moment.locale("en-GB");
 const localizer = momentLocalizer(moment);
@@ -43,25 +43,15 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
   const [enableHourSlots, setEnableHourSlots] = useState([]);
   const [disableHourSlots, setDisableHourSlots] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
+  const [selectedSlots, setSelectedSlots] = useState([]);
 
 
   //student states
   const [reservedSlots, setReservedSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
-  const [isPaymentDone, setIsPaymentDone] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const events2 = [
-    {
-      id: 2,
-      title: 'Booked',
-      createdAt: new Date(2023, 9, 4, 4, 0),
-      start: new Date(2023, 10, 2, 15, 0),
-      end: new Date(2023, 10, 2, 16, 0),
-      type: 'booked',
-      studentName: "jhony"
-    },
-  ];
-
+  const onRequestClose = () => setIsModalOpen(false)
 
   const updateTutorDisableRecord = async () => {
     await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${user.SID}`, {
@@ -97,26 +87,27 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       updateTutorDisableRecord();
   }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched]);
 
-  useEffect(() => {
-    if (isPaymentDone) {
-      // setBookedSlots()
-    }
-  }, [isPaymentDone])
   const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
   const handleCreateEvent = (newEventDetails) => {
+    if (newEventDetails.type == 'delete') {
+      const removeReservedSlots = reservedSlots.filter(date => convertToDate(date.start).getTime() !== newEventDetails.start.getTime())
+      setReservedSlots(removeReservedSlots)
+      return;
+    }
     const newEvent = {
-      title: "Reserved",
+      id: newEventDetails.id,
+      title: newEventDetails.type == 'reserved' ? 'Reserved' :
+        newEventDetails.type === 'intro' ? 'Intro' : "Booked",
       start: newEventDetails.start,
       end: newEventDetails.end,
       studentName: newEventDetails.name,
       createdAt: newEventDetails.createdAt,
-      type: newEventDetails.type
+      type: newEventDetails.type,
     };
 
     setReservedSlots([...reservedSlots, newEvent]);
   };
-
 
   const handleDateClick = (slotInfo) => {
     const clickedDate = slotInfo.start;
@@ -248,7 +239,11 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
               )
               setReservedSlots(removeReservedSlots)
             }
-            else handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony", createdAt: moment().subtract(59, "minutes").toDate() })
+            else {
+              setSelectedSlots([...selectedSlots,{ start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony" }])
+              setIsModalOpen(true);
+              // handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony", createdAt: new Date() })
+            }
           }
         }
       }
@@ -259,7 +254,6 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       }
     }
   };
-
 
   const dayPropGetter = useCallback(
     (date) => {
@@ -290,7 +284,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     [disableWeekDays, enabledDays, disableDates]
   );
   const handleEventClick = (event) => {
-    const message = `Are you sure you want to pay for ${event.start}?`;
+    const message = `Are you ready to pay for the lesson with tutor ${currentTutor.name} ?`;
     const result = window.confirm(message);
     if (result) {
       setReservedSlots(reservedSlots.filter(slot => slot.id !== event.id))
@@ -383,8 +377,6 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
               {...event}
               setReservedSlots={setReservedSlots}
               reservedSlots={reservedSlots}
-              setIsPaymentDone={setIsPaymentDone}
-              setBookedSlots={setBookedSlots}
               handleEventClick={handleEventClick}
             />
           ),
@@ -399,14 +391,16 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
         slotPropGetter={slotPropGetter}
         onView={handleViewChange}
       />
-      {/* <EventModal
+      <EventModal
         isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        selectedDate={selectedDate}
-        eventDetails={eventDetails}
-        setEventDetails={setEventDetails}
-        onCreateEvent={handleCreateEvent}
-      /> */}
+        selectedSlots={selectedSlots}
+        onRequestClose={onRequestClose}
+        setReservedSlots={setReservedSlots}
+        setBookedSlots={setBookedSlots}
+        handleCreateEvent={handleCreateEvent}
+        reservedSlots={reservedSlots}
+        bookedSlots={bookedSlots}
+      />
     </div>
   );
 };

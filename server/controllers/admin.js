@@ -154,7 +154,7 @@ let get_tutor_new_subject = async(req,res) => {
 
 
 let accept_new_subject = (req, res) => {
-    let{Id, Status} = req.body;
+    let{id, subject} = req.body;
     marom_db(async(config) => {
         const sql = require('mssql');
     

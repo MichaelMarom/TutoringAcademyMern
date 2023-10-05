@@ -8,7 +8,7 @@ const { insert, updateById, getAll } = require('../helperfunctions/crud_queries'
 let post_new_subject = (req, res) => {
 
 
-    let {faculty, subject, reason, AcademyId } = req.body;
+    let {faculty, subject, reason, AcademyId, facultyId } = req.body;
 
     let date = new Date();
 
@@ -20,8 +20,8 @@ let post_new_subject = (req, res) => {
         if (poolConnection) {
             var resultSet = poolConnection.request().query(
                 `
-                    INSERT INTO "NewTutorSubject"(faculty, subject, date, AcademyId, reason)
-                    VALUES ('${faculty}', '${subject}', '${date}', '${AcademyId}', '${reason}')
+                    INSERT INTO "NewTutorSubject"(faculty, subject, date, AcademyId, reason, facultyID)
+                    VALUES ('${faculty}', '${subject}', '${date}', '${AcademyId}', '${reason}', '${facultyId}')
                     `
             )
 

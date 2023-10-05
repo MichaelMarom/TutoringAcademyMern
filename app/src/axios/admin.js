@@ -3,12 +3,29 @@ import axios from "axios"
 
 
 
-export let post_new_subject = (id,subject) => {
+export let delete_new_subject = (subject,AcademyId) => {
 
     return new Promise((resolve, reject) => {
 
     
-        axios.get('http://localhost:9876/admin/post-new-subject', {id,subject})
+        axios.get('http://localhost:9876/admin/delete-new-subject', {subject,AcademyId})
+        .then((result) => {
+            resolve(result.data) 
+        })
+        .catch((err) => {
+            reject(err)
+        })
+
+    })
+    
+}
+
+export let post_new_subject = (id,subject,AcademyId) => {
+
+    return new Promise((resolve, reject) => {
+
+    
+        axios.get('http://localhost:9876/admin/post-new-subject', {id,subject,AcademyId})
         .then((result) => {
             resolve(result.data) 
         })

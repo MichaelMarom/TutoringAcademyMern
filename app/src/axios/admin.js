@@ -8,7 +8,7 @@ export let delete_new_subject = (subject,AcademyId) => {
     return new Promise((resolve, reject) => {
 
     
-        axios.get('http://localhost:9876/admin/delete-new-subject', {subject,AcademyId})
+        axios.post('http://localhost:9876/admin/delete-new-subject', {subject,AcademyId})
         .then((result) => {
             resolve(result.data) 
         })
@@ -25,7 +25,7 @@ export let post_new_subject = (id,subject,AcademyId) => {
     return new Promise((resolve, reject) => {
 
     
-        axios.get('http://localhost:9876/admin/post-new-subject', {id,subject,AcademyId})
+        axios.post('http://localhost:9876/admin/post-new-subject', {id,subject,AcademyId})
         .then((result) => {
             resolve(result.data) 
         })

@@ -68,12 +68,11 @@ const TutorTable = () => {
                 document.querySelector('.tutor-popin').style.background = '#000';
                 document.querySelector('.tutor-popin').innerHTML = response.mssg
                 setTimeout(() => {
-                    document.querySelector('.tutor-next').setAttribute('id', 'next')
+                    //document.querySelector('.tutor-next').setAttribute('id', 'next')
                     document.querySelector('.tutor-popin').removeAttribute('id');
                 }, 5000);
 
-                let filteredList = data.filter((item) => item.item.AcademyId !== AcademyId && item.item.subject !== subject)
-                setData(filteredList)
+                
 
             }else{
                 setTimeout(() => {
@@ -111,12 +110,11 @@ const TutorTable = () => {
                 document.querySelector('.tutor-popin').style.background = '#000';
                 document.querySelector('.tutor-popin').innerHTML = response.mssg
                 setTimeout(() => {
-                    document.querySelector('.tutor-next').setAttribute('id', 'next')
+                    //document.querySelector('.tutor-next').setAttribute('id', 'next')
                     document.querySelector('.tutor-popin').removeAttribute('id');
                 }, 5000);
 
-                let filteredList = data.filter((item) => item.item.AcademyId !== AcademyId && item.item.subject !== subject)
-                setData(filteredList)
+                
             }else{
                 setTimeout(() => {
                     document.querySelector('.save-overlay').removeAttribute('id');
@@ -137,7 +135,10 @@ const TutorTable = () => {
 
     return (  
         <> 
-           
+            <div className="tutor-popin"></div>
+            <div className="save-overlay">
+                <span className="save_loader"></span>
+            </div>
             <div className="tables" style={{height: '100%', width: '100%', overflow: 'auto', padding: '5px'}}>
 
             <table style={{position: 'relative'}}>

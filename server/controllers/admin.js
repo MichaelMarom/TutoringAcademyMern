@@ -155,13 +155,14 @@ let get_tutor_new_subject = async(req,res) => {
 
 let accept_new_subject = async(req, res) => {
     let{id,subject,AcademyId} = req.body;
+    console.log(id,subject,AcademyId)
 
-    let date = new Date().toUTCString()
+    let date = new Date().toDateString()
     
     
     let insert = await connecteToDB
-    .then(async(config) => {
-        poolConnection.request().query( ` INSERT INTO Faculty(FacultyId, SubjectName, CreatedOn) values('${id}','${subject}','${date}')`)
+    .then(async(poolConnection) => {
+        poolConnection.request().query( ` INSERT INTO Subjects(FacultyId, SubjectName, CreatedOn) values('${id}','${subject}', '')`)
         .then((result) => {
 
             return result.rowsAffected[0] === 1 ? true : false
@@ -178,11 +179,12 @@ let accept_new_subject = async(req, res) => {
     if(insert){
 
         connecteToDB
-        .then(async(config) => {
-            poolConnection.request().query( ` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' AND WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+        .then(async(poolConnection) => {
+            poolConnection.request().query( ` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
             .then((result) => {
 
-                return result.rowsAffected[0] === 1 ? true : false
+                result.rowsAffected[0] === 1 ? res.status(200).send({bool: true, mssg: 'Data was uploaded successfully'}) : res.status(200).send({bool: false, mssg: 'Database Error, Please Try Again...'})
+
 
             })
             .catch(err => console.log(err))
@@ -207,19 +209,20 @@ let decline_new_subject = (req, res) => {
     
     
     connecteToDB
-    .then(async(config) => {
-        poolConnection.request().query( ` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' AND WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+    .then(async(poolConnection) => {
+        poolConnection.request().query( ` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
         .then((result) => {
 
-            result.rowsAffected[0] === 1 ? res.status(200).send({bool: false, mssg: 'Database Error, Please Try Again...'}) : res.status(200).send({bool: false, mssg: 'Database Error, Please Try Again...'})
+            result.rowsAffected[0] === 1 ? res.status(200).send({bool: true, mssg: 'Data was uploaded successfully'}) : res.status(200).send({bool: false, mssg: 'Error uploading files, Please Try Again...'})
 
         })
         .catch(err => console.log(err))
     
     })
-    .catch(err =>
+    .catch((err) => {
         res.status(200).send({bool: false, mssg: 'Database Error, Please Try Again...'})
-    )
+        console.log(err)
+    })
 
 
 }

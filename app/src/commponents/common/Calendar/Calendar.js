@@ -43,15 +43,17 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
   const [enableHourSlots, setEnableHourSlots] = useState([]);
   const [disableHourSlots, setDisableHourSlots] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
-  const [selectedSlots, setSelectedSlots] = useState([]);
-
 
   //student states
+  const [selectedSlots, setSelectedSlots] = useState([]);
   const [reservedSlots, setReservedSlots] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const onRequestClose = () => setIsModalOpen(false)
+  const onRequestClose = () => {
+    setSelectedSlots([]);
+    setIsModalOpen(false)
+  }
 
   const updateTutorDisableRecord = async () => {
     await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${user.SID}`, {
@@ -89,7 +91,30 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
 
   const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
+  const handleBulkEventCreate = (type) => {
+    console.log(selectedSlots)
+    const updatedSelectedSlots = selectedSlots.map((slot) => {
+      return {
+        ...slot,
+        type,
+        id: uuidv4(),
+        title: type == 'reserved' ? 'Reserved' :
+          type === 'intro' ? 'Intro' : "Booked",
+        studentName: "JHON",
+        createdAt: new Date(),
+      }
+    })
+    console.log(updatedSelectedSlots)
+    if (type === 'reserved')
+      setReservedSlots(reservedSlots.concat(updatedSelectedSlots))
+    else if (type === 'booked')
+      setBookedSlots(bookedSlots.concat(updatedSelectedSlots))
+  }
+  useEffect(() => {
+    console.log(reservedSlots)
+  }, [reservedSlots])
   const handleCreateEvent = (newEventDetails) => {
+    console.log(1)
     if (newEventDetails.type == 'delete') {
       const removeReservedSlots = reservedSlots.filter(date => convertToDate(date.start).getTime() !== newEventDetails.start.getTime())
       setReservedSlots(removeReservedSlots)
@@ -105,7 +130,10 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       createdAt: newEventDetails.createdAt,
       type: newEventDetails.type,
     };
-
+    if (newEventDetails.type === 'booked') {
+      setBookedSlots([...bookedSlots, newEvent])
+      return;
+    }
     setReservedSlots([...reservedSlots, newEvent]);
   };
 
@@ -222,7 +250,9 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
               )
               setReservedSlots(removeReservedSlots)
             }
-            else handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "asiya", createdAt: moment().subtract(1, "minutes").toDate() })
+            else {
+              // handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "asiya", createdAt: moment().subtract(1, "minutes").toDate() })
+            }
           }
           else if (disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
             alert("This slot is disabled.");
@@ -240,8 +270,13 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
               setReservedSlots(removeReservedSlots)
             }
             else {
-              setSelectedSlots([...selectedSlots,{ start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony" }])
-              setIsModalOpen(true);
+              if (selectedSlots.length < 6) {
+                setSelectedSlots([...selectedSlots, { start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony" }])
+                setIsModalOpen(true);
+              }
+              else {
+                toast.error('You can not Place Hold more than 6 Slots! ')
+              }
               // handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony", createdAt: new Date() })
             }
           }
@@ -297,14 +332,34 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       const formattedTime = moment(date).format('h:00 a');
       //student checks
       const existsinReservedSlots = reservedSlots.some(slot => convertToDate(slot).getTime() === date.getTime())
+      const existInSelectedSlotStart = selectedSlots.some(slot => slot.start.getTime() === date.getTime())
 
+      const existInSelectedSlotEnd = selectedSlots.some((slot) => date.getTime() === (moment(slot.end).subtract(30, 'minutes').toDate()).getTime())
       //tutor checks
       const existInEnableSlots = enableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime())
 
       const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime());
+
       if (existsinReservedSlots) {
         return {
           className: 'reserved-slot'
+        }
+      }
+      else if (existInSelectedSlotStart) {
+        return {
+          style: {
+            border: '1px solid red',
+            borderBottom: '0',
+          },
+          className: 'place-holder', // Add the CSS class here
+        };
+      }
+      else if (existInSelectedSlotEnd) {
+        return {
+          style: {
+            border: '1px solid red',
+            borderTop: '0',
+          }
         }
       }
       else if (existInDisableHourSlots) {
@@ -329,7 +384,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
 
     }
     return {};
-  }, [disabledHours, enableHourSlots, disableHourSlots, reservedSlots]);
+  }, [disabledHours, enableHourSlots, disableHourSlots, reservedSlots, selectedSlots]);
 
   const handleViewChange = (view) => {
     setActiveView(view)
@@ -394,10 +449,9 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       <EventModal
         isOpen={isModalOpen}
         selectedSlots={selectedSlots}
+        setSelectedSlots={setSelectedSlots}
         onRequestClose={onRequestClose}
-        setReservedSlots={setReservedSlots}
-        setBookedSlots={setBookedSlots}
-        handleCreateEvent={handleCreateEvent}
+        handleBulkEventCreate={handleBulkEventCreate}
         reservedSlots={reservedSlots}
         bookedSlots={bookedSlots}
       />

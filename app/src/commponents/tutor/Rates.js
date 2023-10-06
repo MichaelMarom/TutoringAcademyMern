@@ -225,7 +225,7 @@ const Rates = () => {
     let multi_rates = ['25%', '30%', '33%', '36%', '39%', '42%', '45%', '48%', '51%', <input type='text' id='custom-rate' placeholder='Type Here' style={{height: '20px', width: '80%', margin: '3px 0 0 0'}}/>, <input type='text' id='custom-rate' placeholder='Type Here' style={{height: '20px', width: '80%', margin: '3px 0 0 0'}}/>]
 
     let subscription_cols = [{Header: 'Hours'}, {Header: 'Select'}, {Header: 'Discount'}]
-    let subscription_dicount = ['5.00%', '7.50%', '10.0%', '12.5%', '15.0%', '17.5%', '20.0%', '22.5%', '25.0%', '27.5%']
+    let subscription_dicount = ['6.0%', '12.0%', '18.0%', '24.0%']
 
 
     useEffect(() => {
@@ -318,7 +318,7 @@ const Rates = () => {
                                 </select>
                             </div>
                             <div style={{display: 'flex', alignItems: 'center', flexDirection: 'row', marginBottom: '5px',  justifyContent: 'center'}}>
-                                <label htmlFor=""><h6>Demo lesson at 50% off &nbsp;</h6></label>
+                                <label htmlFor=""><h6>Introduction lesson at 50% off &nbsp;</h6></label>
                                 <input onInput={e => setFreeDemoLesson(e.target.value)}  style={{cursor: 'pointer', height: '20px', width: '20px'}} type="radio" name="30-mins-free-demo-lesson" id='freeDemoYes' value={'yes'} />&nbsp; <h6>Yes</h6> &nbsp;
                                 <input onInput={e => setFreeDemoLesson(e.target.value)} style={{cursor: 'pointer', height: '20px', width: '20px'}} id='freeDemoNo' type="radio" name="30-mins-free-demo-lesson" value={'no'} />&nbsp; <h6>No</h6> 
                             </div>
@@ -329,7 +329,7 @@ const Rates = () => {
                             </div>
 
                             <div className="highlight" style={{margin: '0'}}>
-                                Video will be stored for 30 days for education purpose. Can be watched only by thr tutor, student or parent.
+                                Video will be stored for 30 days for educational purpose. Can be watched only by thr tutor, student or parent.
                             </div>
 
                         </div>

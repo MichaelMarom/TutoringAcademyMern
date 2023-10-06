@@ -1,42 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import LeftSideBar from "../LeftSideBar";
+import SlotPill from "../../student/SlotPill";
+import { toast } from "react-toastify";
 
-const customStyles = {
-  content: {
-    zIndex: "111",
-    height: "fit-content",
-    width: "20rem",
-    left: 0,
-    top: "5rem"
-  },
-};
 
 function EventModal({
   isOpen,
   onRequestClose,
   selectedSlots,
-  handleCreateEvent,
+  setSelectedSlots,
+  handleBulkEventCreate,
   reservedSlots,
   bookedSlots
 }) {
   const [selectedType, setSelectedType] = useState("booked");
 
-  const ifEventAlreadyExist = () => {
-    const events = reservedSlots.concat(bookedSlots);
-    return events.some(event => event.start.getTime() === selectedSlots.start.getTime() || event.end.getTime() === selectedSlots.start.getTime());
-  }
-
+  // const ifEventAlreadyExist = () => {
+  //   const events = reservedSlots.concat(bookedSlots);
+  //   console.log(events, 'events')
+  //   return events.some(event => event.start.getTime() === selectedSlots.start.getTime() || event.end.getTime() === selectedSlots.start.getTime());
+  // }
+  console.log(selectedSlots,',;secldede')
   const hasIntroEvent = () => {
     const events = reservedSlots.concat(bookedSlots);
     return events.some(event => event.type === 'intro');
   }
 
+  const handleRemoveSlot = (startTime) => {
+    setSelectedSlots(selectedSlots.filter((slot) => slot.start.getTime() !== startTime.getTime()))
+  }
+
+  // useEffect(() => {
+  //   if (!hasIntroEvent() && selectedType !== 'intro' && selectedSlots.start) {
+  //     alert('Can not reserve or book lesson before the introduction')
+  //   }
+  // }, [reservedSlots, selectedType])
+
+
   useEffect(() => {
-    if (!hasIntroEvent() && selectedType !== 'intro' && selectedSlots.start) {
-      alert('Can not reserve or book lesson before the introduction')
+    if (selectedType === 'intro' && selectedSlots > 1) {
+      toast.warning('Cannot book more than 1 Intro session!')
     }
-  }, [reservedSlots, selectedType])
+    else {
+      // addTypeAndIdinSelectedSlots()
+    }
+  }, [selectedType, selectedSlots])
+
 
   return (
     <LeftSideBar
@@ -51,13 +61,13 @@ function EventModal({
         <div className="">
 
           <div>
-            {/* <SlotPill /> */}
+            <SlotPill selectedSlots={selectedSlots} handleRemoveSlot={handleRemoveSlot} selectedType={selectedType} />
           </div>
 
           <div className="form-group d-flex flex-column">
-            <button type="button" className={`btn btn-primary btn-sm `} onClick={() => setSelectedType("intro")} disabled={ifEventAlreadyExist()}>Introduction</button>
-            <button type="button" className="btn btn-success btn-sm" disabled={ifEventAlreadyExist()} onClick={() => setSelectedType("booked")}>Booked</button>
-            <button type="button" className="btn  btn-sm" style={{ background: "yellow" }} disabled={ifEventAlreadyExist()} onClick={() => setSelectedType("reserved")}>Reserved</button>
+            <button type="button" className={`btn btn-primary btn-sm `} onClick={() => setSelectedType("intro")} >Mark as Intro Session</button>
+            <button type="button" className="btn btn-success btn-sm" onClick={() => setSelectedType("booked")}>Mark as Booking Session</button>
+            <button type="button" className="btn  btn-sm" style={{ background: "yellow" }} onClick={() => setSelectedType("reserved")}>Mark as Reserved Session</button>
             <button type="button" className="btn btn-danger btn-sm" onClick={() => setSelectedType("delete")}>Delete</button>
           </div>
         </div>
@@ -66,12 +76,7 @@ function EventModal({
             type="button"
             className="btn btn-primary btn-sm"
             onClick={() => {
-              handleCreateEvent({
-                ...selectedSlots,
-                type: selectedType,
-                id: uuidv4(),
-                createdAt: new Date(),
-              });
+              handleBulkEventCreate(selectedType)
               onRequestClose()
             }}
           >

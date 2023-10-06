@@ -28,14 +28,9 @@ const StudentCalenderScheduling = () => {
       </div>
       <div className='d-flex'>
         <div className="px-2 col-3">
-          <div className="highlight small lh-sm">
-            CheckBox the hours that you are not tutoring. Students will
-            not be able to book lessons for your blocked hours.
-          </div>
 
           <div className="highlight small lh-sm">
-            Double click on a blocked day or hour. Will unblock the
-            day or hour for that full day or specific hour.
+            Double click on a unblocked slots in week or day tab. You can reserve, book or reserve a slot for  introduction with 50% off.
           </div>
         </div>
         <div className='px-5 col-9' style={{ height: "500px" }}>

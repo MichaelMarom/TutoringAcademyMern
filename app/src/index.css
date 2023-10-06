@@ -46,3 +46,10 @@ code {
   background: black !important;
   color: #fff !important;
 }
+/* In your CSS file */
+.place-holder::after {
+  content: "Place holder";
+  display: block; /* Ensures the content appears on a new line */
+  color: rgb(249, 5, 5); /* Customize the text color */
+}
+

@@ -24,14 +24,14 @@ export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId)
     })
 }
   
-export let get_subject = () => {
+export let get_subject = (id) => {
 
     return new Promise((resolve, reject) => {
 
     
         axios.get('http://localhost:9876/tutor/subjects', {
             params: {
-                 
+                 id
             }
         })
         .then((result) => {

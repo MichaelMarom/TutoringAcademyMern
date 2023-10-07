@@ -44,6 +44,8 @@ let post_new_subject = (req, res) => {
     })
 }
 let subjects = (req, res) => {
+
+    let {id} = req.query;
     marom_db(async (config) => {
         const sql = require('mssql');
 
@@ -52,7 +54,7 @@ let subjects = (req, res) => {
         if (poolConnection) {
             var resultSet = await poolConnection.request().query(
                 `
-                    SELECT Id,FacultyId,SubjectName FROM Subjects
+                    SELECT Id,FacultyId,SubjectName FROM Subjects WHERE CONVERT(VARCHAR, FacultyId) =  '${id}'
                 `
             )
 

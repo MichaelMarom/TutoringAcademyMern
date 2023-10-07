@@ -306,7 +306,7 @@ const Education = () => {
                         </h6>
 
                         
-                        <div className='input-cnt'>
+                        <div className='input-cnt' style={{width: '100%'}}>
                             <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <select id='level' style={{padding: '5px'}} onInput={edu_level}>
                                     {
@@ -315,12 +315,12 @@ const Education = () => {
                                 </select>
                             </div>
 
-                            {/* <div style={{display: 'flex', visibility: 'hidden', justifyContent: 'center',  width: '100%', 
+                            <div style={{display: 'flex', visibility: 'hidden', justifyContent: 'center',  width: '100%', 
                             whiteSpace: 'nowrap'}}>
                                 <select onInput={e => set_state1(e.target.value)} id="state1">
                                     <option value='null'>Select</option>
                                 </select>
-                            </div> */}
+                            </div>
 
                             <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap', width:'150px'}}>
                                 <select  onInput={e => set_experience(e.target.value)} id="experience" style={{float: 'right', padding: '8px', margin: '0 0 10px 0'}}>
@@ -329,7 +329,7 @@ const Education = () => {
                             </div>
                         </div>
 
-                        <div className='input-cnt' style={{pointerEvents: event, opacity: opacity}}>
+                        <div className='input-cnt' style={{pointerEvents: event, opacity: opacity, width: '100%'}}>
                             <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <input type='text' id='university1' defaultValue={university1} onInput={e => set_university1(e.target.value)} placeholder='College/University 1' />
                             </div>
@@ -384,7 +384,7 @@ const Education = () => {
                             </div>
                         </div>
 
-                        <div className='input-cnt' style={{pointerEvents: event, opacity: opacity}}>
+                        <div className='input-cnt' style={{pointerEvents: event, opacity: opacity, width: '100%'}}>
                             <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <input type='text' defaultValue={university2} id='university2' onInput={e => set_university2(e.target.value)} placeholder='College/University 2' />
                             </div>
@@ -437,7 +437,7 @@ const Education = () => {
                             </div>
                         </div>
 
-                        <div className='input-cnt' style={{pointerEvents: event, opacity: opacity}}>
+                        <div className='input-cnt' style={{pointerEvents: event, opacity: opacity, width: '100%'}}>
                             <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <select id='degree' style={{padding: '5px'}} onInput={e => set_degree(e.target.value)}>
                                     {
@@ -502,7 +502,7 @@ const Education = () => {
                             </div>
                         </div>
                         
-                        <div className='input-cnt'>
+                        <div className='input-cnt' style={{width: '100%'}}>
                             <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <select id='certificate' style={{padding: '5px'}} onInput={certified}>
                                     {
@@ -541,7 +541,7 @@ const Education = () => {
                             </div>
                         </div>
 
-                        <div className='input-cnt'>
+                        <div className='input-cnt' style={{width: '100%'}}>
                             <div style={{display: 'flex', justifyContent: 'center',  width: '100%', whiteSpace: 'nowrap'}}>
                                 <input id='language' style={{padding: '5px'}} defaultValue={language} onInput={e => set_language(e.target.value)} placeholder='Native Language' />
                             </div>

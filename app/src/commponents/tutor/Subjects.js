@@ -193,7 +193,7 @@ const Subjects = () => {
         let tables = [...document.querySelectorAll('table')];
         let active_table = tables.filter(item => !item.hasAttribute('id'));
         active_table[0].setAttribute('id', 'hide_table');
-        let index_of_elem = [...elem.parentElement.children].indexOf(elem) + 1;
+        let index_of_elem = [...elem.parentElement.children].indexOf(elem);
         console.log(tables,index_of_elem)
         console.log("table",tables[index_of_elem])
         console.log( tables[index_of_elem],index_of_elem, 'tables')

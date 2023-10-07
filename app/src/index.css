@@ -46,10 +46,21 @@ code {
   background: black !important;
   color: #fff !important;
 }
-/* In your CSS file */
-.place-holder::after {
-  content: "Place holder";
-  display: block; /* Ensures the content appears on a new line */
-  color: rgb(249, 5, 5); /* Customize the text color */
+
+.rbc-day-slot.rbc-time-column .place-holder-end-slot {
+
+  border: 1px solid red !important;
+  border-top: 0 !important;
 }
 
+.rbc-day-slot.rbc-time-column .rbc-timeslot-group .rbc-time-slot.place-holder-start-slot {
+  border: 1px solid red !important;
+  border-bottom: 0 !important;
+}
+
+.rbc-day-slot.rbc-time-column .rbc-timeslot-group .rbc-time-slot.place-holder-start-slot::after {
+  content: "Place holder";
+  display: block;
+  color: rgb(249, 5, 5);
+  font-size: 9px
+}

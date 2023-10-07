@@ -30,7 +30,7 @@ const StudentCalenderScheduling = () => {
         <div className="px-2 col-3">
 
           <div className="highlight small lh-sm">
-            Double click on a unblocked slots in week or day tab. You can reserve, book or reserve a slot for  introduction with 50% off.
+            Select a "Week", or a "day" tab at the top right corner. Double click on an aviable (unblocked) slots. You must book first an introduction lesson for 50% off with your new tutor. Then, "Book" a lesson, or "Reserve" a slot for 60 minutes until you make your mind.
           </div>
         </div>
         <div className='px-5 col-9' style={{ height: "500px" }}>

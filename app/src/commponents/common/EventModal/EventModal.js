@@ -21,7 +21,7 @@ function EventModal({
   //   console.log(events, 'events')
   //   return events.some(event => event.start.getTime() === selectedSlots.start.getTime() || event.end.getTime() === selectedSlots.start.getTime());
   // }
-  console.log(selectedSlots,',;secldede')
+  console.log(selectedSlots, ',;secldede')
   const hasIntroEvent = () => {
     const events = reservedSlots.concat(bookedSlots);
     return events.some(event => event.type === 'intro');
@@ -39,7 +39,8 @@ function EventModal({
 
 
   useEffect(() => {
-    if (selectedType === 'intro' && selectedSlots > 1) {
+    console.log('gehe', selectedType, selectedSlots)
+    if (selectedType === 'intro' && selectedSlots.length > 1) {
       toast.warning('Cannot book more than 1 Intro session!')
     }
     else {

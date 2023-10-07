@@ -92,7 +92,6 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
   const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
   const handleBulkEventCreate = (type) => {
-    console.log(selectedSlots)
     const updatedSelectedSlots = selectedSlots.map((slot) => {
       return {
         ...slot,
@@ -104,15 +103,12 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
         createdAt: new Date(),
       }
     })
-    console.log(updatedSelectedSlots)
-    if (type === 'reserved')
+    if (type === 'reserved' || type === 'intro')
       setReservedSlots(reservedSlots.concat(updatedSelectedSlots))
     else if (type === 'booked')
       setBookedSlots(bookedSlots.concat(updatedSelectedSlots))
   }
-  useEffect(() => {
-    console.log(reservedSlots)
-  }, [reservedSlots])
+
   const handleCreateEvent = (newEventDetails) => {
     console.log(1)
     if (newEventDetails.type == 'delete') {
@@ -318,15 +314,19 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     },
     [disableWeekDays, enabledDays, disableDates]
   );
-  const handleEventClick = (event) => {
-    const message = `Are you ready to pay for the lesson with tutor ${currentTutor.name} ?`;
-    const result = window.confirm(message);
-    if (result) {
-      setReservedSlots(reservedSlots.filter(slot => slot.id !== event.id))
-      setBookedSlots([...bookedSlots, { ...event, title: "Booked", type: 'booked' }])
-    }
 
+  const handleEventClick = (event) => {
+    if (event.type !== 'booked') {
+      const message = `Are you ready to pay for the lesson with tutor ${currentTutor.name} ?`;
+      const result = window.confirm(message);
+      //handle intro payment later todo
+      if (result && event.type !== 'intro') {
+        setReservedSlots(reservedSlots.filter(slot => slot.id !== event.id))
+        setBookedSlots([...bookedSlots, { ...event, title: "Booked", type: 'booked' }])
+      }
+    }
   };
+
   const slotPropGetter = useCallback((date) => {
     if (date && moment(date).isSame(moment(date), 'day')) {
       const formattedTime = moment(date).format('h:00 a');
@@ -347,19 +347,12 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
       }
       else if (existInSelectedSlotStart) {
         return {
-          style: {
-            border: '1px solid red',
-            borderBottom: '0',
-          },
-          className: 'place-holder', // Add the CSS class here
+          className: 'place-holder-start-slot', // Add the CSS class here
         };
       }
       else if (existInSelectedSlotEnd) {
         return {
-          style: {
-            border: '1px solid red',
-            borderTop: '0',
-          }
+          className: "place-holder-end-slot"
         }
       }
       else if (existInDisableHourSlots) {

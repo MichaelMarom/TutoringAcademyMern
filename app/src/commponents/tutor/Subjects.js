@@ -1,5 +1,7 @@
 import { useTable } from 'react-table';
 import { useState } from 'react';
+import Skeleton from 'react-loading-skeleton'
+
 import {AnimatePresence} from 'framer-motion'
 import { useMemo } from 'react';
 import { useEffect } from 'react';
@@ -20,34 +22,10 @@ const Subjects = () => {
     let [newSubjectReasonData, setNewSubjectReasonData] = useState('');
     let [newSubjectFacultyIdData, setNewSubjectFacultyIdData] = useState('')
 
+    let [emptyData , set_emptyData] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]);
 
     
     let [newSubject, setNewSubject] = useState(false)
-    let [math_courses, set_math_courses] = useState([])
-    let [software_courses, set_software_courses] = useState([])
-    let [eng_courses, set_eng_courses] = useState([])
-    let [lang_courses, set_lang_courses] = useState([])
-    let [elem_courses, set_elem_courses] = useState([])
-    let [sci_courses, set_sci_courses] = useState([])
-    let [art_courses, set_art_courses] = useState([])
-    let [social_s_courses, set_social_s_courses] = useState([])
-    let [code_courses, set_code_courses] = useState([])
-    let [test_prep_courses, set_test_prep_courses] = useState([])
-    let [business_courses, set_business_courses] = useState([])
-    let [health_courses, set_health_courses] = useState([])
-    let [life_skill_courses, set_life_skill_courses] = useState([])
-    let [pending_courses, set_pending_courses] = useState([])
-    let [aviation_courses, set_aviation_courses] = useState([])
-    let [engineering_courses, set_engineering_courses] = useState([])
-
-    let [chemistry_courses,set_chemistry_courses]=useState([])
-    let [chemistry_courses,set_chemistry_courses]=useState([])
-    let [chemistry_courses,set_chemistry_courses]=useState([])
-    let [chemistry_courses,set_chemistry_courses]=useState([])
-    let [chemistry_courses,set_chemistry_courses]=useState([])
-    let [chemistry_courses,set_chemistry_courses]=useState([])
-    let [chemistry_courses,set_chemistry_courses]=useState([])
-    let [chemistry_courses,set_chemistry_courses]=useState([])
     
     let [faculty, set_faculty] = useState([])
 
@@ -95,12 +73,7 @@ const Subjects = () => {
         .catch((err) => console.log(err))
     })
    
-    let courses = async(cb) => {
-        let response = await get_subject()
-        .then((result) => result.recordset)
-        .catch((err) =>  err) 
-        cb(response);
-    }
+    
 
     let populate_col = e => {
        if(e.target.checked){
@@ -148,96 +121,25 @@ const Subjects = () => {
     }
 
     useEffect(() => {
-        courses((data) => {
-
-            data.map((item) => {
-                let id = item.FacultyId
-                if(id === 1){
-                    set_math_courses(old_list => [...old_list, item])
-                }else if(id === 2){
-                    set_software_courses(old_list => [...old_list, item])
-                }else if(id === 3){
-                    set_eng_courses(old_list => [...old_list, item])
-                }else if(id === 4){
-                    set_lang_courses(old_list => [...old_list, item])
-                }else if(id === 5){
-                    set_elem_courses(old_list => [...old_list, item])
-                }else if(id === 6){
-                    set_sci_courses(old_list => [...old_list, item])
-                }else if(id === 7){
-                    set_art_courses(old_list => [...old_list, item])
-                }else if(id === 8){
-                    set_social_s_courses(old_list => [...old_list, item])
-                }else if(id === 9){
-                    set_code_courses(old_list => [...old_list, item])
-                }else if(id === 10){
-                    set_test_prep_courses(old_list => [...old_list, item])
-                }else if(id === 11){
-                    set_business_courses(old_list => [...old_list, item])
-                }else if(id === 12){
-                    set_health_courses(old_list => [...old_list, item])
-                }else if(id === 13){
-                    set_life_skill_courses(old_list => [...old_list, item])
-                }else if(id === 14){
-                    //set_//aviation_courses(old_list => [...old_list, item]) 
-                }else if(id === 15){
-                    set_aviation_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_engineering_courses(old_list => [...old_list, item])
-                }
-                else if(id === 16){
-                    set_economics_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_hihstory_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_statistics_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_chemistry_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_biology_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_physics_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_music_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_geography_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_psychology_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_graphicDesign_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_photography_courses(old_list => [...old_list, item])
-                }else if(id === 16){
-                    set_geometry_courses(old_list => [...old_list, item])
-                }else if(id === 22){
-                    console.log('Chemistry: ',item)
-                    set_litrature_courses(old_list => [...old_list, item])
-                }else if(id === 22){
-                    console.log('Chemistry: ',item)
-                    set_businessManagement_courses(old_list => [...old_list, item])
-                }
-            })
-
-        })
+        get_subject(1)
+        .then((result) => set_active_course(result.recordset))
+        .catch((err) =>  err) 
+        
     }, []);
+
+    let getSubject = (id) => {
+        get_subject(id)
+        .then((result) => set_active_course(result.recordset))
+        .catch((err) =>  err) 
+    }
     
 
-    useEffect(() => {
-        set_active_course(math_courses)
-    }, []) 
 
     let handle_active_course = e => {
         let elem = e.currentTarget;
-        let tables = [...document.querySelectorAll('table')];
-        let active_table = tables.filter(item => !item.hasAttribute('id'));
-        active_table[0].setAttribute('id', 'hide_table');
-        let index_of_elem = [...elem.parentElement.children].indexOf(elem) ;
-        console.log(tables,index_of_elem)
-        console.log("table",tables[index_of_elem])
-        console.log( tables[index_of_elem],index_of_elem, 'tables')
-        tables[index_of_elem].removeAttribute('id');
+        let index_of_elem = [...elem.parentElement.children].indexOf(elem);
 
-
+        getSubject(index_of_elem + 1)
         let clickedElem = e.currentTarget;
         let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
         deactivedElem.removeAttribute('id');
@@ -525,11 +427,12 @@ const Subjects = () => {
                                 )
                             }
                         </ul>
+
                         <div style={{margin: '0 0 0 0',background: '#efefef', display
                         : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-right" onClick={handle_scroll_right}>
-                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
-                                <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
+                            <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
 
                         </div>
 
@@ -553,8 +456,9 @@ const Subjects = () => {
                             <tbody>
                                     
                                 {
-
-                                    math_courses.map((item, index) => 
+                                    active_course 
+                                    ?
+                                    active_course.map((item, index) => 
                                         
                                         <tr key={index}>
                                            
@@ -570,34 +474,21 @@ const Subjects = () => {
                                             <td data-src={item.FacultyId}></td>
                                         </tr>
                                     )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
 
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
+                                    :
 
-                                    software_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
+                                    emptyData.map((item) => 
+                                        <tr >
+                                        
+                                            <td ><Skeleton count={1} /></td>
+                                            <td ><Skeleton count={1} /></td>
+                                            <td ><Skeleton count={1} /></td>
+                                            <td ><Skeleton count={1} /></td>
+                                            <td ><Skeleton count={1} /></td>
+                                            <td ><Skeleton count={1} /></td>
+                                            <td ><Skeleton count={1} /></td>
+                                            <td ><Skeleton count={1} /></td>
+                                        
                                         </tr>
                                     )
                                 }
@@ -606,455 +497,8 @@ const Subjects = () => {
                             </tbody>
                         </table>
 
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    eng_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    lang_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    elem_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    sci_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    art_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    social_s_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    code_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    test_prep_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    business_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    health_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    life_skill_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    pending_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    aviation_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    engineering_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
-                        
-                        <table id='hide_table'>
-                            <thead>
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                    
-                                {
-
-                                    chemistry_courses.map((item, index) => 
-                                        <tr key={index}>
-                                            <td data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px'}} value={item.SubjectName} /></td>
-
-                                            <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                            <td data-src={item.FacultyId}></td>
-                                        </tr>
-                                    )
-                                }
-                                
-                                
-                            </tbody>
-                        </table>
+                       
+                    
                     </div>
 
                 </div>

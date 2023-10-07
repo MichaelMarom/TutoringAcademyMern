@@ -64,3 +64,7 @@ code {
   color: rgb(249, 5, 5);
   font-size: 9px
 }
+
+button.Toastify__close-button.Toastify__close-button--light {
+  color: white;
+}

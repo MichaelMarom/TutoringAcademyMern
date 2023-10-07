@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
 import LeftSideBar from "../LeftSideBar";
 import SlotPill from "../../student/SlotPill";
 import { toast } from "react-toastify";
@@ -14,40 +13,36 @@ function EventModal({
   reservedSlots,
   bookedSlots
 }) {
-  const [selectedType, setSelectedType] = useState("booked");
+  const [selectedType, setSelectedType] = useState(null);
+  const [canPostEvents, setCanPostEvents] = useState(true)
 
   // const ifEventAlreadyExist = () => {
   //   const events = reservedSlots.concat(bookedSlots);
   //   console.log(events, 'events')
   //   return events.some(event => event.start.getTime() === selectedSlots.start.getTime() || event.end.getTime() === selectedSlots.start.getTime());
   // }
-  console.log(selectedSlots, ',;secldede')
-  const hasIntroEvent = () => {
-    const events = reservedSlots.concat(bookedSlots);
-    return events.some(event => event.type === 'intro');
-  }
 
   const handleRemoveSlot = (startTime) => {
     setSelectedSlots(selectedSlots.filter((slot) => slot.start.getTime() !== startTime.getTime()))
   }
 
-  // useEffect(() => {
-  //   if (!hasIntroEvent() && selectedType !== 'intro' && selectedSlots.start) {
-  //     alert('Can not reserve or book lesson before the introduction')
-  //   }
-  // }, [reservedSlots, selectedType])
-
-
   useEffect(() => {
-    console.log('gehe', selectedType, selectedSlots)
-    if (selectedType === 'intro' && selectedSlots.length > 1) {
+    const existIntroSession = reservedSlots.some(slot => slot.type === 'intro')
+    if (existIntroSession && selectedType === 'intro' && selectedSlots[0]?.start) {
+      toast.warning('Cannot add more than 1 Intro Session!')
+      setCanPostEvents(false)
+    }
+    else if ((!existIntroSession && selectedType !== 'intro') && selectedSlots[0]?.start) {
+      setCanPostEvents(false)
+      toast.warning('Can not reserve or book lesson before the intro Session')
+    } else if (selectedType === 'intro' && selectedSlots.length > 1) {
+      setCanPostEvents(false)
       toast.warning('Cannot book more than 1 Intro session!')
     }
     else {
-      // addTypeAndIdinSelectedSlots()
+      setCanPostEvents(true)
     }
-  }, [selectedType, selectedSlots])
-
+  }, [selectedSlots, selectedType, reservedSlots])
 
   return (
     <LeftSideBar
@@ -77,8 +72,11 @@ function EventModal({
             type="button"
             className="btn btn-primary btn-sm"
             onClick={() => {
-              handleBulkEventCreate(selectedType)
-              onRequestClose()
+              if (canPostEvents) {
+                handleBulkEventCreate(selectedType);
+                onRequestClose();
+                setSelectedType(null)
+              }
             }}
           >
             Save

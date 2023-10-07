@@ -2,16 +2,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import EventModal from "../EventModal/EventModal";
-import { useDispatch } from "react-redux";
-import { addEvent, storeEvent } from "../../../redux/tutor_store/EventSlice";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { get_tutor_setup } from "../../../axios/tutor";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
+import { getStudentBookings } from "../../../redux/student_store/studentBookings";
 moment.locale("en-GB");
+
 const localizer = momentLocalizer(moment);
 
 const views = {
@@ -20,7 +20,7 @@ const views = {
   MONTH: 'month'
 }
 
-const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
+const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
 
   const { events: stateEvents } = useSelector(state => state.event);
   const [activeView, setActiveView] = useState(views.MONTH)
@@ -33,9 +33,11 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     end: null,
   });
 
-  // const [user, setUser] = useState({role:'tutor', id:"Kolin. P. C1501fa", SID:"2"});
-  const [user, setUser] = useState({ role: 'student', id: "Rosemary. W. Cab1220", SID: "2" });
+  const { user } = useSelector(state => state.user);
+  console.log(user)
+  const { selectedTutor } = useSelector(state => state.selectedTutor)
   // const [currentTutor, setCurrentTutor] = useState({ id: "Kolin. P. C1501fa", SID: "2" });
+  const isStudentLoggedIn = user.parentEmail ? true : false
 
   const [enabledDays, setEnabledDays] = useState([]);
   const [disableDates, setDisableDates] = useState([]);
@@ -56,7 +58,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
   }
 
   const updateTutorDisableRecord = async () => {
-    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${user.SID}`, {
+    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${selectedTutor.id}`, {
       enableHourSlots,
       disableDates,
       disableWeekDays,
@@ -66,7 +68,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     });
   }
   const getTutorSetup = async () => {
-    const [result] = await get_tutor_setup(currentTutor.id);
+    const [result] = await get_tutor_setup(selectedTutor.academyId);
     setEnableHourSlots(JSON.parse(result.enableHourSlots));
     setEnabledDays(JSON.parse(result.enabledDays))
     setDisableDates(JSON.parse(result.disableDates));
@@ -85,7 +87,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
   }, [activeTab])
 
   useEffect(() => {
-    if (dataFetched && user.role === 'tutor')
+    if (dataFetched && !isStudentLoggedIn)
       updateTutorDisableRecord();
   }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched]);
 
@@ -99,14 +101,19 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
         id: uuidv4(),
         title: type == 'reserved' ? 'Reserved' :
           type === 'intro' ? 'Intro' : "Booked",
-        studentName: "JHON",
+        studentName: user.firstName,
         createdAt: new Date(),
       }
     })
-    if (type === 'reserved' || type === 'intro')
+    if (type === 'reserved' || type === 'intro') {
       setReservedSlots(reservedSlots.concat(updatedSelectedSlots))
-    else if (type === 'booked')
+      dispatch(getStudentBookings({ studentId: user.academyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots, subjectId: selectedTutor.subject }))
+    }
+    else if (type === 'booked') {
       setBookedSlots(bookedSlots.concat(updatedSelectedSlots))
+      dispatch(getStudentBookings({ studentId: user.academyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots, subjectId: selectedTutor.subject })
+      )
+    }
   }
 
   const handleCreateEvent = (newEventDetails) => {
@@ -149,11 +156,11 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
     if (clickedUpperSlot && activeView != views.MONTH) return;
     if (clickedDate.getTime() < (new Date()).getTime()) {
-      toast.warning(`Cannot ${user.role === 'tutor' ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
+      toast.warning(`Cannot ${!isStudentLoggedIn ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
       return
     }
     if (slotInfo.action === "doubleClick") {
-      if (user.role === "tutor") {
+      if (!isStudentLoggedIn) {
         if (disableWeekDays && disableWeekDays.includes(dayName)) {
           if (activeView !== views.MONTH) {
 
@@ -219,7 +226,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
             }
           }
         }
-      } else if (user.role === "student") {
+      } else if (isStudentLoggedIn) {
         if (activeView !== views.MONTH) {
           //slots/month
           const existsinEnabledInMonth = enabledDays.some((arrayDate) => convertToDate(arrayDate).getTime() === clickedDate.getTime());
@@ -281,7 +288,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
 
       return;
     } else if (slotInfo.action === "click") {
-      if (user.role === "student") {
+      if (isStudentLoggedIn) {
       }
     }
   };
@@ -317,7 +324,7 @@ const ShowCalendar = ({ currentTutor, activeTab, disableWeekDays, disabledHours,
 
   const handleEventClick = (event) => {
     if (event.type !== 'booked') {
-      const message = `Are you ready to pay for the lesson with tutor ${currentTutor.name} ?`;
+      const message = `Are you ready to pay for the lesson with tutor ${selectedTutor.name} ?`;
       const result = window.confirm(message);
       //handle intro payment later todo
       if (result && event.type !== 'intro') {

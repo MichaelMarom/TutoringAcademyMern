@@ -9,6 +9,8 @@ import { useCallback } from 'react';
 import containerVariants from '../constraint';
 import { get_student_short_list } from '../../axios/student';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { setTutor } from '../../redux/student_store/selectedTutor';
 
 const StudentShortList = () => {
 
@@ -19,11 +21,24 @@ const StudentShortList = () => {
     const columns = useMemo(() => COLUMNS, []);
 
     let navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const { selectedTutor } = useSelector(state => state.selectedTutor);
+    console.log(selectedTutor);
+    const handleNavigateToSchedule = async (item) => {
+        console.log(item)
+        await dispatch(setTutor({
+            id: item.tutorData.SID, academyId: item.tutorData.AcademyId,
+            GMT: item.tutorData.GMT,
+            name: `${item.tutorData.FirstName} ${item.tutorData.LastName}`,
+            subject: item.tutorShortList.Subject
+        }))
+        navigate('/student/schedule')
+    }
 
     useEffect(() => {
         get_student_short_list(window.localStorage.getItem('student_user_id'))
-            .then((result) => {
-
+        .then((result) => {
                 result.sort(function (a, b) {
                     if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
                         return -1;
@@ -33,7 +48,7 @@ const StudentShortList = () => {
                     }
                     return 0;
                 });
-
+                
                 setResponse(result)
                 console.log(response)
             })
@@ -72,10 +87,8 @@ const StudentShortList = () => {
 
 
                                 {
-
                                     response.length > 0
                                         ?
-
                                         response.map((item, index) => {
                                             return <tr onDoubleClick={e => redirect_to_tutor_profile(item.tutorData.AcademyId)} key={index}>
 
@@ -96,7 +109,7 @@ const StudentShortList = () => {
                                                     {convertGMTToLocalTime(item.tutorData.GMT).toLocaleString()}
                                                 </td>
                                                 <td>
-                                                    <button className='btn btn-outline-primary' onClick={() => navigate(`/student/schedule`, { state: { id: item.tutorData.SID, academyId: item.tutorData.AcademyId, GMT: item.tutorData.GMT, name: `${item.tutorData.FirstName} ${item.tutorData.LastName}` } })}>View Schedule</button>
+                                                    <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>View Schedule</button>
                                                 </td>
                                                 <td>
                                                     <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(item.tutorData.AcademyId)}>View Profile</button>

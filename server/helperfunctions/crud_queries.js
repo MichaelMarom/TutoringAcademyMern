@@ -1,23 +1,25 @@
 const insert = (tableName, values) => {
+    console.log(values)
     let fieldsArray = Object.keys(values);
     const valuesArray = Object.keys(values).map(key => {
         return values[key];
     })
 
     const fieldsMapped = fieldsArray.map((field, index) => {
-        return (fieldsArray.length !== index) ?
-            `${field},` : `${field}`;
+        return ((fieldsArray.length !== index) ? `${field}` : `${field}`)
     })
     const queryFieldsPart = `(` + fieldsMapped + `)`
     const valuesMapped = valuesArray.map((value, index) => {
-        return (valuesArray.length !== index) ?
-            `'${value}',` : `'${value}'`;
+        const value = ((valuesArray.length !== index) ? `${typeof (value) === 'object' ? `'${JSON.stringify(value)}'` : `'${value}'`}` : `'${value}'`);
+        return value
     })
     const queryValuesPart = `(` + valuesMapped + `)`;
 
     console.log(queryFieldsPart, queryValuesPart);
-    return ` INSERT INTO ${tableName} ${fieldsArray.length ? queryFieldsPart : null} VALUES ${queryValuesPart}
+    const query = `INSERT INTO ${tableName} ${fieldsArray.length ? queryFieldsPart : null} VALUES ${queryValuesPart}
     `
+    console.log(query)
+    return query
 }
 const updateById = (id, tableName, fields) => {
     const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays } = fields;

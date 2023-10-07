@@ -175,6 +175,7 @@ const Subjects = () => {
                 }else if(id === 16){
                     set_engineering_courses(old_list => [...old_list, item])
                 }else if(id === 22){
+                    console.log('Chemistry: ',item)
                     set_chemistry_courses(old_list => [...old_list, item])
                 }
             })
@@ -192,7 +193,7 @@ const Subjects = () => {
         let tables = [...document.querySelectorAll('table')];
         let active_table = tables.filter(item => !item.hasAttribute('id'));
         active_table[0].setAttribute('id', 'hide_table');
-        let index_of_elem = [...elem.parentElement.children].indexOf(elem);
+        let index_of_elem = [...elem.parentElement.children].indexOf(elem) + 1;
         console.log(tables,index_of_elem)
         console.log("table",tables[index_of_elem])
         console.log( tables[index_of_elem],index_of_elem, 'tables')
@@ -230,7 +231,7 @@ const Subjects = () => {
         let scroll_elem = div.children[1];
         console.log(scroll_elem) 
         let w = scroll_elem.offsetWidth;
-        scroll_elem.scrollLeft = '10px';
+        scroll_elem.scrollLeft = w;
 
     }
 
@@ -503,13 +504,14 @@ const Subjects = () => {
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Aviation</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Biology</a></li>
                             <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Engineering</a></li>
+                            <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>Chemistry</a></li>
                             
                         </ul>
                         <div style={{margin: '0 0 0 0',background: '#efefef', display
                         : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'}}  className="scroller-right" onClick={handle_scroll_right}>
-                        <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
-                            <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
+                                <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
 
                         </div>
 

@@ -17,7 +17,7 @@ const SlotPill = ({ selectedSlots, handleRemoveSlot, selectedType }) => {
                     {moment(item.start).format('DD/MM hh:mm')}
                     <span
                         className="remove-icon ml-2 cursor-pointer"
-                        style={{ color: ` ${selectedType === 'intro' ? 'rgb(71 180 255)' : selectedType === 'booked' ? '#2db82d' : '#b08d13'}` }}
+                        style={{ color: ` ${selectedType ? selectedType === 'intro' ? 'rgb(71 180 255)' : selectedType === 'booked' ? '#2db82d' : '#b08d13' : "black"}` }}
                         onClick={() => handleRemoveSlot(item.start)}
                     >
                         &#x2715;

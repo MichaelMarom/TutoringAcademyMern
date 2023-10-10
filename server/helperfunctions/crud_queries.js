@@ -4,21 +4,44 @@ const insert = (tableName, values) => {
         return values[key];
     })
 
+
     const fieldsMapped = fieldsArray.map((field, index) => {
-        return (fieldsArray.length !== index) ?
-            `${field},` : `${field}`;
+        return ((fieldsArray.length !== index) ? `${field}` : `${field}`)
     })
     const queryFieldsPart = `(` + fieldsMapped + `)`
     const valuesMapped = valuesArray.map((value, index) => {
-        return (valuesArray.length !== index) ?
-            `'${value}',` : `'${value}'`;
+        const updatedArray = ((valuesArray.length !== index) ? `${typeof (value) === 'object' ? `'${JSON.stringify(value)}'` : `'${value}'`}` : `'${value}'`);
+        return updatedArray
     })
     const queryValuesPart = `(` + valuesMapped + `)`;
 
-    console.log(queryFieldsPart, queryValuesPart);
-    return ` INSERT INTO ${tableName} ${fieldsArray.length ? queryFieldsPart : null} VALUES ${queryValuesPart}
+    const query = `INSERT INTO ${tableName} ${fieldsArray.length ? queryFieldsPart : null} VALUES ${queryValuesPart}
     `
+    return query
 }
+
+const update = (tableName, values, where) => {
+    const updateFieldsArray = Object.keys(values);
+
+    const setClause = updateFieldsArray.map((field, index) => {
+        const updatedValue = typeof values[field] === 'object'
+            ? `'${JSON.stringify(values[field])}'`
+            : `'${values[field]}'`;
+        return `${field} = ${updatedValue}`;
+    }).join(', ');
+
+    const whereFieldsArray = Object.keys(where);
+    const whereClause = whereFieldsArray.map((field, index) => {
+        const whereValue = typeof where[field] === 'object'
+            ? `'${JSON.stringify(where[field])}'`
+            : `'${where[field]}'`;
+        return `${field} = ${whereValue}`;
+    }).join(' AND ');
+      
+    const query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause}`;
+    return query;
+};
+
 const updateById = (id, tableName, fields) => {
     const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays } = fields;
     const qury = `UPDATE ${tableName}
@@ -29,12 +52,34 @@ const updateById = (id, tableName, fields) => {
     console.log(qury)
     return qury;
 }
+
 const getAll = (tableName) => {
     return `SELECT * FROM ${tableName}`;
 }
 
+const findByAnyIdColumn = (tableName, condition) => {
+    const idColumn = Object.keys(condition)[0];
+    const value = condition[idColumn];
+    return `SELECT TOP 1 * FROM ${tableName} where ${idColumn} = '${value}'`
+}
+
+const find = (tableName, where, opr = 'AND') => {
+    const conditions = [];
+
+    for (const key in where) {
+        if (where.hasOwnProperty(key)) conditions.push(`${key} = '${where[key]}'`);
+    }
+
+    const whereClause = conditions.join(` ${opr} `);
+    const sql = `SELECT * FROM ${tableName} WHERE ${whereClause}`;
+    return sql
+};
+
 module.exports = {
     insert,
     getAll,
-    updateById
+    updateById,
+    findByAnyIdColumn,
+    update,
+    find
 }

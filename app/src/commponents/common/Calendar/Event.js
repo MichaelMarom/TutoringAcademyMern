@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 
-function CustomEvent({ event, handleEventClick, setReservedSlots, reservedSlots }) {
+function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reservedSlots }) {
     const [remainingTime, setRemainingTime] = useState(calculateRemainingTime(event.createdAt));
     const [extraFiveMinStart, setExtraFiveMinStart] = useState(false);
 
@@ -33,7 +33,7 @@ function CustomEvent({ event, handleEventClick, setReservedSlots, reservedSlots 
 
             //5 min extra after expire
             if (diffInMinutes >= 65 && event.type === 'reserved') {
-                setReservedSlots(reservedSlots.filter(slot => event.id !== slot.id));
+                handleSetReservedSlots(reservedSlots.filter(slot => event.id !== slot.id));
                 setExtraFiveMinStart(false)
             }
         };

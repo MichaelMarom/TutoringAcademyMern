@@ -1,4 +1,4 @@
-const { upload_form_one, get_student_setup, get_student_grade, get_tutor_subject, upload_student_short_list, get_student_short_list, get_student_short_list_data, get_student_market_data, get_my_data, get_student_bookings, post_student_bookings } = require('../controllers/student');
+const { upload_form_one, get_student_setup, get_student_grade, get_tutor_subject, upload_student_short_list, get_student_short_list, get_student_short_list_data, get_student_market_data, post_student_bookings, get_student_bookings, get_my_data } = require('../controllers/student');
 const { express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt } = require('../modules');
 
 const STUDENT_ROUTES = express.Router();

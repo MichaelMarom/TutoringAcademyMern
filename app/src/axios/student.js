@@ -167,6 +167,10 @@ export let get_student_short_list_data = (id) => {
 
 
 export const save_student_events = async (body) => {
-    const result = await axiosInstance.post('/student/booking', body);
-    console.log(result)
+    await axiosInstance.post('/student/booking', body);
+}
+
+export const get_student_events = async (studentId, tutorId) => {
+    const { data } = await await axiosInstance.get(`/student/booking/${studentId}/${tutorId}`);
+    return data;
 }

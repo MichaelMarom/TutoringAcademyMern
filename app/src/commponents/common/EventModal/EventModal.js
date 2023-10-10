@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import LeftSideBar from "../LeftSideBar";
 import SlotPill from "../../student/SlotPill";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 
 function EventModal({
@@ -16,18 +17,14 @@ function EventModal({
   const [selectedType, setSelectedType] = useState(null);
   const [canPostEvents, setCanPostEvents] = useState(true)
 
-  // const ifEventAlreadyExist = () => {
-  //   const events = reservedSlots.concat(bookedSlots);
-  //   console.log(events, 'events')
-  //   return events.some(event => event.start.getTime() === selectedSlots.start.getTime() || event.end.getTime() === selectedSlots.start.getTime());
-  // }
+  const { selectedTutor } = useSelector(state => state.selectedTutor)
 
   const handleRemoveSlot = (startTime) => {
     setSelectedSlots(selectedSlots.filter((slot) => slot.start.getTime() !== startTime.getTime()))
   }
 
   useEffect(() => {
-    const existIntroSession = reservedSlots.some(slot => slot.type === 'intro')
+    const existIntroSession = reservedSlots.some(slot => slot.type === 'intro' && selectedTutor.subject === slot.subject )
     if (existIntroSession && selectedType === 'intro' && selectedSlots[0]?.start) {
       toast.warning('Cannot add more than 1 Intro Session!')
       setCanPostEvents(false)
@@ -35,7 +32,7 @@ function EventModal({
     else if ((!existIntroSession && selectedType !== 'intro') && selectedSlots[0]?.start) {
       setCanPostEvents(false)
       toast.warning('Can not reserve or book lesson before the intro Session')
-    } else if (selectedType === 'intro' && selectedSlots.length > 1) {
+    } else if (existIntroSession && selectedType === 'intro' && selectedSlots.length > 1) {
       setCanPostEvents(false)
       toast.warning('Cannot book more than 1 Intro session!')
     }

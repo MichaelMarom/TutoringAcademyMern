@@ -11,12 +11,14 @@ import { get_student_short_list } from '../../axios/student';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTutor } from '../../redux/student_store/selectedTutor';
+import Loading from '../common/Loading';
 
 const StudentShortList = () => {
 
     // columns.js
     const [data, useData] = useState([]);
     const [response, setResponse] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const columns = useMemo(() => COLUMNS, []);
 
@@ -24,11 +26,10 @@ const StudentShortList = () => {
     const dispatch = useDispatch()
 
     const { selectedTutor } = useSelector(state => state.selectedTutor);
-    console.log(selectedTutor);
     const handleNavigateToSchedule = async (item) => {
-        console.log(item)
         await dispatch(setTutor({
-            id: item.tutorData.SID, academyId: item.tutorData.AcademyId,
+            id: item.tutorData.SID, 
+            academyId: item.tutorData.AcademyId,
             GMT: item.tutorData.GMT,
             name: `${item.tutorData.FirstName} ${item.tutorData.LastName}`,
             subject: item.tutorShortList.Subject
@@ -37,6 +38,7 @@ const StudentShortList = () => {
     }
 
     useEffect(() => {
+        setIsLoading(true)
         get_student_short_list(window.localStorage.getItem('student_user_id'))
         .then((result) => {
                 result.sort(function (a, b) {
@@ -50,9 +52,11 @@ const StudentShortList = () => {
                 });
                 
                 setResponse(result)
+                setIsLoading(false)
                 console.log(response)
             })
             .catch((err) => {
+                setIsLoading(false)
                 console.log(err)
             })
     }, [])
@@ -68,6 +72,9 @@ const StudentShortList = () => {
         window.localStorage.setItem('user_role', 'admin');
         navigate('/tutor/tutor-profile')
     }
+
+
+    if(isLoading) return <Loading />
     return (
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>

@@ -1,5 +1,5 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert } = require('../helperfunctions/crud_queries');
+const { insert, getAll, findById, findByAnyIdColumn, update, find } = require('../helperfunctions/crud_queries');
 const { express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
 
@@ -369,7 +369,6 @@ let get_student_short_list = async (req, res) => {
         })
         .then(({ tutorProfile, demoLesson, studentShortList }) => {
             let studentBook = [];
-            console.log(studentShortList)
 
             studentShortList.map((item, index) => {
                 let tutorData = tutorProfile[0].filter(tutor => tutor.AcademyId === item.AcademyId)[0]
@@ -594,7 +593,6 @@ let get_student_market_data = async (req, res) => {
             return { StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT }
         })
         .then((result) => {
-            console.log(result)
             res.send(result)
         })
 
@@ -658,8 +656,13 @@ module.exports = {
     upload_student_short_list,
     get_student_short_list_data,
     get_student_market_data,
+<<<<<<< HEAD
     get_my_data,
     get_student_bookings,
     post_student_bookings
+=======
+    post_student_bookings,
+    get_student_bookings
+>>>>>>> 928a09b (subject-func)
 }
 

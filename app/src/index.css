@@ -34,9 +34,9 @@ code {
   background-color: orange !important;
 }
 
-.reserved-slot {
+/* .reserved-slot {
   background-color: yellow !important;
-}
+} */
 
 .rbc-event-label {
   display: none !important;

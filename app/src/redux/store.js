@@ -14,12 +14,14 @@ import save from './tutor_store/save';
 import ScreenName from './tutor_store/ScreenName';
 import EventReducer from './tutor_store/EventSlice';
 import selectedTutorReducer from './student_store/selectedTutor';
+import studentBookingsReducer from './student_store/studentBookings';
 
 let store = configureStore({
   reducer: {
     user: userReducer,
     subject: subjectReducer,
     selectedTutor: selectedTutorReducer,
+    bookings: studentBookingsReducer,
     lineWidth: thicknessReducer,
     color: colorLineReducer,
     eraserWidth: eraserReducer,

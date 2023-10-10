@@ -1,6 +1,7 @@
 // slice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { save_student_events } from "../../axios/student";
+import { get_student_events, save_student_events } from "../../axios/student";
+import { convertToDate } from "../../commponents/common/Calendar/Calendar";
 
 const slice = createSlice({
     name: "studentBookings",
@@ -9,7 +10,7 @@ const slice = createSlice({
         bookedSlots: [],
         studentId: '',
         tutorId: '',
-        subjectId: '',
+        subjectName: '',
         studentBookings: {},
         isLoading: false,
         error: null,
@@ -19,7 +20,7 @@ const slice = createSlice({
             state.isLoading = true;
         },
         getReservedSlots: (state, action) => {
-            state.isLoading = false
+            state.isLoading = false;
             state.reservedSlots = action.payload;
         },
         getBookedSlots: (state, action) => {
@@ -27,12 +28,14 @@ const slice = createSlice({
             state.bookedSlots = action.payload;
         },
         setReservedSlots: (state, action) => {
-            state.isLoading = false
-            state.reservedSlots = action.payload;
+            state.isLoading = false;
+            const slotsWithDateObj = action.payload.map((slot) => ({ ...slot, start: convertToDate(slot.start), end: convertToDate(slot.end), createdAt: convertToDate(slot.createdAt) }));
+            state.reservedSlots = slotsWithDateObj;
         },
         setBookedSlots: (state, action) => {
-            state.isLoading = false
-            state.bookedSlots = action.payload;
+            state.isLoading = false;
+            const slotsWithDateObj = action.payload.map((slot) => ({ ...slot, start: convertToDate(slot.start), end: convertToDate(slot.end), createdAt: convertToDate(slot.createdAt) }));
+            state.bookedSlots = slotsWithDateObj;
         }
     },
 });
@@ -41,14 +44,21 @@ export default slice.reducer;
 
 // ACTIONS
 
-export function getStudentBookings(data) {
+export function getStudentBookings(studentId, tutorId) {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading(true));
-        console.log(data)
-        const result = await save_student_events(data);
-        dispatch(slice.actions.setReservedSlots(data.reservedSlots))
-        dispatch(slice.actions.setBookedSlots(data.bookedSlots))
+        const result = await get_student_events(studentId, tutorId);
+        dispatch(slice.actions.setReservedSlots(result.studentId ? JSON.parse(result.reservedSlots) : []))
+        dispatch(slice.actions.setBookedSlots(result.studentId ? JSON.parse(result.bookedSlots) : []))
         return result;
+    };
+}
+
+export function postStudentBookings(data) {
+    return async (dispatch) => {
+        dispatch(slice.actions.isLoading(true));
+        await save_student_events(data);
+        return await dispatch(getStudentBookings(data.studentId, data.tutorId))
     };
 }
 

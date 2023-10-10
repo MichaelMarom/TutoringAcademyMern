@@ -73,7 +73,7 @@ const Header = () => {
                         <li data-url='my-students' onClick={handleTabClick} ><a>Message Board</a></li>
                         <li data-url='market-place' onClick={handleTabClick} ><a>Market place</a></li>
                         <li data-url='collaboration' onClick={handleTabClick} ><a>Collaboration </a></li>
-                        <li data-url='tutor-profile' onClick={handleTabClick} ><a>Profile</a></li>
+                        <li data-url='profile' onClick={handleTabClick} ><a>Profile</a></li>
                     </ul>
                     <div className="scroller-right" onClick={handle_scroll_right}></div>
                     <div style={{margin: '0 0 0 0',background: '#efefef', display

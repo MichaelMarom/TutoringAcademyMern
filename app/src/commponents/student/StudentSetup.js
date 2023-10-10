@@ -524,10 +524,33 @@ const StudentSetup = () => {
                                     }
 
                                 </select>
+                                
+                            </div>
+
+
+                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                
+                                    <h5>Parent video consent</h5>
+                                    <div style={{display: 'flex', flexDirection: 'row',}}>
+                                        <div className='input-cnt' style={{height: '20px', width: '70px'}}>
+                                            <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentYes'>Yes</label>
+                                            &nbsp;&nbsp;
+                                            <input name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}} id='parentConsentYes' type='radio'/>
+                                        </div>
+
+                                        <div className='input-cnt' style={{height: '20px', width: '70px'}}>
+
+                                            <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentNo'>No</label>
+                                            &nbsp;&nbsp;
+                                            <input name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}}  id='parentConsentNo' type='radio'/>
+                                        </div>
+                                    </div>
                             </div>
                             
 
                         </div>
+                            
+
 
                         <div className="profile-details-cnt" style={{float: 'left'}}>
 

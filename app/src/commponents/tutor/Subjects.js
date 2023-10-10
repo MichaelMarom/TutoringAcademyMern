@@ -137,20 +137,17 @@ const Subjects = () => {
 
     let handle_active_course = e => {
         let elem = e.currentTarget;
-        let tables = [...document.querySelectorAll('table')];
-        let active_table = tables.filter(item => !item.hasAttribute('id'));
-        active_table[0].setAttribute('id', 'hide_table');
+        //let tables = [...document.querySelectorAll('table')];
+        //let active_table = tables.filter(item => !item.hasAttribute('id'));
+        //active_table[0].setAttribute('id', 'hide_table');
         let index_of_elem = [...elem.parentElement.children].indexOf(elem) ;
-        console.log(tables,index_of_elem)
-        console.log("table",tables[index_of_elem])
-        console.log( tables[index_of_elem],index_of_elem, 'tables')
-        tables[index_of_elem].removeAttribute('id');
+        getSubject(index_of_elem + 1);
+        //tables[index_of_elem].removeAttribute('id');
+ 
 
-
-        let clickedElem = e.currentTarget;
-        let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
+        let deactivedElem = [...elem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
         deactivedElem.removeAttribute('id');
-        clickedElem.setAttribute('id', 'table_options_menu')
+        elem.setAttribute('id', 'table_options_menu')
 
        
 

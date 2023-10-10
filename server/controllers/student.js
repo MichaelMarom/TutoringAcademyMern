@@ -397,6 +397,68 @@ let get_student_short_list = async(req,res) => {
     
 }
 
+let get_my_data = async (req, res) => {
+    let { AcademyId } = req.query;
+    let books = []
+
+    console.log(AcademyId)
+
+    let response_0 = (resolve) => {
+        marom_db(async (config) => {
+            const sql = require('mssql');
+            var poolConnection = await sql.connect(config);
+
+            poolConnection.request().query(`SELECT * from StudentSetup WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+                .then((result) => {
+                    books.push(result.recordsets);
+                    resolve()
+                })
+                .catch((err) => err);
+        })
+    }
+
+    let response_1 = (resolve) => {
+        marom_db(async (config) => {
+            const sql = require('mssql');
+            var poolConnection = await sql.connect(config);
+
+            poolConnection.request().query(`SELECT * from Education WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+                .then((result) => {
+                    books.push(result.recordsets);
+                    resolve()
+                })
+                .catch((err) => err);
+        })
+    }
+
+    
+
+    let sender = (cb) => {
+        //response_0(cb)
+
+        new Promise((resolve) => {
+            response_1(resolve)
+        })
+        .then(() => {
+            response_0(cb)
+        })
+        .catch(err => console.log(err))
+    }
+
+    sender(() => {
+        console.log(books)
+        res.send(books)
+    })
+
+
+
+
+
+
+
+
+    //console.log(response_0, response_1);
+}
 
 let get_student_short_list_data = (req,res) => {
 
@@ -549,6 +611,7 @@ module.exports = {
     get_student_short_list,
     upload_student_short_list,
     get_student_short_list_data,
-    get_student_market_data
+    get_student_market_data,
+    get_my_data
 }
 

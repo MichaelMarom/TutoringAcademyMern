@@ -40,6 +40,7 @@ import StudentTermOfUse from "./pages/student/TermOfUse";
 import StudentMarketPlace from "./commponents/student/StudentMarketPlace";
 import NewSubject from "./pages/Admin/NewSubject";
 import TutorNewSubject from "./pages/Admin/NewSubject";
+import StudentProfile from "./pages/student/StudentProfile";
 
 
 const App = () => {
@@ -123,6 +124,7 @@ const App = () => {
                         <Route path="student/market-place" element={<StudentMarketPlace />}></Route>
                         <Route path="student/schedule" element={<StudentScheduling />}></Route>
                         <Route path="student/term-of-use" element={<StudentTermOfUse />}></Route>
+                        <Route path="student/profile" element={<StudentProfile />}></Route> 
 
 
                     </Routes>

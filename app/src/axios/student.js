@@ -127,6 +127,25 @@ export let get_student_short_list = (student) => {
     })
 }
 
+
+export let get_my_data = (AcademyId) => {
+    return new Promise((resolve, reject) => {
+
+        axios.get('http://localhost:9876/student/my-data', {
+            params: {
+                AcademyId
+            }
+        })
+        .then((result) => {
+            resolve(result.data)
+        })
+        .catch((err) => {
+            reject(err)
+        })           
+
+    })
+}
+
 export let get_student_short_list_data = (id) => {
 
     return new Promise((resolve, reject) => {

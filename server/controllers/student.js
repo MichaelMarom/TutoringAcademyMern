@@ -656,13 +656,8 @@ module.exports = {
     upload_student_short_list,
     get_student_short_list_data,
     get_student_market_data,
-<<<<<<< HEAD
     get_my_data,
     get_student_bookings,
     post_student_bookings
-=======
-    post_student_bookings,
-    get_student_bookings
->>>>>>> 928a09b (subject-func)
 }
 

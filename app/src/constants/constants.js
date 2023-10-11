@@ -31,3 +31,8 @@ export const days = [
   "Thursday",
   "Friday",
 ];
+
+
+export const monthFormat = 'MMM D, YY';
+export const wholeDateFormat = 'ddd, MMM D, hh:mm a';
+export const slotPillDateFormat = 'MMM D, hh a'

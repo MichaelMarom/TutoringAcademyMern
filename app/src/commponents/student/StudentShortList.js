@@ -28,11 +28,13 @@ const StudentShortList = () => {
     const { selectedTutor } = useSelector(state => state.selectedTutor);
     const handleNavigateToSchedule = async (item) => {
         await dispatch(setTutor({
-            id: item.tutorData.SID, 
+            id: item.tutorData.SID,
             academyId: item.tutorData.AcademyId,
             GMT: item.tutorData.GMT,
-            name: `${item.tutorData.FirstName} ${item.tutorData.LastName}`,
-            subject: item.tutorShortList.Subject
+            firstName: item.tutorData.FirstName,
+            lastName: item.tutorData.LastName,
+            subject: item.tutorShortList.Subject,
+            rate: item.tutorShortList.Rate
         }))
         navigate('/student/schedule')
     }
@@ -40,7 +42,7 @@ const StudentShortList = () => {
     useEffect(() => {
         setIsLoading(true)
         get_student_short_list(window.localStorage.getItem('student_user_id'))
-        .then((result) => {
+            .then((result) => {
                 result.sort(function (a, b) {
                     if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
                         return -1;
@@ -50,7 +52,7 @@ const StudentShortList = () => {
                     }
                     return 0;
                 });
-                
+
                 setResponse(result)
                 setIsLoading(false)
                 console.log(response)
@@ -74,7 +76,7 @@ const StudentShortList = () => {
     }
 
 
-    if(isLoading) return <Loading />
+    if (isLoading) return <Loading />
     return (
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>

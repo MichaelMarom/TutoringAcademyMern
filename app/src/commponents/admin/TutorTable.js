@@ -5,7 +5,7 @@ import { COLUMNS } from '../../Tables/Admin/column';
 import moment from 'moment'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { conevrtGMTOffsetToLocalString, convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
+import { conevrtGMTOffsetToLocalString, convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 
 
 const TutorTable = () => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { get_student_data, set_student_status } from '../../axios/admin';
 import { COLUMNS } from '../../Tables/Admin/column_0';
-import { convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
+import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions'
 
 
 const StudentTable = () => {

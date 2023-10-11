@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment'
 import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
-import { conevrtGMTOffsetToLocalString, convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
 import { delete_new_subject, get_tutor_new_subject, post_new_subject } from '../../axios/admin';
 
 

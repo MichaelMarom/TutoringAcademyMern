@@ -6,14 +6,15 @@ const LeftSideBar = ({ isOpen, onClose, children }) => {
     <div
       className={`sidebar ${isOpen ? 'open' : ''} bg-light border-end`}
       style={{
-        width: '25%', 
+        width: '25%',
         transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.3s ease-in-out',
         position: 'fixed',
         top: '0',
         left: '0',
         height: '100%',
-        zIndex: '1000', 
+        zIndex: '1000',
+        overflowY: "auto"
       }}
     >
       <button

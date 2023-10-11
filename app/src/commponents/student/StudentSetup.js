@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { get_countries, get_gmt, get_state } from '../../axios/tutor';
 import { socket } from '../../socket';
 import { get_student_grade, get_student_setup, upload_form_one } from '../../axios/student';
-import { convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
+import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 
 const StudentSetup = () => {
 

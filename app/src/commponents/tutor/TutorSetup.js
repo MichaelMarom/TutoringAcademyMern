@@ -7,7 +7,7 @@ import { socket } from '../../socket';
 import containerVariants from '../constraint';
 import { useDispatch } from 'react-redux';
 import { setscreenNameTo } from '../../redux/tutor_store/ScreenName';
-import { convertGMTOffsetToLocalString } from '../../helperFuncations/timeHelperFuncations';
+import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 const TutorSetup = () => {
 
     let [fname, set_fname] = useState('')

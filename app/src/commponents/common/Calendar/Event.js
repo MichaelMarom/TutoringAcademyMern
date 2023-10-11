@@ -64,7 +64,11 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
     }
 
     return (
-        <div className={`text-center h-100 ${remainingTime.minutes <= 0 ? 'hidden' : ''}`} style={{ fontSize: "12px" }} onClick={() => handleEventClick(event)}>
+        <div
+            className={`text-center h-100 ${remainingTime.minutes <= 0 ? 'hidden' : ''}`}
+            style={{ fontSize: "12px" }}
+            onClick={() => handleEventClick(event)}
+        >
             {(event.type === 'reserved' && (remainingTime.minutes <= 0 && remainingTime.seconds === 1) || remainingTime.minutes >= 60) ? (
                 <div>
                     {event.title} by {event.studentName} - expired

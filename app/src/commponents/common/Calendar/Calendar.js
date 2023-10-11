@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
 import { getStudentBookings, postStudentBookings } from "../../../redux/student_store/studentBookings";
+import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 moment.locale("en-GB");
 
 const localizer = momentLocalizer(moment);
@@ -44,6 +45,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   // const [reservedSlots, setReservedSlots] = useState([]);
   // const [bookedSlots, setBookedSlots] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clickedSlot, setClickedSlot] = useState({})
   const tutorId = selectedTutor.academyId;
   const studentId = user.academyId;
   const subjectName = selectedTutor.subject;
@@ -57,6 +59,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
   const onRequestClose = () => {
     setSelectedSlots([]);
+    setClickedSlot({})
     setIsModalOpen(false)
   }
 
@@ -99,13 +102,17 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   }, [selectedTutor])
 
   const handleBulkEventCreate = (type) => {
+    if (reservedSlots.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
+      dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...clickedSlot, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== clickedSlot.id) }));
+      return
+    }
     if (reservedSlots.some(slot => slot.type === 'intro'
       && slot.subject === selectedTutor.subject
       && slot.end.getTime() > (new Date()).getTime())) {
       toast.warning("We are sorry, your intro session must be conducted first")
       return;
     }
-    if (selectedSlots.length + reservedSlots.length > 6) {
+    if ((selectedSlots.length && selectedSlots[0].type === 'reserved') + reservedSlots.length > 6) {
       toast.warning("Cannot Reserve more than 6 slots")
       return;
     }
@@ -124,14 +131,17 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
     //handle delete type later todo
     if (type === 'reserved' || type === 'intro') {
-      // setReservedSlots(reservedSlots.concat(updatedSelectedSlots))
       dispatch(postStudentBookings({ studentId: user.academyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
     }
     else if (type === 'booked') {
-      // setBookedSlots(bookedSlots.concat(updatedSelectedSlots))
       dispatch(postStudentBookings({ studentId: user.academyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
   }
+
+  const handleRemoveReservedSlot = (reservedSlots) => {
+    dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots }));
+  }
+
   const handleSetReservedSlots = (reservedSlots) => {
     dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots }));
   }
@@ -319,15 +329,24 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   );
 
   const handleEventClick = (event) => {
-    if (event.type !== 'booked') {
-      const message = `Are you ready to pay for the lesson with tutor ${selectedTutor.name} ?`;
-      const result = window.confirm(message);
-      //handle intro payment later todo
-      if (result && event.type !== 'intro') {
-        dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...event, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== event.id) }));
-      }
-    }
+    setClickedSlot(event)
+    setIsModalOpen(true);
   };
+  useEffect(() => {
+    if (isModalOpen) {
+
+      // if (event.type !== 'booked') {
+      console.log('enter');
+      const message = `Are you ready to pay for the lesson with tutor ${formatName(selectedTutor.firstName, selectedTutor.lastName)} ?`;
+      // const result = window.confirm(message);
+      //handle intro payment later todo
+      // if (result && event.type !== 'intro') {
+      // dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...event, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== event.id) }));
+      // }
+
+      // }
+    }
+  }, [isModalOpen])
 
   const slotPropGetter = useCallback((date) => {
     if (date && moment(date).isSame(moment(date), 'day')) {
@@ -381,12 +400,13 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     return {};
   }, [disabledHours, enableHourSlots, disableHourSlots, reservedSlots, selectedSlots]);
 
-  const handleViewChange = (view) => {
-    setActiveView(view)
-  }
+  const handleViewChange = (view) => setActiveView(view)
+
 
   const eventPropGetter = (event) => {
-    const secSubject = reservedSlots.some(slot => slot.type === 'intro' && event.subject !== selectedTutor.subject)
+    const secSubject = reservedSlots.some(slot => slot.type === 'intro'
+      && event.subject !== selectedTutor.subject)
+
     if (secSubject && event.type === 'intro') {
       return {
         className: 'sec-reserved-event',
@@ -424,6 +444,8 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
       return {
         className: 'reserved-event',
         style: {
+          border: "none",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
           backgroundColor: 'yellow',
           color: "black"
         },
@@ -432,6 +454,8 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
       return {
         className: 'booked-event',
         style: {
+          border: "none",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
           backgroundColor: 'green',
         },
       };
@@ -468,7 +492,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         view={activeView}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: "60vh", width: "100%" }}
+        style={{ height: "100%", width: "100%" }}
         step={30}
         onSelectSlot={handleDateClick}
         dayPropGetter={dayPropGetter}
@@ -483,6 +507,9 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         handleBulkEventCreate={handleBulkEventCreate}
         reservedSlots={reservedSlots}
         bookedSlots={bookedSlots}
+        clickedSlot={clickedSlot}
+        setClickedSlot={setClickedSlot}
+        handleRemoveReservedSlot={handleRemoveReservedSlot}
       />
     </div>
   );

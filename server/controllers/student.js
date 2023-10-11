@@ -660,4 +660,3 @@ module.exports = {
     get_student_bookings,
     post_student_bookings
 }
-

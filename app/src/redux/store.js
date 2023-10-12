@@ -12,7 +12,6 @@ import subjectReducer from './subject_store/subjectStore';
 import BoardAccessReducer from './tutor_store/BoardAccess';
 import save from './tutor_store/save';
 import ScreenName from './tutor_store/ScreenName';
-import EventReducer from './tutor_store/EventSlice';
 import selectedTutorReducer from './student_store/selectedTutor';
 import studentBookingsReducer from './student_store/studentBookings';
 
@@ -32,11 +31,8 @@ let store = configureStore({
     save: save,
 
     screenName: ScreenName,
-
     toolReq: toolReq,
     asideReq: asideReq,
-    event: EventReducer
-
   }
 
 })

@@ -44,6 +44,18 @@ export default slice.reducer;
 
 // ACTIONS
 
+export const setReservedSlots = (reservedSlots) => {
+    return async (dispatch) => {
+        dispatch(slice.actions.setReservedSlots(reservedSlots))
+    }
+}
+
+export const setBookedSlots = (bookedSlots) => {
+    return async (dispatch) => {
+        dispatch(slice.actions.setBookedSlots(bookedSlots))
+    }
+}
+
 export function getStudentBookings(studentId, tutorId) {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading(true));

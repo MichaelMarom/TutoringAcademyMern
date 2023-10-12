@@ -14,6 +14,8 @@ const StudentSetup = () => {
     let [sname, set_sname] = useState('')
     let [email, set_email] = useState('')
     let [pwd, set_pwd] = useState('')
+
+    let [ParentConsent, set_ParentConsent] = useState(false)
     let [cell, set_cell] = useState('')
     let [acadId, set_acadId] = useState('') 
     let [add1, set_add1] = useState('')
@@ -25,6 +27,7 @@ const StudentSetup = () => {
     let [timeZone, set_timeZone] = useState('')
     let [is_18, set_is_18] = useState('')
     let [lang, set_lang] = useState('')
+    let [parentConsent, set_parentConsent] = useState(false)
     let [grade, set_grade] = useState('')
     let [parent_fname, set_parent_fname] = useState('')
     let [parent_lname, set_parent_lname] = useState('')
@@ -51,7 +54,7 @@ const StudentSetup = () => {
 
     let saver = async () => {
 
-        let response = await upload_form_one(fname,mname,sname,email,lang,is_18,pwd,cell,grade,add1,add2,city,state,zipCode,country,timeZone,parent_fname,parent_lname,parent_email,photo,acadId)
+        let response = await upload_form_one(fname,mname,sname,email,lang,is_18,pwd,cell,grade,add1,add2,city,state,zipCode,country,timeZone,parent_fname,parent_lname,parent_email,photo,acadId,parentConsent)
 
         return response;
     }
@@ -60,7 +63,7 @@ const StudentSetup = () => {
         if(window.localStorage.getItem('student_user_id') !== null){
             get_student_setup(window.localStorage.getItem('student_user_id'))
             .then((result) => {
-                console.log(result)
+                console.log(result[0])
                 let data = result[0]
                 set_fname(data.FirstName)
                 set_sname(data.LastName)
@@ -79,6 +82,22 @@ const StudentSetup = () => {
                 set_is_18(data.AgeGrade)
                 set_lang(data.Language)
                 set_grade(data.Grade)
+                let list = [...document.querySelectorAll('.parentConsentOption')]
+                for(let i; i<list.length; list++){
+                    if(data.ParentConsent === 'true')
+                    
+                    {list[0].checked = true
+                    list[1].checked = false
+                
+                console.log(list[0])}
+                    else
+                    {list[0].checked = false
+                    list[1].checked = true}
+
+                }
+
+
+                //set_ParentConsent(data.ParentConsent === 'true' ? true : false)
 
                 set_parent_lname(data.ParentFirstName)
                 set_parent_fname(data.ParentLastName)
@@ -184,6 +203,7 @@ const StudentSetup = () => {
         
                 let  bool_list = []
                 let bools = all_values.map(item => {
+                    console.log(item.dataset.type)
         
                     if(item.dataset.type ==='file'){
         
@@ -194,6 +214,15 @@ const StudentSetup = () => {
                             bool_list.push(false)
                         }
         
+                    }else if(item.dataset.type === 'radio'){
+
+                       
+                        if(parentConsent){
+                            bool_list.push(true)
+                        }else{
+                            bool_list.push(false)
+                            alert('Plase Select Parent Consent Option')
+                        }
                     }else{
         
                         if(item.value === ''){
@@ -213,10 +242,7 @@ const StudentSetup = () => {
                     
                 })
         
-                /* if(item.nextElementSibling){
-                                    item.nextElementSibling.setAttribute('id', 'err-border');
-                                }*/
-        
+                
         
                 let result = bool_list.filter(item => item === false)
         
@@ -535,14 +561,14 @@ const StudentSetup = () => {
                                         <div className='input-cnt' style={{height: '20px', width: '70px'}}>
                                             <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentYes'>Yes</label>
                                             &nbsp;&nbsp;
-                                            <input name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}} id='parentConsentYes' type='radio'/>
+                                            <input className='parentConsentOption' onInput={e => set_parentConsent(true)} data-type='radio' name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}} id='parentConsentYes' type='radio'/>
                                         </div>
 
                                         <div className='input-cnt' style={{height: '20px', width: '70px'}}>
 
                                             <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentNo'>No</label>
                                             &nbsp;&nbsp;
-                                            <input name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}}  id='parentConsentNo' type='radio'/>
+                                            <input className='parentConsentOption' onInput={e => set_parentConsent(false)} data-type='radio' name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}}  id='parentConsentNo' type='radio'/>
                                         </div>
                                     </div>
                             </div>

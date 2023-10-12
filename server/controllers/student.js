@@ -6,7 +6,7 @@ require('dotenv').config();
 
 let upload_form_one = (req, res) => {
 
-    let { fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId } = req.body;
+    let { fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent } = req.body;
     console.log('data: ', fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, acadId)
 
     let UserId = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] + shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
@@ -86,8 +86,8 @@ let upload_form_one = (req, res) => {
     }
 
     let insert_student_data = async (poolConnection) => {
-        let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName, MiddleName, LastName, Email, Password, Cell, Language, AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, ParentEmail, ParentFirstName, ParentLastName, AcademyId, ScreenName, Photo, Status)
-        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}','${lang}', '${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${timeZone}','${parent_email}','${parent_fname}','${parent_lname}', '${UserId}','${screenName}','${photo}', 'Pending')`)
+        let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName, MiddleName, LastName, Email, Password, Cell, Language, AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, ParentEmail, ParentFirstName, ParentLastName, AcademyId, ScreenName, Photo, Status, ParentConsent)
+        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}','${lang}', '${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${timeZone}','${parent_email}','${parent_fname}','${parent_lname}', '${UserId}','${screenName}','${photo}', 'Pending', '${parentConsent}')`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         //console.log(result, 'boolean...')
@@ -95,7 +95,7 @@ let upload_form_one = (req, res) => {
     }
 
     let update_student_data = async (poolConnection) => {
-        let records = await poolConnection.request().query(`UPDATE "StudentSetup" set Photo = '${photo}', Address1 = '${add1}', Address2 = '${add2}', City = '${city}', State = '${state}', ZipCode = '${zipCode}', Country = '${country}', Email = '${email}', Cell = '${cell}', GMT = '${timeZone}', Password = '${pwd}', Language='${lang}', AgeGrade='${is_18}', Grade='${grade}', ParentEmail='${parent_email}', ParentFirstName='${parent_fname}', ParentLastName='${parent_lname}'  WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
+        let records = await poolConnection.request().query(`UPDATE "StudentSetup" set Photo = '${photo}', Address1 = '${add1}', Address2 = '${add2}', City = '${city}', State = '${state}', ZipCode = '${zipCode}', Country = '${country}', Email = '${email}', Cell = '${cell}', GMT = '${timeZone}', Password = '${pwd}', Language='${lang}', AgeGrade='${is_18}', Grade='${grade}', ParentEmail='${parent_email}', ParentFirstName='${parent_fname}', ParentConsent='${parentConsent}', ParentLastName='${parent_lname}'  WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);

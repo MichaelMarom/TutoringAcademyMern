@@ -15,6 +15,7 @@ const StudentProfileCnt = () => {
     let [photo, setphoto] = useState('')
     let [screenName, setscreenName] = useState('')
     let [Id, setId] = useState('')
+    let [consentVideo, setconsentVideo] = useState('')
     let [grade, setGrade] = useState('')
     let [GMT, setGMT] = useState('')
     let [country, setcountry] = useState('')
@@ -43,6 +44,7 @@ const StudentProfileCnt = () => {
                 setscreenName(me.ScreenName)
                 setcountry(me.Country)
                 setId(me.AcademyId)
+                setconsentVideo(me.ParentConsent)
                 setGrade(me.Grade)
                 setparentFname(me.ParentFirstName)
                 setparentLname(me.ParentLastName)
@@ -119,6 +121,24 @@ const StudentProfileCnt = () => {
 
                                 <input defaultValue={parentLname} type='text'></input>
 
+                            </div>
+                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
+                                
+                                    <h5>Parent video consent</h5>
+                                    <div style={{display: 'flex', flexDirection: 'row',}}>
+                                        <div className='input-cnt' style={{height: '20px', width: '70px'}}>
+                                            <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentYes'>Yes</label>
+                                            &nbsp;&nbsp;
+                                            <input checked={consentVideo ? true: false} data-type='radio' name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}} id='parentConsentYes' type='radio'/>
+                                        </div>
+
+                                        <div className='input-cnt' style={{height: '20px', width: '70px'}}>
+
+                                            <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentNo'>No</label>
+                                            &nbsp;&nbsp;
+                                            <input checked={!consentVideo ? true: false} data-type='radio' name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}}  id='parentConsentNo' type='radio'/>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                     </div>

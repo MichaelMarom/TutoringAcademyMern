@@ -36,3 +36,60 @@ export const days = [
 export const monthFormat = 'MMM D, YY';
 export const wholeDateFormat = 'ddd, MMM D, hh:mm a';
 export const slotPillDateFormat = 'MMM D, hh a'
+
+export const loggedInStudent = {
+  sid: 1,
+  firstName: "Naomi",
+  middleName: "C",
+  lastName: "Marom",
+  email: "ddiffo@gmail.com",
+  password: "qwertyui",
+  cell: 15166088464,
+  language: "English",
+  ageGrade: "9th",
+  grade: "",
+  address1: "476 Shotwell Rd",
+  address2: "Ste 102",
+  city: "Clayton",
+  state: "CA",
+  zipCode: "27527",
+  country: "USA",
+  gmt: "+03",
+  parentEmail: "ddiffo@gmail.com",
+  parentFirstName: "Marom",
+  parentLastName: "Naomi",
+  academyId: "Naomi. C. M8bc074",
+  screenName: "Naomi. C. M",
+  photo: "data:image/png;ba...", // Replace with actual image data
+  status: "Active"
+}
+export const loggedInTutor = {
+  SID: '1',
+  Photo: "photo string",
+  Video: "video string",
+  FirstName: "Michael",
+  MiddleName: "C",
+  LastName: "Marom",
+  Address1: "476 Shotwell Rd",
+  Address2: "Ste 102",
+  CityTown: "Clayton",
+  StateProvince: "NC",
+  ZipCode: "27520",
+  Country: "USA",
+  Email: "michael_marom@yahoo.com",
+  CellPhone: "15166088464",
+  GMT: "+07",
+  ResponseHrs: "48 Hours",
+  TutorScreenname: "Michael. C. M",
+  HeadLine: "hello world",
+  Introduction: "hello world",
+  Motivate: "hello world",
+  Password: "qwertyui",
+  IdVerified: null,
+  BackgroundVerified: null,
+  AcademyId: "Michael. C. M5ea887",
+  Status: "Active",
+  Grades: ["8th grade", "9th grade", "7th grade", "10th grade"]
+}
+
+export const loggedInAdmin = {}

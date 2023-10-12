@@ -17,11 +17,18 @@ const TVid = () => {
     let [largeScreen, setLargeSreccn] = useState(false);
     let [screenType, setScreenType] = useState(screenLarge);
 
+    let [visuals, setVisuals ]= useState(true)
     let [uname, setUname] = useState('')
 
     
 
-
+let handleVisuals = ()  => {
+    if(visuals){
+        setVisuals(false)
+    }else{
+        setVisuals (true)
+    }
+}
 
     let handleVidActions = e => {
         console.log(e.currentTarget)
@@ -203,7 +210,7 @@ const TVid = () => {
                     <img src={screenType} style={{height: '50%', width: '50%'}} alt="..." />
 
                 </div>
-                <div className="disable-visuals" onClick={handleVidActions}>
+                <div className="disable-visuals" onClick={handleVisuals}>
                     <img src={DiableVideoImage} style={{height: '50%', width: '50%'}} alt="..." />
 
                 </div>

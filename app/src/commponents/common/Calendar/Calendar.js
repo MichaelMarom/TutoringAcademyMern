@@ -4,12 +4,13 @@ import moment from "moment";
 import EventModal from "../EventModal/EventModal";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { get_tutor_setup } from "../../../axios/tutor";
+import { fetchStudentsBookings, get_tutor_setup } from "../../../axios/tutor";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
-import { getStudentBookings, postStudentBookings } from "../../../redux/student_store/studentBookings";
+import Loading from '../Loading'
+import { getStudentBookings, postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
 import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 moment.locale("en-GB");
 
@@ -42,8 +43,6 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
   //student states
   const [selectedSlots, setSelectedSlots] = useState([]);
-  // const [reservedSlots, setReservedSlots] = useState([]);
-  // const [bookedSlots, setBookedSlots] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedSlot, setClickedSlot] = useState({})
   const tutorId = selectedTutor.academyId;
@@ -52,19 +51,9 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
   const { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
 
-  // useEffect(() => {
-  //   setReservedSlots(stateReservedSlots);
-  //   setBookedSlots(stateBookedSlots)
-  // }, [stateReservedSlots, stateBookedSlots])
-
-  const onRequestClose = () => {
-    setSelectedSlots([]);
-    setClickedSlot({})
-    setIsModalOpen(false)
-  }
-
+  //apis functions
   const updateTutorDisableRecord = async () => {
-    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${selectedTutor.id}`, {
+    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${user.AcademyId}`, {
       enableHourSlots,
       disableDates,
       disableWeekDays,
@@ -74,7 +63,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     });
   }
   const getTutorSetup = async () => {
-    const [result] = await get_tutor_setup(selectedTutor.academyId);
+    const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : user.AcademyId);
     setEnableHourSlots(JSON.parse(result.enableHourSlots));
     setEnabledDays(JSON.parse(result.enabledDays))
     setDisableDates(JSON.parse(result.disableDates));
@@ -82,6 +71,29 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     setDisabledWeekDays(JSON.parse(result.disableWeekDays));
     setDisabledHours(JSON.parse(result.disableHoursRange));
     setDataFetched(true);
+  }
+
+  const fetchBookings = async () => {
+    if (isStudentLoggedIn)
+      dispatch(getStudentBookings(user.academyId, selectedTutor.academyId));
+    else {
+      const response = await fetchStudentsBookings(user.AcademyId);
+      const reservedSlots = response.map(data => JSON.parse(data.reservedSlots)).flat()
+      const bookedSlots = response.map(data => JSON.parse(data.bookedSlots)).flat()
+
+      dispatch(setReservedSlots(reservedSlots))
+      dispatch(setBookedSlots(bookedSlots))
+    }
+  }
+
+  useEffect(() => {
+    fetchBookings();
+  }, [selectedTutor, user])
+
+  const onRequestClose = () => {
+    setSelectedSlots([]);
+    setClickedSlot({})
+    setIsModalOpen(false)
   }
 
   useEffect(() => {
@@ -96,10 +108,6 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     if (dataFetched && !isStudentLoggedIn)
       updateTutorDisableRecord();
   }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched]);
-
-  useEffect(() => {
-    dispatch(getStudentBookings(user.academyId, selectedTutor.academyId));
-  }, [selectedTutor])
 
   const handleBulkEventCreate = (type) => {
     if (reservedSlots.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
@@ -189,7 +197,10 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         }
         else {
           if (activeView === views.MONTH) {
-            if (!disableDates.some(date => convertToDate(date).getTime() === slotInfo.start.getTime()))
+            const existInDisableDates = disableDates.some(date =>
+              convertToDate(date).getTime() === slotInfo.start.getTime());
+            const reservedSlotPresentInClickedDate = reservedSlots.some(slot => moment(slot.start).date() === moment(clickedDate).date())
+            if (!existInDisableDates && !reservedSlotPresentInClickedDate)
               setDisableDates([...disableDates, slotInfo.start])
             else {
               const removeDisableDate = disableDates.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime());
@@ -211,8 +222,11 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
                 setEnableHourSlots([...enableHourSlots, slotInfo.start, endTime])
               }
               else {
-                const removeEnableHourSlots = enableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime());
-                setEnableHourSlots(removeEnableHourSlots)
+                const reservedSlotsHaveClickedSlot = reservedSlots.some(slot => slot.start.getTime() === slotInfo.start.getTime())
+                if (!reservedSlotsHaveClickedSlot) {
+                  const removeEnableHourSlots = enableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime());
+                  setEnableHourSlots(removeEnableHourSlots)
+                }
               }
               if (disableHourSlots.some(date => convertToDate(date).getTime() === slotInfo.start.getTime() || endTime.getTime() === convertToDate(date).getTime())) {
                 const removeDisableHourSlots = disableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
@@ -221,8 +235,11 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
               }
             }
             else if (!existInDisabledDate) {
+              const reservedSlotsHaveClickedSlot = reservedSlots.some(slot => slot.start.getTime() === moment(slotInfo.start).startOf('hour').valueOf())
               if (!disableHourSlots.some(date => convertToDate(date).getTime() === slotInfo.start.getTime() || endTime.getTime() === convertToDate(date).getTime())) {
-                setDisableHourSlots([...disableHourSlots, slotInfo.start, endTime])
+                if (!reservedSlotsHaveClickedSlot) {
+                  setDisableHourSlots([...disableHourSlots, slotInfo.start, endTime])
+                }
               }
               else {
                 const removeDisableHourSlots = disableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
@@ -299,54 +316,10 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     }
   };
 
-  const dayPropGetter = useCallback(
-    (date) => {
-      const dayName = moment(date).format("dddd");
-
-      const existsinEnabledInMonth = enabledDays.some((arrayDate) => convertToDate(arrayDate).getTime() === date.getTime());
-      const existsinEnabledInWeek = enabledDays.some((arrayDate) => {
-        const slotDateMoment = moment(date);
-        const arrayMomentDate = moment(arrayDate);
-        return arrayMomentDate.isSame(slotDateMoment, 'day')
-      });
-
-      const isDisableDate = disableDates.some(storeDate => {
-        const slotDateMoment = moment(date);
-        const storedMomentDate = moment(storeDate);
-        return storedMomentDate.isSame(slotDateMoment, 'day')
-      })
-      if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
-        return {
-          className: "disabled-date",
-          onClick: (e) => {
-            e.preventDefault();
-          },
-        };
-      }
-      return {};
-    },
-    [disableWeekDays, enabledDays, disableDates]
-  );
-
   const handleEventClick = (event) => {
     setClickedSlot(event)
     setIsModalOpen(true);
   };
-  useEffect(() => {
-    if (isModalOpen) {
-
-      // if (event.type !== 'booked') {
-      console.log('enter');
-      const message = `Are you ready to pay for the lesson with tutor ${formatName(selectedTutor.firstName, selectedTutor.lastName)} ?`;
-      // const result = window.confirm(message);
-      //handle intro payment later todo
-      // if (result && event.type !== 'intro') {
-      // dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...event, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== event.id) }));
-      // }
-
-      // }
-    }
-  }, [isModalOpen])
 
   const slotPropGetter = useCallback((date) => {
     if (date && moment(date).isSame(moment(date), 'day')) {
@@ -400,8 +373,34 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     return {};
   }, [disabledHours, enableHourSlots, disableHourSlots, reservedSlots, selectedSlots]);
 
-  const handleViewChange = (view) => setActiveView(view)
+  const dayPropGetter = useCallback(
+    (date) => {
+      const dayName = moment(date).format("dddd");
 
+      const existsinEnabledInMonth = enabledDays.some((arrayDate) => convertToDate(arrayDate).getTime() === date.getTime());
+      const existsinEnabledInWeek = enabledDays.some((arrayDate) => {
+        const slotDateMoment = moment(date);
+        const arrayMomentDate = moment(arrayDate);
+        return arrayMomentDate.isSame(slotDateMoment, 'day')
+      });
+
+      const isDisableDate = disableDates.some(storeDate => {
+        const slotDateMoment = moment(date);
+        const storedMomentDate = moment(storeDate);
+        return storedMomentDate.isSame(slotDateMoment, 'day')
+      })
+      if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+        return {
+          className: "disabled-date",
+          onClick: (e) => {
+            e.preventDefault();
+          },
+        };
+      }
+      return {};
+    },
+    [disableWeekDays, enabledDays, disableDates]
+  );
 
   const eventPropGetter = (event) => {
     const secSubject = reservedSlots.some(slot => slot.type === 'intro'
@@ -463,13 +462,10 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     return {};
   };
 
+  const handleViewChange = (view) => setActiveView(view)
+
   if (!dataFetched)
-    return (
-      <div className="d-flex justify-content-center align-items-center h-100">
-        <div className="spinner-border" role="status">
-        </div>
-      </div>
-    )
+    return <Loading />
   return (
     <div className="h-100">
       <Calendar
@@ -483,7 +479,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
           event: event => (
             <CustomEvent
               {...event}
-              setReservedSlots={handleSetReservedSlots}
+              handleSetReservedSlots={handleSetReservedSlots}
               reservedSlots={reservedSlots}
               handleEventClick={handleEventClick}
             />

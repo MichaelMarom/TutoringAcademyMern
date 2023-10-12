@@ -37,20 +37,22 @@ const update = (tableName, values, where) => {
             : `'${where[field]}'`;
         return `${field} = ${whereValue}`;
     }).join(' AND ');
-      
+
     const query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause}`;
     return query;
 };
 
 const updateById = (id, tableName, fields) => {
     const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays } = fields;
-    const qury = `UPDATE ${tableName}
-        SET disableDates = '${JSON.stringify(disableDates)}', disableWeekDays = '${JSON.stringify(disableWeekDays)}',
-        disableHourSlots =  '${JSON.stringify(disableHourSlots)}', enableHourSlots =' ${JSON.stringify(enableHourSlots)}',
-        disableHoursRange='${JSON.stringify(disableHoursRange)}', enabledDays='${JSON.stringify(enabledDays)}'
-        WHERE SID = ${id};`
-    console.log(qury)
-    return qury;
+    const query = `UPDATE ${tableName}
+        SET disableDates = '${JSON.stringify(disableDates)}',
+        disableWeekDays = '${JSON.stringify(disableWeekDays)}',
+        disableHourSlots =  '${JSON.stringify(disableHourSlots)}', 
+        enableHourSlots =' ${JSON.stringify(enableHourSlots)}',
+        disableHoursRange='${JSON.stringify(disableHoursRange)}',
+        enabledDays='${JSON.stringify(enabledDays)}'
+        WHERE CONVERT(VARCHAR, AcademyId)  = '${id}';`
+    return query;
 }
 
 const getAll = (tableName) => {

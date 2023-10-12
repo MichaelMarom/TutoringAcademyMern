@@ -105,7 +105,7 @@ function EventModal({
                   onRequestClose();
                 }}
               >
-                Proceed
+                Confirm
               </button>
             </div>
           </div>

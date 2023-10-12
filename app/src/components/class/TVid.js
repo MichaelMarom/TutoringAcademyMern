@@ -16,6 +16,7 @@ const TVid = () => {
     let [videoLoader, setVideoLoader] = useState('');
     let [largeScreen, setLargeSreccn] = useState(false);
     let [screenType, setScreenType] = useState(screenLarge);
+    let [isVisuals, setIsVisuals] = useState('')
 
     let [visuals, setVisuals ]= useState(true)
     let [uname, setUname] = useState('')

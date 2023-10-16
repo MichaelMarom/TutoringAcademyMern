@@ -1,12 +1,12 @@
-import TermOfUseComp from "../../commponents/student/TermOfUse";
+import TermOfUseComp from "../../components/student/TermOfUse";
+import StudentLayout from "../../layouts/StudentLayout";
 
 
 const TermOfUse = () => {
     return ( 
-        <>
+        <StudentLayout>
             <TermOfUseComp />
-
-        </>
+        </StudentLayout>
      );
 }
  

@@ -17,7 +17,7 @@ const TutorTable = () => {
     useEffect(() => {
         get_tutor_data()
         .then((result) => {
-            console.log(result)
+            console.log(result,'result from tutorTable')
             set_data(result)
         })
         .catch((err) => {

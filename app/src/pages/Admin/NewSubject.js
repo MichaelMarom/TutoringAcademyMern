@@ -1,8 +1,11 @@
-import NewSubject from "../../commponents/admin/NewSubject";
+import NewSubject from "../../components/admin/NewSubject";
+import AdminLayout from "../../layouts/AdminLayout";
 
 const TutorNewSubject = () => {
     return ( 
-        <NewSubject />
+        <AdminLayout >
+            <NewSubject />
+        </AdminLayout>
      );
 }
  

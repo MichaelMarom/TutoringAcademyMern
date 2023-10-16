@@ -17,15 +17,16 @@ import { setToolTo } from '../../redux/student_store/Tool';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 
-import SHeader from '../../commponents/class/THeader';
-import SVid from '../../commponents/class/TVid';
-import SMssg from '../../commponents/class/TMssg';
-import SPanel from '../../commponents/class/TPanel';
+import SHeader from '../../components/class/THeader';
+import SVid from '../../components/class/TVid';
+import SMssg from '../../components/class/TMssg';
+import SPanel from '../../components/class/TPanel';
 import { socket } from '../../socket';
 import { setToolReqTo } from '../../redux/student_store/toolReq';
 import { setAsideReqTo } from '../../redux/student_store/asideReq.js.js';
 import { setEraserWidthTo } from '../../redux/tutor_store/Eraser';
 import { setBoardAccessTo } from '../../redux/tutor_store/BoardAccess';
+import StudentLayout from '../../layouts/StudentLayout';
 
 const Class = () => {
 
@@ -734,7 +735,7 @@ const Class = () => {
     }
 
     return ( 
-        <>
+        <StudentLayout>
 
             
 
@@ -769,13 +770,13 @@ const Class = () => {
                 </div>
 
                
-                <>
+                <div>
                     <input style={{display: 'none'}} accept='video/*' type="file" name="video" id="video" onChange={handleFileChange} />
 
                     <input style={{display: 'none'}} type="file" name="doc" id="doc" />
 
                     <input style={{display: 'none'}} accept='image/*' onChange={handleFileChange} type="file" name="photo" id="photo" />
-                </>
+                </div>
 
                 
                 <canvas id="drawPlace" style={{border:'1px solid #eee'}}>
@@ -820,7 +821,7 @@ const Class = () => {
             
 
            
-        </>
+        </StudentLayout>
      );
 }
  

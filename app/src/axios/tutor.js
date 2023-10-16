@@ -1,4 +1,5 @@
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid'
 
 const instance = axios.create({
     baseURL: "http://localhost:9876", // Adjust the base URL to match your backend API endpoint
@@ -184,13 +185,11 @@ export let get_response = () => {
 }
 
 
-
-
-export let upload_form_one = (fname, uname, mname, sname, email, pwd, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades) => {
+export let upload_form_one = (fname, uname, mname, sname, email, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/form-one', {
-            fname, uname, mname, sname, email, pwd, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades
+            fname, uname, mname, sname, email, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId
         })
             .then((result) => {
                 resolve(result.data)
@@ -455,6 +454,22 @@ export let get_tutor_setup = (AcademyId) => {
     })
 }
 
+export let get_tutor_setup_by_userId = async (userId) => {
+    try {
+        const { data } = await instance.get('/tutor/tutor-setup', {
+            params: {
+                userId
+            }
+        })
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+
+}
+
 export const storeEventAPI = async (eventDetails) => {
     try {
         console.log(eventDetails, 'dataformat');
@@ -489,3 +504,36 @@ export const addDisabledDates = async (date) => {
         console.error("Error:", error);
     }
 };
+
+
+export const post_tutor_setup = async (data) => {
+    try {
+        let dataObject = {}
+        if (data.photo !== undefined) dataObject.Photo = data.photo;
+        if (data.video !== undefined) dataObject.Video = data.video;
+        if (data.fname !== undefined) dataObject.FirstName = data.fname;
+        if (data.mname !== undefined) dataObject.MiddleName = data.mname;
+        if (data.sname !== undefined) dataObject.LastName = data.sname;
+        if (data.add1 !== undefined) dataObject.Address1 = data.add1;
+        if (data.add2 !== undefined) dataObject.Address2 = data.add2;
+        if (data.city !== undefined) dataObject.CityTown = data.city;
+        if (data.state !== undefined) dataObject.StateProvince = data.state;
+        if (data.zipCode !== undefined) dataObject.ZipCode = data.zipCode;
+        if (data.country !== undefined) dataObject.Country = data.country;
+        if (data.cell !== undefined) dataObject.CellPhone = data.cell;
+        if (data.timeZone !== undefined) dataObject.GMT = data.timeZone;
+        if (data.response_zone !== undefined) dataObject.ResponseHrs = data.response_zone;
+        if (data.screenName !== undefined) dataObject.TutorScreenname = data.screenName;
+        if (data.headline !== undefined) dataObject.HeadLine = data.headline;
+        if (data.intro !== undefined) dataObject.Introduction = data.intro;
+        if (data.motivation !== undefined) dataObject.Motivate = data.motivation;
+        if (data.userId !== undefined) dataObject.userId = data.userId;
+        if (data.grades !== undefined) dataObject.Grades = data.grades;
+        dataObject.TutorScreenname = data.mname.length > 0 ? data.fname + '.' + ' ' + data.mname[0] + '.' + ' ' + data.sname[0] : data.fname + '.' + ' ' + data.sname[0];
+        dataObject.AcademyId = uuidv4()
+        console.log(dataObject, 'AOBNjext')
+        return instance.post('/tutor/setup', dataObject)
+    } catch (err) {
+        console.log(err)
+    }
+}

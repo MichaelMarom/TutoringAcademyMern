@@ -6,8 +6,7 @@ require('dotenv').config();
 
 let upload_form_one = (req, res) => {
 
-    let { fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent } = req.body;
-    console.log('data: ', fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, acadId)
+    let { fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId } = req.body;
 
     let UserId = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] + shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
 
@@ -86,8 +85,8 @@ let upload_form_one = (req, res) => {
     }
 
     let insert_student_data = async (poolConnection) => {
-        let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName, MiddleName, LastName, Email, Password, Cell, Language, AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, ParentEmail, ParentFirstName, ParentLastName, AcademyId, ScreenName, Photo, Status, ParentConsent)
-        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}','${lang}', '${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${timeZone}','${parent_email}','${parent_fname}','${parent_lname}', '${UserId}','${screenName}','${photo}', 'Pending', '${parentConsent}')`)
+        let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName, MiddleName, LastName, Email, Password, Cell, Language, AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, ParentEmail, ParentFirstName, ParentLastName, AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
+        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}','${lang}', '${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${timeZone}','${parent_email}','${parent_fname}','${parent_lname}', '${UserId}','${screenName}','${photo}', 'Pending', '${parentConsent}','${userId}')`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         //console.log(result, 'boolean...')
@@ -105,8 +104,8 @@ let upload_form_one = (req, res) => {
 
 
 let get_student_setup = (req, res) => {
-    let { id } = req.query;
-    console.log(id)
+    let { AcademyId = null, userId = null } = req.query;
+    console.log(AcademyId, userId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
@@ -114,9 +113,10 @@ let get_student_setup = (req, res) => {
         // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
-                `
-                    SELECT * From StudentSetup WHERE CONVERT(VARCHAR, AcademyId) = '${id}' 
-                `
+                find('StudentSetup', req.query)
+                // `
+                //     SELECT * From StudentSetup WHERE CONVERT(VARCHAR, AcademyId) = '${id}' 
+                // `
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
@@ -293,8 +293,8 @@ let get_student_short_list = async (req, res) => {
 
         connecteToDB.then((poolConnection) =>
             poolConnection.request().query(`SELECT * From StudentShortList
-            WHERE CONVERT(VARCHAR, Student) =  '${req.query.student}'
             ` )
+                // WHERE CONVERT(VARCHAR, Student) x=  '${req.query.student}'
                 .then((result) => {
                     return result.recordset;
                 })

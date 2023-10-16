@@ -6,13 +6,13 @@ const axiosInstance = axios.create({
     },
 });
 
-export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent) => {
+export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId) => {
 
     return new Promise((resolve, reject) => {
 
 
         axios.post('http://localhost:9876/student/setup', {
-            fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent
+            fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId
         })
             .then((result) => {
                 resolve(result.data)
@@ -26,14 +26,14 @@ export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell
 
 
 
-export let get_student_setup = (id) => {
+export let get_student_setup = (AcademyId) => {
 
     return new Promise((resolve, reject) => {
 
 
         axios.get('http://localhost:9876/student/setup', {
             params: {
-                id
+                AcademyId
             }
         })
             .then((result) => {
@@ -44,6 +44,21 @@ export let get_student_setup = (id) => {
             })
 
     })
+}
+
+export const get_student_setup_by_userId = async (userId) => {
+    try {
+        const { data } = await axiosInstance.get('/student/setup', {
+            params: {
+                userId
+            }
+        })
+        return data
+    }
+    catch (err) {
+        console.log(err);
+        return err
+    }
 }
 
 
@@ -139,12 +154,12 @@ export let get_my_data = (AcademyId) => {
                 AcademyId
             }
         })
-        .then((result) => {
-            resolve(result.data)
-        })
-        .catch((err) => {
-            reject(err)
-        })           
+            .then((result) => {
+                resolve(result.data)
+            })
+            .catch((err) => {
+                reject(err)
+            })
 
     })
 }

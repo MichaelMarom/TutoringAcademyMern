@@ -1,50 +1,21 @@
-import { Route, Link, useLocation, Routes, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from 'framer-motion';
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useRoutes } from "react-router-dom";
+
+import React from 'react'
 
 import './styles/Tab_Styles/LargeScreen.css';
 import './styles/student.css';
 import './styles/admin.css';
-import './styles/Collaboration_Styles/LargeScreen.css';
-
-
-import TutorCollaboration from "./pages/tutor/Collaboration";
-import StudentCollaboration from "./pages/student/Collaboration";
-
-import Intro from "./commponents/tutor/Intro";
-import TutorSetup from "./commponents/tutor/TutorSetup";
-import Education from "./commponents/tutor/Education";
-import Rates from "./commponents/tutor/Rates";
-import Accounting from "./commponents/tutor/Accounting";
-import Subjects from "./commponents/tutor/Subjects";
-import MyStudents from "./commponents/tutor/MyStudents";
-import Scheduling from "./commponents/tutor/Scheduling";
-import TermOfUse from "./commponents/tutor/TermOfUse";
-import MarketPlace from "./commponents/tutor/MarketPlace";
-import TutorProfile from "./commponents/tutor/TutorProfile";
-
-import TutorHeader from "./commponents/tutor/Header";
-import StudentHeader from "./commponents/student/Header";
-
-import StudentSetup from "./pages/student/StudentSetup";
-import { useEffect, useState } from "react";
-import StudentFaculty from "./pages/student/StudentFaculty";
-import StudentShortLists from "./pages/student/StudentShortList";
-import StudentAccountings from "./pages/student/StudentAccounting";
-import StudentFooter from "./commponents/student/Footer";
-import Footer from "./commponents/tutor/Footer";
-import Header from "./commponents/admin/AdminHeader";
-import Tutor_Table from "./pages/Admin/Tutor";
-import Student_Table from "./pages/Admin/Student";
-import StudentScheduling from "./pages/student/StudentScheduling";
-import StudentTermOfUse from "./pages/student/TermOfUse";
-import StudentMarketPlace from "./commponents/student/StudentMarketPlace";
-import NewSubject from "./pages/Admin/NewSubject";
-import TutorNewSubject from "./pages/Admin/NewSubject";
-import StudentProfile from "./pages/student/StudentProfile";
-import { useDispatch } from "react-redux";
-import { setUser } from './redux/auth_state/auth'
+import './styles/Collaboration_Styles/LargeScreen.css'
+import { setUser } from './redux/auth_state/auth';
 import { loggedInAdmin, loggedInStudent, loggedInTutor } from "./constants/constants";
-
+import { isAllowed } from "./utils/permissions";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import rolePermissions from './utils/permissions';
+import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
+import Profile from "./pages/Profile";
 
 const App = () => {
 
@@ -52,115 +23,151 @@ const App = () => {
     let navigate = useNavigate();
     const dispatch = useDispatch();
 
-    let [role, setRole] = useState(false)
+    const { user } = useSelector(state => state.user)
 
     useEffect(() => {
-        if (location.pathname.split('/').splice(-2)[0] === 'tutor') {
-            dispatch(setUser(loggedInTutor))
-            setRole('tutor')
-        } else if (location.pathname.split('/').splice(-2)[0] === 'student') {
-            dispatch(setUser(loggedInStudent))
-            setRole('student')
-        } else {
-            dispatch(setUser(loggedInAdmin))
-            setRole('admin')
-        }
-    }, [location]);
+        const storedUser = localStorage.getItem('user');
+        dispatch(setUser(storedUser ? JSON.parse(storedUser) : {}));
+    }, []);
 
     useEffect(() => {
-        if (location.pathname.split('/').splice(-2)[0] === 'tutor') {
-            navigate('tutor/intro')
-            window.localStorage.setItem('tutor_tab_index', 0)
-        } else if (location.pathname.split('/').splice(-2)[0] === 'student') {
-            navigate('student/intro')
-            window.localStorage.setItem('student_tab_index', 0)
-        } else {
-            navigate('admin/tutor-data')
+        localStorage.setItem('tutor_user_id', user.AcademyId)
+    }, [user])
+    console.log(user)
+    const getDefaultRoute = (role) => {
+        const defaultRoutes = {
+            tutor: '/tutor/intro',
+            student: '/student/intro',
+            admin: '/admin/tutor-data',
+        };
+
+        return defaultRoutes[role] || '/login';
+    };
+
+    useEffect(() => {
+        if (user?.role === 'tutor') window.localStorage.setItem('tutor_tab_index', 0)
+
+        if (user?.role === 'student') window.localStorage.setItem('student_tab_index', 0)
+    }, [user])
+
+    const generateRoutes = (role) => {
+        if (role && rolePermissions[role]) {
+            return rolePermissions[role].map((route) => ({
+                path: route.path,
+                element: route.component,
+            }));
         }
-    }, [])
+        return [];
+    };
 
-    return (
-
-        <AnimatePresence >
-
-
-            {
-                role === 'tutor'
-                    ?
-                    <>
-                        <TutorHeader />
-                        <Routes location={location} key={location.key}>
-                            {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
-                            <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
-                            <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
-                            <Route path="w `-+" element={<Intro />}></Route>
-                            <Route path="tutor/setup" element={<TutorSetup />}></Route>
-                            <Route path="tutor/education" element={<Education />}></Route>
-                            <Route path="tutor/rates" element={<Rates />}></Route>
-                            <Route path="tutor/accounting" element={<Accounting />}></Route>
-                            <Route path="tutor/subjects" element={<Subjects />}></Route>
-                            <Route path="tutor/my-students" element={<MyStudents />}></Route>
-                            <Route path="tutor/scheduling" element={<Scheduling />}></Route>
-                            <Route path="tutor/term-of-use" element={<TermOfUse />}></Route>
-                            <Route path="tutor/market-place" element={<MarketPlace />}></Route>
-                            <Route path="tutor/collaboration" element={<TutorCollaboration />}></Route>
-                            <Route path="tutor/tutor-profile" element={<TutorProfile />}></Route>
-
-                        </Routes>
-                        <Footer />
-                    </>
-
-                    :
-
-                    role === 'student'
-                        ?
-
-                        <>
-                            <StudentHeader />
-                            <Routes location={location} key={location.key}>
-                                {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
-                        <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
-                        <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
-
-                                <Route path="student/" element={< StudentSetup />}></Route>
-                                <Route path="student/setup" element={< StudentSetup />}></Route>
-                                <Route path="student/faculties" element={< StudentFaculty />}></Route>
-                                <Route path="student/short-list" element={< StudentShortLists />}></Route>
-                                <Route path="student/accounting" element={< StudentAccountings />}></Route>
-                                <Route path="student/collaboration" element={<StudentCollaboration />}></Route>
-                                <Route path="student/market-place" element={<StudentMarketPlace />}></Route>
-                                <Route path="student/schedule" element={<StudentScheduling />}></Route>
-                                <Route path="student/term-of-use" element={<StudentTermOfUse />}></Route>
-                                <Route path="student/profile" element={<StudentProfile />}></Route>
+    const routes = useRoutes([
+        {
+            path: '/login',
+            element: <Login />,
+        },
+        {
+            path: '/signup',
+            element: <Signup />,
+        },
+        ...generateRoutes(user[0]?.role),
+        {
+            path: '*',
+            element: <UnAuthorizeRoute />,
+        },
+    ]);
 
 
-                            </Routes>
-                            <StudentFooter />
-                        </>
+    return routes;
+    // return (
+    //     <AnimatePresence >
+    //         {
+    //             role === 'tutor'
+    //                 ?
+    //                 <>
+    //                     <TutorHeader />
+    //                     <Routes location={location} key={location.key}>
+    //                         {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
+    //                         <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
+    //                         <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
+    //                         <Route path="/intro" element={<Intro />}></Route>
+    //                         <Route path="tutor/setup" element={<TutorSetup />}></Route>
+    //                         <Route path="tutor/education" element={<Education />}></Route>
+    //                         <Route path="tutor/rates" element={<Rates />}></Route>
+    //                         <Route path="tutor/accounting" element={<Accounting />}></Route>
+    //                         <Route path="tutor/subjects" element={<Subjects />}></Route>
+    //                         <Route path="tutor/my-students" element={<MyStudents />}></Route>
+    //                         <Route path="tutor/scheduling" element={<Scheduling />}></Route>
+    //                         <Route path="tutor/term-of-use" element={<TermOfUse />}></Route>
+    //                         <Route path="tutor/market-place" element={<MarketPlace />}></Route>
+    //                         <Route path="tutor/collaboration" element={<TutorCollaboration />}></Route>
+    //                         <Route path="tutor/tutor-profile" element={<TutorProfile />}></Route>
 
-                        :
+    //                     </Routes>
+    //                     <Footer />
+    //                 </>
 
-                        <>
-                            <Header />
-                            <Routes location={location} key={location.key}>
-                                {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
-                        <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
-                        <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
+    //                 :
+
+    //                 role === 'student'
+    //                     ?
+
+    //                     <>
+    //                         <StudentHeader />
+    //                         <Routes location={location} key={location.key}>
+    //                             {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
+    //                     <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
+    //                     <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
+
+    //                             <Route path="student/" element={< StudentSetup />}></Route>
+    //                             <Route path="student/setup" element={< StudentSetup />}></Route>
+    //                             <Route path="student/faculties" element={< StudentFaculty />}></Route>
+    //                             <Route path="student/short-list" element={< StudentShortLists />}></Route>
+    //                             <Route path="student/accounting" element={< StudentAccountings />}></Route>
+    //                             <Route path="student/collaboration" element={<StudentCollaboration />}></Route>
+    //                             <Route path="student/market-place" element={<StudentMarketPlace />}></Route>
+    //                             <Route path="student/schedule" element={<StudentScheduling />}></Route>
+    //                             <Route path="student/term-of-use" element={<StudentTermOfUse />}></Route>
+    //                             <Route path="student/profile" element={<StudentProfile />}></Route>
 
 
-                                <Route path="admin/tutor-data" element={<Tutor_Table />}></Route>
-                                <Route path="admin/student-data" element={<Student_Table />}></Route>
-                                <Route path="admin/new-subject" element={<TutorNewSubject />}></Route>
+    //                         </Routes>
+    //                         <StudentFooter />
+    //                     </>
+
+    //                     :
+    //                     role === 'admin' ?
+    //                         <>
+    //                             <Header />
+    //                             <Routes location={location} key={location.key}>
+    //                                 {/*<Route path="/Class/:role/:id" element={<Class />}></Route>
+    //                     <Route path="/student-lecture-pane" element={<StudentLecturePanel />}></Route>
+    //                     <Route path="/tutor-lecture-pane" element={<TutorLecturePanel />}></Route>*/}
 
 
-                            </Routes>
-                        </>
-            }
+    //                                 <Route path="admin/tutor-data" element={<Tutor_Table />}></Route>
+    //                                 <Route path="admin/student-data" element={<Student_Table />}></Route>
+    //                                 <Route path="admin/new-subject" element={<TutorNewSubject />}></Route>
+
+
+    //                             </Routes>
+    //                         </>
+
+    //                         :
+    //                         <>
+    //                             <Header />
+    //                             <Routes location={location} key={location.key}>
+    //                                 <Route path="/login" element={<Tutor_Table />}></Route>
+    //                                 <Route path="/signup" element={<Student_Table />}></Route>
+
+    //                             </Routes>
+    //                         </>
+
+    //         }
 
 
 
-        </AnimatePresence>
-    );
+    //     </AnimatePresence>
+    // );
 }
 
 export default App;

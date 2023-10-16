@@ -1,5 +1,5 @@
 import React from 'react'
-import StudentCalenderScheduling from '../../commponents/student/StudentCalenderScheduling'
+import StudentCalenderScheduling from '../../components/student/StudentCalenderScheduling'
 
 const StudentScheduling = () => {
   return (

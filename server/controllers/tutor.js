@@ -1,7 +1,7 @@
 const { resolve } = require('path/posix');
 const { marom_db, knex, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
-const { insert, updateById, getAll, find } = require('../helperfunctions/crud_queries');
+const { insert, updateById, getAll, find, findByAnyIdColumn } = require('../helperfunctions/crud_queries');
 
 
 
@@ -69,7 +69,7 @@ let subjects = (req, res) => {
 
 let post_form_one = (req, res) => {
 
-    let { fname, mname, sname, email, pwd, acadId, cell, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades } = req.body;
+    let { fname, mname, sname, email, pwd, acadId, cell, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId } = req.body;
 
     let UserId = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] + shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
     let screenName = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] : fname + '.' + ' ' + sname[0]
@@ -131,12 +131,6 @@ let post_form_one = (req, res) => {
         }
     })
 
-
-
-
-
-
-
     let get_action = async (poolConnection) => {
         let records = await poolConnection.request().query(`SELECT * FROM "TutorSetup" WHERE CONVERT(VARCHAR, Email) = '${email}'`)
         let get_duplicate = await records.recordset;
@@ -146,11 +140,39 @@ let post_form_one = (req, res) => {
     }
 
     let insert_rates = async (poolConnection) => {
-        let records = await poolConnection.request().query(`INSERT INTO TutorSetup(Photo, Video, FirstName, MiddleName, LastName, Address1, Address2, CityTown, StateProvince, ZipCode, Country, Email, CellPhone, GMT, ResponseHrs, TutorScreenname, HeadLine, Introduction, Motivate, Password, IdVerified, BackgroundVerified, AcademyId, Grades)
-        VALUES ('${photo}', '${video}', '${fname}','${mname}','${sname}','${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${email}','${cell}','${timeZone}','${response_zone}','${screenName}','${headline}','${intro}','${motivation}','${pwd}','${null}','${null}', '${UserId}', '${grades}')`)
+        const dataObject = {
+            Photo: photo || null,
+            Video: video || null,
+            FirstName: fname || null,
+            MiddleName: mname || null,
+            LastName: sname || null,
+            Address1: add1 || null,
+            Address2: add2 || null,
+            CityTown: city || null,
+            StateProvince: state || null,
+            ZipCode: zipCode || null,
+            Country: country || null,
+            Email: email || null,
+            CellPhone: cell || null,
+            GMT: timeZone || null,
+            ResponseHrs: response_zone || null,
+            TutorScreenname: screenName || null,
+            HeadLine: headline || null,
+            Introduction: intro || null,
+            Motivate: motivation || null,
+            IdVerified: null || null,
+            BackgroundVerified: null || null,
+            AcademyId: UserId || null,
+            Grades: grades || null,
+            userId
+        };
+        console.log(dataObject, 'erdsdddd')
+        let records = await poolConnection.request().query(
+            insert('TutorSetup', dataObject)
+        )
 
+        console.log(records, 'boolean...')
         let result = await records.rowsAffected[0] === 1 ? true : false
-        //console.log(result, 'boolean...')
         return (result);
     }
 
@@ -162,7 +184,6 @@ let post_form_one = (req, res) => {
     }
 
 }
-
 
 let post_form_two = async (req, res) => {
 
@@ -850,16 +871,14 @@ let get_bank_details = (req, res) => {
 
 
 let get_tutor_setup = (req, res) => {
-    let { AcademyId } = req.query;
+    let { userId = null, AcademyId = null } = req.query;
     marom_db(async (config) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
         if (poolConnection) {
             poolConnection.request().query(
-                `
-                    SELECT * From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' 
-                `
+                findByAnyIdColumn('TutorSetup', req.query, 'varchar(max)')
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
@@ -999,9 +1018,31 @@ let fetchStudentsBookings = (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+const post_tutor_setup = (req, res) => {
+    console.log(req.body, 'boaady')
+    const screenName = ''
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    insert('TutorSetup', req.body)
+                );
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
 
 module.exports = {
     subjects,
+    post_tutor_setup,
     faculties,
     post_form_one,
     post_form_two,

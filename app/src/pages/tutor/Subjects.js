@@ -1,4 +1,4 @@
-import SubjectsComp from "../../commponents/tutor/Subjects";
+import SubjectsComp from "../../components/tutor/Subjects";
 
 
 const Subjects = () => {

@@ -1,4 +1,4 @@
-import MarketPlaceComp from "../../commponents/tutor/MarketPlace";
+import MarketPlaceComp from "../../components/tutor/MarketPlace";
 
 
 const MarketPlace = () => {

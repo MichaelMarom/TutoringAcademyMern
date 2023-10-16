@@ -1,9 +1,12 @@
-import TutorTable from "../../commponents/admin/TutorTable";
+import TutorTable from "../../components/admin/TutorTable";
+import AdminLayout from "../../layouts/AdminLayout";
 
 const Tutor_Table = () => {
-    return ( 
-        <TutorTable />
-     );
+    return (
+        <AdminLayout>
+            <TutorTable />
+        </AdminLayout>
+    );
 }
- 
+
 export default Tutor_Table;

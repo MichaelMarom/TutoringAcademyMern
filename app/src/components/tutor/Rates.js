@@ -157,7 +157,7 @@ const Rates = () => {
     useEffect(() => {
         let next = document.querySelector('.tutor-next')
 
-        if(next.hasAttribute('id')){
+        if(next && next.hasAttribute('id')){
             next.removeAttribute('id');
         }
     }, [])

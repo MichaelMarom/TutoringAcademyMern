@@ -1,4 +1,4 @@
-import MyStudentsComp from "../../commponents/tutor/MyStudents";
+import MyStudentsComp from "../../components/tutor/MyStudents";
 
 
 const MyStudents = () => {

@@ -1,4 +1,4 @@
-import SchedulingComp from "../../commponents/tutor/Scheduling";
+import SchedulingComp from "../../components/tutor/Scheduling";
 
 
 const Scheduling = () => {

@@ -4,19 +4,20 @@ const insert = (tableName, values) => {
         return values[key];
     })
 
-
     const fieldsMapped = fieldsArray.map((field, index) => {
         return ((fieldsArray.length !== index) ? `${field}` : `${field}`)
     })
-    const queryFieldsPart = `(` + fieldsMapped + `)`
+
+    const queryFieldsPart = `(` + fieldsMapped + `)`;
     const valuesMapped = valuesArray.map((value, index) => {
         const updatedArray = ((valuesArray.length !== index) ? `${typeof (value) === 'object' ? `'${JSON.stringify(value)}'` : `'${value}'`}` : `'${value}'`);
         return updatedArray
     })
+
     const queryValuesPart = `(` + valuesMapped + `)`;
 
-    const query = `INSERT INTO ${tableName} ${fieldsArray.length ? queryFieldsPart : null} VALUES ${queryValuesPart}
-    `
+    const query = `INSERT INTO ${tableName} ${fieldsArray.length ? queryFieldsPart : null} OUTPUT inserted.* VALUES ${queryValuesPart}`;
+    console.log(query)
     return query
 }
 
@@ -59,10 +60,15 @@ const getAll = (tableName) => {
     return `SELECT * FROM ${tableName}`;
 }
 
-const findByAnyIdColumn = (tableName, condition) => {
-    const idColumn = Object.keys(condition)[0];
-    const value = condition[idColumn];
-    return `SELECT TOP 1 * FROM ${tableName} where ${idColumn} = '${value}'`
+const findByAnyIdColumn = (tableName, condition, casting = null) => {
+    let idColumn = Object.keys(condition)[0];
+    let value = `'${condition[idColumn]}'`;
+    if (casting && value) {
+        idColumn = `CAST(${idColumn} AS ${casting})`;
+    }
+    let query = `SELECT TOP 1 * FROM ${tableName} where ${idColumn} = ${value}`;
+    console.log(query)
+    return query;
 }
 
 const find = (tableName, where, opr = 'AND') => {
@@ -74,6 +80,7 @@ const find = (tableName, where, opr = 'AND') => {
 
     const whereClause = conditions.join(` ${opr} `);
     const sql = `SELECT * FROM ${tableName} WHERE ${whereClause}`;
+    console.log(sql)
     return sql
 };
 

@@ -44,7 +44,7 @@ const StudentLecturePanel = () => {
     
 
     return ( 
-        <>  
+        <StudentLayout>  
             <div className="student-lec-pane-head shadow-sm">
 
             </div>
@@ -58,7 +58,7 @@ const StudentLecturePanel = () => {
                 </div>
 
             </div>
-        </>
+        </StudentLayout>
 
 
      );

@@ -1,4 +1,4 @@
-import TermOfUseComp from "../../commponents/tutor/TermOfUse";
+import TermOfUseComp from "../../components/tutor/TermOfUse";
 
 
 const TermOfUse = () => {

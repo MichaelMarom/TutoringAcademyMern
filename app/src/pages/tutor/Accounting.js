@@ -1,4 +1,4 @@
-import AccountingComp from "../../commponents/tutor/Accounting";
+import AccountingComp from "../../components/tutor/Accounting";
 
 
 const Accounting = () => {

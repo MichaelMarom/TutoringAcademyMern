@@ -1,8 +1,11 @@
-import StudentTable from "../../commponents/admin/StudentTable";
+import StudentTable from "../../components/admin/StudentTable";
+import AdminLayout from "../../layouts/AdminLayout";
 
 const Student_Table = () => {
     return ( 
-        <StudentTable />
+        <AdminLayout>
+            <StudentTable />
+        </AdminLayout>
      );
 }
  

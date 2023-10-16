@@ -1,7 +1,7 @@
 // slice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { get_student_events, save_student_events } from "../../axios/student";
-import { convertToDate } from "../../commponents/common/Calendar/Calendar";
+import { convertToDate } from "../../components/common/Calendar/Calendar";
 
 const slice = createSlice({
     name: "studentBookings",

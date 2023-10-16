@@ -30,7 +30,7 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
             const currentTime = moment();
             const inputTime = moment(event.createdAt);
             const diffInMinutes = currentTime.diff(inputTime, 'minutes');
-
+            console.log(diffInMinutes, 'll')
             //5 min extra after expire
             if (diffInMinutes >= 65 && event.type === 'reserved') {
                 handleSetReservedSlots(reservedSlots.filter(slot => event.id !== slot.id));
@@ -48,12 +48,17 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
         };
     }, [event.createdAt, extraFiveMinStart]);
 
-
-
     function calculateRemainingTime(createdAt) {
         const createdAtMoment = moment(createdAt);
         const now = moment();
         const duration = moment.duration(now.diff(createdAtMoment));
+
+        if (duration.hours() > 2 || duration.days() > 1 || now.diff(createdAtMoment, 'minutes') > 64) {
+            return {
+                minutes: 0,
+                seconds: 1
+            }
+        }
         const remainingMinutes = 60 - duration.minutes() - 1;
         const remainingSeconds = 60 - duration.seconds() - 1;
 
@@ -65,11 +70,11 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
 
     return (
         <div
-            className={`text-center h-100 ${remainingTime.minutes <= 0 ? 'hidden' : ''}`}
+            className={`text-center h-100 `}
             style={{ fontSize: "12px" }}
             onClick={() => handleEventClick(event)}
         >
-            {(event.type === 'reserved' && (remainingTime.minutes <= 0 && remainingTime.seconds === 1) || remainingTime.minutes >= 60) ? (
+            {(event.type === 'reserved' && extraFiveMinStart) ? (
                 <div>
                     {event.title} by {event.studentName} - expired
                 </div>

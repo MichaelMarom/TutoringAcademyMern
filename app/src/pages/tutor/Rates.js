@@ -1,4 +1,4 @@
-import RatesComp from "../../commponents/tutor/Rates";
+import RatesComp from "../../components/tutor/Rates";
 
 
 const Rates = () => {

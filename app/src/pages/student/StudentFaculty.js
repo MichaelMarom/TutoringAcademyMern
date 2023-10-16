@@ -1,11 +1,12 @@
-import StudentFaculties from "../../commponents/student/StudentFaculties";
+import StudentFaculties from "../../components/student/StudentFaculties";
+import StudentLayout from "../../layouts/StudentLayout";
 
 
 const StudentFaculty = () => {
     return ( 
-        <>
+        <StudentLayout>
             <StudentFaculties />
-        </>
+        </StudentLayout>
      );
 }
  

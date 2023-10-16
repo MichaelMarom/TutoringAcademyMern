@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { get_tutor_status } from "../../axios/tutor";
+import { get_tutor_setup, get_tutor_status } from "../../axios/tutor";
 
 
 const Header = () => {
@@ -24,9 +24,9 @@ const Header = () => {
 
     useEffect(() => {
         let user_id = window.localStorage.getItem('tutor_user_id');
-        get_tutor_status(user_id)
+        get_tutor_setup(user_id)
         .then((result) =>{
-            console.log(result[0].Status)
+
             setTutorState(result[0].Status)
         })
         .catch(err => console.log(err)) 
@@ -39,8 +39,7 @@ const Header = () => {
 
         deactivedElem.removeAttribute('id');
         clickedElem.setAttribute('id', 'tutor-tab-header-list-active')
-
-        nav(`tutor/${url}`)
+        nav(`/tutor/${url}`)
 
         let urls = [
             'intro','setup','education','rates','accounting','subjects','my-students','scheduling','term-of-use','market-place','collaboration','tutor-profile'

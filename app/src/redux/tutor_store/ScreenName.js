@@ -10,7 +10,7 @@ export const screenNameSlice = createSlice({
   reducers: {
     
     setscreenNameTo: (state, action) => {
-      state.screenName = action.payload
+      state.TutorScreenname = action.payload
     },
   },
 })

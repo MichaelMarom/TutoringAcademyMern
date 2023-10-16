@@ -1,4 +1,4 @@
-import EducationComp from "../../commponents/tutor/Education";
+import EducationComp from "../../components/tutor/Education";
 
 
 const Education = () => {

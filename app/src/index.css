@@ -72,3 +72,19 @@ button.Toastify__close-button.Toastify__close-button--light {
 .table-striped tbody tr:nth-of-type(odd) {
   background-color: #00ff001a;
 }
+
+.default-avatar {
+  width: 150px;
+  height: 150px;
+  background-color: #ccc;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}

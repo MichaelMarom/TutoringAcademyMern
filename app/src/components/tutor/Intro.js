@@ -1,8 +1,8 @@
 import { useTable } from 'react-table';
-import { COLUMNS,DATA } from '../../Tables/Prompt/columns';
+import { COLUMNS, DATA } from '../../Tables/Prompt/columns';
 import { useMemo } from 'react';
 import { useState } from 'react';
-import {motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { useCallback } from 'react';
@@ -11,11 +11,13 @@ import containerVariants from '../constraint';
 const Intro = () => {
 
     // columns.js
-
+    useEffect(() => {
+        console.log('hit')
+    }, [])
     useEffect(() => {
         let next = document.querySelector('.tutor-next')
 
-        if(next.hasAttribute('id')){
+        if (next && next.hasAttribute('id')) {
             next.removeAttribute('id');
         }
     }, [])
@@ -23,23 +25,11 @@ const Intro = () => {
 
     const columns = useMemo(() => COLUMNS, []);
 
-    axios.get('', {
-        params: {
-            data: 'hello'
-        }
-    })
-    .then(() => {
-        
-    })
-    .catch(err => {
-        console.log(err)
-    })
-
-    const tableInstance = useTable({columns, data})
+    const tableInstance = useTable({ columns, data })
 
     const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
 
-    return ( 
+    return (
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="tutor-tab">
 
@@ -53,10 +43,10 @@ const Intro = () => {
                     <div className="note-three shadow-sm"></div>
                 </div>
 
-               
+
             </motion.div>
         </>
-     );
+    );
 }
- 
+
 export default Intro;

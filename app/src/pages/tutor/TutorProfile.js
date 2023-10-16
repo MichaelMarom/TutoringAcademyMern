@@ -1,4 +1,4 @@
-import TutorProfileComp from "../../commponents/tutor/TutorProfile";
+import TutorProfileComp from "../../components/tutor/TutorProfile";
 
 
 const TutorProfile = () => {

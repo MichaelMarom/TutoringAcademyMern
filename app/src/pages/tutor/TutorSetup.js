@@ -1,12 +1,12 @@
-import Setup from "../../commponents/tutor/TutorSetup";
-
+import Setup from "../../components/tutor/TutorSetup";
+import TutorLayout from "../../layouts/TutorLayout";
 
 const TutorSetup = () => {
-    return ( 
-        <>
+    return (
+        <TutorLayout>
             <Setup />
-        </>
-     );
+        </TutorLayout>
+    );
 }
- 
+
 export default TutorSetup;

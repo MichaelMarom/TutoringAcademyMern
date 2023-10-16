@@ -17,10 +17,10 @@ import { setToolTo } from '../../redux/student_store/Tool';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 
-import SHeader from '../../commponents/class/THeader';
-import SVid from '../../commponents/class/TVid';
-import SMssg from '../../commponents/class/TMssg';
-import SPanel from '../../commponents/class/TPanel';
+import SHeader from '../../components/class/THeader';
+import SVid from '../../components/class/TVid';
+import SMssg from '../../components/class/TMssg';
+import SPanel from '../../components/class/TPanel';
 
 //import pdfreader from 'pdfreader'
 import { socket } from '../../socket';

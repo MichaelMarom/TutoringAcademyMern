@@ -4,7 +4,7 @@ const TermOfUse = () => {
    /* useEffect(() => {
         let next = document.querySelector('.student-next')
 
-        if(next.hasAttribute('id')){
+        if(next && next.hasAttribute('id')){
             next.removeAttribute('id');
         }
     }, [])*/

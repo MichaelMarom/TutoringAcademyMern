@@ -9,55 +9,34 @@ import SqImage from '../../images/square-svgrepo-com (1).svg';
 import eraserImage from '../../images/eraser-svgrepo-com.svg';
 import triangleImage from '../../images/triangle-svgrepo-com (1).svg';
 import rectImage from '../../images/rectangle-svgrepo-com.svg'
-
-import {useEffect, useRef, useState} from 'react'
-import {Peer} from 'peerjs';
-import uniqid from 'uniqid';
-import { setToolTo } from '../../redux/student_store/Tool';
-import { useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from "react-redux";
-
-import SHeader from '../../components/class/THeader';
-import SVid from '../../components/class/TVid';
-import SMssg from '../../components/class/TMssg';
-import SPanel from '../../components/class/TPanel';
-
-//import pdfreader from 'pdfreader'
+import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { socket } from '../../socket';
-import { setToolReqTo } from '../../redux/student_store/toolReq';
-import { setAsideReqTo } from '../../redux/student_store/asideReq.js.js';
-import { setEraserWidthTo } from '../../redux/tutor_store/Eraser';
-import { setBoardAccessTo } from '../../redux/tutor_store/BoardAccess';
+import { setToolTo } from '../../redux/student_store/Tool';
+import { setEraserWidthTo } from '../../redux/student_store/Eraser';
 
-const Class = () => {
 
-    let dispatch = useDispatch();
+const StudentCollabTools = () => {
+    let [boardAccess, setboardAccess] = useState(false);
 
     let location = useLocation();
-
-    let drawStartMode  = useRef('')
-    let drawMoveMode  = useRef('')
-    let drawEndMode  = useRef('')
-
-    let {ModeValue} = useSelector(s => s.mode)
-
-    let {BoardAccess} = useSelector(state => state.BoardUser);
-
+    let navigate = useNavigate();
+    let {toolReqValue} = useSelector(s => s.toolReq)
     
+    
+    let {BoardAccess} = useSelector(state => state.BoardUser);
     let {colorLine} = useSelector(state => state.color);
     let {paintValue} = useSelector(state => state.paint);
     let {lineWidthValue} = useSelector(state => state.lineWidth);
-
     let {ToolValue} = useSelector(state => state.tool);
     let {eraserWidthValue} = useSelector(state => state.eraserWidth);
-
     let {asideReqValue} = useSelector((state) => state.asideReq);
-    let {toolReqValue} = useSelector((state) => state.toolReq);
-
+    
     let [requestBox, setRequestBox] = useState('');
     let answer = useRef('Ignor')
     let phrase = useRef('Do Not')
-
+    let dispatch = useDispatch()
 
     //let [thickness, setthickness] = useState('');
     
@@ -82,10 +61,44 @@ const Class = () => {
     var thick = useRef(2);
     let selectedTool = useRef('pen');
     var EraserWidth = useRef(2);
+
+    useEffect(() => {
+
+        let r = 
+        <div className="tutor-requests">
+            <div className="request-bx">
+                <div className="text">
+                    <h6>
+                        Emeka {phrase.current} Have Access To The White Board Tools
+                    </h6>
+                </div>
+
+                <div className="btns">
+                    <button>Grant Access</button>
+                </div>
+            </div>
+        </div>
+
+        if(location.pathname.split('/').splice(-2)[0] === 'tutor'){
+            setTutorReq(r)
+        }else{
+            setTutorReq('')
+        }
+        
+    },[location])
+
     
-    
-   
-    
+    useEffect(() => {
+        let l = document.getElementById('line-ill');
+        console.log(l)
+        if(l){
+            l.style.border = `${border}px solid ${penColor}`
+        }
+        //
+
+    },[border, penColor])
+
+       
     useEffect(() => {
 
         setState(BoardAccess )
@@ -196,7 +209,7 @@ const Class = () => {
 
         function onResize(){
 
-            canvas.height = window.innerHeight;  
+            canvas.height = window.innerHeight - 110;  
             canvas.width = window.innerWidth - 5;
             //canvas.style.pointerEvents.right = `${400}`
             ctx.strokeStyle = color.current;
@@ -249,9 +262,6 @@ const Class = () => {
                 socket.emit('canvas-move', 'eraser', e.clientX, e.clientY, e.offsetX, e.offsetY, e.pageX, e.pageY )
             }
 
-            
-            
-
         }
         function onPointerEnd( e ){
             isDrawing = false;
@@ -272,9 +282,9 @@ const Class = () => {
         canvas.addEventListener('mousemove', onPointerMove);
         canvas.addEventListener('mouseup', onPointerEnd);
         canvas.addEventListener( 'resize', onResize);
-        document.querySelector('.delete').onclick = e => {
+        /*document.querySelector('.TutorCollabDeleteBtn').onclick = e => {
             clearCanvas()
-        }
+        }*/
         onResize();
 
         socket.on('tool', (tool)=> {
@@ -341,9 +351,10 @@ const Class = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
         }
 
-    }, [dispatch]);
+    }, [dispatch]); 
 
-  
+
+
     let handleFileChange = e => {
 
         if(e.target.name === 'photo'){
@@ -385,126 +396,6 @@ const Class = () => {
         let c = e.target.dataset.color;
         fillColor.current = c 
     }
-
-    /*useEffect(() => {
-        document.querySelector('.reqBtn').onclick = e => {
-            socket.emit('permissiontoUseBoardTools', location.pathname.split('/').splice(-1)[0]);
-        }
-        
-    },[location])*/
-
-    useEffect(() => {
-
-        let r = 
-        <div className="tutor-requests">
-            <div className="request-bx">
-                <div className="text">
-                    <h6>
-                        Emeka {phrase.current} Have Access To The White Board Tools
-                    </h6>
-                </div>
-
-                <div className="btns">
-                    <button>Grant Access</button>
-                </div>
-            </div>
-        </div>
-
-        if(location.pathname.split('/').splice(-2)[0] === 'tutor'){
-            setTutorReq(r)
-        }else{
-            setTutorReq('')
-        }
-        
-    },[location])
-
-     //TUTORS PANEL...
-    useEffect(() => {
-        //TUTORS PANEL...
-        socket.on('permissiontoUseBoardTools', id => {
-
-            let div = document.createElement('div');
-            div.className = 'popin';
-
-            let h5 = document.createElement('h5');
-            h5.innerHTML = `User "${id}" Requested To Use The White Board Tools.`
-
-            
-
-            div.appendChild(h5)
-         
-            let _$ = value => {
-                if(value === 'approve'){
-                    dispatch(setAsideReqTo('approve'))
-                    dispatch(setToolReqTo('approve'))
-                }else if(value === 'reject'){
-                    dispatch(setAsideReqTo('reject'))
-                    dispatch(setToolReqTo('reject'))
-                }else{
-                    dispatch(setAsideReqTo('ignore'))
-                    dispatch(setToolReqTo('ignore'))
-                }
-            }
-
-            document.body.appendChild(div)
-
-           
-            setTimeout(() => {
-                _$(answer.current)
-                div.remove();
-                //socket.emit('PermissionResponse', answer.current);
-            }, 2000);
-            
-
-            
-        })
-
-    },[answer,dispatch])
-
-
-    useEffect(() => {
-        socket.on('accessGranted', () => {
-            dispatch(setBoardAccessTo('student'))
-            let div = document.createElement('div');
-            div.className = 'popin';
-
-            let small = document.createElement('small');
-            small.innerHTML = `You Now Have Access To The White Board.`;
-
-            div.appendChild(small)
-
-            document.body.appendChild(div);
-
-            setTimeout(() => {
-                div.remove();
-            }, 2000);
-        });
-    
-        socket.on('accessRestricted', () => {
-            dispatch(setBoardAccessTo('tutor'))
-
-            let div = document.createElement('div');
-            div.className = 'popin';
-
-            let small = document.createElement('small');
-            small.innerHTML = `You have Been Restricted From Using The White Board.`;
-
-            div.appendChild(small)
-
-            document.body.appendChild(div);
-
-            setTimeout(() => {
-                div.remove();
-            }, 2000);
-        });
-    }, [dispatch])
-
-    useEffect(() => {
-        if(location.pathname.split('/').splice(-2)[0] === 'tutor'){
-            toolReqValue !== 'approve' ? phrase.current = 'Wants To' : phrase.current = 'Do Not'
-        }
-        
-    }, [toolReqValue, location])
 
     let handleShapeOptions = e => {
 
@@ -648,16 +539,6 @@ const Class = () => {
         console.log(e.target.value)
     }
 
-    useEffect(() => {
-        let l = document.getElementById('line-ill');
-        console.log(l)
-        if(l){
-            l.style.border = `${border}px solid ${penColor}`
-        }
-        //
-
-    },[border, penColor])
-
     let handlePenStyle = e => {
         handleTool(e);
 
@@ -733,94 +614,33 @@ const Class = () => {
     }
 
     return ( 
+
         <>
+            {shapesCnt}
+            {thickness}
+            {penStyle}
+            <div className="student-writing-set shadow" data-set='pens' id='set' style={{display: 'flex', opacity: toolReqValue ? 1 : .5, pointerEvents: toolReqValue ? 'all' : 'none'}} > 
 
-            
+                <button onClick={handlePenStyle} data-tool='pen' style={{padding: '5px'}}>
+                    <img src={p1} style={{height: '35px', width: '35px'}} alt="..." />
+                </button>
 
-            <div className="class-room" >
+                <button onClick={handlePenStyle} data-tool='line' style={{padding: '5px'}}>
+                    <img src={sl} style={{height: '35px', width: '35px'}} alt="..." />
+                </button>
 
-                
-                {shapesCnt}
-                {thickness}
-                {penStyle}
+                <button onClick={handleShapeOptions} data-tool='shapes' style={{padding: '5px'}}>
+                    <img src={shapesImage} style={{height: '35px', width: '35px'}} alt="..." /> 
+                </button>
 
-
-                <SHeader />
-                
-                <div className="writing-set shadow" data-set='pens' id='set' style={{display: state === 'tutor' && location.pathname.split('/').splice(-2)[0] === 'tutor' ? 'block' : state === 'student' && location.pathname.split('/').splice(-2)[0] === 'student' ? 'block' : 'none'}} > 
-
-                    <div onClick={handlePenStyle} data-tool='pen' style={{padding: '5px'}}>
-                        <img src={p1} style={{height: '100%', width: '100%'}} alt="..." />
-                    </div>
-
-                    <div onClick={handlePenStyle} data-tool='line' style={{padding: '5px'}}>
-                        <img src={sl} style={{height: '100%', width: '100%'}} alt="..." />
-                    </div>
-
-                    <div onClick={handleShapeOptions} data-tool='shapes' style={{padding: '5px'}}>
-                        <img src={shapesImage} style={{height: '100%', width: '100%'}} alt="..." /> 
-                    </div>
-
-                    <div onClick={handleEraserThickness} data-tool='eraser' style={{padding: '5px'}} >
-                        <img src={eraserImage} style={{height: '100%', width: '100%'}} alt="..." />
-                    </div>
-
-                </div>
-
-               
-                <>
-                    <input style={{display: 'none'}} accept='video/*' type="file" name="video" id="video" onChange={handleFileChange} />
-
-                    <input style={{display: 'none'}} type="file" name="doc" id="doc" />
-
-                    <input style={{display: 'none'}} accept='image/*' onChange={handleFileChange} type="file" name="photo" id="photo" />
-                </>
-
-                
-                <canvas id="drawPlace" style={{border:'1px solid #eee'}}>
-            
-                </canvas>
-                
-
-                {
-                    <div dangerouslySetInnerHTML={{__html:
-                        floatingFile.map((item) => {
-                            return item
-                        })
-                    }} />
-                }
-
-                
-                <div className="conference-box">
-
-                    <SVid />
-
-                    <div className="info-panel">
-                        
-                    </div>
-
-                    <SMssg />
-
-                    <SPanel />
-                    
-                </div>
-
-
-                <div className="board-panel shadow-sm">
-
-                </div>
-
-
+                <button onClick={handleEraserThickness} data-tool='eraser' style={{padding: '5px'}} >
+                    <img src={eraserImage} style={{height: '35px', width: '35px'}} alt="..." />
+                </button>
 
             </div>
-
-            
-
-            
-
-           
         </>
+
      );
 }
  
-export default Class;
+export default StudentCollabTools;

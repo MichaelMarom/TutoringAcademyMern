@@ -17,7 +17,6 @@ import rolePermissions from './utils/permissions';
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
 
-
 const App = () => {
 
     let location = useLocation();

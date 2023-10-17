@@ -68,10 +68,10 @@ const TutorSetup = () => {
 
     useEffect(() => {
         const fetchTutorSetup = async () => {
-            const result = await get_tutor_setup_by_userId(user[0].SID)
+            const result = await get_tutor_setup_by_userId(user[0].SID);
+            localStorage.setItem('tutor_user_id', result[0].AcademyId);
             if (result.length) {
                 let data = result[0]
-                console.log(window.localStorage.getItem('tutor_user_id'), 'userId', data)
                 set_fname(data.FirstName)
                 set_sname(data.LastName)
                 set_mname(data.MiddleName)
@@ -229,7 +229,7 @@ const TutorSetup = () => {
             if (response.status === 200) {
 
                 // if (response.type === 'save') {
-                window.localStorage.setItem('tutor_user_id', response.data[0].TutorScreenname);
+                window.localStorage.setItem('tutor_user_id', response.data[0].AcademyId);
                 window.localStorage.setItem('tutor_screen_name', response.data[0].TutorScreenname);
                 dispatch(setscreenNameTo(response.data[0].TutorScreenname));
                 alert(`Your New Screen Name Is ${response.data[0].TutorScreenname}`)
@@ -524,11 +524,6 @@ const TutorSetup = () => {
                             </div>
                             <div className='err-mssg' >
                                 Email already exist, Please try something else...
-                            </div>
-
-                            <div style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <label style={{ width: '30%' }} htmlFor=''>Password</label> &nbsp;&nbsp;
-                                <input style={{ margin: '2.5px 0 0 0', width: '70%', float: 'right', position: 'relative' }} onInput={e => set_pwd(e.target.value)} placeholder='Password' defaultValue={pwd} type="text" id="pwd" />
                             </div>
 
                             <div style={{ display: 'flex', margin: '0 0 10px 0', padding: '0', justifyContent: 'center', alignItems: 'center', width: '100%', whiteSpace: 'nowrap' }}>

@@ -1,12 +1,16 @@
 import EducationComp from "../../components/tutor/Education";
+import Footer from "../../components/tutor/Footer";
+import Header from "../../components/tutor/Header";
 
 
 const Education = () => {
-    return ( 
+    return (
         <>
+            <Header />
             <EducationComp />
+            <Footer />
         </>
-     );
+    );
 }
- 
+
 export default Education;

@@ -189,7 +189,7 @@ let post_form_two = async (req, res) => {
 
 
 
-    let { level, university1, university2, degree, certificate, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id } = req.body;
+    let { level, university1, university2, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id } = req.body;
 
 
     let duplicate = await connecteToDB.then(async (poolConnection) => {
@@ -211,8 +211,8 @@ let post_form_two = async (req, res) => {
             if (poolConnection) {
                 var resultSet = poolConnection.request().query(
                     `
-                        INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, College1State, College1Year, College2, College2State, College2StateYear, Degree, DegreeState, DegreeYear, Certificate, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
-                        VALUES ('${level}', '${experience}', '${university1}','${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}','${degree}', '${state4}','${graduagteYr3}','${certificate}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')
+                        INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, College1State, College1Year, College2, College2State, College2StateYear, Degree,DegreeFile, DegreeState, DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
+                        VALUES ('${level}', '${experience}', '${university1}','${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}','${degree}', '${degreeFile}','${state4}','${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')
                         `
                 )
 
@@ -897,16 +897,12 @@ let get_my_edu = (req, res) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
-                `
-                    SELECT * From Education WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' 
-                `
+                findByAnyIdColumn('Education', req.query, 'varchar(max)')
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 

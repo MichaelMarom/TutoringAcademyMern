@@ -204,11 +204,11 @@ export let upload_form_one = (fname, uname, mname, sname, email, cell, acadId, a
 }
 
 
-export let upload_form_two = (level, university1, university2, degree, certificate, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id) => {
+export let upload_form_two = (level, university1, university2, degree, degreeFile, certificate, certificateFile,language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/form-two', {
-            level, university1, university2, degree, certificate, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id
+            level, university1, university2, degree, degreeFile, certificate, certificateFile,language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id
         })
             .then((result) => {
                 resolve(result.data)

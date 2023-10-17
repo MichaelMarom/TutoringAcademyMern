@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import rolePermissions from './utils/permissions';
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
+import { get_tutor_setup_by_userId } from "./axios/tutor";
 
 
 const App = () => {
@@ -31,11 +32,15 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('tutor_user_id', user.AcademyId)
+        if(user[0])
+        get_tutor_setup_by_userId(user[0].SID).then((result) => {
+            console.log(result, 'render in routes')
+            localStorage.setItem('tutor_user_id', result[0].AcademyId)
+        })
     }, [user])
 
     console.log(user)
-    
+
     const getDefaultRoute = (role) => {
         const defaultRoutes = {
             tutor: '/tutor/intro',

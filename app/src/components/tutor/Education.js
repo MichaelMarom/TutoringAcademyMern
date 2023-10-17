@@ -48,6 +48,8 @@ const Education = () => {
     let [data, set_data] = useState(false);
     let [files, set_files] = useState('');
 
+    const [errors, setErrors] = useState({})
+
     useEffect(() => {
         const currentYear = (new Date()).getFullYear();
         const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
@@ -63,7 +65,7 @@ const Education = () => {
     let user_id = window.localStorage.getItem('tutor_user_id');
 
     let saver = () => {
-        let response = upload_form_two(level, university1, university2, degree, certificate, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, othelang, workExperience, user_id)
+        let response = upload_form_two(level, university1, university2, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, othelang, workExperience, user_id)
         return response;
     }
 
@@ -89,6 +91,7 @@ const Education = () => {
                     } else {
                         item.setAttribute('id', 'err-border');
                     }
+                    // if()
                     bool_list.push(false)
                 } else {
                     if (item.dataset.type === 'file') {
@@ -281,6 +284,12 @@ const Education = () => {
 
     let [certified_opacity, set_certified_opacity] = useState('1')
     let [certified_event, set_certified_event] = useState('all')
+
+    const [degreeFile, setDegreeFile] = useState(null);
+    const [degreeFileContent, setDegreeFileContent] = useState('')
+    const [certificateFile, setCertificateFile] = useState(null);
+    const [certFileContent, setCertFileContent] = useState('')
+
     let certified = e => {
         if (e.target.value === 'Not Certified') {
             set_certified_opacity('.5')
@@ -291,6 +300,34 @@ const Education = () => {
         }
         set_certificate(e.target.value)
     }
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                setDegreeFileContent(content);
+            };
+            reader.readAsText(file);
+            setDegreeFile(file);
+        }
+    }
+
+    const handleCertUpload = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                setCertFileContent(content);
+            };
+            reader.readAsText(file);
+            setCertificateFile(file);
+        }
+    }
+
 
     return (
         <>
@@ -443,12 +480,29 @@ const Education = () => {
                         </div>
 
                         <div className='input-cnt' style={{ pointerEvents: event, opacity: opacity, width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <select id='degree' style={{ padding: '5px' }} onInput={e => set_degree(e.target.value)}>
+                            <div style={{
+                                display: 'flex', flexDirection: "column",
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: '100%'
+                            }}>
+                                <select id='degree' className='mb-4' style={{ padding: '5px' }} onInput={e => set_degree(e.target.value)}>
                                     {
                                         degree_list
                                     }
                                 </select>
+                                {
+                                    degree.length ?
+                                        <div className={`form-outline ${errors.degreeFile ? 'border border-danger' : ''}`}>
+                                            <input
+                                                type="file"
+                                                id="degree"
+                                                name="degree"
+                                                className="form-control m-0"
+                                                onChange={handleFileUpload}
+                                            />
+                                        </div> : null
+                                }
                             </div>
 
                             <div style={{
@@ -507,12 +561,24 @@ const Education = () => {
                         </div>
 
                         <div className='input-cnt' style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <select id='certificate' style={{ padding: '5px' }} onInput={certified}>
+                            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%', whiteSpace: 'nowrap', alignItems: "center" }}>
+                                <select id='certificate' style={{ padding: '5px', marginBottom: '20px' }} onInput={certified}>
                                     {
                                         certificate_list
                                     }
                                 </select>
+                                {
+                                    certificate.length ?
+                                        <div className={`form-outline `}>
+                                            <input
+                                                type="file"
+                                                id="certificate"
+                                                name="certificate"
+                                                className="form-control m-0"
+                                                onChange={handleCertUpload}
+                                            />
+                                        </div> : null
+                                }
                             </div>
 
                             <div style={{

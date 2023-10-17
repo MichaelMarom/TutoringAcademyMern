@@ -15,7 +15,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import rolePermissions from './utils/permissions';
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
-import Profile from "./pages/Profile";
+
 
 const App = () => {
 
@@ -33,13 +33,16 @@ const App = () => {
     useEffect(() => {
         localStorage.setItem('tutor_user_id', user.AcademyId)
     }, [user])
+
     console.log(user)
+    
     const getDefaultRoute = (role) => {
         const defaultRoutes = {
             tutor: '/tutor/intro',
             student: '/student/intro',
             admin: '/admin/tutor-data',
         };
+
 
         return defaultRoutes[role] || '/login';
     };

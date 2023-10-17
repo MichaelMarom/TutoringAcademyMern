@@ -31,6 +31,7 @@ import StudentIntro from "../pages/student/StudentIntro";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Profile from "../pages/Profile";
+import TutorClass from "../pages/tutor/TutotClass";
 
 const rolePermissions = {
     tutor: [
@@ -44,11 +45,12 @@ const rolePermissions = {
         { path: '/tutor/scheduling', component: <Scheduling /> },
         { path: '/tutor/term-of-use', component: <TermOfUse /> },
         { path: '/tutor/market-place', component: <MarketPlace /> },
-        { path: '/tutor/collaboration', component: <TutorCollaboration /> },
         { path: '/tutor/tutor-profile', component: <TutorProfile /> },
-        { path: '/profile', component: <Profile /> }
+        { path: '/profile', component: <Profile /> },
+        { path: "tutor/collaboration", component: <TutorClass /> }
     ],
     student: [
+        { path: "student/collaboration", component: <StudentCollaboration /> },
         { path: '/profile', component: <Profile /> },
         { path: "student/", component: <StudentSetup /> },
         { path: "student/intro", component: <StudentIntro /> },
@@ -56,7 +58,6 @@ const rolePermissions = {
         { path: "student/faculties", component: <StudentFaculty /> },
         { path: "student/short-list", component: <StudentShortLists /> },
         { path: "student/accounting", component: <StudentAccountings /> },
-        { path: "student/collaboration", component: <StudentCollaboration /> },
         { path: "student/market-place", component: <StudentMarketPlace /> },
         { path: "student/schedule", component: <StudentScheduling /> },
         { path: "student/term-of-use", component: <StudentTermOfUse /> },

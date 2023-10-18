@@ -2,6 +2,96 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../axios/tutor';
 import career from '../../images/career.png';
+import Select, { components } from 'react-select'
+
+const languages = [
+    'Afrikaans',
+    'Albanian',
+    'Arabic',
+    'Armenian',
+    'Basque',
+    'Bengali',
+    'Bulgarian',
+    'Catalan',
+    'Cambodian',
+    'Chinese (Mandarin)',
+    'Croatian',
+    'Czech',
+    'Danish',
+    'Dutch',
+    'English',
+    'Estonian',
+    'Fiji',
+    'Finnish',
+    'French',
+    'Georgian',
+    'German',
+    'Greek',
+    'Gujarati',
+    'Hebrew',
+    'Hindi',
+    'Hungarian',
+    'Icelandic',
+    'Indonesian',
+    'Irish',
+    'Italian',
+    'Japanese',
+    'Javanese',
+    'Korean',
+    'Latin',
+    'Latvian',
+    'Lithuanian',
+    'Macedonian',
+    'Malay',
+    'Malayalam',
+    'Maltese',
+    'Maori',
+    'Marathi',
+    'Mongolian',
+    'Nepali',
+    'Norwegian',
+    'Persian',
+    'Polish',
+    'Portuguese',
+    'Punjabi',
+    'Quechua',
+    'Romanian',
+    'Russian',
+    'Samoan',
+    'Serbian',
+    'Slovak',
+    'Slovenian',
+    'Spanish',
+    'Swahili',
+    'Swedish',
+    'Tamil',
+    'Tatar',
+    'Telugu',
+    'Thai',
+    'Tibetan',
+    'Tonga',
+    'Turkish',
+    'Ukrainian',
+    'Urdu',
+    'Uzbek',
+    'Vietnamese',
+    'Welsh',
+    'Xhosa',
+];
+
+const languageOptions = languages.map((language) => ({
+    value: language,
+    label: language,
+}));
+
+const CustomLanguageINput = ({ className = 'langues', ...props }) => {
+    return (
+        <components.Input
+            {...props}
+            className={`input-language ${className}`}
+        />
+    );
+};
 
 const Education = () => {
 
@@ -21,8 +111,7 @@ const Education = () => {
     let [university2, set_university2] = useState([]);
     let [degree, set_degree] = useState([]);
     let [certificate, set_certificate] = useState([]);
-    let [language, set_language] = useState('');
-
+    let [language, set_language] = useState([]);
     let [state1, set_state1] = useState([]);
     let [state2, set_state2] = useState([]);
     let [state3, set_state3] = useState([]);
@@ -48,12 +137,13 @@ const Education = () => {
     let [data, set_data] = useState(false);
     let [files, set_files] = useState('');
 
-    const [errors, setErrors] = useState({})
 
+    const handleLanguageChange = (selectedOption) => {
+        set_language(selectedOption);
+    }
     useEffect(() => {
         const currentYear = (new Date()).getFullYear();
         const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
-        console.log(range(currentYear, currentYear - 50, -1))
         let d = range(currentYear, currentYear - 50, -1)
         let list = d.map(item => <option value={item} >{item}</option>)
         list.unshift(<option value='' >Select Year</option>)
@@ -65,7 +155,7 @@ const Education = () => {
     let user_id = window.localStorage.getItem('tutor_user_id');
 
     let saver = () => {
-        let response = upload_form_two(level, university1, university2, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, othelang, workExperience, user_id)
+        let response = upload_form_two(level, university1, university2, degree, JSON.stringify(degreeFile), certificate, JSON.stringify(certificateFile), JSON.stringify(language), state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, othelang, workExperience, user_id)
         return response;
     }
 
@@ -82,17 +172,27 @@ const Education = () => {
 
             let bool_list = []
             let bools = all_values.map(item => {
+                let dependantFields = { degree: 'degreeFile', certificate: "certificateFile" }
                 if (item.value === '') {
-
-                    if (item.dataset.type === 'file') {
-                        if (item.nextElementSibling) {
-                            item.nextElementSibling.setAttribute('id', 'err-border');
-                        }
-                    } else {
-                        item.setAttribute('id', 'err-border');
+                    if ((dependantFields[item.name] && (item.value && all_values.find(input => input.name === dependantFields[item.name])?.value)) || (document.querySelector('[autocomplete="off"]') === item && language.length)) {
+                        bool_list.push(true)
                     }
-                    // if()
-                    bool_list.push(false)
+                    else if (!dependantFields[item.name]) {
+                        if (item.dataset.type === 'file') {
+                            if (item.nextElementSibling) {
+                                item.nextElementSibling.setAttribute('id', 'err-border');
+                            }
+                        } else {
+                            item.setAttribute('id', 'err-border');
+                        }
+                        if (document.querySelector('[autocomplete="off"]') === item) {
+                            document.querySelector('.language-selector').style.border = "1px solid red";
+                        }
+                        bool_list.push(false)
+                    }
+                    else {
+                        bool_list.push(true)
+                    }
                 } else {
                     if (item.dataset.type === 'file') {
                         if (item.nextElementSibling) {
@@ -107,19 +207,12 @@ const Education = () => {
                 }
             })
 
-
             let result = bool_list.filter(item => item === false)
 
-            //console.log(result)
             if (result.length === 0) {
                 document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
                 let response = await saver();
-                console.log(response)
                 if (response) {
-                    //document.querySelector('form').reset(); 
-                    console.log(response)
-                    //alert(`Your New Screen Name Is ${response.screen_name}`)
-
                     setTimeout(() => {
                         document.querySelector('.save-overlay').removeAttribute('id');
                     }, 1000);
@@ -155,21 +248,14 @@ const Education = () => {
             .then((result) => {
 
                 if (result.length > 0) {
-                    console.log(result)
                     let data = result[0];
                     set_files(data)
-                    console.log(data)
 
                     set_workExperience(data.WorkExperience)
                     set_university1(data.College1)
                     set_university2(data.College2)
-                    set_language(data.NativeLang)
+                    set_language(JSON.parse(data.NativeLang))
                     set_othelang(data.NativeLangOtherLang)
-
-                    //set_state2(data.College1State)
-                    //set_state3(data.College2State)
-                    //set_state4(data.DegreeState)
-                    //set_state5(data.CertificateState)
 
                     set_graduagteYr1(data.College1Year)
                     set_graduagteYr2(data.College2Year)
@@ -177,6 +263,10 @@ const Education = () => {
 
                     set_degree(data.Degree)
                     set_certificate(data.Certificate)
+
+                    setDegreeFile(JSON.parse(data.DegreeFile))
+                    setCertificateFile(JSON.parse(data.CertificateFile))
+
                     set_level(data.EducationalLevel)
                     set_expiration(data.CertificateExpiration)
                     set_experience(data.EducationalLevelExperience)
@@ -215,7 +305,6 @@ const Education = () => {
             .then(({ recordset }) => {
                 let data = recordset.map(item => item.State);
                 setStateList(data);
-                console.log(data)
 
             })
             .catch((err) => {
@@ -486,18 +575,20 @@ const Education = () => {
                                 alignItems: 'center',
                                 width: '100%'
                             }}>
-                                <select id='degree' className='mb-4' style={{ padding: '5px' }} onInput={e => set_degree(e.target.value)}>
+                                <select id='degree'
+                                    name="degree"
+                                    className='mb-4' style={{ padding: '5px' }} onInput={e => set_degree(e.target.value)}>
                                     {
                                         degree_list
                                     }
                                 </select>
                                 {
                                     degree.length ?
-                                        <div className={`form-outline ${errors.degreeFile ? 'border border-danger' : ''}`}>
+                                        <div className={`form-outline`}>
                                             <input
                                                 type="file"
-                                                id="degree"
-                                                name="degree"
+                                                id="degreeFile"
+                                                name="degreeFile"
                                                 className="form-control m-0"
                                                 onChange={handleFileUpload}
                                             />
@@ -562,7 +653,7 @@ const Education = () => {
 
                         <div className='input-cnt' style={{ width: '100%' }}>
                             <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%', whiteSpace: 'nowrap', alignItems: "center" }}>
-                                <select id='certificate' style={{ padding: '5px', marginBottom: '20px' }} onInput={certified}>
+                                <select id='certificate' name="certificate" style={{ padding: '5px', marginBottom: '20px' }} onInput={certified}>
                                     {
                                         certificate_list
                                     }
@@ -572,8 +663,8 @@ const Education = () => {
                                         <div className={`form-outline `}>
                                             <input
                                                 type="file"
-                                                id="certificate"
-                                                name="certificate"
+                                                id="certificateFile"
+                                                name="certificateFile"
                                                 className="form-control m-0"
                                                 onChange={handleCertUpload}
                                             />
@@ -613,8 +704,17 @@ const Education = () => {
                         </div>
 
                         <div className='input-cnt' style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input id='language' style={{ padding: '5px' }} defaultValue={language} onInput={e => set_language(e.target.value)} placeholder='Native Language' />
+                            <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%', whiteSpace: 'nowrap', marginLeft: '2.3rem' }}>
+
+                                <Select
+                                    isMulti
+                                    className='language-selector'
+                                    id='language'
+                                    value={language}
+                                    onChange={handleLanguageChange}
+                                    options={languageOptions}
+                                    components={CustomLanguageINput}
+                                />
                             </div>
 
                             <div style={{
@@ -624,10 +724,6 @@ const Education = () => {
                                 <select style={{ padding: '5px', width: '100px', visibility: 'hidden' }} value='null' id="state1">
                                     <option value='null'>Select</option>
                                 </select>
-                            </div>
-
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_othelang(e.target.value)} defaultValue={othelang} placeholder='Other Languages' type="text" id="other_languages" style={{ float: 'right' }} />
                             </div>
                         </div>
 

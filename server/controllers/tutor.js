@@ -187,8 +187,6 @@ let post_form_one = (req, res) => {
 
 let post_form_two = async (req, res) => {
 
-
-
     let { level, university1, university2, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id } = req.body;
 
 
@@ -201,13 +199,15 @@ let post_form_two = async (req, res) => {
             .catch(err => console.log(err))
     });
 
-    console.log(duplicate.length)
     if (duplicate.length === 0) {
         marom_db(async (config) => {
             const sql = require('mssql');
             console.log('uploading data...')
 
             var poolConnection = await sql.connect(config);
+            console.log(` INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, College1State, College1Year, College2, College2State, College2StateYear, Degree,DegreeFile, DegreeState, DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
+            VALUES ('${level}', '${experience}', '${university1}','${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}','${degree}', '${degreeFile}','${state4}','${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')`
+            )
             if (poolConnection) {
                 var resultSet = poolConnection.request().query(
                     `

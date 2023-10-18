@@ -88,3 +88,42 @@ button.Toastify__close-button.Toastify__close-button--light {
   height: 150px;
   border-radius: 50%;
 }
+
+.language-selector {
+  width: 18rem;
+  font-size: 16px;
+}
+
+
+.custom-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-tooltip.top {
+  position: absolute;
+  bottom: 20px;
+  left: 4rem;
+  width: 100px;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 999;
+}
+
+.custom-tooltip.left {
+  position: absolute;
+  top: -83px;
+  left: -3rem;
+  width: 100px;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 999;
+}

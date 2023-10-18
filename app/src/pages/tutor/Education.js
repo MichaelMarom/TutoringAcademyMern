@@ -1,15 +1,12 @@
 import EducationComp from "../../components/tutor/Education";
-import Footer from "../../components/tutor/Footer";
-import Header from "../../components/tutor/Header";
+import TutorLayout from "../../layouts/TutorLayout";
 
 
 const Education = () => {
     return (
-        <>
-            <Header />
+       <TutorLayout>
             <EducationComp />
-            <Footer />
-        </>
+        </TutorLayout>
     );
 }
 

@@ -5,7 +5,6 @@ import TutorCollabHeader from "../../components/tutor/TutorCollabHeader";
 const TutorClass = () => {
     return (
         <>
-
             <TutorCollabHeader />
             <TutorCollabBoard />
             <TutorCollabFooter />

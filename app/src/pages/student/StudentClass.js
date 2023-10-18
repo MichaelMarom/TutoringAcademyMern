@@ -1,6 +1,6 @@
-import StudentCollabBoard from "../../commponents/student/StudentCollabBoard";
-import StudentCollabFooter from "../../commponents/student/StudentCollabFooter";
-import StudentCollabHeader from "../../commponents/student/StudentCollabHeader";
+import StudentCollabBoard from "../../components/student/StudentCollabBoard";
+import StudentCollabFooter from "../../components/student/StudentCollabFooter";
+import StudentCollabHeader from "../../components/student/StudentCollabHeader";
 
 const StudentClass = () => {
     return ( 

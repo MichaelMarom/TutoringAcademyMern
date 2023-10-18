@@ -8,6 +8,7 @@ import containerVariants from '../constraint';
 import { useDispatch } from 'react-redux';
 import { setscreenNameTo } from '../../redux/tutor_store/ScreenName';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
+import VideoRecorder from './VideoRecorder';
 const TutorSetup = () => {
 
     let [fname, set_fname] = useState('')
@@ -596,11 +597,13 @@ const TutorSetup = () => {
                         </div>
 
                         <div className="profile-video-cnt" style={{ float: 'right', width: '70%' }}>
-                            <h5 style={{ whiteSpace: 'nowrap' }}>Produce your profile video </h5>
+                            <h5 style={{ whiteSpace: 'nowrap' }}>Record your profile video </h5>
 
                             <input data-type='file' defaultValue={video} onChange={handleVideo} type="file" style={{ display: 'none' }} id="video" />
 
-                            <div className="tutor-tab-video-frame"></div>
+                            <div className="tutor-tab-video-frame">
+                                {/* <VideoRecorder /> */}
+                            </div>
                             <label id='btn' htmlFor="video">
                                 Upload
                             </label>

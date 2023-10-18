@@ -1,6 +1,6 @@
-import TutorCollabBoard from "../../commponents/tutor/TutorCollabBoard";
-import TutorCollabFooter from "../../commponents/tutor/TutorCollabFooter";
-import TutorCollabHeader from "../../commponents/tutor/TutorCollabHeader";
+import TutorCollabBoard from "../../components/tutor/TutorCollabBoard";
+import TutorCollabFooter from "../../components/tutor/TutorCollabFooter";
+import TutorCollabHeader from "../../components/tutor/TutorCollabHeader";
 
 const TutorClass = () => {
     return ( 

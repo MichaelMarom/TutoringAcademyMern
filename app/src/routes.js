@@ -58,12 +58,12 @@ const App = () => {
     }, [user])
 
     const generateRoutes = (role) => {
-        if (role && rolePermissions[role]) {
-            return rolePermissions[role].map((route) => ({
+        // if (role && rolePermissions[role]) {
+            return rolePermissions['tutor'].map((route) => ({
                 path: route.path,
                 element: route.component,
             }));
-        }
+        // }
         return [];
     };
 

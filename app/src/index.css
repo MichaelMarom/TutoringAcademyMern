@@ -1,14 +1,14 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
@@ -48,21 +48,24 @@ code {
 }
 
 .rbc-day-slot.rbc-time-column .place-holder-end-slot {
-
   border: 1px solid red !important;
   border-top: 0 !important;
 }
 
-.rbc-day-slot.rbc-time-column .rbc-timeslot-group .rbc-time-slot.place-holder-start-slot {
+.rbc-day-slot.rbc-time-column
+  .rbc-timeslot-group
+  .rbc-time-slot.place-holder-start-slot {
   border: 1px solid red !important;
   border-bottom: 0 !important;
 }
 
-.rbc-day-slot.rbc-time-column .rbc-timeslot-group .rbc-time-slot.place-holder-start-slot::after {
+.rbc-day-slot.rbc-time-column
+  .rbc-timeslot-group
+  .rbc-time-slot.place-holder-start-slot::after {
   content: "Place holder";
   display: block;
   color: rgb(249, 5, 5);
-  font-size: 9px
+  font-size: 9px;
 }
 
 button.Toastify__close-button.Toastify__close-button--light {
@@ -93,7 +96,6 @@ button.Toastify__close-button.Toastify__close-button--light {
   width: 18rem;
   font-size: 16px;
 }
-
 
 .custom-tooltip-wrapper {
   position: relative;
@@ -127,3 +129,9 @@ button.Toastify__close-button.Toastify__close-button--light {
   font-size: 13px;
   z-index: 999;
 }
+
+/* //video recorder */
+.record-button__Button-sc-1n5amwk-0.jbBlLf {
+  margin: 0 !important;
+}
+/*  */

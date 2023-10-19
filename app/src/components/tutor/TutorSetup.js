@@ -116,7 +116,7 @@ const TutorSetup = () => {
 
         console.log(data.Grades);
 
-        let gradeList = data.Grades.split(",");
+        let gradeList = data.Grades?.split(",") || [];
         grades.map((item) => {
           gradeList.map((grade) =>
             item.grade === grade ? (item.ex = true) : ""
@@ -1068,7 +1068,7 @@ const TutorSetup = () => {
               />
 
               <div className="tutor-tab-video-frame">
-                <ProfileVideoRecord />
+                {/* <ProfileVideoRecord /> */}
               </div>
               <label id="btn" htmlFor="video">
                 Upload

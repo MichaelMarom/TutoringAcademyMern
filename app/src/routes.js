@@ -31,11 +31,11 @@ const App = () => {
     }, []);
 
     useEffect(() => {
-        if(user[0])
-        get_tutor_setup_by_userId(user[0].SID).then((result) => {
-            console.log(result, 'render in routes')
-            localStorage.setItem('tutor_user_id', result[0].AcademyId)
-        })
+        if (user[0])
+            get_tutor_setup_by_userId(user[0].SID).then((result) => {
+                console.log(result, 'render in routes')
+                localStorage.setItem('tutor_user_id', result[0].AcademyId)
+            })
     }, [user])
 
     console.log(user)
@@ -58,12 +58,12 @@ const App = () => {
     }, [user])
 
     const generateRoutes = (role) => {
-        // if (role && rolePermissions[role]) {
-            return rolePermissions['tutor'].map((route) => ({
+        if (role && rolePermissions[role]) {
+            return rolePermissions[role].map((route) => ({
                 path: route.path,
                 element: route.component,
             }));
-        // }
+        }
         return [];
     };
 

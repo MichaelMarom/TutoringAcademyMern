@@ -1,6 +1,6 @@
 import VideoRecorder from "react-video-recorder";
 
-export default function ProfileVideoRecord() {
+export default function ProfileVideoRecord({handleVideoBlob}) {
   return (
     <div style={{ height: "90%" }}>
       <VideoRecorder
@@ -12,6 +12,7 @@ export default function ProfileVideoRecord() {
         onRecordingComplete={(videoBlob) => {
           // Do something with the video...
           console.log("videoBlob", videoBlob);
+          handleVideoBlob();
         }}
       />
     </div>

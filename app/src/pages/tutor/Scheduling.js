@@ -1,12 +1,12 @@
 import SchedulingComp from "../../components/tutor/Scheduling";
-
+import TutorLayout from "../../layouts/TutorLayout";
 
 const Scheduling = () => {
-    return ( 
-        <>
-            <SchedulingComp />
-        </>
-     );
-}
- 
+  return (
+    <TutorLayout>
+      <SchedulingComp />
+    </TutorLayout>
+  );
+};
+
 export default Scheduling;

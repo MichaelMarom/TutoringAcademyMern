@@ -1,31 +1,27 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { BsCameraVideo, BsCloudUpload } from "react-icons/bs";
 import moment from "moment";
 import {
   get_countries,
   get_gmt,
-  get_rates,
   get_response,
   get_state,
-  get_tutor_setup,
   get_tutor_setup_by_userId,
   post_tutor_setup,
-  upload_form_one,
 } from "../../axios/tutor";
-import { socket } from "../../socket";
 import containerVariants from "../constraint";
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
+
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
   let [uname, set_uname] = useState("");
   let [mname, set_mname] = useState("");
   let [sname, set_sname] = useState("");
-  let [email, set_email] = useState("");
-  let [pwd, set_pwd] = useState("");
   let [cell, set_cell] = useState("");
   let [acadId, set_acadId] = useState("");
   let [add1, set_add1] = useState("");
@@ -62,11 +58,6 @@ const TutorSetup = () => {
 
   const { user } = useSelector((state) => state.user);
 
-  let [email_isVerified, set_email_isVerified] = useState(false);
-  let { save } = useSelector((s) => s.save);
-
-  let [is_logged_in, set_is_logged_in] = useState(false);
-
   let [countryList, setCountryList] = useState("");
   let [stateList, setStateList] = useState("");
   let [GMTList, setGMTList] = useState("");
@@ -76,9 +67,12 @@ const TutorSetup = () => {
 
   let dispatch = useDispatch();
 
+  const [selectedVideoOption, setSelectedVideoOption] = useState(null);
+
+  const handleOptionClick = (option) => setSelectedVideoOption(option);
+
   let handleTutorGrade = (e) => {
     let elem = e.target;
-    console.log(tutorGrades);
     if (elem.checked) {
       setTutorGrades((item) => [...item, elem.getAttribute("id")]);
     } else {
@@ -89,7 +83,7 @@ const TutorSetup = () => {
 
   useEffect(() => {
     const fetchTutorSetup = async () => {
-      const result = await get_tutor_setup_by_userId(user[0].SID);
+      const result = await get_tutor_setup_by_userId(user[0]?.SID);
       localStorage.setItem("tutor_user_id", result[0].AcademyId);
       if (result.length) {
         let data = result[0];
@@ -98,7 +92,6 @@ const TutorSetup = () => {
         set_mname(data.MiddleName);
         set_photo(data.Photo);
         set_video(data.Video);
-        set_email(data.Email);
         set_cell(data.CellPhone);
         set_state(data.StateProvince);
 
@@ -152,106 +145,19 @@ const TutorSetup = () => {
   }, []);
 
   useEffect(() => {
-    let input = [...document.querySelectorAll("input")];
-    let select = [...document.querySelectorAll("select")];
-    let textarea = [...document.querySelectorAll("textarea")];
-
-    let doc = [
-      document.querySelector(".profile-photo-cnt"),
-      document.querySelector(".profile-video-cnt"),
-    ];
-
-    let field = [...input, ...select, ...textarea, ...doc];
-
-    // let name = window.localStorage.getItem('tutor_user_id');
-    // if (name === null || name === 'null') {
-    //     field.map(item => {
-    //         item.style.opacity = 1;
-    //         item.style.pointerEvents = 'all';
-    //     })
-    // } else {
-    //     field.map(item => {
-    //         item.style.opacity = .4;
-    //         item.style.pointerEvents = 'none';
-    //     })
-    // }
-  }, []);
-
-  useEffect(() => {
     if (document.querySelector("#fname").value !== "") {
       document.querySelector("#tutor-save").style.opacity = ".3";
       document.querySelector("#tutor-save").style.pointerEvents = "none";
     }
   }, []);
 
-  //useEffect(() => {
-
   if (document.querySelector("#tutor-save")) {
     document.querySelector("#tutor-save").onclick = async () => {
-      let all_inputs = [...document.querySelectorAll("input")].filter(
-        (item) =>
-          item.getAttribute("id") !== "add2" &&
-          item.getAttribute("id") !== "mname" &&
-          item.getAttribute("class") !== "grades"
-      );
-      let selects = [...document.querySelectorAll("select")];
-      let text = [...document.querySelectorAll("textarea")];
-
-      let all_select = selects.filter(
-        (item) => item.className !== "video-upload-option"
-      );
-
-      let all_values = [...all_inputs, ...all_select, ...text];
-      let grades = tutorGrades.length < 1 ? false : true;
-
-      // let bool_list = []
-      // let bools = () => {
-      //     all_values.map(item => {
-      //         if (grades) {
-
-      //             if (item.dataset.type === 'file') {
-
-      //                 let data = item.nextElementSibling.hasChildNodes;
-      //                 if (data) {
-      //                     bool_list.push(true)
-      //                 } else {
-      //                     bool_list.push(false)
-      //                 }
-
-      //             } else {
-
-      //                 if (item.value === '') {
-
-      //                     if (item.dataset.type !== 'file') {
-      //                         item.setAttribute('id', 'err-border');
-      //                     }
-      //                     bool_list.push(false)
-      //                 } else {
-      //                     if (item.dataset.type !== 'file') {
-      //                         item.removeAttribute('id');
-      //                     }
-
-      //                     bool_list.push(true)
-      //                 }
-      //             }
-      //         } else {
-      //             bool_list.push(false)
-      //             //alert('Please Select At Least One Grade That You Teach')
-      //         }
-
-      //     })
-      // }
-      // bools()
-
-      // let result = bool_list.filter(item => item === false)
-
-      // if (result.length === 0) {
       document
         .querySelector(".save-overlay")
         .setAttribute("id", "save-overlay");
       let response = await saver();
       if (response.status === 200) {
-        // if (response.type === 'save') {
         window.localStorage.setItem(
           "tutor_user_id",
           response.data[0].AcademyId
@@ -289,14 +195,7 @@ const TutorSetup = () => {
           document.querySelector(".tutor-popin").removeAttribute("id");
         }, 5000);
       }
-
-      // } else {
-      //     alert('Please Ensure No Field Is Empty')
-      // }
-
-      /**/
     };
-  } else {
   }
 
   if (document.querySelector("#tutor-edit")) {
@@ -336,9 +235,7 @@ const TutorSetup = () => {
         [...document.querySelectorAll("textarea")]
       );
     };
-  } else {
   }
-  //}, [])
 
   let saver = async () => {
     let response = await post_tutor_setup({
@@ -363,10 +260,8 @@ const TutorSetup = () => {
       photo,
       video,
       tutorGrades,
-      userId: user[0].SID,
+      userId: user[0]?.SID,
     });
-    //console.log(fname,uname,mname,sname,email,pwd,cell,acadId,add1,add2,city,state,zipCode,country,timeZone,response_zone,intro, motivation,headline)
-
     return response;
   };
 
@@ -568,8 +463,6 @@ const TutorSetup = () => {
   };
 
   let handleVideo = () => {
-    let frame = document.querySelector(".tutor-tab-video-frame");
-
     let f = document.querySelector("#video");
 
     let type = [...f.files][0].type;
@@ -577,16 +470,10 @@ const TutorSetup = () => {
     if (type.split("/")[0] !== "video") {
       alert("Only Video Can Be Uploaded To This Field");
     } else {
-      frame.innerHTML = "";
-
       let reader = new FileReader({});
 
       reader.onload = (result) => {
-        let video = `<video src='${reader.result}' controls autoplay style='height: 100%; width: 100%; '}} alt='video' ></video>`;
-
         set_video(reader.result);
-
-        frame.insertAdjacentHTML("afterbegin", video);
       };
       reader.readAsDataURL([...f.files][0]);
     }
@@ -609,6 +496,12 @@ const TutorSetup = () => {
     const localTime = convertGMTOffsetToLocalString(timeZone);
     setDateTime(localTime);
   }, [timeZone]);
+
+  const handleVideoBlob = (blobObj) => {
+    console.log(blobObj);
+    //store it in DB
+  };
+
   return (
     <>
       <div className="tutor-popin"></div>
@@ -1054,27 +947,73 @@ const TutorSetup = () => {
               className="profile-video-cnt"
               style={{ float: "right", width: "70%" }}
             >
-              <h5 style={{ whiteSpace: "nowrap" }}>
-                Record your profile video{" "}
-              </h5>
+              {selectedVideoOption === "record" ? (
+                <div className="w-100">
+                  <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
+                </div>
+              ) : selectedVideoOption === "upload" ? (
+                <div className="tutor-tab-video-frame">
+                  <video
+                    src={video}
+                    controls
+                    autoplay
+                    style={{ height: "100%", width: "100%" }}
+                    alt="video"
+                  ></video>
+                </div>
+              ) : null}
 
-              <input
-                data-type="file"
-                defaultValue={video}
-                onChange={handleVideo}
-                type="file"
-                style={{ display: "none" }}
-                id="video"
-              />
-
-              <div className="tutor-tab-video-frame">
-                {/* <ProfileVideoRecord /> */}
+              <div className="container mt-2">
+                <div className="row justify-content-center align-items-center">
+                  <div className="col-md-6">
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        className={`btn btn-primary small ${
+                          selectedVideoOption === "record" ? "active" : ""
+                        }`}
+                        style={{ fontSize: "10px" }}
+                        onClick={() => {
+                          set_video("");
+                          handleOptionClick("record");
+                        }}
+                      >
+                        <BsCameraVideo size={20} />
+                        Record Video
+                      </button>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="text-center">
+                      <input
+                        data-type="file"
+                        defaultValue={video}
+                        onChange={handleVideo}
+                        type="file"
+                        style={{ display: "none" }}
+                        id="video"
+                      />
+                      <label
+                        id="btn"
+                        htmlFor="video"
+                        style={{ fontSize: "10px" }}
+                        className={`btn btn-primary ${
+                          selectedVideoOption === "upload" ? "active" : ""
+                        }`}
+                        onClick={() => handleOptionClick("upload")}
+                      >
+                        <BsCloudUpload size={20} /> Upload a Video
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <label id="btn" htmlFor="video">
-                Upload
-              </label>
 
-              <select
+              {/* <label id="btn" htmlFor="video">
+                Upload
+              </label> */}
+
+              {/* <select
                 className="video-upload-option"
                 style={{ padding: "5px" }}
                 name=""
@@ -1084,7 +1023,7 @@ const TutorSetup = () => {
                 <option value="Storage">Local File</option>
                 <option value="Youtube">Youtube</option>
                 <option value="Link">Url</option>
-              </select>
+              </select> */}
             </div>
           </div>
 

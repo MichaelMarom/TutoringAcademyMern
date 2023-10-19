@@ -1,12 +1,12 @@
 import MyStudentsComp from "../../components/tutor/MyStudents";
-
+import TutorLayout from "../../layouts/TutorLayout";
 
 const MyStudents = () => {
-    return ( 
-        <>
-            <MyStudentsComp />
-        </>
-     );
-}
- 
+  return (
+    <TutorLayout>
+      <MyStudentsComp />
+    </TutorLayout>
+  );
+};
+
 export default MyStudents;

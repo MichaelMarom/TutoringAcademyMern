@@ -1,12 +1,12 @@
 import MarketPlaceComp from "../../components/tutor/MarketPlace";
-
+import TutorLayout from "../../layouts/TutorLayout";
 
 const MarketPlace = () => {
-    return ( 
-        <>
-            <MarketPlaceComp />
-        </>
-     );
-}
- 
+  return (
+    <TutorLayout>
+      <MarketPlaceComp />
+    </TutorLayout>
+  );
+};
+
 export default MarketPlace;

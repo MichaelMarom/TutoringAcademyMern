@@ -12,7 +12,7 @@ export default function ProfileVideoRecord({handleVideoBlob}) {
         onRecordingComplete={(videoBlob) => {
           // Do something with the video...
           console.log("videoBlob", videoBlob);
-          handleVideoBlob();
+          handleVideoBlob(videoBlob);
         }}
       />
     </div>

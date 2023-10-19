@@ -413,13 +413,13 @@ html,body{
     }
 
     #btn {
-        padding: 10px 40px 10px 40px;
+        /* padding: 10px 40px 10px 40px;
         border-radius: 2.5px;
         background-color: #000000;
         color: #fff;
         cursor: pointer;
         border-radius: 2.5px;
-        margin: 10px 0 10px 0;
+        margin: 10px 0 10px 0; */
     }
 
     .profile-photo-cnt {

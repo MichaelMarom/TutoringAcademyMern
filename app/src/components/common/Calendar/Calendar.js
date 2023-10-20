@@ -32,7 +32,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   const { user } = useSelector(state => state.user);
   const { selectedTutor } = useSelector(state => state.selectedTutor)
 
-  const isStudentLoggedIn = user.parentEmail ? true : false
+  const isStudentLoggedIn = user[0].parentEmail ? true : false
 
   const [enabledDays, setEnabledDays] = useState([]);
   const [disableDates, setDisableDates] = useState([]);
@@ -40,20 +40,21 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   const [enableHourSlots, setEnableHourSlots] = useState([]);
   const [disableHourSlots, setDisableHourSlots] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
+  const tutorAcademyId = localStorage.getItem('tutor_user_id')
 
   //student states
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedSlot, setClickedSlot] = useState({})
   const tutorId = selectedTutor.academyId;
-  const studentId = user.academyId;
+  const studentId = user[0].academyId;
   const subjectName = selectedTutor.subject;
 
   const { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
 
   //apis functions
   const updateTutorDisableRecord = async () => {
-    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${user.AcademyId}`, {
+    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${tutorAcademyId}`, {
       enableHourSlots,
       disableDates,
       disableWeekDays,
@@ -63,26 +64,33 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
     });
   }
   const getTutorSetup = async () => {
-    const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : user.AcademyId);
-    setEnableHourSlots(JSON.parse(result.enableHourSlots));
-    setEnabledDays(JSON.parse(result.enabledDays))
-    setDisableDates(JSON.parse(result.disableDates));
-    setDisableHourSlots(JSON.parse(result.disableHourSlots));
-    setDisabledWeekDays(JSON.parse(result.disableWeekDays));
-    setDisabledHours(JSON.parse(result.disableHoursRange));
+    const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
+    console.log(result)
+    if (result.length) {
+      setEnableHourSlots(JSON.parse(result.enableHourSlots));
+      setEnabledDays(JSON.parse(result.enabledDays))
+      setDisableDates(JSON.parse(result.disableDates));
+      setDisableHourSlots(JSON.parse(result.disableHourSlots));
+      setDisabledWeekDays(JSON.parse(result.disableWeekDays));
+      setDisabledHours(JSON.parse(result.disableHoursRange));
+    }
     setDataFetched(true);
   }
 
   const fetchBookings = async () => {
     if (isStudentLoggedIn)
-      dispatch(getStudentBookings(user.academyId, selectedTutor.academyId));
+      dispatch(getStudentBookings(user[0].academyId, selectedTutor.academyId));
     else {
-      const response = await fetchStudentsBookings(user.AcademyId);
-      const reservedSlots = response.map(data => JSON.parse(data.reservedSlots)).flat()
-      const bookedSlots = response.map(data => JSON.parse(data.bookedSlots)).flat()
+      console.log(user, 'user loggedin')
+      const response = await fetchStudentsBookings(tutorAcademyId);
+      console.log(response, 'bookings')
+      if (response.length) {
+        const reservedSlots = response.map(data => JSON.parse(data.reservedSlots)).flat()
+        const bookedSlots = response.map(data => JSON.parse(data.bookedSlots)).flat()
 
-      dispatch(setReservedSlots(reservedSlots))
-      dispatch(setBookedSlots(bookedSlots))
+        dispatch(setReservedSlots(reservedSlots))
+        dispatch(setBookedSlots(bookedSlots))
+      }
     }
   }
 
@@ -131,7 +139,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         id: uuidv4(),
         title: type == 'reserved' ? 'Reserved' :
           type === 'intro' ? 'Intro' : "Booked",
-        studentName: user.firstName,
+        studentName: user[0].firstName,
         createdAt: new Date(),
         subject: selectedTutor.subject
       }
@@ -139,10 +147,10 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
     //handle delete type later todo
     if (type === 'reserved' || type === 'intro') {
-      dispatch(postStudentBookings({ studentId: user.academyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
+      dispatch(postStudentBookings({ studentId: user[0].academyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
     }
     else if (type === 'booked') {
-      dispatch(postStudentBookings({ studentId: user.academyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
+      dispatch(postStudentBookings({ studentId: user[0].academyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
   }
 

@@ -858,7 +858,7 @@ html,body{
         display: flex;
         flex-direction: column;
         gap: 0px;
-        height: 12rem;
+        height: auto;
         overflow: scroll;
         border: 1px solid #80808029;
         border-radius: 3px;

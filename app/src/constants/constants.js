@@ -23,13 +23,13 @@ export const hours = [
 
 
 export const days = [
-  "Saturday",
   "Sunday",
   "Monday",
   "Tuesday",
   "Wednesday",
   "Thursday",
   "Friday",
+  "Saturday",
 ];
 
 

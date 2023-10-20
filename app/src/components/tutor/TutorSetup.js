@@ -85,7 +85,7 @@ const TutorSetup = () => {
     const fetchTutorSetup = async () => {
       const result = await get_tutor_setup_by_userId(user[0]?.SID);
       console.log(result, 'result')
-      localStorage.setItem("tutor_user_id", result[0].AcademyId);
+      localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       if (result.length) {
         let data = result[0];
         set_fname(data.FirstName);
@@ -168,7 +168,7 @@ const TutorSetup = () => {
       if (response.status === 200) {
         window.localStorage.setItem(
           "tutor_user_id",
-          response.data[0].AcademyId
+          response.data[0]?.AcademyId
         );
         window.localStorage.setItem(
           "tutor_screen_name",

@@ -508,6 +508,7 @@ export const addDisabledDates = async (date) => {
 
 export const post_tutor_setup = async (data) => {
     try {
+        console.log(data.video)
         let dataObject = {}
         if (data.photo !== undefined) dataObject.Photo = data.photo;
         if (data.video !== undefined) dataObject.Video = data.video;

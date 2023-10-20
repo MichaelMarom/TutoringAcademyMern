@@ -1,7 +1,7 @@
 const { resolve } = require('path/posix');
 const { marom_db, knex, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
-const { insert, updateById, getAll, find, findByAnyIdColumn } = require('../helperfunctions/crud_queries');
+const { insert, updateById, getAll, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 
 
 
@@ -1015,19 +1015,27 @@ let fetchStudentsBookings = (req, res) => {
     }
 };
 const post_tutor_setup = (req, res) => {
-    console.log(req.body, 'boaady')
-    const screenName = ''
     marom_db(async (config) => {
         try {
             const sql = require('mssql');
             const poolConnection = await sql.connect(config);
 
             if (poolConnection) {
-                const result = await poolConnection.request().query(
-                    insert('TutorSetup', req.body)
+                const findtutorSetup = await poolConnection.request().query(
+                    findByAnyIdColumn('TutorSetup', { userId: req.body.userId })
                 );
-
-                res.status(200).send(result.recordset);
+                if (findByAnyIdColumn) {
+                    const result = await poolConnection.request().query(
+                        update('TutorSetup', req.body, { userId: req.body.userId })
+                    );
+                    res.status(200).send(result.recordset);
+                }
+                else {
+                    const result = await poolConnection.request().query(
+                        insert('TutorSetup', req.body)
+                    );
+                    res.status(200).send(result.recordset);
+                }
             }
         } catch (err) {
             console.log(err);

@@ -84,6 +84,7 @@ const TutorSetup = () => {
   useEffect(() => {
     const fetchTutorSetup = async () => {
       const result = await get_tutor_setup_by_userId(user[0]?.SID);
+      console.log(result, 'result')
       localStorage.setItem("tutor_user_id", result[0].AcademyId);
       if (result.length) {
         let data = result[0];
@@ -91,7 +92,6 @@ const TutorSetup = () => {
         set_sname(data.LastName);
         set_mname(data.MiddleName);
         set_photo(data.Photo);
-        set_video(data.Video);
         set_cell(data.CellPhone);
         set_state(data.StateProvince);
 
@@ -117,13 +117,21 @@ const TutorSetup = () => {
         });
 
         let frame1 = document.querySelector(".tutor-tab-photo-frame");
-        let frame2 = document.querySelector(".tutor-tab-video-frame");
+        let dataVideo = JSON.parse(data.Video)
+        console.log(data.Video, dataVideo, 'blobsssssssss')
+        if (dataVideo instanceof Blob) {
+          const blobURL = URL.createObjectURL(dataVideo);
+          set_video(blobURL);
+          console.log(blobURL, 'from db')
+        }
+        else {
+          set_video(data.Video)
+        }
+
+        setSelectedVideoOption("upload");
 
         let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`;
         frame1.insertAdjacentHTML("afterbegin", img);
-
-        let video = `<video src='${data.Video}' controls autoplay style='height: 100%; width: 100%; '}} alt='video' ></video>`;
-        frame2.insertAdjacentHTML("afterbegin", video);
       }
     };
     fetchTutorSetup();
@@ -499,7 +507,10 @@ const TutorSetup = () => {
 
   const handleVideoBlob = (blobObj) => {
     console.log(blobObj);
-    //store it in DB
+    // const blobData = new Buffer.from(blobObj, 'binary');
+    const blobURL = URL.createObjectURL(blobObj);
+    console.log(blobObj, 'bloburl')
+    set_video(JSON.stringify(blobObj));
   };
 
   return (
@@ -951,7 +962,7 @@ const TutorSetup = () => {
                 <div className="w-100">
                   <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
                 </div>
-              ) : selectedVideoOption === "upload" ? (
+              ) : selectedVideoOption === "upload" && video.length ? (
                 <div className="tutor-tab-video-frame">
                   <video
                     src={video}
@@ -965,25 +976,25 @@ const TutorSetup = () => {
 
               <div className="container mt-2">
                 <div className="row justify-content-center align-items-center">
-                  <div className="col-md-6">
+                  <div className="col-md-4">
                     <div className="text-center">
                       <button
                         type="button"
-                        className={`btn btn-primary small ${
-                          selectedVideoOption === "record" ? "active" : ""
-                        }`}
+                        className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
+                          }`}
                         style={{ fontSize: "10px" }}
                         onClick={() => {
                           set_video("");
                           handleOptionClick("record");
                         }}
                       >
-                        <BsCameraVideo size={20} />
+                        <BsCameraVideo size={15} />
+                        <br />
                         Record Video
                       </button>
                     </div>
                   </div>
-                  <div className="col-md-6">
+                  <div className="col-md-4">
                     <div className="text-center">
                       <input
                         data-type="file"
@@ -997,13 +1008,27 @@ const TutorSetup = () => {
                         id="btn"
                         htmlFor="video"
                         style={{ fontSize: "10px" }}
-                        className={`btn btn-primary ${
-                          selectedVideoOption === "upload" ? "active" : ""
-                        }`}
+                        className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
+                          }`}
                         onClick={() => handleOptionClick("upload")}
                       >
-                        <BsCloudUpload size={20} /> Upload a Video
+                        <BsCloudUpload size={15} /> <br />
+                        Upload a Video
                       </label>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        style={{ fontSize: "10px" }}
+                        className={`btn btn-danger `}
+                        onClick={() => set_video("")}
+                      >
+                        <BsCloudUpload size={15} />
+                        <br />
+                        Delete Video
+                      </button>
                     </div>
                   </div>
                 </div>

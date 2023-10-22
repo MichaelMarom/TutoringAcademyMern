@@ -27,6 +27,14 @@ const StudentAside = () => {
 
     
     let handleVidActions = e => {
+
+        visuals.getVideoTracks()[0].enabled =
+        !(visuals.getVideoTracks()[0].enabled);
+        /*navigator.mediaDevices.getUserMedia()
+        .then((mediaStream) => {
+            mediaStream.getVideoTracks()[0].enabled =
+            !(mediaStream.getVideoTracks()[0].enabled);
+        })*/
         
     }
 
@@ -51,6 +59,7 @@ const StudentAside = () => {
             audio: true
         })
         .then(stream => {
+            setVisuals(stream)
 
             addVideoStream(myVideo, stream);
             peer.on('call', call => {

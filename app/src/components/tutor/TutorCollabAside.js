@@ -47,7 +47,15 @@ const TutorAside = () => {
 
 
     let handleVidActions = e => {
-       
+
+        visuals.getVideoTracks()[0].enabled =
+        !(visuals.getVideoTracks()[0].enabled);
+        /*navigator.mediaDevices.getUserMedia()
+        .then((mediaStream) => {
+            mediaStream.getVideoTracks()[0].enabled =
+            !(mediaStream.getVideoTracks()[0].enabled);
+        })*/
+        
     }
 
    
@@ -72,12 +80,13 @@ const TutorAside = () => {
         })
         .then(stream => { 
 
+            setVisuals(stream)
             addVideoStream(myVideo, stream);
             peer.on('call', call => {
-                let file = visuals ? stream : '';
+              
 
                 setVideoLoader('Connecting...')
-                call.answer(file);
+                call.answer(stream);
                 call.on('stream', userVideoStream => {
                     setVideoLoader('')
                     addVideoStream(myVideo, userVideoStream)
@@ -87,9 +96,9 @@ const TutorAside = () => {
             socket.on('user-connected', user_id => {
                 connectToNewUser(user_id, stream)
                 peer.on('call', call => {
-                    let file = visuals ? stream : '';
+                    
                     setVideoLoader('Connecting...')
-                    call.answer(file)
+                    call.answer(stream)
                     call.on('stream', userVideoStream => {
                         addVideoStream(myVideo, userVideoStream)
                     })
@@ -143,8 +152,8 @@ const TutorAside = () => {
                     <video className='tutor-video-tab'>
                     </video>
                     <ul>
-                        <li  className="video-size" style={{background: '#fff', opacity: '.4'}} onClick={e => handleVidActions(e)}>
-                            <img src={screenType} style={{height: '25px', width: '30px'}} alt="..." />
+                        <li  className="video-size" style={{background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px'}} onClick={e => handleVidActions(e)}>
+                            <img src={screenType} style={{height: '25px', width: '25px'}} alt="..." />
                         </li>
                         <li className="disable-visuals" onClick={e => visuals ?  setVisuals(false) : setIsVisuals(true)}>
                             <img src={DiableVideoImage} style={{height: '25px', width: '30px'}} alt="..." />

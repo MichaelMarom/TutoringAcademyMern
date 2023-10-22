@@ -7,6 +7,7 @@ import React from "react";
 import "./styles/Tab_Styles/LargeScreen.css";
 import "./styles/student.css";
 import "./styles/admin.css";
+import "./styles/collab.css";
 import "./styles/Collaboration_Styles/LargeScreen.css";
 import { setUser } from "./redux/auth_state/auth";
 import Login from "./pages/Login";

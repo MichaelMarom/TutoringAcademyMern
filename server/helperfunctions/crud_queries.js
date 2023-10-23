@@ -40,8 +40,10 @@ const update = (tableName, values, where) => {
     }).join(' AND ');
 
     const query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause}`;
+    console.log(query)
     return query;
 };
+  
 
 const updateById = (id, tableName, fields) => {
     const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays } = fields;

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload } from "react-icons/bs";
 import moment from "moment";
+import { Buffer } from "buffer";
 import {
   get_countries,
   get_gmt,
@@ -63,7 +64,7 @@ const TutorSetup = () => {
   let [GMTList, setGMTList] = useState("");
   let [response_list, set_response_list] = useState("");
   let [recordedVideo, setRecordedVideo] = useState(null);
-
+  let [lol123, setLol123] = useState(null);
   let [data, set_data] = useState(false);
 
   let dispatch = useDispatch();
@@ -120,6 +121,9 @@ const TutorSetup = () => {
         let frame1 = document.querySelector(".tutor-tab-photo-frame");
 
         set_video(data.Video);
+        setRecordedVideo(data.VideoRecorded)
+        const lol12 = new Blob([data.VideoRecorded], { type: 'video/mp4' });
+        setLol123(lol12)
         setSelectedVideoOption("upload");
 
         let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`;
@@ -259,7 +263,6 @@ const TutorSetup = () => {
       headline,
       photo,
       video,
-      recordedVideo,
       tutorGrades,
       userId: user[0]?.SID,
     });
@@ -510,7 +513,22 @@ const TutorSetup = () => {
   const handleVideoBlob = (blobObj) => {
     console.log(blobObj);
     if (blobObj instanceof Blob) {
-      setRecordedVideo(blobObj);
+      const reader = new FileReader();
+  
+      reader.onload = (event) => {
+        const arrayBuffer = event.target.result;
+  
+        // Now, 'arrayBuffer' contains the binary data in a suitable format.
+        // You can store it in the 'recordedVideo' state or variable.
+  
+        // For React state:
+        setRecordedVideo(arrayBuffer);
+  
+        // For a regular JavaScript variable:
+        // const recordedVideo = arrayBuffer;
+      };
+  
+      reader.readAsArrayBuffer(blobObj);
     }
 
     // convertBlobToBase64(blobObj)
@@ -975,7 +993,7 @@ const TutorSetup = () => {
                 <div className="w-100">
                   <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
                 </div>
-              ) : selectedVideoOption === "upload" && video.length ? (
+              ) : selectedVideoOption === "upload" && video?.length ? (
                 <div className="tutor-tab-video-frame">
                   {/* <video
                     src={video}
@@ -992,7 +1010,7 @@ const TutorSetup = () => {
               ) : null}
 
               <video
-                src={recordedVideo ? URL.createObjectURL(recordedVideo) : ""}
+                src={lol123 ? URL.createObjectURL(lol123) : ""}
                 controls
                 autoplay
                 style={{ height: "100%", width: "100%" }}
@@ -1005,9 +1023,8 @@ const TutorSetup = () => {
                     <div className="text-center">
                       <button
                         type="button"
-                        className={`btn btn-primary small ${
-                          selectedVideoOption === "record" ? "active" : ""
-                        }`}
+                        className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
+                          }`}
                         style={{ fontSize: "10px" }}
                         onClick={() => {
                           set_video("");
@@ -1034,9 +1051,8 @@ const TutorSetup = () => {
                         id="btn"
                         htmlFor="video"
                         style={{ fontSize: "10px" }}
-                        className={`btn btn-warning ${
-                          selectedVideoOption === "upload" ? "active" : ""
-                        }`}
+                        className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
+                          }`}
                         onClick={() => handleOptionClick("upload")}
                       >
                         <BsCloudUpload size={15} /> <br />

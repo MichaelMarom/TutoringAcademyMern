@@ -62,6 +62,7 @@ const TutorSetup = () => {
   let [stateList, setStateList] = useState("");
   let [GMTList, setGMTList] = useState("");
   let [response_list, set_response_list] = useState("");
+  let [recordedVideo, setRecordedVideo] = useState(null);
 
   let [data, set_data] = useState(false);
 
@@ -84,7 +85,7 @@ const TutorSetup = () => {
   useEffect(() => {
     const fetchTutorSetup = async () => {
       const result = await get_tutor_setup_by_userId(user[0]?.SID);
-      console.log(result, 'result')
+      console.log(result, "result");
       localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       if (result.length) {
         let data = result[0];
@@ -117,20 +118,8 @@ const TutorSetup = () => {
         });
 
         let frame1 = document.querySelector(".tutor-tab-photo-frame");
-        // let dataVideo = JSON.parse(data.Video)
-        // console.log(data.Video, dataVideo, 'blobsssssssss')
-        // if (dataVideo instanceof Blob) {
-        //   const blobURL = URL.createObjectURL(dataVideo);
-        //   set_video(blobURL);
-        //   console.log(blobURL, 'from db')
-        // }
-        // else {
-          console.log(data.Video)
-          const decodedVideoData = atob(data.Video);
-          const blob = new Blob([decodedVideoData], { type: "video/webm" });
-         set_video(URL.createObjectURL(blob))
-        // }
-// 
+
+        set_video(data.Video);
         setSelectedVideoOption("upload");
 
         let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`;
@@ -270,6 +259,7 @@ const TutorSetup = () => {
       headline,
       photo,
       video,
+      recordedVideo,
       tutorGrades,
       userId: user[0]?.SID,
     });
@@ -507,28 +497,34 @@ const TutorSetup = () => {
     const localTime = convertGMTOffsetToLocalString(timeZone);
     setDateTime(localTime);
   }, [timeZone]);
-  function convertBlobToBase64(blob) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  }
+
+  // function convertBlobToBase64(blob) {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.onload = () => resolve(reader.result);
+  //     reader.onerror = reject;
+  //     reader.readAsDataURL(blob);
+  //   });
+  // }
+
   const handleVideoBlob = (blobObj) => {
     console.log(blobObj);
-     convertBlobToBase64(blobObj)
-      .then((base64String) => {
-        console.log(base64String,'base beboo base')
-        set_video(base64String);
-      })
-      .catch((error) => {
-        // Handle the error
-        console.log(error,'bblobss error')
-      });
-    console.log(blobObj, 'bloburl')
-    set_video(JSON.stringify(blobObj));
+    if (blobObj instanceof Blob) {
+      setRecordedVideo(blobObj);
+    }
+
+    // convertBlobToBase64(blobObj)
+    //   .then((base64String) => {
+    //     // console.log(base64String, "base beboo base");
+    //     // set_video(base64String);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error, "bblobss error");
+    //   });
   };
+  useEffect(() => {
+    console.log(recordedVideo, "vbfbvfhb");
+  }, [recordedVideo]);
 
   return (
     <>
@@ -988,12 +984,20 @@ const TutorSetup = () => {
                     style={{ height: "100%", width: "100%" }}
                     alt="video"
                   ></video> */}
-                    <video controls autoplay>
-        <source id="videoSource" src={video} type="video/webm" />
-        Your browser does not support the video tag.
-    </video>
+                  {/* <video controls autoplay>
+                    <source id="videoSource" src={video} type="video/webm" />
+                    Your browser does not support the video tag.
+                  </video> */}
                 </div>
               ) : null}
+
+              <video
+                src={recordedVideo ? URL.createObjectURL(recordedVideo) : ""}
+                controls
+                autoplay
+                style={{ height: "100%", width: "100%" }}
+                alt="video"
+              ></video>
 
               <div className="container mt-2">
                 <div className="row justify-content-center align-items-center">
@@ -1001,8 +1005,9 @@ const TutorSetup = () => {
                     <div className="text-center">
                       <button
                         type="button"
-                        className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
-                          }`}
+                        className={`btn btn-primary small ${
+                          selectedVideoOption === "record" ? "active" : ""
+                        }`}
                         style={{ fontSize: "10px" }}
                         onClick={() => {
                           set_video("");
@@ -1029,8 +1034,9 @@ const TutorSetup = () => {
                         id="btn"
                         htmlFor="video"
                         style={{ fontSize: "10px" }}
-                        className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
-                          }`}
+                        className={`btn btn-warning ${
+                          selectedVideoOption === "upload" ? "active" : ""
+                        }`}
                         onClick={() => handleOptionClick("upload")}
                       >
                         <BsCloudUpload size={15} /> <br />

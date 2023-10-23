@@ -512,6 +512,7 @@ export const post_tutor_setup = async (data) => {
         let dataObject = {}
         if (data.photo !== undefined) dataObject.Photo = data.photo;
         if (data.video !== undefined) dataObject.Video = data.video;
+        if (data.recordedVideo !== undefined) dataObject.VideoRecorded = data.recordedVideo;
         if (data.fname !== undefined) dataObject.FirstName = data.fname;
         if (data.mname !== undefined) dataObject.MiddleName = data.mname;
         if (data.sname !== undefined) dataObject.LastName = data.sname;

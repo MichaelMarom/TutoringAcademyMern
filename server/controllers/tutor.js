@@ -1024,7 +1024,7 @@ const post_tutor_setup = (req, res) => {
                 const findtutorSetup = await poolConnection.request().query(
                     findByAnyIdColumn('TutorSetup', { userId: req.body.userId })
                 );
-                if (findByAnyIdColumn) {
+                if (findtutorSetup) {
                     const result = await poolConnection.request().query(
                         update('TutorSetup', req.body, { userId: req.body.userId })
                     );

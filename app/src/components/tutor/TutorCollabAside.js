@@ -155,7 +155,7 @@ const TutorAside = () => {
                         <li  className="video-size" style={{background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px'}} onClick={e => handleVidActions(e)}>
                             <img src={screenType} style={{height: '25px', width: '25px'}} alt="..." />
                         </li>
-                        <li className="disable-visuals" onClick={e => visuals ?  setVisuals(false) : setIsVisuals(true)}>
+                        <li className="disable-visuals" onClick={e=> handleVidActions(e)}>
                             <img src={DiableVideoImage} style={{height: '25px', width: '30px'}} alt="..." />
 
                         </li>

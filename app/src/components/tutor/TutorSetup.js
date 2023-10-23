@@ -117,17 +117,20 @@ const TutorSetup = () => {
         });
 
         let frame1 = document.querySelector(".tutor-tab-photo-frame");
-        let dataVideo = JSON.parse(data.Video)
-        console.log(data.Video, dataVideo, 'blobsssssssss')
-        if (dataVideo instanceof Blob) {
-          const blobURL = URL.createObjectURL(dataVideo);
-          set_video(blobURL);
-          console.log(blobURL, 'from db')
-        }
-        else {
-          set_video(data.Video)
-        }
-
+        // let dataVideo = JSON.parse(data.Video)
+        // console.log(data.Video, dataVideo, 'blobsssssssss')
+        // if (dataVideo instanceof Blob) {
+        //   const blobURL = URL.createObjectURL(dataVideo);
+        //   set_video(blobURL);
+        //   console.log(blobURL, 'from db')
+        // }
+        // else {
+          console.log(data.Video)
+          const decodedVideoData = atob(data.Video);
+          const blob = new Blob([decodedVideoData], { type: "video/webm" });
+         set_video(URL.createObjectURL(blob))
+        // }
+// 
         setSelectedVideoOption("upload");
 
         let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`;
@@ -504,11 +507,25 @@ const TutorSetup = () => {
     const localTime = convertGMTOffsetToLocalString(timeZone);
     setDateTime(localTime);
   }, [timeZone]);
-
+  function convertBlobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
   const handleVideoBlob = (blobObj) => {
     console.log(blobObj);
-    // const blobData = new Buffer.from(blobObj, 'binary');
-    const blobURL = URL.createObjectURL(blobObj);
+     convertBlobToBase64(blobObj)
+      .then((base64String) => {
+        console.log(base64String,'base beboo base')
+        set_video(base64String);
+      })
+      .catch((error) => {
+        // Handle the error
+        console.log(error,'bblobss error')
+      });
     console.log(blobObj, 'bloburl')
     set_video(JSON.stringify(blobObj));
   };
@@ -964,13 +981,17 @@ const TutorSetup = () => {
                 </div>
               ) : selectedVideoOption === "upload" && video.length ? (
                 <div className="tutor-tab-video-frame">
-                  <video
+                  {/* <video
                     src={video}
                     controls
                     autoplay
                     style={{ height: "100%", width: "100%" }}
                     alt="video"
-                  ></video>
+                  ></video> */}
+                    <video controls autoplay>
+        <source id="videoSource" src={video} type="video/webm" />
+        Your browser does not support the video tag.
+    </video>
                 </div>
               ) : null}
 

@@ -32,7 +32,7 @@ const App = () => {
     if (user[0])
       get_tutor_setup_by_userId(user[0].SID).then((result) => {
         console.log(result, "render in routes");
-        localStorage.setItem("tutor_user_id", result[0].AcademyId);
+        localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       });
   }, [user]);
 

@@ -28,6 +28,7 @@ import Signup from "../pages/Signup";
 import Profile from "../pages/Profile";
 import TutorClass from "../pages/tutor/TutotClass";
 import StudentClass from "../pages/student/StudentClass";
+import { Feedback } from "../pages/student/Feedback";
 
 const rolePermissions = {
   tutor: [
@@ -43,10 +44,8 @@ const rolePermissions = {
     { path: "/tutor/market-place", component: <MarketPlace /> },
     { path: "/tutor/tutor-profile", component: <TutorProfile /> },
     { path: "tutor/collaboration", component: <TutorClass /> },
-    { path: "/profile", component: <Profile /> },
   ],
   student: [
-    { path: "/profile", component: <Profile /> },
     { path: "student/collaboration", component: <StudentClass /> },
     { path: "student/", component: <StudentSetup /> },
     { path: "student/intro", component: <StudentIntro /> },
@@ -58,10 +57,9 @@ const rolePermissions = {
     { path: "student/schedule", component: <StudentScheduling /> },
     { path: "student/term-of-use", component: <StudentTermOfUse /> },
     { path: "student/profile", component: <StudentProfile /> },
+    { path: 'student/feedback', component: <Feedback /> }
   ],
   admin: [
-    { path: "/profile", component: <Profile /> },
-
     { path: "admin/tutor-data", component: <Tutor_Table /> },
     { path: "admin/student-data", component: <Student_Table /> },
     { path: "admin/new-subject", component: <TutorNewSubject /> },

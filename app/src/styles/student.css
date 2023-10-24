@@ -360,3 +360,47 @@
       }
 
 }
+/* Custom colors for different emojis */
+/* Hover states */
+.worst:hover {
+ color: darkred; /* Change background color on hover */
+}
+
+.angry:hover {
+ color: orangered; /* Change background color on hover */
+}
+
+.neutral:hover {
+ color: yellow; /* Change background color on hover */
+}
+
+.good:hover {
+ color: limegreen; /* Change background color on hover */
+}
+
+.best:hover {
+ color: green; /* Change background color on hover */
+}
+
+/* Active states */
+.worst:active {
+ color: darkred; /* Change background color on click */
+}
+
+.angry:active {
+ color: orangered; /* Change background color on click */
+}
+
+.neutral:active {
+ color: yellow; /* Change background color on click */
+}
+
+.good:active {
+ color: limegreen; /* Change background color on click */
+}
+.cursor-pointer{
+  cursor: pointer;
+}
+.best:active {
+ color: green; /* Change background color on click */
+}

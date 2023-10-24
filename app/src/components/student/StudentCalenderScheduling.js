@@ -3,7 +3,7 @@ import ShowCalendar from '../common/Calendar/Calendar'
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import useClock from '../../hooks/Clock';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { formatName } from '../../helperFunctions/generalHelperFunctions';
 import { convertGMTOffsetToLocalString, showDate } from '../../helperFunctions/timeHelperFunctions';
 
@@ -17,12 +17,14 @@ const StudentCalenderScheduling = () => {
   const { user } = useSelector(state => state.user);
   const { subject } = useSelector(state => state.subject)
 
+  const nav = useNavigate()
+
   useEffect(() => {
     setTutorTime(convertGMTOffsetToLocalString(selectedTutor.GMT))
   }, [selectedTutor])
 
   if (!selectedTutor.AcademyId)
-    return <div className="text-danger mt-4">Please select tutor to Book lessons</div>
+    return <div className="text-danger mt-4" onClick={()=>{nav('/student/feedback')}}>Please select tutor to Book lessons</div>
   return (
     <div>
       <div className='align-items-center justify-content-center mt-5 d-flex gap-4'>

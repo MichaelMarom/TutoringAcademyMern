@@ -3,15 +3,15 @@ import StudentCollabFooter from "../../components/student/StudentCollabFooter";
 import StudentCollabHeader from "../../components/student/StudentCollabHeader";
 
 const StudentClass = () => {
-    return ( 
-        <>  
+    return (
+        <>
 
             <StudentCollabHeader />
             <StudentCollabBoard />
             <StudentCollabFooter />
-        
+
         </>
-     );
+    );
 }
- 
+
 export default StudentClass;

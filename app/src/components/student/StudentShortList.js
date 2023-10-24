@@ -28,11 +28,11 @@ const StudentShortList = () => {
     const { selectedTutor } = useSelector(state => state.selectedTutor);
     const handleNavigateToSchedule = async (item) => {
         await dispatch(setTutor({
-            id: item.tutorData.SID,
-            academyId: item.tutorData.AcademyId,
-            GMT: item.tutorData.GMT,
-            firstName: item.tutorData.FirstName,
-            lastName: item.tutorData.LastName,
+            id: item.tutorData?.SID,
+            academyId: item.tutorData?.AcademyId,
+            GMT: item.tutorData?.GMT,
+            firstName: item.tutorData?.FirstName,
+            lastName: item.tutorData?.LastName,
             subject: item.tutorShortList.Subject,
             rate: item.tutorShortList.Rate
         }))
@@ -81,17 +81,22 @@ const StudentShortList = () => {
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
                 <div className="form-into-prompt shadow-sm" style={{ padding: '20px' }}>
-                    <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> To view complete tutor's profile include presentation video, double click on his/hers picture.</div>
+                   {response.length ? 
+                   <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> To view complete tutor's profile include presentation video, double click on his/hers picture.</div> : 
+                   <div className='text-danger'> no record found!</div>
+                   
+                }
 
                     <div className="tables" style={{ height: '800px', width: '100%', overflow: 'auto', padding: '5px' }}>
 
                         <table>
-                            <thead>
-                                <tr>
-                                    {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>
-                                    )}
-                                </tr>
-                            </thead>
+                            {response.length ?
+                                <thead>
+                                    <tr>
+                                        {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>
+                                        )}
+                                    </tr>
+                                </thead> : null}
                             <tbody>
 
 
@@ -99,9 +104,9 @@ const StudentShortList = () => {
                                     response.length > 0
                                         ?
                                         response.map((item, index) => {
-                                            return <tr onDoubleClick={e => redirect_to_tutor_profile(item.tutorData.AcademyId)} key={index}>
+                                            return <tr onDoubleClick={e => redirect_to_tutor_profile(item.tutorData?.AcademyId)} key={index}>
 
-                                                <td>{<img src={item.tutorData.Photo} style={{ height: '100px', width: '120px' }} />}</td>
+                                                <td>{<img src={item.tutorData?.Photo} style={{ height: '100px', width: '120px' }} />}</td>
                                                 <td>
                                                     <input type='checkbox' style={{ height: '20px', width: '20px' }} defaultChecked={item.tutorDemoLesson.FreeDemoLesson === 'yes' ? true : false} />
                                                 </td>
@@ -112,16 +117,16 @@ const StudentShortList = () => {
                                                     {item.tutorShortList.ScreenName}
                                                 </td>
                                                 <td>
-                                                    {item.tutorData.Country}
+                                                    {item.tutorData?.Country}
                                                 </td>
                                                 <td>
-                                                    {convertGMTToLocalTime(item.tutorData.GMT).toLocaleString()}
+                                                    {convertGMTToLocalTime(item.tutorData?.GMT).toLocaleString()}
                                                 </td>
                                                 <td>
                                                     <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>View Schedule</button>
                                                 </td>
                                                 <td>
-                                                    <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(item.tutorData.AcademyId)}>View Profile</button>
+                                                    <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(item.tutorData?.AcademyId)}>View Profile</button>
                                                 </td>
                                                 <td>{item.tutorShortList.Rate}</td>
                                                 <td>

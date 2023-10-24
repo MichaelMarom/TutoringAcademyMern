@@ -42,7 +42,7 @@ const Header = () => {
 
         deactivedElem.removeAttribute('id');
         clickedElem.setAttribute('id', 'student-tab-header-list-active')
-        nav(`student/${e.currentTarget.dataset.url}`)
+        nav(`/student/${e.currentTarget.dataset.url}`)
  
     }
 

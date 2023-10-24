@@ -288,14 +288,13 @@ let upload_student_short_list = async (req, res) => {
 let get_student_short_list = async (req, res) => {
     let tutorUserData = []
     let tutorDemoLesson = []
-
+    console.log(req.params, req.query)
     let shortList = (() =>
 
         connecteToDB.then((poolConnection) =>
-            poolConnection.request().query(`SELECT * From StudentShortList
-            ` )
-                // WHERE CONVERT(VARCHAR, Student) x=  '${req.query.student}'
+            poolConnection.request().query(findByAnyIdColumn('StudentShortList', { Student: req.query.student }, 'VARCHAR'))
                 .then((result) => {
+                    res.send(result.recordset)
                     return result.recordset;
                 })
                 .catch(err => console.log(err))
@@ -338,9 +337,6 @@ let get_student_short_list = async (req, res) => {
                 })
                 .catch(err => console.log(err))
         )
-
-
-
     )
 
     return new Promise(async (resolve, reject) => {
@@ -388,11 +384,6 @@ let get_student_short_list = async (req, res) => {
                 }
             })
         })
-
-
-
-
-
 }
 
 let get_my_data = async (req, res) => {

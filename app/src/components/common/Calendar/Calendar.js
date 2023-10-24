@@ -12,6 +12,7 @@ import CustomEvent from "./Event";
 import Loading from '../Loading'
 import { getStudentBookings, postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
 import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
+import CustomAgenda from "./CustomAgenda";
 moment.locale("en-GB");
 
 const localizer = momentLocalizer(moment);
@@ -21,6 +22,9 @@ const views = {
   DAY: 'day',
   MONTH: 'month'
 }
+const myMessages = {
+  // agenda: 'BookedLessons', // Change this to your custom tab name
+};
 
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
@@ -471,13 +475,22 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   };
 
   const handleViewChange = (view) => setActiveView(view)
+  const event2 = [{
+    id: 2,
+    title: 'Lunch with Client',
+    start: new Date(2023, 10, 26, 12, 30), // Date and time when the event starts
+    end: new Date(2023, 10, 26, 13, 30),   // Date and time when the event ends
+    description: 'Meet with the client to discuss project requirements and milestones.',
+    location: 'Restaurant XYZ',
+  }];
 
+  
   if (!dataFetched)
     return <Loading />
   return (
     <div className="h-100">
       <Calendar
-        views={["day", "week", "month"]}
+        views={["day", "week", "month", "agenda"]}
         localizer={localizer}
         selectable={true}
         defaultView={activeView}
@@ -492,6 +505,9 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
               handleEventClick={handleEventClick}
             />
           ),
+          agenda: {
+            agenda: CustomAgenda,
+          },
         }}
         view={activeView}
         startAccessor="start"
@@ -502,6 +518,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         dayPropGetter={dayPropGetter}
         slotPropGetter={slotPropGetter}
         onView={handleViewChange}
+        messages={myMessages}
       />
       <EventModal
         isOpen={isModalOpen}

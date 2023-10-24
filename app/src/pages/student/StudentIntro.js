@@ -1,10 +1,11 @@
 import React from 'react'
+import StudentLayout from '../../layouts/StudentLayout'
 
 const StudentIntro = () => {
   return (
-    <div>
-      
-    </div>
+    <StudentLayout >
+      Intro page
+    </StudentLayout>
   )
 }
 

@@ -63,8 +63,12 @@ const StudentSetup = () => {
         console.log(user, 'user in student')
         const fetchStudentSetup = async () => {
             if (user[0].role === 'student') {
+                console.log(user)
                 const result = await get_student_setup_by_userId(user[0].SID);
-                console.log(result, 'defetcing')
+                localStorage.setItem('student_screen_name',result[0].ScreenName)
+                localStorage.setItem('student_user_id',result[0].AcademyId)
+                localStorage.setItem('logged_user',JSON.stringify(result[0]))
+
                 if (result.length) {
                     let data = result[0]
                     set_fname(data.FirstName)

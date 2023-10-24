@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { socket } from "../../socket";
 import {v4} from 'uuid';
 import Pusher from 'pusher-js';
+import StudentLayout from "../../layouts/StudentLayout";
 
 
 const StudentLecturePanel = () => {
@@ -59,8 +60,6 @@ const StudentLecturePanel = () => {
 
             </div>
         </StudentLayout>
-
-
      );
 }
  

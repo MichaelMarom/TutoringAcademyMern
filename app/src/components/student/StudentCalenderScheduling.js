@@ -21,6 +21,8 @@ const StudentCalenderScheduling = () => {
     setTutorTime(convertGMTOffsetToLocalString(selectedTutor.GMT))
   }, [selectedTutor])
 
+  if (!selectedTutor.AcademyId)
+    return <div className="text-danger mt-4">Please select tutor to Book lessons</div>
   return (
     <div>
       <div className='align-items-center justify-content-center mt-5 d-flex gap-4'>

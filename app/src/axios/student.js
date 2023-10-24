@@ -98,8 +98,6 @@ export let get_student_market_data = (id) => {
 export let get_tutor_subject = (subject) => {
 
     return new Promise((resolve, reject) => {
-
-
         axios.get('http://localhost:9876/student/tutor-subject', { params: { subject } })
             .then((result) => {
                 resolve(result.data)
@@ -107,7 +105,6 @@ export let get_tutor_subject = (subject) => {
             .catch((err) => {
                 reject(err)
             })
-
     })
 }
 
@@ -130,7 +127,7 @@ export let upload_student_short_list = (items) => {
 
 
 export let get_student_short_list = (student) => {
-
+    console.log(student,'estudent')
     return new Promise((resolve, reject) => {
 
 

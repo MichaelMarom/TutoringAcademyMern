@@ -15,12 +15,10 @@ const LoginPage = () => {
         e.preventDefault();
         setLoading(true)
         const result = await login(loginForm);
-        console.log('/eetr', result)
         if (result.status === 200) {
             toast.success("Login Successfull!");
             setLoginForm({});
             localStorage.setItem('user', JSON.stringify(result.data));
-            console.log(result, ';res')
             navigate(`/${result.data[0].role}/setup`);
         }
         else {

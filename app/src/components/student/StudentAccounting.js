@@ -15,10 +15,9 @@ const StudentAccounting = () => {
                 date: recordDate,
                 tutor: `Tutor ${i}`,
                 subject: `Subject ${i}`,
-                rate: 50 + i * 5, // Vary the rate
+                rate: 50 + i * 5,
             });
         }
-
         return records;
     };
 
@@ -27,7 +26,6 @@ const StudentAccounting = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
-    // Calculate the total amount paid during the selected interval
     const totalAmount = tableData
         .filter((row) => {
             if (!startDate || !endDate) return true;

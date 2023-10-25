@@ -638,6 +638,106 @@ const get_student_bookings = async (req, res) => {
     )
 }
 
+const get_student_bank_details = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    findByAnyIdColumn('StudentBank', req.params, 'Varchar')
+                );
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const post_student_bank_details = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    findByAnyIdColumn('StudentBank', { AcademyId: req.body.AcademyId }, 'varchar')
+                );
+                if (result.recordset.length) {
+                    await poolConnection.request().query(
+                        update('StudentBank', req.body, { AcademyId: req.body.AcademyId })
+                    );
+                }
+                else {
+                    await poolConnection.request().query(
+                        insert('StudentBank', req.body)
+                    );
+                }
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const get_student_feedback = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    findByAnyIdColumn('Feedback', req.params, 'Varchar')
+                );
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const post_student_feedback = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    findByAnyIdColumn('Feedback', { AcademyId: req.body.ShortlistId }, 'varchar')
+                );
+                if (result.recordset.length) {
+                    await poolConnection.request().query(
+                        update('StudentBank', req.body, { AcademyId: req.body.ShortlistId })
+                    );
+                }
+                else {
+                    await poolConnection.request().query(
+                        insert('Feedback', req.body)
+                    );
+                }
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 module.exports = {
     upload_form_one,
     get_student_setup,
@@ -649,5 +749,9 @@ module.exports = {
     get_student_market_data,
     get_my_data,
     get_student_bookings,
-    post_student_bookings
+    post_student_bookings,
+    get_student_bank_details,
+    post_student_bank_details,
+    get_student_feedback,
+    post_student_feedback
 }

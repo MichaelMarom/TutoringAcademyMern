@@ -127,7 +127,7 @@ export let upload_student_short_list = (items) => {
 
 
 export let get_student_short_list = (student) => {
-    console.log(student,'estudent')
+    console.log(student, 'estudent')
     return new Promise((resolve, reject) => {
 
 
@@ -185,4 +185,48 @@ export const save_student_events = async (body) => {
 export const get_student_events = async (studentId, tutorId) => {
     const { data } = await await axiosInstance.get(`/student/booking/${studentId}/${tutorId}`);
     return data;
+}
+
+export const post_bank_details = async (payload) => {
+    try {
+        const { data } = await axiosInstance.post('/student/bank', payload);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export const get_bank_details = async (id) => {
+    try {
+        const { data } = await axiosInstance.get(`/student/bank/${id}`);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export const get_feedback = async (id) => {
+    try {
+        const { data } = await axiosInstance.get(`/student/feedback/${id}`);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export const post_feedback = async (payload) => {
+    try {
+        const { data } = await axiosInstance.post(`/student/feedback`, payload);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
 }

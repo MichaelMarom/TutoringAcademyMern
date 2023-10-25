@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { get_bank_details, upload_form_four, upload_form_three } from '../../axios/tutor';
+import { get_bank_details, upload_form_four } from '../../axios/tutor';
 import Acad_Commission from './Acad_Commission._Table';
 
  

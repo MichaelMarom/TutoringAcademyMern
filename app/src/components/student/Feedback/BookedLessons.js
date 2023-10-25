@@ -1,12 +1,12 @@
 import React from 'react';
 
-const BookedLessons = ({ handleRowSelect }) => {
+function BookedLessons({ events, handleRowSelect, tutor }) {
   return (
     <table>
       <thead className="thead-light">
         <tr>
           <th scope="col">#</th>
-          <th scope="col">Data</th>
+          <th scope="col">Date</th>
           <th scope="col">GMT</th>
           <th scope="col">Subject</th>
           <th scope="col">Tutor</th>
@@ -14,39 +14,21 @@ const BookedLessons = ({ handleRowSelect }) => {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-          <td>Mark</td>
-          <td>
-            <button onClick={() => handleRowSelect(1)}>Select</button>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-          <td>@mdo</td>
-          <td>
-            <button onClick={() => handleRowSelect(2)}>Select</button>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>Larry</td>
-          <td>the Bird</td>
-          <td>@twitter</td>
-          <td>@mdo</td>
-          <td>
-            <button onClick={() => handleRowSelect(3)}>Select</button>
-          </td>
-        </tr>
+        {events.map((event, index) => (
+          <tr key={index}>
+            <th scope="row">{index + 1}</th>
+            <td>{event.date}</td>
+            <td>{event.title}</td>
+            <td>{event.subject}</td>
+            <td>{tutor}</td>
+            <td>
+              <button onClick={() => handleRowSelect(event.id)}>Select</button>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
-};
+}
 
 export default BookedLessons;

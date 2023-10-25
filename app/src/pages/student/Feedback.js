@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import StudentLayout from '../../layouts/StudentLayout';
 import BookedLessons from '../../components/student/Feedback/BookedLessons'
 import QuestionFeedback from '../../components/student/Feedback/QuestionFeedback'
+import { get_feedback, get_student_events } from '../../axios/student';
 
 export const Feedback = () => {
     const [questions, setQuestions] = useState([
@@ -22,6 +23,8 @@ export const Feedback = () => {
         },
     ]);
     const [selectedSubject, setSelectedSubject] = useState(null)
+    const [reservedSlots, setReservedSlots] = useState({})
+    const [bookedSlots, setBookedSlots] = useState({})
 
 
     const handleEmojiClick = (id, star) => {
@@ -42,6 +45,28 @@ export const Feedback = () => {
     const handleRowSelect = (subject) => {
         setSelectedSubject(subject)
     }
+    const studentId = 'Naomi. C. M8bc074';
+    const tutorId = 'Michael. C. M5ea887';
+    const ShortlistId = 28;
+
+    useEffect(() => {
+        const fetchFeedback = async () => {
+            const data = await get_feedback(ShortlistId);
+            console.log(data)
+            if(data){
+                setReservedSlots((data.reservedSlots))
+            }
+        }
+        fetchFeedback()
+    }, [])
+
+    useEffect(() => {
+        const getBookings = async () => {
+            const data = await get_student_events(studentId, tutorId);
+            console.log(data)
+        }
+        getBookings()
+    }, [])
 
     return (
 

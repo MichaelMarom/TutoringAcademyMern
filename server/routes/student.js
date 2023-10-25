@@ -1,4 +1,4 @@
-const { upload_form_one, get_student_setup, get_student_grade, get_tutor_subject, upload_student_short_list, get_student_short_list, get_student_short_list_data, get_student_market_data, post_student_bookings, get_student_bookings, get_my_data } = require('../controllers/student');
+const { upload_form_one, get_student_setup, get_student_grade, get_tutor_subject, upload_student_short_list, get_student_short_list, get_student_short_list_data, get_student_market_data, post_student_bookings, get_student_bookings, get_my_data, get_student_bank_details, post_student_bank_details, post_student_feedback, get_student_feedback } = require('../controllers/student');
 const { express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt } = require('../modules');
 
 const STUDENT_ROUTES = express.Router();
@@ -15,6 +15,10 @@ STUDENT_ROUTES.post('/student/setup', parser, upload_form_one)
 //bookings
 STUDENT_ROUTES.post('/student/booking', parser, post_student_bookings)
 STUDENT_ROUTES.get('/student/booking/:studentId/:tutorId', parser, get_student_bookings)
+STUDENT_ROUTES.get('/student/bank/:AcademyId', get_student_bank_details)
+STUDENT_ROUTES.post('/student/bank', parser, post_student_bank_details)
+STUDENT_ROUTES.post('/student/feedback', parser, post_student_feedback)
+STUDENT_ROUTES.get('/student/feedback/:ShortlistId', get_student_feedback)
 
 module.exports = {
     STUDENT_ROUTES

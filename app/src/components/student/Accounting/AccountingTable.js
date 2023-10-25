@@ -6,19 +6,19 @@ const AccountingTable = ({ tableData }) => {
     return (
         <div className="col-md-6" style={{
             overflowY: 'auto',
-            height:'60vh'
+            height: '60vh'
         }}>
             <h2>Payment Report</h2>
             <table className="table">
                 <thead className="thead-dark" style={{
-                    background:"black"
+                    background: "black"
                 }}>
                     <tr>
-                        <th className='text-white'>Date</th>
-                        <th className='text-white'>Tutor</th>
-                        <th className='text-white'>Subject</th>
-                        <th className='text-white'>Rate</th>
-                        <th className='text-white'>Action</th>
+                        <th className='text-white bg-dark'>Date</th>
+                        <th className='text-white bg-dark'>Tutor</th>
+                        <th className='text-white bg-dark'>Subject</th>
+                        <th className='text-white bg-dark'>Rate</th>
+                        <th className='text-white bg-dark'>Action</th>
                     </tr>
                 </thead>
                 <tbody>

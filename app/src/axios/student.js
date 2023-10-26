@@ -77,7 +77,6 @@ export let get_student_grade = () => {
 
     })
 }
-
 export let get_student_market_data = (id) => {
 
     return new Promise((resolve, reject) => {
@@ -95,17 +94,10 @@ export let get_student_market_data = (id) => {
 }
 
 
-export let get_tutor_subject = (subject) => {
-
-    return new Promise((resolve, reject) => {
-        axios.get('http://localhost:9876/student/tutor-subject', { params: { subject } })
-            .then((result) => {
-                resolve(result.data)
-            })
-            .catch((err) => {
-                reject(err)
-            })
-    })
+export let get_tutor_subject = async (subject) => {
+    const { data } = await axiosInstance.get('/student/tutor-subject', { params: { subject } })
+    console.log(data, 'in axios123')
+    return data
 }
 
 

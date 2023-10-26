@@ -10,62 +10,52 @@ const StudentFaculties = () => {
 
     const [response, setResponse] = useState([]);
     const [data, setData] = useState([]);
-    const [badData, setbadData] = useState([]);
-
     const columns = useMemo(() => COLUMNS, []);
 
     useEffect(() => {
-        get_tutor_subject('1')
-            .then((result) => {
-                setResponse(result)
-                result.sort(function (a, b) {
-                    if (a[0].subject < b[0].subject) {
-                        return -1;
-                    }
-                    if (a[0].subject > b[0].subject) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                console.log(result)
-            })
-            .catch((err) => setResponse(err))
-
+        const fetchTutorSubject = async () => {
+            const result = await get_tutor_subject('1')
+            console.log(result, 123)
+            result.sort(function (a, b) {
+                if (a[0].subject < b[0].subject) {
+                    return -1;
+                }
+                if (a[0].subject > b[0].subject) {
+                    return 1;
+                }
+                return 0;
+            });
+            setResponse(result)
+        }
+        fetchTutorSubject()
 
     }, [])
 
-    let getTutorSubject = e => {
+    let getTutorSubject = async (e) => {
         let subject = e.currentTarget.dataset.id;
 
-        get_tutor_subject(subject)
-            .then((result) => {
-                setResponse(result);
-                result.sort(function (a, b) {
-                    if (a[0].subject < b[0].subject) {
-                        return -1;
-                    }
-                    if (a[0].subject > b[0].subject) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                console.log(result)
+        const result = await get_tutor_subject(subject)
+        setResponse(result);
+        result.sort(function (a, b) {
+            if (a[0].subject < b[0].subject) {
+                return -1;
+            }
+            if (a[0].subject > b[0].subject) {
+                return 1;
+            }
+            return 0;
+        });
+        // let clickedElem = e.currentTarget;
+        // let deactivedElem = [...clickedElem?.parentElement.children ? clickedElem?.parentElement.children : []].filter(item => item.hasAttribute('id'))[0];
 
-            })
-            .catch((err) => setResponse(err))
-
-        let clickedElem = e.currentTarget;
-        let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
-
-        deactivedElem.removeAttribute('id');
-        clickedElem.setAttribute('id', 'form-subject-data-tabs-list-active')
+        // deactivedElem.removeAttribute('id');
+        // clickedElem.setAttribute('id', 'form-subject-data-tabs-list-active')
     }
 
     let handle_scroll_right = () => {
 
         let div = document.querySelector('.form-subject-data-tabs');
         let scroll_elem = div.children[1];
-        //console.log(scroll_elem) 
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = w;
 
@@ -95,13 +85,9 @@ const StudentFaculties = () => {
             if (data[0]) {
 
                 let list = data[0].split('-')
-                //let response = upload_student_short_list(list[0],list[1],list[3],list[2]);
-                let response = upload_student_short_list(data);
+                let res = upload_student_short_list(data);
 
-                if (response) {
-
-                    //document.querySelector('form').reset(); 
-                    //if(response.type === 'save'){
+                if (res) {
 
                     setTimeout(() => {
                         document.querySelector('.save-overlay').removeAttribute('id');
@@ -111,8 +97,6 @@ const StudentFaculties = () => {
                     document.querySelector('.tutor-popin').style.background = '#000';
                     document.querySelector('.tutor-popin').innerHTML = 'Data was uploaded successfully...'
                     setTimeout(() => {
-                        // document.querySelector('.student-next').setAttribute('id', 'next')
-
                         if (document.querySelector('.tutor-popin')) {
                             document.querySelector('.tutor-popin').removeAttribute('id');
                         }
@@ -125,30 +109,23 @@ const StudentFaculties = () => {
 
                     document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
                     document.querySelector('.tutor-popin').style.background = 'red';
-                    document.querySelector('.tutor-popin').innerHTML = response.mssg
+                    document.querySelector('.tutor-popin').innerHTML = res.mssg
                     setTimeout(() => {
                         document.querySelector('.tutor-popin').removeAttribute('id');
                     }, 5000);
-
                 }
-
             }
         }
     }, [])
 
     useEffect(() => {
-        console.log(badData)
-    }, [badData])
-
-
-    useEffect(() => {
         get_student_short_list_data(window.localStorage.getItem('student_user_id'))
             .then((result) => {
-                console.log(result,'cehbcjc')
+                console.log(result, 'cehbcjc')
                 let list = [...document.querySelectorAll('#student-tutor')];
                 if (result.length) {
                     result.map(item => {
-                        let elem = list.filter(response => response.dataset.id.split('-')[0] === item.AcademyId && response.dataset.id.split('-')[1] === item.Subject)
+                        let elem = list.filter(res => res.dataset.id.split('-')[0] === item.AcademyId && res.dataset.id.split('-')[1] === item.Subject)
                         if (elem.length > 0) {
                             elem[0].children[0].checked = true;
                         }
@@ -270,30 +247,34 @@ const StudentFaculties = () => {
                                         {
 
                                             response.map((item) =>
-                                                <tr>
-                                                    <td id='student-tutor' data-id={`${item[0]?.AcademyId}-${item[0].subject}-${item[0].rate}-${item[2]?.TutorScreenname}-${window.localStorage.getItem('student_user_id')}`}>
+                                                {
+                                                    let faculty  = item[0] || {};
+                                                    let experience = item[1] || {};
+                                                    console.log(item[0], item[1],'0,1')
+                                                    return <tr>
+                                                    <td id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${item[2]?.TutorScreenname}-${window.localStorage.getItem('student_user_id')}`}>
 
                                                         <input onInput={handleBadData} type='checkbox' style={{ height: '20px', width: '20px' }} />
                                                     </td>
 
-                                                    <td>{item[0]?.subject}</td>
+                                                    <td>{faculty.subject}</td>
                                                     <td>
-                                                        {item.splice(-1)[0]?.TutorScreenname}
+                                                        {(faculty.AcademyId).split(".").slice(0, 2).join(".")}
                                                     </td>
                                                     <td>
-                                                        {item[1]?.EducationalLevelExperience}
+                                                        {experience.EducationalLevelExperience}
                                                     </td>
                                                     <td>
-                                                        {item[1]?.Certificate}
+                                                        {experience.Certificate}
                                                     </td>
                                                     <td>
-                                                        {item[1]?.CertificateState}
+                                                        {experience.CertificateState}
                                                     </td>
                                                     <td>
-                                                        {new Date(item[1]?.CertificateExpiration).toLocaleDateString()}
+                                                        {new Date(experience.CertificateExpiration).toLocaleDateString()}
                                                     </td>
-                                                    <td>{item[0]?.rate}</td>
-                                                </tr>
+                                                    <td>{faculty.rate}</td>
+                                                </tr>}
                                             )
 
                                         }

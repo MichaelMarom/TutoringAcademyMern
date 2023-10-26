@@ -157,7 +157,6 @@ let get_tutor_subject = async (req, res) => {
     let { subject } = req.query;
     console.log(subject)
     let book = {}
-    let document = []
     let subjectLength = 0
 
     let subjects = async () => await connecteToDB.then(poolConnection =>
@@ -166,9 +165,6 @@ let get_tutor_subject = async (req, res) => {
                 subjectLength = result.recordset.length;
                 console.log(result)
                 return result.recordset;
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
     )
@@ -188,21 +184,15 @@ let get_tutor_subject = async (req, res) => {
     let tutor = (subjectsBook) => connecteToDB.then(poolConnection =>
         poolConnection.request().query(`SELECT TutorScreenname From TutorSetup  WHERE CONVERT(VARCHAR, AcademyId) =  '${subjectsBook.AcademyId}'`)
             .then(async (result) => {
-
-                //return book[subjectsBook.AcademyId] = [...await edu(subjectsBook.AcademyId), ...result.recordset, subjectsBook]
-
+                console.log(result)
                 return result.recordset
-
             })
             .catch(err => console.log(err))
     )
 
-
-
     async function extratInfo() {
         let subject = await subjects();
         if (subject.length > 0) {
-
             subject.map((async (item) => {
                 let tutorData = await tutor(item);
                 let tutorEducation = await edu(item)
@@ -211,21 +201,15 @@ let get_tutor_subject = async (req, res) => {
                 if (Object.keys(book).length === subjectLength) {
 
                     let data = Object.values(book)
-                    console.log('data')
                     res.status(200).send(data)
                 } else {
                     console.log(Object.keys(book).length, subjectLength)
                 }
-
             }))
         } else { res.status(200).send([]) }
     }
 
     extratInfo()
-
-
-
-
 }
 
 let upload_student_short_list = async (req, res) => {
@@ -294,7 +278,6 @@ let get_student_short_list = async (req, res) => {
         connecteToDB.then((poolConnection) =>
             poolConnection.request().query(findByAnyIdColumn('StudentShortList', { Student: req.query.student }, 'VARCHAR'))
                 .then((result) => {
-                    res.send(result.recordset)
                     return result.recordset;
                 })
                 .catch(err => console.log(err))
@@ -303,16 +286,11 @@ let get_student_short_list = async (req, res) => {
     )
 
     let getTutorDemo = async (item, shortList) => (
-        //WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'
         connecteToDB.then(poolConnection =>
             poolConnection.request().query(`SELECT FreeDemoLesson,AcademyId From TutorRates
             `)
                 .then((result) => {
-                    //book[item.AcademyId] = [item,result.recordset[0], document[index]]
                     tutorDemoLesson.push(result.recordset)
-                    /*if(tutorDemoLesson.length === shortList.length){
-                        return tutorDemoLesson;
-                    }*/
                     return tutorDemoLesson;
                 })
                 .catch(err => console.log(err))
@@ -321,18 +299,12 @@ let get_student_short_list = async (req, res) => {
 
     )
 
-
-    // WHERE CONVERT(VARCHAR, AcademyId) = '${item.AcademyId}'
     let getTutorDataViaShortList = ((item, shortList) =>
 
         connecteToDB.then((poolConnection) =>
             poolConnection.request().query(`SELECT * From TutorSetup`)
                 .then((result) => {
                     tutorUserData.push(result.recordset);
-                    //console.log(result.recordset.length)
-                    /*if(tutorUserData.length === shortList.length){
-                        return tutorUserData;
-                    } */
                     return tutorUserData;
                 })
                 .catch(err => console.log(err))
@@ -344,19 +316,10 @@ let get_student_short_list = async (req, res) => {
         resolve(studentShortList)
     })
         .then(async (studentShortList) => {
-            /*let tutorProfile = await studentShortList.map((item) => {
-                let response =  getTutorDataViaShortList(item,studentShortList);
-                return response
-            })*/
             let tutorProfile = await getTutorDataViaShortList();
-            //return response
             return { studentShortList, tutorProfile }
         })
         .then(async ({ studentShortList, tutorProfile }) => {
-            /*let demoLesson = studentShortList.map((item) => {
-                let response =  getTutorDemo();
-                return response
-            })*/
             let demoLesson = await getTutorDemo();
             return { tutorProfile, demoLesson, studentShortList }
         })

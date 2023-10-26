@@ -108,13 +108,13 @@ const StudentShortList = () => {
 
                                                 <td>{<img src={item.tutorData?.Photo} style={{ height: '100px', width: '120px' }} />}</td>
                                                 <td>
-                                                    <input type='checkbox' style={{ height: '20px', width: '20px' }} defaultChecked={item.tutorDemoLesson.FreeDemoLesson === 'yes' ? true : false} />
+                                                    <input type='checkbox' style={{ height: '20px', width: '20px' }} defaultChecked={item.tutorDemoLesson?.FreeDemoLesson === 'yes' ? true : false} />
                                                 </td>
                                                 <td>
-                                                    {item.tutorShortList.Subject}
+                                                    {item.tutorShortList?.Subject}
                                                 </td>
                                                 <td>
-                                                    {item.tutorShortList.ScreenName}
+                                                    {item.tutorShortList?.ScreenName}
                                                 </td>
                                                 <td>
                                                     {item.tutorData?.Country}
@@ -128,7 +128,7 @@ const StudentShortList = () => {
                                                 <td>
                                                     <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(item.tutorData?.AcademyId)}>View Profile</button>
                                                 </td>
-                                                <td>{item.tutorShortList.Rate}</td>
+                                                <td>{item.tutorShortList?.Rate}</td>
                                                 <td>
                                                     <input style={{ height: '20px', width: '20px' }} type='radio' />
                                                 </td>

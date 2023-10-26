@@ -1,8 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { showDate } from '../../../helperFunctions/timeHelperFunctions'
 import { wholeDateFormat } from '../../../constants/constants'
+import { get_payment_report } from '../../../axios/student'
 
 const AccountingTable = ({ tableData }) => {
+
+    const studentId = localStorage.getItem('student_user_id');
+
+    console.log(studentId);
+    useEffect(() => {
+        const fetchPaymentReport = async () => {
+            const data = await get_payment_report(studentId);
+            console.log(data, 'deded');
+        }
+        fetchPaymentReport()
+    }, [])
+    
     return (
         <div className="col-md-6" style={{
             overflowY: 'auto',

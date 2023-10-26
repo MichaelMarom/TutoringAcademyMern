@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react'
 import StudentLayout from '../../layouts/StudentLayout';
 import BookedLessons from '../../components/student/Feedback/BookedLessons'
 import QuestionFeedback from '../../components/student/Feedback/QuestionFeedback'
-import { get_feedback, get_student_events } from '../../axios/student';
-
+import { get_feedback, get_student_events, save_student_events } from '../../axios/student';
+import { showDate } from '../../helperFunctions/timeHelperFunctions';
+import { wholeDateFormat } from '../../constants/constants';
+import { useDispatch } from 'react-redux';
+import { postStudentBookings } from '../../redux/student_store/studentBookings';
+import Actions from '../../components/student/Actions';
+import Loading from '../../components/common/Loading';
+import { toast } from 'react-toastify';
 export const Feedback = () => {
     const [questions, setQuestions] = useState([
         {
@@ -22,39 +28,92 @@ export const Feedback = () => {
             star: null,
         },
     ]);
-    const [selectedSubject, setSelectedSubject] = useState(null)
-    const [reservedSlots, setReservedSlots] = useState({})
-    const [bookedSlots, setBookedSlots] = useState({})
+    const [comment, setComment] = useState('')
+    const [reservedSlots, setReservedSlots] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [bookedSlots, setBookedSlots] = useState([])
 
+    const [selectedEvent, setSelectedEvent] = useState({})
 
     const handleEmojiClick = (id, star) => {
-        // Create a copy of the questions array
         const updatedQuestions = [...questions];
-
-        // Find the index of the question with the matching id
         const questionIndex = updatedQuestions.findIndex((question) => question.id === id);
 
         if (questionIndex !== -1) {
-            // Update the star rating for the question with the matching id
             updatedQuestions[questionIndex].star = star;
+            setQuestions([...updatedQuestions]);
+            if (selectedEvent.type === 'booked') {
+                const updatedBookedSlots = bookedSlots.map(slot => {
+                    if (slot.id === selectedEvent.id) {
+                        slot.rating = (questions.reduce((sum, question) => {
+                            sum = question.star + sum
+                            return sum
+                        }, 0)) / questions.length;
+                    }
+                    return slot
+                })
+                setBookedSlots([...updatedBookedSlots])
+            }
+            else {
+                const updatedReservedSlots = reservedSlots.map(slot => {
+                    if (slot.id === selectedEvent.id) {
+                        slot.rating = (questions.reduce((sum, question) => {
+                            sum = question.star + sum
+                            return sum
+                        }, 0)) / questions.length;
+                    }
+                    return slot
+                })
 
-            // Update the state with the modified questions
-            setQuestions(updatedQuestions);
+                setReservedSlots([...updatedReservedSlots])
+            }
         }
     };
-    const handleRowSelect = (subject) => {
-        setSelectedSubject(subject)
+
+    const handleRowSelect = (event) => {
+        setSelectedEvent(event)
     }
+
     const studentId = 'Naomi. C. M8bc074';
     const tutorId = 'Michael. C. M5ea887';
     const ShortlistId = 28;
+    const dispatch = useDispatch()
+
+    const onSave = async () => {
+        setLoading(true)
+        const data = await dispatch(postStudentBookings({ studentId, tutorId, bookedSlots, reservedSlots }));
+        (data.response?.status === 400) ?
+            toast.error("Error while saving the data") :
+            toast.success('Data Succesfully Saved')
+        setLoading(false)
+    }
+
+    useEffect(() => {
+        const updatedSlots = (selectedEvent.type === 'booked'
+            ? bookedSlots
+            : reservedSlots).map(slot => {
+                if (slot.id === selectedEvent.id) {
+                    slot.comment = comment;
+                }
+                return slot
+            })
+        if (selectedEvent.type === 'booked')
+            setBookedSlots([...updatedSlots])
+        else
+            setReservedSlots([...updatedSlots])
+    }, [comment])
+
+    useEffect(() => {
+        setQuestions(questions.map(question => ({ ...question, star: null })))
+        setComment('')
+    }, [selectedEvent.id])
 
     useEffect(() => {
         const fetchFeedback = async () => {
             const data = await get_feedback(ShortlistId);
             console.log(data)
-            if(data){
-                setReservedSlots((data.reservedSlots))
+            if (data) {
+                // setReservedSlots((data.reservedSlots))
             }
         }
         fetchFeedback()
@@ -63,32 +122,47 @@ export const Feedback = () => {
     useEffect(() => {
         const getBookings = async () => {
             const data = await get_student_events(studentId, tutorId);
-            console.log(data)
+            setBookedSlots(JSON.parse(data.bookedSlots))
+            setReservedSlots(JSON.parse(data.reservedSlots))
         }
         getBookings()
     }, [])
 
+    if (loading)
+        return <Loading />
     return (
-
-        <StudentLayout>
+        <StudentLayout showLegacyFooter={false} >
             <div className="container mt-5">
                 <div className="row">
                     <div className="col-md-6">
                         <h2>Booked Lessons</h2>
-                        <BookedLessons handleRowSelect={handleRowSelect} />
+                        <BookedLessons
+                            events={bookedSlots.concat(reservedSlots)}
+                            handleRowSelect={handleRowSelect}
+                            setSelectedEvent={setSelectedEvent}
+                            selectedEvent={selectedEvent}
+                        />
                     </div>
-                    <div className="col-md-6">
-                        <h2>Feedback</h2>
-                        <div className="questions">
-                            <QuestionFeedback questions={questions} handleEmojiClick={handleEmojiClick} />
-                            <div class="form-group">
-                                <label for="exampleTextarea">Write Feedback about your tutor and relevant subject</label>
-                                <textarea class="form-control" id="exampleTextarea" rows="4"></textarea>
+                    {
+                        selectedEvent.id &&
+                        <div className="col-md-6">
+                            <h4>Feedback on {showDate(selectedEvent.start, wholeDateFormat)} Session</h4>
+                            <div className="questions">
+                                <QuestionFeedback
+                                    questions={questions} handleEmojiClick={handleEmojiClick} />
+                                <div class="form-group">
+                                    <label for="exampleTextarea">Write Feedback about your tutor, relevant subject and about session</label>
+                                    <textarea class="form-control" id="exampleTextarea" rows="4"
+                                        value={selectedEvent.comment ? selectedEvent.comment : comment}
+                                        onChange={(e) => setComment(e.target.value)}></textarea>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
             </div>
+
+            <Actions onSave={onSave} />
         </StudentLayout>
     )
 }

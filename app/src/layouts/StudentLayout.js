@@ -2,12 +2,15 @@ import React from 'react'
 import Header from '../components/student/Header'
 import Footer from '../components/student/Footer'
 
-const StudentLayout = ({ children }) => {
+const StudentLayout = ({ children, showLegacyFooter = true }) => {
     return (
         <div>
             <Header />
             {children}
-            <Footer />
+            {showLegacyFooter ?
+                <Footer /> :
+                null
+            }
         </div>
     )
 }

@@ -3,7 +3,7 @@ import AmountCalc from './Accounting/AmountCalc';
 import AccountingTable from './Accounting/AccountingTable';
 import BankDetails from './Accounting/BankDetails';
 import { get_bank_details, post_bank_details } from '../../axios/student';
-import { Actions } from './Actions';
+import Actions from './Actions';
 import { toast } from 'react-toastify';
 import Loading from '../common/Loading';
 
@@ -20,7 +20,7 @@ const StudentAccounting = () => {
     let [AccumulatedHrs, set_accumulated_hrs] = useState(null)
     let [PaymentOption, set_payment_option] = useState(null)
     const AcademyId = localStorage.getItem('student_user_id')
-    
+
     const onSave = async () => {
 
         if (!StudentStartDay ||

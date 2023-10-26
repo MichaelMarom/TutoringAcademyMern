@@ -1,28 +1,41 @@
 import React from 'react';
+import { wholeDateFormat } from '../../../constants/constants';
+import { showDate } from '../../../helperFunctions/timeHelperFunctions'
+import Comment from './Comment';
+import StarRating from './StarRating';
 
-function BookedLessons({ events, handleRowSelect, tutor }) {
+function BookedLessons({
+  events,
+  handleRowSelect,
+  selectedEvent
+}) {
   return (
     <table>
       <thead className="thead-light">
         <tr>
-          <th scope="col">#</th>
           <th scope="col">Date</th>
-          <th scope="col">GMT</th>
+          <th scope="col">Lesson</th>
           <th scope="col">Subject</th>
-          <th scope="col">Tutor</th>
+          <th scope="col">Rating</th>
+          <th scope="col">Comment</th>
           <th scope="col">Action</th>
         </tr>
       </thead>
       <tbody>
         {events.map((event, index) => (
           <tr key={index}>
-            <th scope="row">{index + 1}</th>
-            <td>{event.date}</td>
-            <td>{event.title}</td>
+            <td>{showDate(event.start, wholeDateFormat)}</td>
             <td>{event.subject}</td>
-            <td>{tutor}</td>
+            <td>{event.title}</td>
+
+            <td><StarRating rating={event.rating} /></td>
             <td>
-              <button onClick={() => handleRowSelect(event.id)}>Select</button>
+             <Comment comment={event.comment} />
+            </td>
+
+            <td>
+              <button className={`btn ${selectedEvent.id === event.id ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => handleRowSelect(event)}>Select</button>
             </td>
           </tr>
         ))}

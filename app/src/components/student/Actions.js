@@ -10,7 +10,7 @@ const actionsStyle = {
     padding: '10px',
 };
 
-export const Actions = ({
+const Actions = ({
     onSave = () => { },
     onBack = () => { },
     onEdit = () => { },
@@ -37,3 +37,5 @@ export const Actions = ({
         </div>
     );
 };
+
+export default Actions

@@ -715,6 +715,7 @@ const payment_report = async (req, res) => {
                    b.tutorId AS tutorId,
                    b.reservedSlots AS reservedSlots,
                    b.bookedSlots AS bookedSlots,
+                   r.Subject,
                    r.rate AS rate
                     FROM StudentBookings AS b
                     JOIN StudentShortList AS r ON

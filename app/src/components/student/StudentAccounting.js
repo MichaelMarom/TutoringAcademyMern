@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import AmountCalc from './Accounting/AmountCalc';
 import AccountingTable from './Accounting/AccountingTable';
 import BankDetails from './Accounting/BankDetails';
-import { get_bank_details, post_bank_details } from '../../axios/student';
+import { get_bank_details, get_payment_report, post_bank_details } from '../../axios/student';
 import Actions from './Actions';
 import { toast } from 'react-toastify';
 import Loading from '../common/Loading';
+import { convertToDate } from '../common/Calendar/Calendar';
 
 const StudentAccounting = () => {
     let date = new Date()
@@ -99,14 +100,45 @@ const StudentAccounting = () => {
 
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [paymentReportData, setPaymentReportData] = useState([]);
 
-    const totalAmount = tableData
+    const transformIntoPaymentReport = (item) => {
+        const bookedSlots = JSON.parse(item.bookedSlots);
+        const reservedSlots = JSON.parse(item.reservedSlots);
+        const updatedPaymentReport_booked = bookedSlots.map(slot => ({
+            ...slot,
+            tutorId: item.tutorId,
+            subject: item.Subject,
+            rate: item.rate,
+        }));
+
+        const updatedPaymentReport_reserved = reservedSlots.map(slot => ({
+            ...slot,
+            tutorId: item.tutorId,
+            subject: item.Subject,
+            rate: item.rate,
+        }));
+
+        return updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
+    };
+
+    useEffect(() => {
+        const fetchPaymentReport = async () => {
+            const data = await get_payment_report('Naomi. C. M8bc074');
+            const transformedData = data.map(item => transformIntoPaymentReport(item)).flat();
+            setPaymentReportData([...paymentReportData, ...transformedData]);
+        };
+
+        fetchPaymentReport();
+    }, []);
+    console.log(paymentReportData, paymentReportData.length)
+    const totalAmount = paymentReportData
         .filter((row) => {
             if (!startDate || !endDate) return true;
             console.log(row)
-            return row.date >= new Date(startDate) && row.date <= new Date(endDate);
+            return convertToDate(row.start) >= new Date(startDate) && convertToDate(row.start) <= new Date(endDate);
         })
-        .reduce((total, row) => total + row.rate, 0);
+        .reduce((total, row) => total + parseFloat(row.rate.split('$')[1]), 0);
 
     if (loading)
         return <Loading />
@@ -136,7 +168,7 @@ const StudentAccounting = () => {
             </div>
             <div className="container">
                 <div className="row">
-                    <AccountingTable tableData={tableData} />
+                    <AccountingTable tableData={paymentReportData} />
                     <AmountCalc
                         totalAmount={totalAmount}
                         setStartDate={setStartDate}

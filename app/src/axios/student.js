@@ -226,7 +226,7 @@ export const post_feedback = async (payload) => {
 
 export const get_payment_report = async(studentId)=>{
     try {
-        const { data } = await axiosInstance.get(`/student/payment-report/:${studentId}`);
+        const { data } = await axiosInstance.get(`/student/payment-report/${studentId}`);
         return data
     }
     catch (err) {

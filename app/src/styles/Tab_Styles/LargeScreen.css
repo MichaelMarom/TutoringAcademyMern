@@ -176,11 +176,13 @@ html,body{
     .tutor-tab-header ul {
         list-style-type: none;
         margin: 0;
+        height: 100%;
         width: 70%;
         display: flex;
         align-items: center;
         justify-content: left;
-        overflow: auto;
+        overflow-x: auto;
+        overflow-y: hidden;
         padding: 0 8px 0 8px;
         background: #212F3D;
         scroll-behavior: smooth;
@@ -229,16 +231,20 @@ html,body{
         background-color: #ffffff;
     }
 
-    ul {
+    ul{
         list-style-type: none;
         margin: 0;
         display: flex;
         align-items: center;
         justify-content: left;
-        overflow: auto;
+        overflow-x: auto;
         padding: 0 8px 0 8px;
         scroll-behavior: smooth;
         transition: cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    ul.header {
+        height: 100%;
+        overflow-x: auto;
     }
 
     ul li {

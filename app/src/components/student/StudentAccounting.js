@@ -119,7 +119,9 @@ const StudentAccounting = () => {
             rate: item.rate,
         }));
 
-        return updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
+        const combinedPaymentData = updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
+        const final = combinedPaymentData.filter(data => data.type != 'reserved')
+        return final
     };
 
     useEffect(() => {
@@ -144,7 +146,7 @@ const StudentAccounting = () => {
         return <Loading />
     return (
         <>
-            <div className='mt-4'>
+            <div className='mt-4 container'>
                 <BankDetails
                     StudentStartDay={StudentStartDay}
                     set_start_day={set_start_day}
@@ -166,6 +168,8 @@ const StudentAccounting = () => {
                     set_payment_option={set_payment_option}
                 />
             </div>
+            <hr />
+
             <div className="container">
                 <div className="row">
                     <AccountingTable tableData={paymentReportData} />

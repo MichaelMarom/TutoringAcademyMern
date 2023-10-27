@@ -136,7 +136,8 @@
         display: flex;
         align-items: center;
         justify-content: left;
-        overflow: auto;
+        overflow-x: auto;
+        overflow-y: hidden;
         padding: 0 8px 0 8px;
         background: #212F3D;
         scroll-behavior: smooth;
@@ -168,7 +169,7 @@
 
     #student-tab-header-list-active{
         background: #2471A3;
-          color: #1ba9a9;
+          color: white;
     }
 
    

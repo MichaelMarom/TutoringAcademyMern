@@ -19,6 +19,11 @@ const LoginPage = () => {
             toast.success("Login Successfull!");
             setLoginForm({});
             localStorage.setItem('user', JSON.stringify(result.data));
+            console.log(result.data[0].role)
+            if (result.data[0].role === 'admin') {
+                navigate(`/${result.data[0].role}/tutor-data`);
+                return
+            }
             navigate(`/${result.data[0].role}/setup`);
         }
         else {

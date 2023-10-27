@@ -43,6 +43,7 @@ function BankDetails({
             </div>
 
             <div className="form-check form-check-inline">
+
                 <input
                     className="form-check-input"
                     type="radio"
@@ -74,91 +75,125 @@ function BankDetails({
 
             <div className='form-row row'>
                 <div className='form-group col-6'>
-                    <input
-                        type="text"
-                        onChange={(e) => set_acct_name(e.target.value)}
-                        value={AccountName}
-                        className='form-control'
-                        placeholder="Account Name"
-                    />
+                    <div className='row'>
+
+                        <label className="col-4">Account Name</label>
+
+                        <input
+                            type="text"
+                            onChange={(e) => set_acct_name(e.target.value)}
+                            value={AccountName} className='form-control col-6 w-50'
+
+                        />
+                    </div>
                 </div>
 
                 <div className='form-group col-6'>
-                    <select
-                        onChange={(e) => set_acct_type(e.target.value)}
-                        value={PaymentType}
-                        className='form-control'
-                    >
-                        <option value="null">Select Account Type</option>
-                        <option value="savings">Savings</option>
-                        <option value="checking">Checking</option>
-                    </select>
+                    <div className='row'>
+
+                        <label className="col-4">Account Type</label>
+
+                        <select
+                            onChange={(e) => set_acct_type(e.target.value)}
+                            value={PaymentType} className='form-control col-6 w-50'
+
+                        >
+                            <option value="null">Select Account Type</option>
+                            <option value="savings">Savings</option>
+                            <option value="checking">Checking</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
             <div className='form-row row'>
                 <div className='form-group col'>
-                    <input
-                        type="text"
-                        onChange={(e) => set_bank_name(e.target.value)}
-                        value={BankName}
-                        className='form-control'
-                        placeholder="Bank Name"
-                    />
+                    <div className='row'>
+
+                        <label className="col-4">Bank Name</label>
+
+                        <input
+                            type="text"
+                            onChange={(e) => set_bank_name(e.target.value)}
+                            value={BankName} className='form-control col-6 w-50'
+
+                        />
+                    </div>
                 </div>
 
                 <div className='form-group col'>
-                    <input
-                        type="number"
-                        onChange={(e) => set_acct(e.target.value)}
-                        value={AccountNumber}
-                        className='form-control'
-                        placeholder="Account #"
-                    />
+                    <div className='row'>
+
+                        <label className="col-4">Account Number</label>
+
+                        <input
+                            type="number"
+                            onChange={(e) => set_acct(e.target.value)}
+                            value={AccountNumber} className='form-control col-6 w-50'
+
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div className='form-row row'>
+
+                <div className='form-group col'>
+                    <div className='row'>
+
+                        <label className="col-4">Routing Name</label>
+                        <input
+                            type="text"
+                            onChange={(e) => set_routing(e.target.value)}
+                            value={RoutingNumber} className='form-control col-6 w-50'
+
+                        />
+                    </div>
+                </div>
+
+                <div className='form-group col'>
+                    <div className='row'>
+
+                        <label className="col-4">SSH </label>
+
+                        <input
+                            type="text"
+                            onChange={(e) => set_ssh(e.target.value)}
+                            value={SSH} className='form-control col-6 w-50'
+
+                        />
+                    </div>
                 </div>
             </div>
 
             <div className='form-row row'>
                 <div className='form-group col'>
-                    <input
-                        type="text"
-                        onChange={(e) => set_routing(e.target.value)}
-                        value={RoutingNumber}
-                        className='form-control'
-                        placeholder="Routing #"
-                    />
+                    <div className='row'>
+
+                        <label className="col-4">Accumulated Hours</label>
+
+                        <input
+                            type="text"
+                            onChange={(e) => set_accumulated_hrs(e.target.value)}
+                            value={AccumulatedHrs}
+                            className='form-control col-6 w-50'
+
+                        />
+                    </div>
                 </div>
 
                 <div className='form-group col'>
-                    <input
-                        type="text"
-                        onChange={(e) => set_ssh(e.target.value)}
-                        value={SSH}
-                        className='form-control'
-                        placeholder="SSH"
-                    />
-                </div>
-            </div>
+                    <div className='row'>
 
-            <div className='form-row row'>
-                <div className='form-group col'>
-                    <input
-                        type="text"
-                        onChange={(e) => set_accumulated_hrs(e.target.value)}
-                        value={AccumulatedHrs}
-                        className='form-control'
-                        placeholder="Accumulated Hours"
-                    />
-                </div>
+                        <label className="col-4">Student Start Day</label>
 
-                <div className='form-group col'>
-                    <input
-                        type="datetime-local"
-                        onChange={(e) => set_start_day(e.target.value)}
-                        value={StudentStartDay}
-                        className='form-control'
-                        placeholder="Tutor Start Day"
-                    />
+                        <input
+                            type="datetime-local"
+                            onChange={(e) => set_start_day(e.target.value)}
+                            value={StudentStartDay}
+                            className='form-control col-6 w-50'
+                        />
+                    </div>
                 </div>
             </div>
         </div>

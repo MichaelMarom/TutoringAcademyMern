@@ -2,7 +2,7 @@ import React from 'react'
 
 const AmountCalc = ({ totalAmount, setStartDate, setEndDate }) => {
     return (
-        <div className="col-md-6">
+        <div className="col-md-4">
             <h2>Filter by Date and Time</h2>
             <div className="form-group">
                 <label htmlFor="startDate">Start Date and Time</label>

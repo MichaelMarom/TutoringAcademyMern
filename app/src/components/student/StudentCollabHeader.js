@@ -131,19 +131,19 @@ const StudentCollabHeader = () => {
                 </div>
                 <div className="right">
                     <div>
-                        <span class="digit" id="hr">
+                        <span className="digit" id="hr">
                             {hr}</span>
-                        <span class="txt">Hr</span>
+                        <span className="txt">Hr</span>
                         &nbsp;&nbsp;
-                        <span class="digit" id="min">
+                        <span className="digit" id="min">
                             {min}</span>
-                        <span class="txt">Min</span>
+                        <span className="txt">Min</span>
                         &nbsp;&nbsp;
-                        <span class="digit" id="sec">
+                        <span className="digit" id="sec">
                             {sec}</span>
-                        <span class="txt">Sec</span>
+                        <span className="txt">Sec</span>
                         &nbsp;&nbsp;
-                        {/*<span class="digit" id="count">
+                        {/*<span className="digit" id="count">
                             {msec}</span>*/}
                     </div>
 

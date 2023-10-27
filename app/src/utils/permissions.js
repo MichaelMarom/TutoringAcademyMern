@@ -29,6 +29,7 @@ import Profile from "../pages/Profile";
 import TutorClass from "../pages/tutor/TutotClass";
 import StudentClass from "../pages/student/StudentClass";
 import { Feedback } from "../pages/student/Feedback";
+import Chat from "../pages/Chat";
 
 const rolePermissions = {
   tutor: [
@@ -57,7 +58,8 @@ const rolePermissions = {
     { path: "student/schedule", component: <StudentScheduling /> },
     { path: "student/term-of-use", component: <StudentTermOfUse /> },
     { path: "student/profile", component: <StudentProfile /> },
-    { path: 'student/feedback', component: <Feedback /> }
+    { path: 'student/feedback', component: <Feedback /> },
+    { path: '/chat', component: <Chat /> }
   ],
   admin: [
     { path: "admin/tutor-data", component: <Tutor_Table /> },

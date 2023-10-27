@@ -554,16 +554,16 @@ const Rates = () => {
                             (reduction from 20%). You can offer this reduction to your
                             students as a "Discount" by checking the box below.
                         </div>
-                        <div class="form-check form-switch d-flex align-items-center gap-2">
+                        <div className="form-check form-switch d-flex align-items-center gap-2">
                             <input
-                                class="form-check-input "
+                                className="form-check-input "
                                 type="checkbox"
                                 role="switch"
                                 id="flexSwitchCheckChecked"
                                 onChange={() => setDiscountEnabled(!discountEnabled)}
                                 checked={discountEnabled}
                             />
-                            <label class="form-check-label" for="flexSwitchCheckChecked">
+                            <label className="form-check-label" for="flexSwitchCheckChecked">
                                 My Student's 10% markup
                             </label>
 
@@ -580,7 +580,7 @@ const Rates = () => {
                                     onClick={() => setDiscountCode(generateDiscountCode())}
                                 />
                             </Tooltip>
-                            <div class="input-group">
+                            <div className="input-group">
                                 <input
                                     type="text"
                                     className="form-control m-0 h-100 p-2"
@@ -589,7 +589,7 @@ const Rates = () => {
                                 />
 
                                 <label
-                                    class="m-0 input-group-text"
+                                    className="m-0 input-group-text"
                                     type="button"
                                     id="inputGroupFileAddon04"
                                 >
@@ -608,16 +608,16 @@ const Rates = () => {
                             )}
                         </div>
 
-                        <div class="form-check form-switch d-flex align-items-center gap-2 mt-4">
+                        <div className="form-check form-switch d-flex align-items-center gap-2 mt-4">
                             <input
-                                class="form-check-input "
+                                className="form-check-input "
                                 type="checkbox"
                                 role="switch"
                                 id="flexSwitchCheckChecked"
                                 onChange={() => setClassTeaching(!classTeaching)}
                                 checked={discountEnabled}
                             />
-                            <label class="form-check-label" for="flexSwitchCheckChecked">
+                            <label className="form-check-label" for="flexSwitchCheckChecked">
                                 I can tutor full school class. My charge for class up to 30
                                 students
                             </label>
@@ -629,14 +629,14 @@ const Rates = () => {
                                 <FaInfoCircle size={20} color="gray" />
                             </Tooltip>
                         </div>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">$</span>
+                        <div className="input-group mb-3">
+                            <span className="input-group-text">$</span>
                             <input
                                 type="text"
-                                class="form-control m-0 py-4"
+                                className="form-control m-0 py-4"
                                 aria-label="Amount (to the nearest dollar)"
                             />
-                            <span class="input-group-text">.00</span>
+                            <span className="input-group-text">.00</span>
                         </div>
                     </div>
                 </div>

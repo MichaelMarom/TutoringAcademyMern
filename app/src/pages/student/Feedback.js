@@ -150,9 +150,9 @@ export const Feedback = () => {
                             <div className="questions">
                                 <QuestionFeedback
                                     questions={questions} handleEmojiClick={handleEmojiClick} />
-                                <div class="form-group">
+                                <div className="form-group">
                                     <label for="exampleTextarea">Write Feedback about your tutor, relevant subject and about session</label>
-                                    <textarea class="form-control" id="exampleTextarea" rows="4"
+                                    <textarea className="form-control" id="exampleTextarea" rows="4"
                                         value={selectedEvent.comment ? selectedEvent.comment : comment}
                                         onChange={(e) => setComment(e.target.value)}></textarea>
                                 </div>

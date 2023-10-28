@@ -50,7 +50,6 @@ const Header = () => {
 
     useEffect(() => {
         const currentTab = location.pathname.split('/').pop();
-        console.log(currentTab, 'tzb')
         setActiveTab(currentTab)
     }, [location])
 

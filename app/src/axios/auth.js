@@ -28,3 +28,14 @@ export const login = async (data) => {
         return err;
     }
 }
+
+export const get_user_detail = async (userId) => {
+    try {
+        const {data} = await AxiosInstance.get(`/user/${userId}`);
+        return data;
+    }
+    catch (err) {
+        console.log(err)
+        return err;
+    }
+}

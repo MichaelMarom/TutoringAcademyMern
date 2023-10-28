@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../axios/auth';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/auth_state/auth';
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -10,6 +12,7 @@ const LoginPage = () => {
         password: '',
     });
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch()
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -19,6 +22,7 @@ const LoginPage = () => {
             toast.success("Login Successfull!");
             setLoginForm({});
             localStorage.setItem('user', JSON.stringify(result.data));
+            dispatch(setUser(result.data))
             console.log(result.data[0].role)
             if (result.data[0].role === 'admin') {
                 navigate(`/${result.data[0].role}/tutor-data`);

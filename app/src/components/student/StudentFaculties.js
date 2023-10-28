@@ -83,7 +83,7 @@ const StudentFaculties = () => {
             let data = doc.map(item => item.dataset.id)
 
             if (data[0]) {
-
+                console.log(data, 'data123')
                 let list = data[0].split('-')
                 let res = upload_student_short_list(data);
 
@@ -246,13 +246,12 @@ const StudentFaculties = () => {
                                     <tbody>
                                         {
 
-                                            response.map((item) =>
-                                                {
-                                                    let faculty  = item[0] || {};
-                                                    let experience = item[1] || {};
-                                                    console.log(item[0], item[1],'0,1')
-                                                    return <tr>
-                                                    <td id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${item[2]?.TutorScreenname}-${window.localStorage.getItem('student_user_id')}`}>
+                                            response.map((item) => {
+                                                let faculty = item[0] || {};
+                                                let experience = item[1] || {};
+                                                console.log(item[0], item[1], '0,1')
+                                                return <tr>
+                                                    <td id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
 
                                                         <input onInput={handleBadData} type='checkbox' style={{ height: '20px', width: '20px' }} />
                                                     </td>
@@ -274,7 +273,8 @@ const StudentFaculties = () => {
                                                         {new Date(experience.CertificateExpiration).toLocaleDateString()}
                                                     </td>
                                                     <td>{faculty.rate}</td>
-                                                </tr>}
+                                                </tr>
+                                            }
                                             )
 
                                         }

@@ -1,5 +1,5 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert, find } = require('../helperfunctions/crud_queries');
+const { insert, find, findByAnyIdColumn } = require('../helperfunctions/crud_queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -58,7 +58,28 @@ const login = async (req, res) => {
     })
 };
 
+const get_user_detail = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    findByAnyIdColumn('Users', req.params)
+                );
+
+                res.status(200).send(result.recordset[0] );
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 module.exports = {
     login,
+    get_user_detail,
     signup,
 };

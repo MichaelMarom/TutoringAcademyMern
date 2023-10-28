@@ -113,7 +113,7 @@ let get_student_setup = (req, res) => {
         // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
-                find('StudentSetup', req.query)
+                findByAnyIdColumn('StudentSetup', req.query, 'varchar')
                 // `
                 //     SELECT * From StudentSetup WHERE CONVERT(VARCHAR, AcademyId) = '${id}' 
                 // `
@@ -257,14 +257,11 @@ let upload_student_short_list = async (req, res) => {
 
 
     items.map(async (item) => {
-
+        console.log(item,'inside items');
         let list = item.split('-');
 
         let bool = await checkDuplicates(list[1], list[0], list[4])
         if (bool) { uploadData(list) }
-
-
-
     })
 }
 
@@ -295,8 +292,6 @@ let get_student_short_list = async (req, res) => {
                 })
                 .catch(err => console.log(err))
         )
-
-
     )
 
     let getTutorDataViaShortList = ((item, shortList) =>
@@ -715,7 +710,6 @@ const payment_report = async (req, res) => {
                    b.tutorId AS tutorId,
                    b.reservedSlots AS reservedSlots,
                    b.bookedSlots AS bookedSlots,
-                   r.Subject,
                    r.rate AS rate
                     FROM StudentBookings AS b
                     JOIN StudentShortList AS r ON

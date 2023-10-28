@@ -25,7 +25,6 @@ import StudentIntro from "../pages/student/StudentIntro";
 
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
-import Profile from "../pages/Profile";
 import TutorClass from "../pages/tutor/TutotClass";
 import StudentClass from "../pages/student/StudentClass";
 import { Feedback } from "../pages/student/Feedback";
@@ -44,27 +43,27 @@ const rolePermissions = {
     { path: "/tutor/term-of-use", component: <TermOfUse /> },
     { path: "/tutor/market-place", component: <MarketPlace /> },
     { path: "/tutor/tutor-profile", component: <TutorProfile /> },
-    { path: "tutor/collaboration", component: <TutorClass /> },
+    { path: "/tutor/collaboration", component: <TutorClass /> },
   ],
   student: [
-    { path: "student/collaboration", component: <StudentClass /> },
-    { path: "student/", component: <StudentSetup /> },
-    { path: "student/intro", component: <StudentIntro /> },
-    { path: "student/setup", component: <StudentSetup /> },
-    { path: "student/faculties", component: <StudentFaculty /> },
-    { path: "student/short-list", component: <StudentShortLists /> },
-    { path: "student/accounting", component: <StudentAccountings /> },
-    { path: "student/market-place", component: <StudentMarketPlace /> },
-    { path: "student/schedule", component: <StudentScheduling /> },
-    { path: "student/term-of-use", component: <StudentTermOfUse /> },
-    { path: "student/profile", component: <StudentProfile /> },
-    { path: 'student/feedback', component: <Feedback /> },
+    { path: "/student/collaboration", component: <StudentClass /> },
+    { path: "/student/", component: <StudentSetup /> },
+    { path: "/student/intro", component: <StudentIntro /> },
+    { path: "/student/setup", component: <StudentSetup /> },
+    { path: "/student/faculties", component: <StudentFaculty /> },
+    { path: "/student/short-list", component: <StudentShortLists /> },
+    { path: "/student/accounting", component: <StudentAccountings /> },
+    { path: "/student/market-place", component: <StudentMarketPlace /> },
+    { path: "/student/schedule", component: <StudentScheduling /> },
+    { path: "/student/term-of-use", component: <StudentTermOfUse /> },
+    { path: "/student/profile", component: <StudentProfile /> },
+    { path: '/student/feedback', component: <Feedback /> },
     { path: '/chat', component: <Chat /> }
   ],
   admin: [
-    { path: "admin/tutor-data", component: <Tutor_Table /> },
-    { path: "admin/student-data", component: <Student_Table /> },
-    { path: "admin/new-subject", component: <TutorNewSubject /> },
+    { path: "/admin/tutor-data", component: <Tutor_Table /> },
+    { path: "/admin/student-data", component: <Student_Table /> },
+    { path: "/admin/new-subject", component: <TutorNewSubject /> },
   ],
   common: [
     { path: "/login", component: <Login /> },
@@ -72,6 +71,6 @@ const rolePermissions = {
   ],
 };
 
-export const isAllowed = (role, route) => rolePermissions[role].includes(route);
-
+export const isAllowed = (role, route) => rolePermissions[role].some((r) => r.path === route);
 export default rolePermissions;
+

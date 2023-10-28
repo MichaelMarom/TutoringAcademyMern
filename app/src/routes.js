@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useRoutes } from "react-router-dom";
 
 import React from "react";
@@ -22,6 +22,7 @@ const App = () => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.user);
+  const [activeRoutes, setActiveRoutes] = useState([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -31,12 +32,10 @@ const App = () => {
   useEffect(() => {
     if (user[0])
       get_tutor_setup_by_userId(user[0].SID).then((result) => {
-        console.log(result, "render in routes");
         localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       });
   }, [user]);
 
-  console.log(user);
 
   const getDefaultRoute = (role) => {
     const defaultRoutes = {
@@ -49,22 +48,44 @@ const App = () => {
   };
 
   useEffect(() => {
-    if (user?.role === "tutor")
+    if (user[0]?.role === "tutor")
       window.localStorage.setItem("tutor_tab_index", 0);
 
-    if (user?.role === "student")
+    if (user[0]?.role === "student")
       window.localStorage.setItem("student_tab_index", 0);
   }, [user]);
 
   const generateRoutes = (role) => {
     if (role && rolePermissions[role]) {
-      return rolePermissions[role].map((route) => ({
-        path: route.path,
-        element: route.component,
-      }));
+      if (role === 'admin') {
+        const allRoutes = Object.keys(rolePermissions).map((key) => rolePermissions[key]).flat();
+        setActiveRoutes(
+          allRoutes.map((route) => ({
+            path: route.path,
+            element: route.component,
+          })))
+      } else {
+        setActiveRoutes(
+          rolePermissions[role].map((route) => ({
+            path: route.path,
+            element: route.component,
+          })))
+      }
     }
-    return [];
+    else {
+      setActiveRoutes([]);
+    }
   };
+
+
+  useEffect(() => {
+    generateRoutes(user[0]?.role);
+  }, [user])
+
+  useEffect(() => {
+    if (location.pathname === '/')
+      navigate('/login')
+  }, [])
 
   const routes = useRoutes([
     {
@@ -75,7 +96,7 @@ const App = () => {
       path: "/signup",
       element: <Signup />,
     },
-    ...generateRoutes(user[0]?.role),
+    ...activeRoutes,
     {
       path: "*",
       element: <UnAuthorizeRoute />,

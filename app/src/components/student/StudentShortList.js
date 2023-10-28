@@ -26,6 +26,7 @@ const StudentShortList = () => {
     const dispatch = useDispatch()
 
     const { selectedTutor } = useSelector(state => state.selectedTutor);
+
     const handleNavigateToSchedule = async (item) => {
         await dispatch(setTutor({
             id: item.tutorData?.SID,
@@ -70,9 +71,9 @@ const StudentShortList = () => {
     let multi_student_cols = [{ Header: 'Photo' }, { Header: 'Demo Lesson @50%' }, { Header: 'Subject' }, { Header: 'Tutor Name' }, { Header: 'Country' }, { Header: 'Tutor Time' }, { Header: 'Tutor Schedule' }, { Header: 'Tutor Profile' }, { Header: 'Rate' }, { Header: 'Hire' }]
 
     let redirect_to_tutor_profile = tutor_user_id => {
-        window.localStorage.setItem('tutor_user_id', tutor_user_id);
-        window.localStorage.setItem('user_role', 'admin');
-        navigate('/tutor/tutor-profile')
+        // window.localStorage.setItem('tutor_user_id', tutor_user_id);
+        // window.localStorage.setItem('user_role', 'admin');
+        // navigate('/tutor/tutor-profile')
     }
 
 
@@ -81,11 +82,11 @@ const StudentShortList = () => {
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
                 <div className="form-into-prompt shadow-sm" style={{ padding: '20px' }}>
-                   {response.length ? 
-                   <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> To view complete tutor's profile include presentation video, double click on his/hers picture.</div> : 
-                   <div className='text-danger'> no record found!</div>
-                   
-                }
+                    {response.length ?
+                        <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> To view complete tutor's profile include presentation video, double click on his/hers picture.</div> :
+                        <div className='text-danger'> no record found!</div>
+
+                    }
 
                     <div className="tables" style={{ height: '800px', width: '100%', overflow: 'auto', padding: '5px' }}>
 

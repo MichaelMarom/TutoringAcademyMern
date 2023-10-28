@@ -1,15 +1,11 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 const UnAuthorizeRoute = () => {
-    // You can customize this component to display an unauthorized message or redirect to a login page
-    useEffect(() => {
-        console.log('render in unautho')
-    }, [])
-
-    const navigate = useNavigate();
-    navigate('/login'); // Redirect to a login page if unauthorized
-    return null;
+    return (
+        <div className='fs-4 text-danger d-flex justify-content-center align-item-center'
+            style={{ height: '100vh' }}
+        >
+            Searching Route....
+        </div>
+    );
 }
 
 export default UnAuthorizeRoute

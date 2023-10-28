@@ -1,49 +1,61 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 const Header = () => {
 
-  
-    let nav = useNavigate()
-    
+
+    let nav = useNavigate();
+    const location = useLocation();
+
+    const [activeTab, setActiveTab] = useState('');
+
+    const tabs = [
+        { id: 'tutor-data', label: 'Tutor' },
+        { id: 'student-data', label: 'Student' },
+        { id: 'email-prog', label: 'Email Prog' },
+        { id: 'new-subject', label: 'New Subject' },
+        { id: 'accounting', label: 'Accounting' },
+        { id: 'communications', label: 'Communications' },
+    ];
+
+
     let handleTabClick = e => {
-        let clickedElem = e.currentTarget;
-        let deactivedElem = [...clickedElem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
-
-        deactivedElem.removeAttribute('id');
-        clickedElem.setAttribute('id', 'admin-tab-header-list-active')
-
-        nav(`admin/${e.currentTarget.dataset.url}`)
- 
+        nav(`/admin/${e.currentTarget.dataset.url}`)
     }
+
+    useEffect(() => {
+        const currentTab = location.pathname.split('/').pop();
+        setActiveTab(currentTab)
+    }, [location])
 
     let [screen_name, set_screen_name] = useState('')
 
     useEffect(() => {
         let name = window.localStorage.getItem('admin_screen_name');
-        set_screen_name(name) 
+        set_screen_name(name)
     }, []);
 
 
-    return ( 
+    return (
         <>
-        <div className="screen-name btn-success rounded" style={{display: screen_name === 'null' ? 'none': 'flex',position: 'fixed', top: '15px', zIndex: '1000', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height:'30px'}}>
+            <div className="screen-name btn-success rounded" style={{ display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed', top: '15px', zIndex: '1000', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height: '30px' }}>
                 {screen_name}
-            </div>  
+            </div>
             <div className="admin-tab-header shadow-sm">
                 <ul>
-                    <li data-url='tutor-data' onClick={handleTabClick} id="admin-tab-header-list-active"><a>Tutor</a></li>
-                    <li data-url='student-data' onClick={handleTabClick} ><a>Student</a></li>
-                    <li data-url='emai-prog' onClick={handleTabClick} ><a>Email Prog</a></li>
-                    <li data-url='new-subject' onClick={handleTabClick} ><a>New Subject</a></li>
-                    <li data-url='accounting' onClick={handleTabClick} ><a>Accounting</a></li>
-                    <li data-url='communications' onClick={handleTabClick} ><a>Communications </a></li>
+                    {tabs.map((tab) => (
+                        <li key={tab.id} data-url={tab.id} onClick={handleTabClick}
+                            id={`${activeTab === tab.id ? 'admin-tab-header-list-active' : ''}`}
+                        >
+                            <a>{tab.label}</a>
+                        </li>
+                    ))}
                 </ul>
             </div>
         </>
-     );
+    );
 }
- 
+
 export default Header;

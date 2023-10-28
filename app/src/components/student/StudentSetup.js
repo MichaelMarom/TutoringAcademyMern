@@ -60,14 +60,15 @@ const StudentSetup = () => {
         return response;
     }
     useEffect(() => {
-        console.log(user, 'user in student')
+        const AcademyId = localStorage.getItem('student_user_id')
+        console.log(user, AcademyId, 'user in student')
         const fetchStudentSetup = async () => {
-            if (user[0].role === 'student') {
+            if (user[0].role === 'student' || user[0].role === 'admin') {
                 console.log(user)
-                const result = await get_student_setup_by_userId(user[0].SID);
-                localStorage.setItem('student_screen_name',result[0].ScreenName)
-                localStorage.setItem('student_user_id',result[0].AcademyId)
-                localStorage.setItem('logged_user',JSON.stringify(result[0]))
+                const result = await get_student_setup_by_userId(AcademyId);
+                localStorage.setItem('student_screen_name', result[0].ScreenName)
+                localStorage.setItem('student_user_id', result[0].AcademyId)
+                localStorage.setItem('logged_user', JSON.stringify(result[0]))
 
                 if (result.length) {
                     let data = result[0]

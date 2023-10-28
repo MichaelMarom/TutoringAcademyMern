@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload } from "react-icons/bs";
 import moment from "moment";
-import { Buffer } from "buffer";
+
 import {
   get_countries,
   get_gmt,
   get_response,
   get_state,
-  get_tutor_setup_by_userId,
+  get_tutor_setup_by_acaId,
   post_tutor_setup,
 } from "../../axios/tutor";
 import containerVariants from "../constraint";
@@ -17,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
+import { get_user_detail } from "../../axios/auth";
 
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
@@ -39,7 +40,7 @@ const TutorSetup = () => {
   let [headline, set_headline] = useState("");
   let [photo, set_photo] = useState("");
   let [video, set_video] = useState("");
-
+  
   let [grades, setGrades] = useState([
     { grade: "1st grade" },
     { grade: "2nd grade" },
@@ -56,9 +57,10 @@ const TutorSetup = () => {
     { grade: "Academic" },
   ]);
   let [tutorGrades, setTutorGrades] = useState([]);
-
+  
   const { user } = useSelector((state) => state.user);
-
+  
+  const [email, set_email]=useState(user[0].email)
   let [countryList, setCountryList] = useState("");
   let [stateList, setStateList] = useState("");
   let [GMTList, setGMTList] = useState("");
@@ -84,19 +86,23 @@ const TutorSetup = () => {
   };
 
   useEffect(() => {
+    const AcademyId = localStorage.getItem('tutor_user_id')
+    console.log(AcademyId, "aca id");
+
     const fetchTutorSetup = async () => {
-      const result = await get_tutor_setup_by_userId(user[0]?.SID);
-      console.log(result, "result");
+      const result = await get_tutor_setup_by_acaId(AcademyId);
       localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       if (result.length) {
         let data = result[0];
+        const selectedUserId = await get_user_detail(data.userId);
+        console.log(selectedUserId,'ddd')
         set_fname(data.FirstName);
         set_sname(data.LastName);
         set_mname(data.MiddleName);
         set_photo(data.Photo);
         set_cell(data.CellPhone);
         set_state(data.StateProvince);
-
+        set_email(selectedUserId.email)
         set_city(data.CityTown);
         set_country(data.Country);
         set_response_zone(data.ResponseHrs);
@@ -514,20 +520,20 @@ const TutorSetup = () => {
     console.log(blobObj);
     if (blobObj instanceof Blob) {
       const reader = new FileReader();
-  
+
       reader.onload = (event) => {
         const arrayBuffer = event.target.result;
-  
+
         // Now, 'arrayBuffer' contains the binary data in a suitable format.
         // You can store it in the 'recordedVideo' state or variable.
-  
+
         // For React state:
         setRecordedVideo(arrayBuffer);
-  
+
         // For a regular JavaScript variable:
         // const recordedVideo = arrayBuffer;
       };
-  
+
       reader.readAsArrayBuffer(blobObj);
     }
 
@@ -693,7 +699,7 @@ const TutorSetup = () => {
                     position: "relative",
                   }}
                   placeholder="Email"
-                  value={user[0]?.email}
+                  value={email}
                   type="text"
                   id="email"
                   readonly

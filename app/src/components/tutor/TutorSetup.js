@@ -1204,7 +1204,7 @@ const TutorSetup = () => {
               <textarea
                 defaultValue={intro}
                 maxLength={500}
-                placeholder="Writw An Introduction Here... e.g(My name is Fabian and i am a graduate of Harvard University in Boston...)"
+                placeholder="Write Your Introduction Here... e.g: (My name is Fabian and i am a graduate of Harvard University in Boston...)"
                 onInput={(e) =>
                   counter(e.target.value, e.target, set_intro, 500)
                 }

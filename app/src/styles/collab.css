@@ -458,7 +458,17 @@
         padding: 0 20px 0 20px;
         width: 100%;
         position: relative;
-        background-color: #e6e6e6;
+        background-color: #212F3D;
+    }
+
+    #tutor-video-tab{
+        position: fixed;
+        left: 0;
+        top: 0;
+        transition: 1s;
+        height: 100vh;
+        width: 100vw;
+        z-index: 10000;
     }
      
     .tutor-writing-set{
@@ -488,7 +498,7 @@
     .TutorAside{
         height: calc(100% - 250px);
         width: 300px;
-        position: fixed;
+        position: absolute;
         top: 50%;
         right: 0%;
         z-index: 2000;

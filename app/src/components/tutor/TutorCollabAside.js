@@ -42,7 +42,15 @@ const TutorAside = () => {
 
     
 
-    
+    let handleVideoResize = e => {
+        let element = document.querySelector('.TutorAsideVideoCnt');
+
+        if(element.hasAttribute('id')){
+            element.removeAttribute('id')
+        }else{
+            element.setAttribute('id', 'tutor-video-tab')
+        }
+    }
 
 
 
@@ -152,7 +160,7 @@ const TutorAside = () => {
                     <video className='tutor-video-tab'>
                     </video>
                     <ul>
-                        <li  className="video-size" style={{background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px'}} onClick={e => handleVidActions(e)}>
+                        <li  className="video-size" style={{background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px'}} onClick={e => handleVideoResize(e)}>
                             <img src={screenType} style={{height: '25px', width: '25px'}} alt="..." />
                         </li>
                         <li className="disable-visuals" onClick={e=> handleVidActions(e)}>

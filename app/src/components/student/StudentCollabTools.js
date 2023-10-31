@@ -209,7 +209,7 @@ const StudentCollabTools = () => {
 
         function onResize(){
 
-            canvas.height = window.innerHeight - 110;  
+            canvas.height = window.innerHeight - 141;  
             canvas.width = window.innerWidth - 5;
             //canvas.style.pointerEvents.right = `${400}`
             ctx.strokeStyle = color.current;

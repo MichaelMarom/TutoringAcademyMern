@@ -131,20 +131,20 @@ const StudentCollabHeader = () => {
                 </div>
                 <div className="right">
                     <div>
-                        <span className="digit" id="hr">
+                    <span className="digit" id="hr">
                             {hr}</span>
                         <span className="txt">Hr</span>
                         &nbsp;&nbsp;
                         <span className="digit" id="min">
                             {min}</span>
                         <span className="txt">Min</span>
-                        &nbsp;&nbsp;
+                        {/*&nbsp;&nbsp;
                         <span className="digit" id="sec">
                             {sec}</span>
                         <span className="txt">Sec</span>
                         &nbsp;&nbsp;
-                        {/*<span className="digit" id="count">
-                            {msec}</span>*/}
+                        <span className="digit" id="count">
+    {msec}</span>*/}
                     </div>
 
                     <button onClick={handleAsidePanel}>

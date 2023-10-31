@@ -139,13 +139,13 @@ const TutorCollabHeader = () => {
                         <span className="digit" id="min">
                             {min}</span>
                         <span className="txt">Min</span>
-                        &nbsp;&nbsp;
+                        {/*&nbsp;&nbsp;
                         <span className="digit" id="sec">
                             {sec}</span>
                         <span className="txt">Sec</span>
                         &nbsp;&nbsp;
                         <span className="digit" id="count">
-                            {msec}</span>
+    {msec}</span>*/}
                     </div>
 
                     <button onClick={handleAsidePanel}>

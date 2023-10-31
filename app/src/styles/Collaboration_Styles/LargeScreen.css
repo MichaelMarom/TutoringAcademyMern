@@ -479,9 +479,9 @@
     .color-pallete, .fill-pallete{
         height: 500px;
         width: 300px;
-        position: absolute;
+        position: fixed;
         padding: 10px;
-        z-index: 10;
+        z-index: 1000000;
         border-radius: 6px;
         top: 60px;
         background-color: #ffffff;
@@ -587,8 +587,8 @@
         padding: 10px;
         border-radius: 5px;
         cursor: pointer;
-        z-index: 25;
-        position: absolute;
+        z-index: 100000;
+        position: fixed;
         background: #ffffff;
         top: 150px;
     }
@@ -793,8 +793,8 @@
         padding: 10px;
         border-radius: 5px;
         cursor: pointer;
-        z-index: 25;
-        position: absolute;
+        z-index: 100000;
+        position: fixed;
         background: #ffffff;
         top: 150px;
 

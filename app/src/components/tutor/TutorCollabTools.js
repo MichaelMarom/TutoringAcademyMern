@@ -213,7 +213,7 @@ const TutorCollabTools = () => {
 
         function onResize(){
 
-            canvas.height = window.innerHeight - 110;  
+            canvas.height = window.innerHeight - 141;  
             canvas.width = window.innerWidth - 5;
             //canvas.style.pointerEvents.right = `${400}`
             ctx.strokeStyle = color.current;
@@ -552,7 +552,7 @@ const TutorCollabTools = () => {
         let top = elem.getBoundingClientRect().top
 
         let penStyles = 
-        <div>
+        <div >
             <div className='color-pallete shadow' style={{left: `${left - 50}px`, top: `${top + 60}px`}}>
 
 

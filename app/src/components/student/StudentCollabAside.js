@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import screenLarge from '../../images/screen-full-svgrepo-com.svg';
 import screenNormal from '../../images/screen-normal-svgrepo-com.svg'
 import DiableVideoImage from '../../images/video-recorder-off-svgrepo-com.svg'; 
+import muteSvg from '../../images/mute-svgrepo-com.svg'
 import { socket } from '../../socket';
 import {Peer} from 'peerjs';
 import { useLocation } from 'react-router-dom';
@@ -25,7 +26,20 @@ const StudentAside = () => {
 
     
 
-    
+    let handleVideoResize = e => {
+        let element = document.querySelector('.StudentAsideVideoCnt');
+        if(element.hasAttribute('id')){
+            element.removeAttribute('id')
+            setScreenType(screenLarge)
+        }else{
+            element.setAttribute('id', 'StudentAsideVideoCnt')
+            setScreenType(screenNormal)
+
+        }
+    }
+
+
+
     let handleVidActions = e => {
 
         visuals.getVideoTracks()[0].enabled =
@@ -35,6 +49,31 @@ const StudentAside = () => {
             mediaStream.getVideoTracks()[0].enabled =
             !(mediaStream.getVideoTracks()[0].enabled);
         })*/
+
+        if(e.target.hasAttribute('id')){
+            e.target.removeAttribute('id')
+        }else{
+            e.target.setAttribute('id', 'collab-action')
+        }
+
+        
+    }
+
+    let handleAudioActions = e => {
+
+        visuals.getAudioTracks()[0].enabled =
+        !(visuals.getAudioTracks()[0].enabled);
+        /*navigator.mediaDevices.getUserMedia()
+        .then((mediaStream) => {
+            mediaStream.getVideoTracks()[0].enabled =
+            !(mediaStream.getVideoTracks()[0].enabled);
+        })*/
+
+        if(e.target.hasAttribute('id')){
+            e.target.removeAttribute('id')
+        }else{
+            e.target.setAttribute('id', 'collab-action')
+        }
         
     }
 
@@ -150,11 +189,16 @@ const StudentAside = () => {
                     <video  className='student-video-tab'>
                     </video>
                     <ul>
-                        <li className="video-size" style={{background: '#fff', opacity: '.4'}} onClick={e => handleVidActions(e)}>
-                            <img src={screenType} style={{height: '25px', width: '30px'}} alt="..." />
+                        <li  className="video-size" style={{background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px'}} onClick={handleVideoResize}>
+                            <img src={screenType} style={{height: '20px', width: '20px'}} alt="..." />
                         </li>
-                        <li onClick={e => visuals ?  setVisuals(false) : setIsVisuals(true)} className="disable-visuals">
-                            <img src={DiableVideoImage} style={{height: '25px', width: '30px'}} alt="..." />
+                        <li className="disable-visuals" onClick={e=> handleVidActions(e)}>
+                            <img src={DiableVideoImage} style={{height: '25px', width: '25px'}} alt="..." />
+
+                        </li>
+
+                        <li className="disable-visuals" onClick={e=> handleAudioActions(e)}>
+                            <img src={muteSvg} style={{height: '25px', width: '25px'}} alt="..." />
 
                         </li>
                     </ul>

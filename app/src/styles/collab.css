@@ -255,7 +255,7 @@
         padding: 0 20px 0 20px;
         width: 100%;
         position: relative;
-        background-color: #e6e6e6;
+        background-color: #212F3D;
     }
      
     .student-writing-set{
@@ -289,10 +289,22 @@
         position: fixed;
         position: fixed;
         top: 50%;
+        z-index: 1000;
         right: 0%;
         transform: translate(-5%, -50%);
         background-color: #fff;
         border-radius: 5px;
+    }
+
+    #StudentAsideVideoCnt{
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: 1s;
+
+        height: calc(100vh - 150px);
+        width: calc(100vw - 35px);
+        z-index: 1000;
     }
 
     .StudentCollabFooter{
@@ -330,7 +342,7 @@
     }
 
     .StudentAsideVideoCnt ul li{
-        margin: 0 10px 0 10px;
+        margin: 0 2.5px 0 2.5px;
     }
 
     .StudentAsideChatCnt{
@@ -461,14 +473,15 @@
         background-color: #212F3D;
     }
 
-    #tutor-video-tab{
-        position: fixed;
-        left: 0;
+    #TutorAsideVideoCnt{
+        position: absolute;
+        right: 0;
         top: 0;
         transition: 1s;
-        height: 100vh;
-        width: 100vw;
-        z-index: 10000;
+
+        height: calc(100vh - 150px);
+        width: calc(100vw - 35px);
+        z-index: 1000;
     }
      
     .tutor-writing-set{
@@ -544,14 +557,21 @@
         position: absolute;
         bottom: 5px;
         left: 0;
-        padding: 0;
+        padding: 0 0 0 5px;
         display: flex;
         
         
     }
 
     .TutorAsideVideoCnt ul li{
-        margin: 0 10px 0 10px;
+        margin: 0 2.5px 0 2.5px;
+        padding: 8px;
+    }
+
+    #collab-action{
+        background-color: yellow;
+        padding: 4px;
+        border-radius: 5px;
     }
 
     .TutorAsideChatCnt{

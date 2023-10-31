@@ -31,7 +31,18 @@ export const login = async (data) => {
 
 export const get_user_detail = async (userId) => {
     try {
-        const {data} = await AxiosInstance.get(`/user/${userId}`);
+        const { data } = await AxiosInstance.get(`/user/${userId}`);
+        return data;
+    }
+    catch (err) {
+        console.log(err)
+        return err;
+    }
+}
+
+export const get_user_setup_detail = async (role, userId) => {
+    try {
+        const { data } = await AxiosInstance.get(`/setup/${role}/${userId}`);
         return data;
     }
     catch (err) {

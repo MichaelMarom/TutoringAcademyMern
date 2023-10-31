@@ -69,7 +69,36 @@ const get_user_detail = async (req, res) => {
                     findByAnyIdColumn('Users', req.params)
                 );
 
-                res.status(200).send(result.recordset[0] );
+                res.status(200).send(result.recordset[0]);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const get_setup_detail = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const { role, userId } = req.params
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                let result;
+                if (role === 'tutor') {
+                    result = await poolConnection.request().query(
+                        find('TutorSetup', { userId }, 'AND', { userId: 'varchar(max)' })
+                    );
+                }
+                else {
+                    result = await poolConnection.request().query(
+                        find('StudentSetup', { userId }, 'AND', { userId: 'varchar(max)' })
+                    )
+                }
+                console.log(result, 'reslogfin');
+                res.status(200).send(result.recordset[0]);
             }
         } catch (err) {
             console.log(err);
@@ -82,4 +111,5 @@ module.exports = {
     login,
     get_user_detail,
     signup,
+    get_setup_detail
 };

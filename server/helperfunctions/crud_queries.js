@@ -21,7 +21,7 @@ const insert = (tableName, values) => {
     return query
 }
 
-const update = (tableName, values, where) => {
+const update = (tableName, values, where, returnUpdated = true) => {
     const updateFieldsArray = Object.keys(values);
 
     const setClause = updateFieldsArray.map((field, index) => {
@@ -39,11 +39,13 @@ const update = (tableName, values, where) => {
         return `${field} = ${whereValue}`;
     }).join(' AND ');
 
-    const query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause}`;
+    const query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause};
+    ${returnUpdated ? `SELECT * FROM  ${tableName}  WHERE  ${whereClause};` : ``}
+    `;
     console.log(query)
     return query;
 };
-  
+
 
 const updateById = (id, tableName, fields) => {
     const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays } = fields;
@@ -80,17 +82,21 @@ const findByAnyIdColumn = (tableName, condition, casting = null) => {
     return query;
 }
 
-const find = (tableName, where, opr = 'AND') => {
+const find = (tableName, where, opr = 'AND', casting = {}) => {
     const conditions = [];
 
     for (const key in where) {
-        if (where.hasOwnProperty(key)) conditions.push(`${key} = '${where[key]}'`);
+        if (where.hasOwnProperty(key)) {
+            const castType = casting[key] || 'varchar';
+            const castedColumn = `CAST(${key} AS ${castType})`;
+            conditions.push(`${castedColumn} = '${where[key]}'`);
+        }
     }
 
     const whereClause = conditions.join(` ${opr} `);
     const sql = `SELECT * FROM ${tableName} WHERE ${whereClause}`;
-    console.log(sql)
-    return sql
+    console.log(sql);
+    return sql;
 };
 
 module.exports = {

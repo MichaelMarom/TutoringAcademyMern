@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { BsCameraVideo, BsCloudUpload } from "react-icons/bs";
+import { BsCameraVideo, BsCloudUpload, BsTrash } from "react-icons/bs";
 import moment from "moment";
 
 import {
@@ -10,6 +10,7 @@ import {
   get_response,
   get_state,
   get_tutor_setup_by_acaId,
+  get_tutor_setup_by_userId,
   post_tutor_setup,
 } from "../../axios/tutor";
 import containerVariants from "../constraint";
@@ -40,7 +41,7 @@ const TutorSetup = () => {
   let [headline, set_headline] = useState("");
   let [photo, set_photo] = useState("");
   let [video, set_video] = useState("");
-  
+
   let [grades, setGrades] = useState([
     { grade: "1st grade" },
     { grade: "2nd grade" },
@@ -57,10 +58,10 @@ const TutorSetup = () => {
     { grade: "Academic" },
   ]);
   let [tutorGrades, setTutorGrades] = useState([]);
-  
+
   const { user } = useSelector((state) => state.user);
-  
-  const [email, set_email]=useState(user[0].email)
+
+  const [email, set_email] = useState(user[0].email)
   let [countryList, setCountryList] = useState("");
   let [stateList, setStateList] = useState("");
   let [GMTList, setGMTList] = useState("");
@@ -90,12 +91,19 @@ const TutorSetup = () => {
     console.log(AcademyId, "aca id");
 
     const fetchTutorSetup = async () => {
-      const result = await get_tutor_setup_by_acaId(AcademyId);
+      let result;
+      if (user[0].role === 'admin') {
+
+        result = await get_tutor_setup_by_acaId(AcademyId);
+      }
+      else {
+        result = await get_tutor_setup_by_userId(user[0].SID);
+      }
       localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       if (result.length) {
         let data = result[0];
         const selectedUserId = await get_user_detail(data.userId);
-        console.log(selectedUserId,'ddd')
+        console.log(selectedUserId, 'ddd')
         set_fname(data.FirstName);
         set_sname(data.LastName);
         set_mname(data.MiddleName);
@@ -174,10 +182,10 @@ const TutorSetup = () => {
         );
         window.localStorage.setItem(
           "tutor_screen_name",
-          response.data[0].TutorScreenname
+          response.data[0]?.TutorScreenname
         );
-        dispatch(setscreenNameTo(response.data[0].TutorScreenname));
-        alert(`Your New Screen Name Is ${response.data[0].TutorScreenname}`);
+        dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
+        alert(`Your New Screen Name Is ${response.data[0]?.TutorScreenname}`);
         setTimeout(() => {
           document.querySelector(".save-overlay").removeAttribute("id");
         }, 1000);
@@ -507,44 +515,17 @@ const TutorSetup = () => {
     setDateTime(localTime);
   }, [timeZone]);
 
-  // function convertBlobToBase64(blob) {
-  //   return new Promise((resolve, reject) => {
-  //     const reader = new FileReader();
-  //     reader.onload = () => resolve(reader.result);
-  //     reader.onerror = reject;
-  //     reader.readAsDataURL(blob);
-  //   });
-  // }
-
   const handleVideoBlob = (blobObj) => {
-    console.log(blobObj);
     if (blobObj instanceof Blob) {
       const reader = new FileReader();
 
       reader.onload = (event) => {
         const arrayBuffer = event.target.result;
-
-        // Now, 'arrayBuffer' contains the binary data in a suitable format.
-        // You can store it in the 'recordedVideo' state or variable.
-
-        // For React state:
         setRecordedVideo(arrayBuffer);
-
-        // For a regular JavaScript variable:
-        // const recordedVideo = arrayBuffer;
       };
 
       reader.readAsArrayBuffer(blobObj);
     }
-
-    // convertBlobToBase64(blobObj)
-    //   .then((base64String) => {
-    //     // console.log(base64String, "base beboo base");
-    //     // set_video(base64String);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error, "bblobss error");
-    //   });
   };
   useEffect(() => {
     console.log(recordedVideo, "vbfbvfhb");
@@ -563,10 +544,13 @@ const TutorSetup = () => {
         exit="exit"
         className="tutor-tab-setup"
       >
-        <form action="">
-          <div className="tutor-setup-top-field">
+        <form action="" className="pt-4">
+          <div className="d-flex justify-content-center align-items-center">
+            <p>{typeof dateTime === "object" ? "" : dateTime}</p>
+
+          </div>
+          <div className="tutor-setup-top-field container">
             <div className="profile-photo-cnt">
-              <p>{typeof dateTime === "object" ? "" : dateTime}</p>
               <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
               <input
                 type="file"
@@ -581,10 +565,11 @@ const TutorSetup = () => {
               </label>
             </div>
 
-            <div
-              className="profile-details-cnt"
+
+            <div className="profile-details-cnt pt-3"
               style={{ float: "left", margin: "0 10px 0 10px ", width: "40%" }}
             >
+
               <div
                 style={{
                   display: "flex",
@@ -738,7 +723,43 @@ const TutorSetup = () => {
                   id="cellphn"
                 />
               </div>
+              <div
+                style={{
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  margin: "0 0 10px 0",
+                  display: "flex",
+                  justifyContent: "center",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <label style={{ width: "30%" }} htmlFor="">
+                  Response Time
+                </label>{" "}
+                &nbsp;&nbsp;
+                <select
+                  onInput={(e) => set_response_zone(e.target.value)}
+                  value={response_zone}
+                  id="resZone"
+                  style={{
+                    float: "right",
+                    width: "70%",
+                    margin: "2.5px 0 0 0",
+                    padding: "5px 5px 5px 5px",
+                    margin: "0 0 10px 0",
+                  }}
+                >
+                  {response_list}
+                </select>
+              </div>
 
+            </div>
+
+            <div className="profile-details-cnt pt-3"
+              style={{ float: "right", margin: "0 10px 0 10px ", width: "40%" }}
+            >
               <div
                 style={{
                   display: "flex",
@@ -769,12 +790,6 @@ const TutorSetup = () => {
                   id="add1"
                 />
               </div>
-            </div>
-
-            <div
-              className="profile-details-cnt"
-              style={{ float: "right", margin: "0 10px 0 10px ", width: "40%" }}
-            >
               <div
                 style={{
                   display: "flex",
@@ -853,7 +868,7 @@ const TutorSetup = () => {
                 <select
                   onInput={(e) => set_state(e.target.value)}
                   id="state"
-                  defaultValue={state}
+                  value={state}
                   style={{
                     float: "right",
                     width: "70%",
@@ -914,7 +929,7 @@ const TutorSetup = () => {
                 <select
                   onInput={(e) => set_country(e.target.value)}
                   id="country"
-                  defaultValue={country}
+                  value={country}
                   style={{
                     float: "right",
                     width: "70%",
@@ -945,7 +960,7 @@ const TutorSetup = () => {
                 <select
                   onInput={(e) => set_timeZone(e.target.value)}
                   id="timeZone"
-                  defaultValue={timeZone}
+                  value={timeZone}
                   style={{
                     float: "right",
                     width: "70%",
@@ -958,70 +973,26 @@ const TutorSetup = () => {
                 </select>
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "0 0 10px 0",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Response Time
-                </label>{" "}
-                &nbsp;&nbsp;
-                <select
-                  onInput={(e) => set_response_zone(e.target.value)}
-                  defaultValue={response_zone}
-                  id="resZone"
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                    padding: "5px 5px 5px 5px",
-                    margin: "0 0 10px 0",
-                  }}
-                >
-                  {response_list}
-                </select>
-              </div>
+
             </div>
 
-            <div
-              className="profile-video-cnt"
-              style={{ float: "right", width: "70%" }}
+            <div className="profile-video-cnt mt-3 "
+              style={{ float: "right", width: "70%", height: "250px" }}
             >
               {selectedVideoOption === "record" ? (
                 <div className="w-100">
                   <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
                 </div>
               ) : selectedVideoOption === "upload" && video?.length ? (
-                <div className="tutor-tab-video-frame">
-                  {/* <video
-                    src={video}
-                    controls
-                    autoplay
-                    style={{ height: "100%", width: "100%" }}
-                    alt="video"
-                  ></video> */}
-                  {/* <video controls autoplay>
-                    <source id="videoSource" src={video} type="video/webm" />
-                    Your browser does not support the video tag.
-                  </video> */}
+                <div className="tutor-tab-video-frame p-3 card">
+                  <video src={video} className="w-100 h-100"
+                  controls autoplay
+                  />
                 </div>
-              ) : null}
-
-              <video
-                src={lol123 ? URL.createObjectURL(lol123) : ""}
-                controls
-                autoplay
-                style={{ height: "100%", width: "100%" }}
-                alt="video"
-              ></video>
+              ) :
+                <div className="tutor-tab-video-frame p-3 card">
+                </div>
+              }
 
               <div className="container mt-2">
                 <div className="row justify-content-center align-items-center">
@@ -1074,7 +1045,7 @@ const TutorSetup = () => {
                         className={`btn btn-danger `}
                         onClick={() => set_video("")}
                       >
-                        <BsCloudUpload size={15} />
+                        <BsTrash size={15} />
                         <br />
                         Delete Video
                       </button>
@@ -1082,22 +1053,6 @@ const TutorSetup = () => {
                   </div>
                 </div>
               </div>
-
-              {/* <label id="btn" htmlFor="video">
-                Upload
-              </label> */}
-
-              {/* <select
-                className="video-upload-option"
-                style={{ padding: "5px" }}
-                name=""
-                id=""
-              >
-                <option value="null">Select Upload Option</option>
-                <option value="Storage">Local File</option>
-                <option value="Youtube">Youtube</option>
-                <option value="Link">Url</option>
-              </select> */}
             </div>
           </div>
 

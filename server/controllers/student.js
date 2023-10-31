@@ -257,7 +257,7 @@ let upload_student_short_list = async (req, res) => {
 
 
     items.map(async (item) => {
-        console.log(item,'inside items');
+        console.log(item, 'inside items');
         let list = item.split('-');
 
         let bool = await checkDuplicates(list[1], list[0], list[4])
@@ -266,83 +266,63 @@ let upload_student_short_list = async (req, res) => {
 }
 
 
-let get_student_short_list = async (req, res) => {
-    let tutorUserData = []
-    let tutorDemoLesson = []
-    console.log(req.params, req.query)
-    let shortList = (() =>
+const get_student_short_list = async (req, res) => {
+    try {
+        let tutorUserData = [];
+        let tutorDemoLesson = [];
 
-        connecteToDB.then((poolConnection) =>
-            poolConnection.request().query(findByAnyIdColumn('StudentShortList', { Student: req.query.student }, 'VARCHAR'))
-                .then((result) => {
-                    return result.recordset;
-                })
-                .catch(err => console.log(err))
-        )
-            .catch(err => console.log(err))
-    )
+        let shortList = async () => {
+            let poolConnection = await connecteToDB;
+            let result = await poolConnection.request().query(
+                find('StudentShortList', { Student: req.params.student }, { Student: 'VARCHAR' })
+            );
+            return result.recordset;
+        };
 
-    let getTutorDemo = async (item, shortList) => (
-        connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT FreeDemoLesson,AcademyId From TutorRates
-            `)
-                .then((result) => {
-                    tutorDemoLesson.push(result.recordset)
-                    return tutorDemoLesson;
-                })
-                .catch(err => console.log(err))
-        )
-    )
+        let getTutorDemo = async () => {
+            let poolConnection = await connecteToDB;
+            let result = await poolConnection.request().query(
+                'SELECT FreeDemoLesson, AcademyId FROM TutorRates'
+            );
+            tutorDemoLesson.push(result.recordset);
+            return tutorDemoLesson;
+        };
 
-    let getTutorDataViaShortList = ((item, shortList) =>
+        let getTutorDataViaShortList = async () => {
+            let poolConnection = await connecteToDB;
+            let result = await poolConnection.request().query('SELECT * FROM TutorSetup');
+            tutorUserData.push(result.recordset);
+            return tutorUserData;
+        };
 
-        connecteToDB.then((poolConnection) =>
-            poolConnection.request().query(`SELECT * From TutorSetup`)
-                .then((result) => {
-                    tutorUserData.push(result.recordset);
-                    return tutorUserData;
-                })
-                .catch(err => console.log(err))
-        )
-    )
+        let studentShortList = await shortList();
+        let tutorProfile = await getTutorDataViaShortList();
+        let demoLesson = await getTutorDemo();
 
-    return new Promise(async (resolve, reject) => {
-        let studentShortList = await shortList()
-        resolve(studentShortList)
-    })
-        .then(async (studentShortList) => {
-            let tutorProfile = await getTutorDataViaShortList();
-            return { studentShortList, tutorProfile }
-        })
-        .then(async ({ studentShortList, tutorProfile }) => {
-            let demoLesson = await getTutorDemo();
-            return { tutorProfile, demoLesson, studentShortList }
-        })
-        .catch((err) => {
-            console.log(err);
-        })
-        .then(({ tutorProfile, demoLesson, studentShortList }) => {
-            let studentBook = [];
+        let studentBook = [];
 
-            studentShortList.map((item, index) => {
-                let tutorData = tutorProfile[0].filter(tutor => tutor.AcademyId === item.AcademyId)[0]
-                let tutorDemoLesson = demoLesson[0].filter(tutor => tutor.AcademyId === item.AcademyId)[0]
-                let bookName = shortId.generate();
+        studentShortList.map((item) => {
+            console.log(item.AcademyId, 'item')
+            let tutorData = tutorProfile[0].filter((tutor) =>
+                tutor.AcademyId === item.AcademyId)[0];
+            let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId)[0];
+            let bookName = shortId.generate();
 
-                bookName = {
-                    'tutorDemoLesson': tutorDemoLesson,
-                    'tutorData': tutorData,
-                    'tutorShortList': item
-                };
+            bookName = {
+                tutorDemoLesson: tutorDemoLesson,
+                tutorData: tutorData,
+                tutorShortList: item,
+            };
 
-                studentBook.push(bookName)
+            studentBook.push(bookName);
+        });
 
-                if (studentBook.length === studentShortList.length) {
-                    res.status(200).send(Object.values(studentBook))
-                }
-            })
-        })
-}
+        res.status(200).send(Object.values(studentBook));
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 
 let get_my_data = async (req, res) => {
     let { AcademyId } = req.query;
@@ -404,7 +384,6 @@ let get_my_data = async (req, res) => {
 
 
 
-    //console.log(response_0, response_1);
 }
 
 let get_student_short_list_data = (req, res) => {
@@ -414,10 +393,7 @@ let get_student_short_list_data = (req, res) => {
             .then((result) => {
 
                 res.send(result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
+                 })
             .catch(err => console.log(err))
     )
 
@@ -434,10 +410,7 @@ let get_student_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
+              })
             .catch(err => console.log(err))
             .catch(err => console.log(err))
     )
@@ -447,11 +420,7 @@ let get_student_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
-            .catch(err => console.log(err))
+                })
             .catch(err => console.log(err))
     )
 

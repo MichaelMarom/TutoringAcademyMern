@@ -50,7 +50,6 @@ let subjects = (req, res) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             var resultSet = await poolConnection.request().query(
                 `
@@ -59,7 +58,6 @@ let subjects = (req, res) => {
             )
 
             res.send(resultSet)
-
 
         }
 
@@ -166,7 +164,6 @@ let post_form_one = (req, res) => {
             Grades: grades || null,
             userId
         };
-        console.log(dataObject, 'erdsdddd')
         let records = await poolConnection.request().query(
             insert('TutorSetup', dataObject)
         )
@@ -491,12 +488,11 @@ let get_user_data = (req, res) => {
         if (poolConnection) {
             poolConnection.request().query(
                 `
-                    SELECT EducationalLevel, EducationalLevelExperience, Certificate, CertificateState, CertificateExpiration, AcademyId  From Education  WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
+                    SELECT EducationalLevel, EducationalLevelExperience, Certificate, CertificateState, CertificateExpiration, AcademyId  From Education  WHERE CONVERT(VARCHAR(max), AcademyId) = '${user_id}'
                 `
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 
@@ -775,7 +771,6 @@ let get_rates = (req, res) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
                 `
@@ -784,7 +779,6 @@ let get_rates = (req, res) => {
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 
@@ -834,7 +828,6 @@ let faculties = (req, res) => {
                 .then((result) => {
                     console.log(result.recordset)
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 
@@ -1014,6 +1007,7 @@ let fetchStudentsBookings = (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
 const post_tutor_setup = (req, res) => {
     marom_db(async (config) => {
         try {
@@ -1024,13 +1018,17 @@ const post_tutor_setup = (req, res) => {
                 const findtutorSetup = await poolConnection.request().query(
                     findByAnyIdColumn('TutorSetup', { userId: req.body.userId })
                 );
-                if (findtutorSetup) {
+                if (findtutorSetup.recordset.length) {
+                    req.body.AcademyId = req.body.MiddleName.length > 0 ? req.body.FirstName + '.' + ' ' + req.body.MiddleName[0] + '.' + ' ' + req.body.LastName[0] + shortId.generate() : req.body.FirstName + '.' + ' ' + req.body.LastName[0] + shortId.generate();
+
                     const result = await poolConnection.request().query(
                         update('TutorSetup', req.body, { userId: req.body.userId })
-                    );
+                        );
                     res.status(200).send(result.recordset);
                 }
                 else {
+                    req.body.AcademyId = req.body.MiddleName.length > 0 ? req.body.FirstName + '.' + ' ' + req.body.MiddleName[0] + '.' + ' ' + req.body.LastName[0] + shortId.generate() : req.body.FirstName + '.' + ' ' + req.body.LastName[0] + shortId.generate();
+
                     const result = await poolConnection.request().query(
                         insert('TutorSetup', req.body)
                     );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { login } from '../axios/auth';
+import { get_user_detail, get_user_setup_detail, login } from '../axios/auth';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/auth_state/auth';
@@ -22,12 +22,15 @@ const LoginPage = () => {
             toast.success("Login Successfull!");
             setLoginForm({});
             localStorage.setItem('user', JSON.stringify(result.data));
+            const getUserSetup = await get_user_setup_detail(result.data[0].role, result.data[0].SID);
+            console.log(getUserSetup)
             dispatch(setUser(result.data))
             console.log(result.data[0].role)
             if (result.data[0].role === 'admin') {
                 navigate(`/${result.data[0].role}/tutor-data`);
                 return
             }
+            localStorage.setItem(`${result.data[0].role}_user_id`, getUserSetup.AcademyId)
             navigate(`/${result.data[0].role}/setup`);
         }
         else {

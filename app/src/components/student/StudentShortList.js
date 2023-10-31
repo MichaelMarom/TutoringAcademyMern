@@ -29,7 +29,7 @@ const StudentShortList = () => {
 
     const handleNavigateToSchedule = async (item) => {
         await dispatch(setTutor({
-            id: item.tutorData?.SID,
+            id: item.tutorSetup?.SID,
             academyId: item.tutorData?.AcademyId,
             GMT: item.tutorData?.GMT,
             firstName: item.tutorData?.FirstName,
@@ -44,6 +44,8 @@ const StudentShortList = () => {
         setIsLoading(true)
         get_student_short_list(window.localStorage.getItem('student_user_id'))
             .then((result) => {
+                console.log(result, 'shortlists')
+
                 result.sort(function (a, b) {
                     if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
                         return -1;
@@ -56,13 +58,13 @@ const StudentShortList = () => {
 
                 setResponse(result)
                 setIsLoading(false)
-                console.log(response)
             })
             .catch((err) => {
                 setIsLoading(false)
                 console.log(err)
             })
     }, [])
+
     function convertGMTToLocalTime(gmtOffset) {
         const utcTime = new Date();
         const localTime = new Date(utcTime.getTime() + gmtOffset * 60 * 60 * 1000);
@@ -105,31 +107,34 @@ const StudentShortList = () => {
                                     response.length > 0
                                         ?
                                         response.map((item, index) => {
-                                            return <tr onDoubleClick={e => redirect_to_tutor_profile(item.tutorData?.AcademyId)} key={index}>
+                                            const tutorSetup = item.tutorData;
+                                            const tutorDemoLesson = item.tutorDemoLesson;
+                                            const tutorShortList = item.tutorShortList;
+                                            return <tr onDoubleClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)} key={index}>
 
-                                                <td>{<img src={item.tutorData?.Photo} style={{ height: '100px', width: '120px' }} />}</td>
+                                                <td>{<img src={tutorSetup?.Photo} style={{ height: '100px', width: '120px' }} />}</td>
                                                 <td>
-                                                    <input type='checkbox' style={{ height: '20px', width: '20px' }} defaultChecked={item.tutorDemoLesson?.FreeDemoLesson === 'yes' ? true : false} />
+                                                    <input type='checkbox' style={{ height: '20px', width: '20px' }} defaultChecked={tutorDemoLesson?.FreeDemoLesson === 'yes' ? true : false} />
                                                 </td>
                                                 <td>
-                                                    {item.tutorShortList?.Subject}
+                                                    {tutorShortList?.Subject}
                                                 </td>
                                                 <td>
-                                                    {item.tutorShortList?.ScreenName}
+                                                    {tutorShortList?.ScreenName}
                                                 </td>
                                                 <td>
-                                                    {item.tutorData?.Country}
+                                                    {tutorSetup?.Country}
                                                 </td>
                                                 <td>
-                                                    {convertGMTToLocalTime(item.tutorData?.GMT).toLocaleString()}
+                                                    {convertGMTToLocalTime(tutorSetup?.GMT).toLocaleString()}
                                                 </td>
                                                 <td>
                                                     <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>View Schedule</button>
                                                 </td>
                                                 <td>
-                                                    <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(item.tutorData?.AcademyId)}>View Profile</button>
+                                                    <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>View Profile</button>
                                                 </td>
-                                                <td>{item.tutorShortList?.Rate}</td>
+                                                <td>{tutorShortList?.Rate}</td>
                                                 <td>
                                                     <input style={{ height: '20px', width: '20px' }} type='radio' />
                                                 </td>

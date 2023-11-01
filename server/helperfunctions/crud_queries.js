@@ -21,6 +21,14 @@ const insert = (tableName, values) => {
     return query
 }
 
+/**
+ * 
+ * @param {String} tableName 
+ * @param {{}} values key value to update the table fields
+ * @param {{}} where key value for where [key] = [value]
+ * @param {true} returnUpdated retuen updated value or not
+ * @returns 
+ */
 const update = (tableName, values, where, returnUpdated = true) => {
     const updateFieldsArray = Object.keys(values);
 

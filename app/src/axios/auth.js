@@ -50,3 +50,14 @@ export const get_user_setup_detail = async (role, userId) => {
         return err;
     }
 }
+
+export const forget_password = async (email, password) => {
+    try {
+        const {data} = await AxiosInstance.put(`/user/forgetpassword/${email}`, { password })
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}

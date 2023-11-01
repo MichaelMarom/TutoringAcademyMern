@@ -514,7 +514,6 @@ html,body{
         height: calc(100% - 40px);
         width: 60%;
         float: left;
-        padding: 80px 0 0 20px;
         text-align: center;
         font-size: small;
         font-weight: 500;
@@ -611,7 +610,7 @@ html,body{
         text-align: left;
         border-radius: 5px;
         margin-bottom: 15px;
-        background-color: #e4e4e4;
+        background-color: #d4e9efad;
         padding: 10px;
     }
 

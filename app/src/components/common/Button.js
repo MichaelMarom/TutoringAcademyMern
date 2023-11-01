@@ -1,14 +1,24 @@
 import React from 'react';
-import { Button as BootstrapButton } from 'react-bootstrap';
 
-function Button(props) {
-    const { label, type, onClick, disabled } = props;
+function Button({ loading=false, type="button", handleClick = () => { }, children, className='' }) {
 
-    const buttonClass = type === 'inverted' ? 'btn-inverted' : 'btn-default';
+    // const buttonClass = type === 'inverted' ? 'btn-inverted' : 'btn-default';
     return (
-        <BootstrapButton className={buttonClass} onClick={onClick} disabled={disabled}>
-            {label}
-        </BootstrapButton>
+        <button
+            className={`btn ${loading ? 'btn-secondary' : className}`}
+            disabled={loading}
+            type={type}
+            onClick={handleClick}
+        >
+            {loading && (
+                <span
+                    className="spinner-border spinner-border-sm mr-2"
+                    role="status"
+                    aria-hidden="true"
+                ></span>
+            )}
+            {!loading && children}
+        </button>
     );
 }
 

@@ -1,5 +1,5 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert, find, findByAnyIdColumn } = require('../helperfunctions/crud_queries');
+const { insert, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -107,9 +107,37 @@ const get_setup_detail = async (req, res) => {
     })
 }
 
+const forget_password = async (req, res) => {
+    const { email } = req.params;
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    findByAnyIdColumn('Users', req.params)
+                );
+                console.log(result.recordset, req.body)
+                if (!result.recordset.length) throw new Error(`user with email = ${email} not found`);
+                const hashedPassword = await bcrypt.hash(req.body.password, 10);
+                const updateData = await poolConnection.request().query(
+                    update('Users', { password: hashedPassword }, { email })
+                );
+
+                res.status(200).send(updateData.recordset[0]);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 module.exports = {
     login,
     get_user_detail,
+    forget_password,
     signup,
     get_setup_detail
 };

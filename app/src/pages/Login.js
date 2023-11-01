@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { get_user_detail, get_user_setup_detail, login } from '../axios/auth';
+import { get_user_setup_detail, login } from '../axios/auth';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/auth_state/auth';
+import { ForgetPasswordModal } from '../components/auth/ForgetPasswordModal';
+import '../styles/auth.css'
+import Button from '../components/common/Button';
 
 const LoginPage = () => {
     const navigate = useNavigate()
+    const [modalOpen, setOpenModel] = useState(false)
     const [loginForm, setLoginForm] = useState({
         email: '',
         password: '',
@@ -89,22 +93,15 @@ const LoginPage = () => {
                                                 onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                                             />
                                         </div>
+                                        <div className='w-100 d-flex justify-content-end text-primary'>
+                                            <div onClick={() => setOpenModel(true)}>
+                                                forget password
+                                            </div>
+                                        </div>
 
-                                        <button
-                                            id="loading-button"
-                                            className={`btn ${loading ? 'btn-secondary' : 'btn-primary'}`}
-                                            disabled={loading}
-                                            type='submit'
-                                        >
-                                            {loading && (
-                                                <span
-                                                    className="spinner-border spinner-border-sm mr-2"
-                                                    role="status"
-                                                    aria-hidden="true"
-                                                ></span>
-                                            )}
-                                            {!loading && 'Login'}
-                                        </button>
+                                        <Button className="btn-primary" type="submit" loading={loading}>
+                                            Login
+                                        </Button>
 
                                         <div className="text-center">
                                             <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
@@ -112,6 +109,10 @@ const LoginPage = () => {
 
                                     </form>
                                 </div>
+                                <ForgetPasswordModal
+                                    setOpenModel={setOpenModel}
+                                    modalOpen={modalOpen}
+                                />
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../axios/tutor';
 import career from '../../images/career.png';
 import Select, { components } from 'react-select'
+const placeholderOption = { value: 'placeholder', label: 'Select other languages' };
 
 const languages = [
     'Afrikaans',
@@ -84,15 +85,6 @@ const languageOptions = languages.map((language) => ({
     label: language,
 }));
 
-const CustomLanguageINput = ({ className = 'langues', ...props }) => {
-    return (
-        <components.Input
-            {...props}
-            className={`input-language ${className}`}
-        />
-    );
-};
-
 const Education = () => {
 
     useEffect(() => {
@@ -112,7 +104,7 @@ const Education = () => {
     let [degree, set_degree] = useState([]);
     let [certificate, set_certificate] = useState([]);
     let [language, set_language] = useState([]);
-    let [state1, set_state1] = useState([]);
+
     let [state2, set_state2] = useState([]);
     let [state3, set_state3] = useState([]);
     let [state4, set_state4] = useState([]);
@@ -120,11 +112,11 @@ const Education = () => {
     let [state6, set_state6] = useState([]);
 
     let [experience, set_experience] = useState('');
-    let [graduagteYr1, set_graduagteYr1] = useState('');
-    let [graduagteYr2, set_graduagteYr2] = useState('');
+    let [graduateYr1, set_graduateYr1] = useState('');
+    let [graduateYr2, set_graduateYr2] = useState('');
     let [graduagteYr3, set_graduagteYr3] = useState('');
     let [expiration, set_expiration] = useState('');
-    let [othelang, set_othelang] = useState('');
+    let [othelang, set_othelang] = useState([]);
     let [workExperience, set_workExperience] = useState('');
 
     let [exp, set_exp] = useState();
@@ -139,7 +131,7 @@ const Education = () => {
 
 
     const handleLanguageChange = (selectedOption) => {
-        set_language(selectedOption);
+        set_othelang(selectedOption);
     }
     useEffect(() => {
         const currentYear = (new Date()).getFullYear();
@@ -155,7 +147,7 @@ const Education = () => {
     let user_id = window.localStorage.getItem('tutor_user_id');
 
     let saver = () => {
-        let response = upload_form_two(level, university1, university2, degree, JSON.stringify(degreeFile), certificate, JSON.stringify(certificateFile), JSON.stringify(language), state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, othelang, workExperience, user_id)
+        let response = upload_form_two(level, university1, university2, degree, JSON.stringify(degreeFile), certificate, JSON.stringify(certificateFile), JSON.stringify(language), state2, state3, state4, state5, state6, experience, graduateYr1, graduateYr2, graduagteYr3, expiration, JSON.stringify(othelang), workExperience, user_id)
         return response;
     }
 
@@ -174,7 +166,9 @@ const Education = () => {
             let bools = all_values.map(item => {
                 let dependantFields = { degree: 'degreeFile', certificate: "certificateFile" }
                 if (item.value === '') {
-                    if ((dependantFields[item.name] && (item.value && all_values.find(input => input.name === dependantFields[item.name])?.value)) || (document.querySelector('[autocomplete="off"]') === item && language.length)) {
+                    console.log(document.querySelectorAll('[autocomplete="off"]')[0] === item, document.querySelector('[autocomplete="off"]'), document.querySelectorAll('[autocomplete="off"]')[0], item, language, ';;lolll')
+                    if ((dependantFields[item.name] && (item.value && all_values.find(input => input.name === dependantFields[item.name])?.value)) || (document.querySelectorAll('[autocomplete="off"]')[0] === item && Object.keys(language).length) || (document.querySelectorAll('[autocomplete="off"]')[1] === item && othelang.length)) {
+                        console.log(true, item, '123')
                         bool_list.push(true)
                     }
                     else if (!dependantFields[item.name]) {
@@ -203,12 +197,10 @@ const Education = () => {
                     }
 
                     bool_list.push(true)
-
                 }
             })
 
             let result = bool_list.filter(item => item === false)
-
             if (result.length === 0) {
                 document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
                 let response = await saver();
@@ -255,10 +247,10 @@ const Education = () => {
                     set_university1(data.College1)
                     set_university2(data.College2)
                     set_language(JSON.parse(data.NativeLang))
-                    set_othelang(data.NativeLangOtherLang)
+                    set_othelang(JSON.parse(data.NativeLangOtherLang))
 
-                    set_graduagteYr1(data.College1Year)
-                    set_graduagteYr2(data.College2Year)
+                    set_graduateYr1(data.College1Year)
+                    set_graduateYr2(data.College2Year)
                     set_graduagteYr3(data.DegreeYear)
 
                     set_degree(data.Degree)
@@ -361,6 +353,7 @@ const Education = () => {
     let [event, set_event] = useState('all')
 
     let edu_level = e => {
+        console.log(e.target.value)
         if (e.target.value === 'No Academic Education') {
             set_opacity('.5')
             set_event('none')
@@ -420,171 +413,146 @@ const Education = () => {
 
     return (
         <>
-            <div className="tutor-popin"></div>
-            <div className="save-overlay">
-                <span className="save_loader"></span>
+            <div className='tutor-popin'></div>
+            <div className='save-overlay'>
+                <span className='save-loader'></span>
             </div>
-            <div className="tutor-tab-education">
+            <div className="container tutor-tab-education">
                 <form action="">
-
-                    <div className="tutor-tab-education-info" >
+                    <div className="tutor-tab-education-info pt-4">
                         <h3>Education</h3>
-
-                        <h6 className='tutor-tab-education-notice highlight' >
-                            Tutor does not have to be academic graduate in order to pass his knowledge. However, when you select your academic background, you must uplaod your credentials. You have 7 days doing that. Until your diploma or teacher's cerificate uploaded, "X" icon is being shown near the appropriate field. When your documentaions are uploaded, the icon be changed to a green "Verified" logo. The student, or parents are able to see your status when making their decision of selecting you.
+                        <h6 className="tutor-tab-education-notice highlight">
+                            Tutor does not have to be an academy graduate in order to lecture his knowledge. However, when you select your academic background, you must upload your diploma and/or Certificate(s). You have 7 days to do that. Until your credentials are uploaded, "X" icon is being shown near the appropriate field. When your documents are uploaded, the "X" icon is changed to a green "Verified" logo. The student or parents can see your status when making their decision of selecting you.
                         </h6>
 
-
-                        <div className='input-cnt' style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <select id='level' style={{ padding: '5px' }} onInput={edu_level}>
-                                    {
-                                        level_list
-                                    }
+                        <div className="d-flex justify-content-between row">
+                            <div className="col-md-4">
+                                <label htmlFor="level">Education Level:</label>
+                                <select
+                                    id="level"
+                                    className="form-control m-0"
+                                    onChange={edu_level}
+                                    value={level}
+                                >
+                                    {level_list}
                                 </select>
                             </div>
 
-                            <div style={{
-                                display: 'flex', visibility: 'hidden', justifyContent: 'center', width: '100%',
-                                whiteSpace: 'nowrap'
-                            }}>
-                                <select onInput={e => set_state1(e.target.value)} id="state1">
-                                    <option value='null'>Select</option>
-                                </select>
-                            </div>
-
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap', width: '150px' }}>
-                                <select onInput={e => set_experience(e.target.value)} id="experience" style={{ float: 'right', padding: '8px', margin: '0 0 10px 0' }}>
+                            <div className="col-md-4">
+                                <label htmlFor="experience">Experience:</label>
+                                <select
+                                    id="experience"
+                                    className="form-control m-0"
+                                    onChange={(e) => set_experience(e.target.value)}
+                                    value={experience}
+                                >
                                     {exp}
                                 </select>
                             </div>
                         </div>
+                        {(level !== 'Undergraduate Student' && level !== 'No Academic Education' && level.length) ? (
+                            <>
+                                <div className="row mt-3">
+                                    <div className="col-md-4">
+                                        <label htmlFor="university1">College/University 1:</label>
+                                        <input
+                                            type="text"
+                                            id="university1"
+                                            className="form-control m-0"
+                                            value={university1}
+                                            onChange={(e) => set_university1(e.target.value)}
+                                            placeholder="College/University 1"
+                                        />
+                                    </div>
 
-                        <div className='input-cnt' style={{ pointerEvents: event, opacity: opacity, width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input type='text' id='university1' defaultValue={university1} onInput={e => set_university1(e.target.value)} placeholder='College/University 1' />
-                            </div>
+                                    <div className="col-md-4">
+                                        <label htmlFor="state1">Select State:</label>
+                                        <select
+                                            id="state1"
+                                            className="form-control m-0 w-100"
+                                            onChange={(e) => set_state2(e.target.value)}
+                                            value={state2}
+                                        >
+                                            <option value="">Select State</option>
+                                            {stateList.map((item) => (
+                                                <option key={item} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                            <div style={{
-                                display: 'flex', justifyContent: 'center', width: '100%',
-                                whiteSpace: 'nowrap'
-                            }}>
-                                <select style={{ padding: '5px', width: '100px' }} onInput={e => set_state2(e.target.value)} id="state1">
-                                    <option value=''>Select State</option>
-                                    {
-                                        stateList.map(item => {
-                                            if (files !== null) {
-                                                return (
-                                                    item === files.College1State
-                                                        ?
-                                                        <option selected key={item}>{item}</option>
-                                                        :
-                                                        <option key={item}>{item}</option>
-                                                )
-                                            } else {
-                                                return <option key={item}>{item}</option>
-                                            }
-                                        }
-                                        )
-                                    }
-                                </select>
-                            </div>
+                                    <div className="col-md-4">
+                                        <label htmlFor="yr1">Graduation Year:</label>
+                                        <select
+                                            id="yr1"
+                                            className="form-control m-0 w-100"
+                                            onChange={(e) => set_graduateYr1(e.target.value)}
+                                            value={graduateYr1}
+                                        >
+                                            <option>Select Year</option>
+                                            {d_list.map((item) => (
+                                                <option key={item} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', whiteSpace: 'nowrap', marginTop: '10px' }}>
-                                <label htmlFor='yr1'>Graduation Year</label>
+                                <div className="row mt-3">
+                                    <div className="col-md-4">
+                                        <label htmlFor="university2">College/University 2:</label>
+                                        <input
+                                            type="text"
+                                            id="university2"
+                                            className="form-control m-0"
+                                            value={university2}
+                                            onChange={(e) => set_university2(e.target.value)}
+                                            placeholder="College/University 2"
+                                        />
+                                    </div>
 
-                                <select onInput={e => set_graduagteYr1(e.target.value)} id="yr1">
-                                    {
-                                        d_list.map(item => {
-                                            if (files !== null) {
-                                                return (
-                                                    item === files.College1Year
-                                                        ?
-                                                        <option selected key={item}>{item}</option>
-                                                        :
-                                                        <option key={item}>{item}</option>
-                                                )
-                                            } else {
-                                                return <option key={item}>{item}</option>
-                                            }
-                                        }
-                                        )
-                                    }
-                                </select>
+                                    <div className="col-md-4">
+                                        <label htmlFor="state3">Select State:</label>
+                                        <select
+                                            id="state3"
+                                            className="form-control m-0 w-100"
+                                            onChange={(e) => set_state3(e.target.value)}
+                                            value={state3}
+                                        >
+                                            <option value="">Select State</option>
+                                            {stateList.map((item) => (
+                                                <option key={item} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                            </div>
-                        </div>
+                                    <div className="col-md-4">
+                                        <label htmlFor="yr2">Graduation Year:</label>
+                                        <select
+                                            id="yr2"
+                                            className="form-control m-0 w-100"
+                                            onChange={(e) => set_graduateYr2(e.target.value)}
+                                            value={graduateYr2}
+                                        >
+                                            <option>Select Year</option>
+                                            {d_list.map((item) => (
+                                                <option key={item} value={item}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
 
-                        <div className='input-cnt' style={{ pointerEvents: event, opacity: opacity, width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input type='text' defaultValue={university2} id='university2' onInput={e => set_university2(e.target.value)} placeholder='College/University 2' />
-                            </div>
+                                <div className="row mt-3">
+                                    <div className="col-md-4">
+                                        <label htmlFor="degree">Upload Degree:</label>
 
-                            <div style={{
-                                display: 'flex', justifyContent: 'center', width: '100%',
-                                whiteSpace: 'nowrap'
-                            }}>
-                                <select style={{ padding: '5px', width: '100px' }} onInput={e => set_state3(e.target.value)} id="state3">
-                                    <option value=''>Select State</option>
-                                    {
-                                        stateList.map(item => {
-                                            if (files !== null) {
-                                                return (
-                                                    item === files.College2State
-                                                        ?
-                                                        <option selected key={item}>{item}</option>
-                                                        :
-                                                        <option key={item}>{item}</option>
-                                                )
-                                            } else {
-                                                return <option selected key={item}>{item}</option>
-                                            }
-                                        }
-                                        )
-                                    }
-                                </select>
-                            </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', whiteSpace: 'nowrap', marginTop: '10px' }}>
-                                <label htmlFor='yr2'>Graduation Year</label>
-                                <select onInput={e => set_graduagteYr2(e.target.value)} id="yr2">
-                                    {
-                                        d_list.map(item => {
-                                            if (files !== null) {
-                                                return (
-                                                    item === files.College2Year
-                                                        ?
-                                                        <option selected key={item}>{item}</option>
-                                                        :
-                                                        <option key={item}>{item}</option>
-                                                )
-                                            } else {
-                                                return <option key={item}>{item}</option>
-                                            }
-                                        }
-                                        )
-                                    }
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className='input-cnt' style={{ pointerEvents: event, opacity: opacity, width: '100%' }}>
-                            <div style={{
-                                display: 'flex', flexDirection: "column",
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                width: '100%'
-                            }}>
-                                <select id='degree'
-                                    name="degree"
-                                    className='mb-4' style={{ padding: '5px' }} onInput={e => set_degree(e.target.value)}>
-                                    {
-                                        degree_list
-                                    }
-                                </select>
-                                {
-                                    degree.length ?
-                                        <div className={`form-outline`}>
+                                        <div className="form-outline">
                                             <input
                                                 type="file"
                                                 id="degreeFile"
@@ -592,164 +560,168 @@ const Education = () => {
                                                 className="form-control m-0"
                                                 onChange={handleFileUpload}
                                             />
-                                        </div> : null
-                                }
-                            </div>
+                                        </div>
+                                    </div>
 
-                            <div style={{
-                                display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%',
-                                whiteSpace: 'nowrap'
-                            }}>
-                                <select style={{ padding: '5px', width: '100px' }} onInput={e => set_state4(e.target.value)} id="state1">
-                                    <option value=''>Select State</option>
-                                    {
-                                        stateList.map(item => {
+                                    <div className="col-md-4">
+                                        <label htmlFor="state4">Select State:</label>
+                                        <select
+                                            id="state4"
+                                            className="form-control m-0 w-100"
+                                            onChange={(e) => set_state4(e.target.value)}
+                                        >
+                                            <option value="">Select State</option>
+                                            {stateList.map((item) => (
+                                                <option
+                                                    key={item}
+                                                    value={item}
+                                                    selected={item === files?.DegreeState}
+                                                >
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                                            if (files !== null) {
+                                    <div className="col-md-4">
+                                        <label htmlFor="yr3">Graduation Year:</label>
+                                        <select
+                                            id="yr3"
+                                            className="form-control m-0 w-100"
+                                            onChange={(e) => set_graduagteYr3(e.target.value)}
+                                        >
 
-                                                return (
-                                                    item === files.DegreeState
-                                                        ?
-                                                        <option selected key={item}>{item}</option>
-                                                        :
-                                                        <option key={item}>{item}</option>
-                                                )
-                                            } else {
-                                                return <option key={item}>{item}</option>
+                                            <option>
+                                                Select Year
+                                            </option>
+                                            {d_list.map((item) => (
+                                                <option
+                                                    key={item}
+                                                    value={item}
+                                                    selected={item === files?.DegreeYear}
+                                                >
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </>
+                        ) : null}
 
-                                            }
-                                        }
-
-                                        )
-                                    }
+                        <div className="row mt-3 align-items-end">
+                            <div className="col-md-4">
+                                <label htmlFor="certificate">Certificate:</label>
+                                <select
+                                    id="certificate"
+                                    name="certificate"
+                                    className="form-control m-0"
+                                    onChange={certified}
+                                >
+                                    {certificate_list}
                                 </select>
+                                {certificate.length ? (
+                                    <div className="form-outline">
+                                        <input
+                                            type="file"
+                                            id="certificateFile"
+                                            name="certificateFile"
+                                            className="form-control m-0"
+                                            onChange={handleCertUpload}
+                                        />
+                                    </div>
+                                ) : null}
                             </div>
+                            {certificate.length ?
+                                <>
+                                    <div className="col-md-4">
+                                        <label htmlFor="state5">Select State:</label>
+                                        <select
+                                            id="state5"
+                                            className="form-control m-0 w-100"
+                                            onChange={(e) => set_state5(e.target.value)}
+                                        >
+                                            <option value="">Select State</option>
+                                            {stateList.map((item) => (
+                                                <option
+                                                    key={item}
+                                                    value={item}
+                                                    selected={item === files?.CertificateState}
+                                                >
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', whiteSpace: 'nowrap', marginTop: '10px' }}>
-                                <label htmlFor='yr3'>Graduation Year</label>
-                                <select onInput={e => set_graduagteYr3(e.target.value)} id="yr3">
-                                    {
-                                        d_list.map(item => {
-                                            if (files !== null) {
-
-                                                return (
-                                                    item === files.DegreeYear
-                                                        ?
-                                                        <option selected key={item}>{item}</option>
-                                                        :
-                                                        <option key={item}>{item}</option>
-                                                )
-                                            } else {
-                                                return <option key={item}>{item}</option>
-
-                                            }
-                                        }
-
-                                        )
-                                    }
-                                </select>
-                            </div>
+                                    <div className="col-md-4">
+                                        <label htmlFor="expiration">Expiration:</label>
+                                        <input
+                                            type="date"
+                                            id="expiration"
+                                            className="form-control m-0"
+                                            value={files?.CertificateExpiration}
+                                            onChange={(e) => set_expiration(e.target.value)}
+                                            placeholder="Expiration"
+                                        />
+                                    </div>
+                                </>
+                                : null
+                            }
                         </div>
 
-                        <div className='input-cnt' style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%', whiteSpace: 'nowrap', alignItems: "center" }}>
-                                <select id='certificate' name="certificate" style={{ padding: '5px', marginBottom: '20px' }} onInput={certified}>
-                                    {
-                                        certificate_list
-                                    }
-                                </select>
-                                {
-                                    certificate.length ?
-                                        <div className={`form-outline `}>
-                                            <input
-                                                type="file"
-                                                id="certificateFile"
-                                                name="certificateFile"
-                                                className="form-control m-0"
-                                                onChange={handleCertUpload}
-                                            />
-                                        </div> : null
-                                }
-                            </div>
-
-                            <div style={{
-                                display: 'flex', opacity: certified_opacity, pointerEvents: certified_event, justifyContent: 'center', margin: '0 0 30px 0', width: '100%',
-                                whiteSpace: 'nowrap'
-                            }}>
-                                <select style={{ padding: '5px', width: '100px' }} onInput={e => set_state5(e.target.value)} id="state1">
-                                    <option value=''>Select State</option>
-                                    {
-                                        stateList.map(item => {
-                                            if (files !== null) {
-                                                return (
-                                                    item === files.CertificateState
-                                                        ?
-                                                        <option selected key={item}>{item}</option>
-                                                        :
-                                                        <option key={item}>{item}</option>
-                                                )
-                                            } else {
-                                                return <option key={item}>{item}</option>
-
-                                            }
-                                        }
-                                        )
-                                    }
-                                </select>
-                            </div>
-
-                            <div style={{ display: 'flex', opacity: certified_opacity, pointerEvents: certified_event, justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_expiration(e.target.value)} placeholder='Expiration' type="date" defaultValue={files !== null ? files.CertificateExpiration : ''} id="expiration" style={{ float: 'right', width: '200px', marginTop: '30px' }} />
-                            </div>
-                        </div>
-
-                        <div className='input-cnt' style={{ width: '100%' }}>
-                            <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%', whiteSpace: 'nowrap', marginLeft: '2.3rem' }}>
-
+                        <div className="row mt-3 justify-content-between ">
+                            <div className="col-md-4">
+                                <label htmlFor="language">Select Native Language:</label>
                                 <Select
-                                    isMulti
-                                    className='language-selector'
-                                    id='language'
+                                    isMulti={false}
+                                    placeholder="Select Native Languages"
+                                    className="language-selector w-100"
+                                    id="native-language"
+                                    onChange={(selectedOption) => set_language(selectedOption)}
+                                    defaultValue={language}
                                     value={language}
-                                    onChange={handleLanguageChange}
                                     options={languageOptions}
-                                    components={CustomLanguageINput}
                                 />
                             </div>
 
-                            <div style={{
-                                display: 'flex', justifyContent: 'center', margin: '0 0 30px 0', width: '100%',
-                                whiteSpace: 'nowrap'
-                            }}>
-                                <select style={{ padding: '5px', width: '100px', visibility: 'hidden' }} value='null' id="state1">
-                                    <option value='null'>Select</option>
-                                </select>
+                            <div className="col-md-4">
+                                <label htmlFor="other-languages">Select other languages:</label>
+                                <Select
+                                    isMulti
+                                    placeholder="Select other languages"
+                                    className="language-selector w-100"
+                                    id="other-languages"
+                                    value={othelang}
+                                    onChange={handleLanguageChange}
+                                    options={languageOptions}
+                                />
                             </div>
                         </div>
-
-
-
-
-
                     </div>
 
                     <div className="tutor-tab-education-experience">
                         <div className="education-work-experience-logo">
-
-                            <img src={career} style={{ height: '85%', width: '200px', display: 'block', margin: 'auto', padding: '30px' }} alt="" />
-
-                            <label htmlFor="" style={{ margin: 'auto', textAlign: 'center' }}><h6 style={{ textAlign: 'center' }}>Work Experience</h6></label>
-
+                            <img
+                                src={career}
+                                style={{ height: '85%', width: '200px', display: 'block', margin: 'auto', padding: '30px' }}
+                                alt=""
+                            />
+                            <label htmlFor=""><h6 style={{ textAlign: 'center' }}>Work Experience</h6></label>
                         </div>
 
-                        <textarea defaultValue={workExperience} onInput={e => set_workExperience(e.target.value)} style={{ height: '400px' }} placeholder="Enter Here Your Work Experience" className="tutor-tab-education-experience-details">
-
-                        </textarea>
+                        <textarea
+                            value={workExperience}
+                            onChange={(e) => set_workExperience(e.target.value)}
+                            style={{ height: '400px' }}
+                            placeholder="Enter Your Work Experience"
+                            className="tutor-tab-education-experience-details"
+                        ></textarea>
                     </div>
-
                 </form>
             </div>
         </>
+
     );
 }
 

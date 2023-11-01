@@ -56,7 +56,7 @@ const App = () => {
   }, [user]);
 
   const generateRoutes = (role) => {
-    // if (role && rolePermissions[role]) {
+    if (role && rolePermissions[role]) {
       if (role === 'admin') {
         const allRoutes = Object.keys(rolePermissions).map((key) => rolePermissions[key]).flat();
         setActiveRoutes(
@@ -66,15 +66,15 @@ const App = () => {
           })))
       } else {
         setActiveRoutes(
-          rolePermissions['student'].map((route) => ({
+          rolePermissions[role].map((route) => ({
             path: route.path,
             element: route.component,
           })))
       }
-    // }
-    // else {
-    //   setActiveRoutes([]);
-    // }
+    }
+    else {
+      setActiveRoutes([]);
+    }
   };
 
 

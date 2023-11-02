@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../axios/tutor';
 import career from '../../images/career.png';
 import Select, { components } from 'react-select'
-const placeholderOption = { value: 'placeholder', label: 'Select other languages' };
 
 const languages = [
     'Afrikaans',
@@ -95,12 +94,13 @@ const Education = () => {
         }
     }, [])
 
-    let { save } = useSelector(s => s.save)
-
 
     let [level, set_level] = useState([]);
+
     let [university1, set_university1] = useState([]);
     let [university2, set_university2] = useState([]);
+    let [university3, set_university3] = useState([]);
+
     let [degree, set_degree] = useState([]);
     let [certificate, set_certificate] = useState([]);
     let [language, set_language] = useState([]);
@@ -110,11 +110,14 @@ const Education = () => {
     let [state4, set_state4] = useState([]);
     let [state5, set_state5] = useState([]);
     let [state6, set_state6] = useState([]);
+    let [doctorateState, set_doctorateState] = useState([])
 
     let [experience, set_experience] = useState('');
     let [graduateYr1, set_graduateYr1] = useState('');
     let [graduateYr2, set_graduateYr2] = useState('');
     let [graduagteYr3, set_graduagteYr3] = useState('');
+    let [doctorateGraduateYear, setDoctorateGraduateYear] = useState('')
+
     let [expiration, set_expiration] = useState('');
     let [othelang, set_othelang] = useState([]);
     let [workExperience, set_workExperience] = useState('');
@@ -147,7 +150,7 @@ const Education = () => {
     let user_id = window.localStorage.getItem('tutor_user_id');
 
     let saver = () => {
-        let response = upload_form_two(level, university1, university2, degree, JSON.stringify(degreeFile), certificate, JSON.stringify(certificateFile), JSON.stringify(language), state2, state3, state4, state5, state6, experience, graduateYr1, graduateYr2, graduagteYr3, expiration, JSON.stringify(othelang), workExperience, user_id)
+        let response = upload_form_two(level, university1, university2, university3, degree, JSON.stringify(degreeFile), certificate, JSON.stringify(certificateFile), JSON.stringify(language), state2, state3, state4, state5, state6, doctorateState, experience, graduateYr1, graduateYr2, graduagteYr3, doctorateGraduateYear, expiration, JSON.stringify(othelang), workExperience, user_id)
         return response;
     }
 
@@ -242,16 +245,28 @@ const Education = () => {
                 if (result.length > 0) {
                     let data = result[0];
                     set_files(data)
-
+                    console.log(data)
                     set_workExperience(data.WorkExperience)
                     set_university1(data.College1)
                     set_university2(data.College2)
+                    set_university3(data.DoctorateCollege)
+
                     set_language(JSON.parse(data.NativeLang))
                     set_othelang(JSON.parse(data.NativeLangOtherLang))
 
                     set_graduateYr1(data.College1Year)
-                    set_graduateYr2(data.College2Year)
+                    set_graduateYr2(data.College2StateYear)
                     set_graduagteYr3(data.DegreeYear)
+
+                    set_state2(data.College1State)
+                    set_state3(data.College2State)
+                    set_state4(data.DegreeState)
+                    set_state5(data.CertificateState)
+                    set_doctorateState(data.DoctorateState)
+
+                    setDoctorateGraduateYear(data.DoctorateGradYr)
+
+                    set_doctorateState(data.DoctorateState)
 
                     set_degree(data.Degree)
                     set_certificate(data.Certificate)
@@ -323,9 +338,6 @@ const Education = () => {
                 let list = data.recordset.map((item) =>
                     <option key={item.Level} className={item.Level} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} selected={item.Level === level ? 'selected' : ''} value={item.Level}>{item.Level}</option>
                 );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Educational Level</option>
-
-                list.unshift(head);
                 set_level_list(list)
 
             })
@@ -338,9 +350,6 @@ const Education = () => {
                 let list = data.recordset.map((item) =>
                     <option key={item.CertificateType} className={item.CertificateType} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 5x 0 5x', borderRadius: '0' }} selected={item.CertificateType === certificate ? 'selected' : ''} value={item.CertificateType}>{item.CertificateType}</option>
                 );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>CertificateType</option>
-
-                list.unshift(head);
                 set_certificate_list(list)
 
             })
@@ -434,6 +443,7 @@ const Education = () => {
                                     onChange={edu_level}
                                     value={level}
                                 >
+                                    <option value="" disabled selected >Select Education</option>
                                     {level_list}
                                 </select>
                             </div>
@@ -454,7 +464,7 @@ const Education = () => {
                             <>
                                 <div className="row mt-3">
                                     <div className="col-md-4">
-                                        <label htmlFor="university1">College/University 1:</label>
+                                        <label htmlFor="university1">Bachelor Degree:</label>
                                         <input
                                             type="text"
                                             id="university1"
@@ -499,62 +509,118 @@ const Education = () => {
                                         </select>
                                     </div>
                                 </div>
+                                {
+                                     level !== 'Graduate Student' ?
+                                        <div className="row mt-3">
+                                            <div className="col-md-4">
+                                                <label htmlFor="university2">Master Degree:</label>
+                                                <input
+                                                    type="text"
+                                                    id="university2"
+                                                    className="form-control m-0"
+                                                    value={university2}
+                                                    onChange={(e) => set_university2(e.target.value)}
+                                                    placeholder="College/University 2"
+                                                />
+                                            </div>
+
+                                            <div className="col-md-4">
+                                                <label htmlFor="state3">Select State:</label>
+                                                <select
+                                                    id="state3"
+                                                    className="form-control m-0 w-100"
+                                                    onChange={(e) => set_state3(e.target.value)}
+                                                    value={state3}
+                                                >
+                                                    <option value="">Select State</option>
+                                                    {stateList.map((item) => (
+                                                        <option key={item} value={item}>
+                                                            {item}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div className="col-md-4">
+                                                <label htmlFor="yr2">Graduation Year:</label>
+                                                <select
+                                                    id="yr2"
+                                                    className="form-control m-0 w-100"
+                                                    onChange={(e) => set_graduateYr2(e.target.value)}
+                                                    value={graduateYr2}
+                                                >
+                                                    <option>Select Year</option>
+                                                    {d_list.map((item) => (
+                                                        <option key={item} value={item}>
+                                                            {item}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        : null
+                                }
+                                {
+                                    level !== 'Bachelor Degree' && level !== 'Master Degree' ?
+                                        <div className="row mt-3">
+                                            <div className="col-md-4">
+                                                <label htmlFor="university2">Doctorate Degree:</label>
+                                                <input
+                                                    type="text"
+                                                    id="university2"
+                                                    className="form-control m-0"
+                                                    value={university3}
+                                                    onChange={(e) => set_university3(e.target.value)}
+                                                    placeholder="College/University 2"
+                                                />
+                                            </div>
+
+                                            <div className="col-md-4">
+                                                <label htmlFor="state3">Select State:</label>
+                                                <select
+                                                    id="state3"
+                                                    className="form-control m-0 w-100"
+                                                    onChange={(e) => set_doctorateState(e.target.value)}
+                                                    value={doctorateState}
+                                                >
+                                                    <option value="">Select State</option>
+                                                    {stateList.map((item) => (
+                                                        <option key={item} value={item}>
+                                                            {item}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div className="col-md-4">
+                                                <label htmlFor="yr2">Graduation Year:</label>
+                                                <select
+                                                    id="yr2"
+                                                    className="form-control m-0 w-100"
+                                                    onChange={(e) => setDoctorateGraduateYear(e.target.value)}
+                                                    value={doctorateGraduateYear}
+                                                >
+                                                    <option>Select Year</option>
+                                                    {d_list.map((item) => (
+                                                        <option key={item} value={item}>
+                                                            {item}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        :
+                                        null}
+
 
                                 <div className="row mt-3">
                                     <div className="col-md-4">
-                                        <label htmlFor="university2">College/University 2:</label>
-                                        <input
-                                            type="text"
-                                            id="university2"
-                                            className="form-control m-0"
-                                            value={university2}
-                                            onChange={(e) => set_university2(e.target.value)}
-                                            placeholder="College/University 2"
-                                        />
-                                    </div>
-
-                                    <div className="col-md-4">
-                                        <label htmlFor="state3">Select State:</label>
-                                        <select
-                                            id="state3"
-                                            className="form-control m-0 w-100"
-                                            onChange={(e) => set_state3(e.target.value)}
-                                            value={state3}
-                                        >
-                                            <option value="">Select State</option>
-                                            {stateList.map((item) => (
-                                                <option key={item} value={item}>
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="col-md-4">
-                                        <label htmlFor="yr2">Graduation Year:</label>
-                                        <select
-                                            id="yr2"
-                                            className="form-control m-0 w-100"
-                                            onChange={(e) => set_graduateYr2(e.target.value)}
-                                            value={graduateYr2}
-                                        >
-                                            <option>Select Year</option>
-                                            {d_list.map((item) => (
-                                                <option key={item} value={item}>
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="row mt-3">
-                                    <div className="col-md-4">
-                                        <label htmlFor="degree">Upload Degree:</label>
+                                        <label htmlFor="degree">Upload Highest Degree:</label>
 
                                         <div className="form-outline">
                                             <input
                                                 type="file"
+                                                accept=".pdf, .jpeg, .png, .jpg, .doc"
                                                 id="degreeFile"
                                                 name="degreeFile"
                                                 className="form-control m-0"
@@ -569,6 +635,7 @@ const Education = () => {
                                             id="state4"
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_state4(e.target.value)}
+                                            value={state4}
                                         >
                                             <option value="">Select State</option>
                                             {stateList.map((item) => (
@@ -589,6 +656,7 @@ const Education = () => {
                                             id="yr3"
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_graduagteYr3(e.target.value)}
+                                            value={graduagteYr3}
                                         >
 
                                             <option>
@@ -611,19 +679,22 @@ const Education = () => {
 
                         <div className="row mt-3 align-items-end">
                             <div className="col-md-4">
-                                <label htmlFor="certificate">Certificate:</label>
+                                <label htmlFor="certificate">Upload Certificate:</label>
                                 <select
                                     id="certificate"
                                     name="certificate"
                                     className="form-control m-0"
                                     onChange={certified}
+                                    placeholder='Select Certificate'
                                 >
+                                    <option value="" disabled selected>Select Certificate</option>
                                     {certificate_list}
                                 </select>
-                                {certificate.length ? (
+                                {(certificate.length && certificate !== 'Not Certified') ? (
                                     <div className="form-outline">
                                         <input
                                             type="file"
+                                            accept=".pdf, .jpeg, .png, .jpg, .doc"
                                             id="certificateFile"
                                             name="certificateFile"
                                             className="form-control m-0"
@@ -632,7 +703,7 @@ const Education = () => {
                                     </div>
                                 ) : null}
                             </div>
-                            {certificate.length ?
+                            {(certificate.length && certificate !== 'Not Certified') ?
                                 <>
                                     <div className="col-md-4">
                                         <label htmlFor="state5">Select State:</label>
@@ -653,14 +724,13 @@ const Education = () => {
                                             ))}
                                         </select>
                                     </div>
-
                                     <div className="col-md-4">
                                         <label htmlFor="expiration">Expiration:</label>
                                         <input
                                             type="date"
                                             id="expiration"
                                             className="form-control m-0"
-                                            value={files?.CertificateExpiration}
+                                            value={expiration}
                                             onChange={(e) => set_expiration(e.target.value)}
                                             placeholder="Expiration"
                                         />
@@ -672,7 +742,7 @@ const Education = () => {
 
                         <div className="row mt-3 justify-content-between ">
                             <div className="col-md-4">
-                                <label htmlFor="language">Select Native Language:</label>
+                                <label htmlFor="language">Select Native (Primery) Language:</label>
                                 <Select
                                     isMulti={false}
                                     placeholder="Select Native Languages"
@@ -686,7 +756,7 @@ const Education = () => {
                             </div>
 
                             <div className="col-md-4">
-                                <label htmlFor="other-languages">Select other languages:</label>
+                                <label htmlFor="other-languages">Select Secondary language(s):</label>
                                 <Select
                                     isMulti
                                     placeholder="Select other languages"

@@ -184,8 +184,9 @@ let post_form_one = (req, res) => {
 
 let post_form_two = async (req, res) => {
 
-    let { level, university1, university2, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, experience, graduagteYr1, graduagteYr2, graduagteYr3, expiration, otherang, workExperience, user_id } = req.body;
+    let { level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id } = req.body;
 
+    console.log(university3, doctorateGraduateYear, doctorateState, 'hehhehehheheh')
 
     let duplicate = await connecteToDB.then(async (poolConnection) => {
         return await poolConnection.request().query(`SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${user_id}'`)
@@ -195,21 +196,36 @@ let post_form_two = async (req, res) => {
             })
             .catch(err => console.log(err))
     });
+    console.log(duplicate, 'dede')
 
-    if (duplicate.length === 0) {
+    if (!duplicate.length) {
         marom_db(async (config) => {
             const sql = require('mssql');
             console.log('uploading data...')
 
             var poolConnection = await sql.connect(config);
-            console.log(` INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, College1State, College1Year, College2, College2State, College2StateYear, Degree,DegreeFile, DegreeState, DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
-            VALUES ('${level}', '${experience}', '${university1}','${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}','${degree}', '${degreeFile}','${state4}','${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')`
+            console.log(` INSERT INTO "Education" (EducationalLevel, EducationalLevelExperience, College1, 
+                College1State, College1Year, College2, College2State, College2StateYear, 
+                DoctorateCollege, DoctorateState, DoctorateGradYr,  Degree, DegreeFile, 
+                DegreeState, DegreeYear, Certificate,CertificateFile, CertificateState, 
+                CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, 
+                WorkExperience, AcademyId)
+            VALUES ('${level}', '${experience}', '${university1}',
+            '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
+            '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}',
+            '${state4}','${graduagteYr3}','${certificate}','${certificateFile}','${state5}',
+            '${expiration}','${language}','${state6}','${otherang}',
+            '${workExperience}', '${user_id}')`
             )
             if (poolConnection) {
                 var resultSet = poolConnection.request().query(
                     `
-                        INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, College1State, College1Year, College2, College2State, College2StateYear, Degree,DegreeFile, DegreeState, DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
-                        VALUES ('${level}', '${experience}', '${university1}','${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}','${degree}', '${degreeFile}','${state4}','${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')
+                        INSERT INTO "Education"(EducationalLevel, EducationalLevelExperience, College1, 
+                            College1State, College1Year, College2, College2State, College2StateYear, 
+                            DoctorateCollege, DoctorateState, DoctorateGradYr, Degree,DegreeFile, DegreeState, DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId)
+                        VALUES ('${level}', '${experience}', '${university1}',
+                        '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
+                        '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}','${state4}','${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}','${language}','${state6}','${otherang}','${workExperience}', '${user_id}')
                         `
                 )
 
@@ -239,7 +255,8 @@ let post_form_two = async (req, res) => {
             if (poolConnection) {
                 var resultSet = poolConnection.request().query(
                     `
-                        UPDATE  "Education" SET EducationalLevel = '${level}', EducationalLevelExperience = '${experience}', College1 = '${university1}', College1State = '${state2}', College1Year = '${graduagteYr1}', College2 ='${university2}', College2State = '${state3}', College2StateYear = '${graduagteYr2}', Degree = '${degree}', DegreeState ='${state4}', DegreeYear = '${graduagteYr3}', Certificate = '${certificate}', CertificateState = '${state5}', CertificateExpiration = '${expiration}', NativeLang = '${language}', NativeLangState = '${state6}', NativeLangOtherLang = '${otherang}', WorkExperience = '${workExperience}' WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
+                        UPDATE  "Education" SET EducationalLevel = '${level}', EducationalLevelExperience = '${experience}', College1 = '${university1}', DoctorateCollege = '${university3}',DoctorateState = '${doctorateState}', DoctorateGradYr='${doctorateGraduateYear}',
+                        College1State = '${state2}', College1Year = '${graduagteYr1}', College2 ='${university2}', College2State = '${state3}', College2StateYear = '${graduagteYr2}', Degree = '${degree}', DegreeState ='${state4}', DegreeYear = '${graduagteYr3}', Certificate = '${certificate}', CertificateState = '${state5}', CertificateExpiration = '${expiration}', NativeLang = '${language}', NativeLangState = '${state6}', NativeLangOtherLang = '${otherang}', WorkExperience = '${workExperience}' WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
                         `
                 )
 
@@ -897,8 +914,10 @@ let get_my_edu = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                .catch(err => console.log(err))
-
+                .catch(err => {
+                    console.log(err)
+                    res.status(400).send(err)
+                })
         }
 
     })
@@ -1023,7 +1042,7 @@ const post_tutor_setup = (req, res) => {
 
                     const result = await poolConnection.request().query(
                         update('TutorSetup', req.body, { userId: req.body.userId })
-                        );
+                    );
                     res.status(200).send(result.recordset);
                 }
                 else {

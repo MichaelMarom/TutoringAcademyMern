@@ -149,7 +149,7 @@ const TutorCollabHeader = () => {
                     </div>
 
                     <button onClick={handleAsidePanel}>
-                        Hide Conference Panel 
+                        Hide Video Panel 
                     </button>
                 </div>
             </div>

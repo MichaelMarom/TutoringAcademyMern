@@ -117,6 +117,7 @@ button.Toastify__close-button.Toastify__close-button--light {
 }
 
 .custom-tooltip.left {
+  height: auto;
   position: absolute;
   top: -83px;
   left: -3rem;

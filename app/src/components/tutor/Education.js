@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { IoIosCheckmarkCircle } from 'react-icons/io';
+import { FaTimesCircle } from 'react-icons/fa';
+
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../axios/tutor';
 import career from '../../images/career.png';
 import Select, { components } from 'react-select'
 import Actions from '../common/Actions';
+import { FaRegTimesCircle } from 'react-icons/fa';
 
 const languages = [
     'Afrikaans',
@@ -87,6 +91,21 @@ const languageOptions = languages.map((language) => ({
 
 const Education = () => {
 
+    function getToday() {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    }
+
+    function handleDateChange(e) {
+        const selectedValue = e.target.value;
+        set_expiration(selectedValue);
+    }
+    function handleBlur() {
+        if (expiration < getToday()) {
+            set_expiration(getToday());
+        }
+    }
+
     useEffect(() => {
         let next = document.querySelector('.tutor-next')
 
@@ -133,6 +152,12 @@ const Education = () => {
     let [data, set_data] = useState(false);
     let [files, set_files] = useState('');
 
+    useEffect(() => {
+        setCertificateFile(null)
+        setCertFileContent(null)
+        setDegreeFile(null)
+        setDegreeFileContent(null)
+    }, [level])
 
     const handleLanguageChange = (selectedOption) => {
         set_othelang(selectedOption);
@@ -155,89 +180,89 @@ const Education = () => {
         return response;
     }
 
-    const tutorSaveBtn = document.querySelector('#tutor-save')
-    if (tutorSaveBtn) {
-        tutorSaveBtn.onclick = async () => {
+    // const tutorSaveBtn = document.querySelector('#tutor-save')
+    // if (tutorSaveBtn) {
+    //     tutorSaveBtn.onclick = async () => {
 
-            let all_inputs = [...document.querySelectorAll('input')]
-            let selects = [...document.querySelectorAll('select')]
-            let text = [...document.querySelectorAll('textarea')]
+    //         let all_inputs = [...document.querySelectorAll('input')]
+    //         let selects = [...document.querySelectorAll('select')]
+    //         let text = [...document.querySelectorAll('textarea')]
 
-            let all_values = [...text, ...selects, ...all_inputs];
-
-
-            let bool_list = []
-            let bools = all_values.map(item => {
-                let dependantFields = { degree: 'degreeFile', certificate: "certificateFile" }
-                if (item.value === '') {
-                    console.log(document.querySelectorAll('[autocomplete="off"]')[0] === item, document.querySelector('[autocomplete="off"]'), document.querySelectorAll('[autocomplete="off"]')[0], item, language, ';;lolll')
-                    if ((dependantFields[item.name] && (item.value && all_values.find(input => input.name === dependantFields[item.name])?.value)) || (document.querySelectorAll('[autocomplete="off"]')[0] === item && Object.keys(language).length) || (document.querySelectorAll('[autocomplete="off"]')[1] === item && othelang.length)) {
-                        console.log(true, item, '123')
-                        bool_list.push(true)
-                    }
-                    else if (!dependantFields[item.name]) {
-                        if (item.dataset.type === 'file') {
-                            if (item.nextElementSibling) {
-                                item.nextElementSibling.setAttribute('id', 'err-border');
-                            }
-                        } else {
-                            item.setAttribute('id', 'err-border');
-                        }
-                        if (document.querySelector('[autocomplete="off"]') === item) {
-                            document.querySelector('.language-selector').style.border = "1px solid red";
-                        }
-                        bool_list.push(false)
-                    }
-                    else {
-                        bool_list.push(true)
-                    }
-                } else {
-                    if (item.dataset.type === 'file') {
-                        if (item.nextElementSibling) {
-                            item.nextElementSibling.removeAttribute('id');
-                        }
-                    } else {
-                        item.removeAttribute('id');
-                    }
-
-                    bool_list.push(true)
-                }
-            })
-
-            let result = bool_list.filter(item => item === false)
-            if (result.length === 0) {
-                document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
-                let response = await saver();
-                if (response) {
-                    setTimeout(() => {
-                        document.querySelector('.save-overlay').removeAttribute('id');
-                    }, 1000);
-
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').style.background = '#000';
-                    document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
-                    setTimeout(() => {
-                        document.querySelector('.tutor-next').setAttribute('id', 'next')
-                        document.querySelector('.tutor-popin').removeAttribute('id');
-                    }, 5000);
-                } else {
-                    setTimeout(() => {
-                        document.querySelector('.save-overlay').removeAttribute('id');
-                    }, 1000);
-
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').style.background = 'red';
-                    document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
-                    setTimeout(() => {
-                        document.querySelector('.tutor-popin').removeAttribute('id');
-                    }, 5000);
-
-                }
+    //         let all_values = [...text, ...selects, ...all_inputs];
 
 
-            }
-        }
-    }
+    //         let bool_list = []
+    //         let bools = all_values.map(item => {
+    //             let dependantFields = { degree: 'degreeFile', certificate: "certificateFile" }
+    //             if (item.value === '') {
+    //                 console.log(document.querySelectorAll('[autocomplete="off"]')[0] === item, document.querySelector('[autocomplete="off"]'), document.querySelectorAll('[autocomplete="off"]')[0], item, language, ';;lolll')
+    //                 if ((dependantFields[item.name] && (item.value && all_values.find(input => input.name === dependantFields[item.name])?.value)) || (document.querySelectorAll('[autocomplete="off"]')[0] === item && Object.keys(language).length) || (document.querySelectorAll('[autocomplete="off"]')[1] === item && othelang.length)) {
+    //                     console.log(true, item, '123')
+    //                     bool_list.push(true)
+    //                 }
+    //                 else if (!dependantFields[item.name]) {
+    //                     if (item.dataset.type === 'file') {
+    //                         if (item.nextElementSibling) {
+    //                             item.nextElementSibling.setAttribute('id', 'err-border');
+    //                         }
+    //                     } else {
+    //                         item.setAttribute('id', 'err-border');
+    //                     }
+    //                     if (document.querySelector('[autocomplete="off"]') === item) {
+    //                         document.querySelector('.language-selector').style.border = "1px solid red";
+    //                     }
+    //                     bool_list.push(false)
+    //                 }
+    //                 else {
+    //                     bool_list.push(true)
+    //                 }
+    //             } else {
+    //                 if (item.dataset.type === 'file') {
+    //                     if (item.nextElementSibling) {
+    //                         item.nextElementSibling.removeAttribute('id');
+    //                     }
+    //                 } else {
+    //                     item.removeAttribute('id');
+    //                 }
+
+    //                 bool_list.push(true)
+    //             }
+    //         })
+
+    //         let result = bool_list.filter(item => item === false)
+    //         if (result.length === 0) {
+    //             document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+    //             let response = await saver();
+    //             if (response) {
+    //                 setTimeout(() => {
+    //                     document.querySelector('.save-overlay').removeAttribute('id');
+    //                 }, 1000);
+
+    //                 document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+    //                 document.querySelector('.tutor-popin').style.background = '#000';
+    //                 document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
+    //                 setTimeout(() => {
+    //                     document.querySelector('.tutor-next').setAttribute('id', 'next')
+    //                     document.querySelector('.tutor-popin').removeAttribute('id');
+    //                 }, 5000);
+    //             } else {
+    //                 setTimeout(() => {
+    //                     document.querySelector('.save-overlay').removeAttribute('id');
+    //                 }, 1000);
+
+    //                 document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+    //                 document.querySelector('.tutor-popin').style.background = 'red';
+    //                 document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
+    //                 setTimeout(() => {
+    //                     document.querySelector('.tutor-popin').removeAttribute('id');
+    //                 }, 5000);
+
+    //             }
+
+
+    //         }
+    //     }
+    // }
 
     useEffect(() => {
         get_my_edu(window.localStorage.getItem('tutor_user_id'))
@@ -419,6 +444,11 @@ const Education = () => {
         }
     }
 
+    const handleSave = async (e) => {
+        e.preventDefault();
+        let res = await saver()
+        console.log(res);
+    }
 
     return (
         <>
@@ -427,7 +457,7 @@ const Education = () => {
                 <span className='save-loader'></span>
             </div>
             <div className="container tutor-tab-education">
-                <form action="">
+                <form action="" onSubmit={handleSave}>
                     <div className="tutor-tab-education-info pt-4">
                         <h3>Education</h3>
                         <h6 className="tutor-tab-education-notice highlight">
@@ -442,8 +472,9 @@ const Education = () => {
                                     className="form-control m-0"
                                     onChange={edu_level}
                                     value={level}
+                                    required
                                 >
-                                    <option value="" disabled selected >Select Education</option>
+                                    <option value="" disabled>Select Education</option>
                                     {level_list}
                                 </select>
                             </div>
@@ -455,13 +486,16 @@ const Education = () => {
                                     className="form-control m-0"
                                     onChange={(e) => set_experience(e.target.value)}
                                     value={experience}
+                                    required
                                 >
                                     {exp}
                                 </select>
                             </div>
                         </div>
-                        {(level !== 'Undergraduate Student' && level !== 'No Academic Education' && level.length) ? (
+
+                        {level !== 'No Academic Education' && level.length ? (
                             <>
+
                                 <div className="row mt-3">
                                     <div className="col-md-4">
                                         <label htmlFor="university1">Bachelor Degree:</label>
@@ -472,6 +506,7 @@ const Education = () => {
                                             value={university1}
                                             onChange={(e) => set_university1(e.target.value)}
                                             placeholder="College/University 1"
+                                            required
                                         />
                                     </div>
 
@@ -482,6 +517,7 @@ const Education = () => {
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_state2(e.target.value)}
                                             value={state2}
+                                            required
                                         >
                                             <option value="">Select State</option>
                                             {stateList.map((item) => (
@@ -499,8 +535,9 @@ const Education = () => {
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_graduateYr1(e.target.value)}
                                             value={graduateYr1}
+                                            required
                                         >
-                                            <option>Select Year</option>
+                                            <option value="">Select Year</option>
                                             {d_list.map((item) => (
                                                 <option key={item} value={item}>
                                                     {item}
@@ -510,8 +547,8 @@ const Education = () => {
                                     </div>
                                 </div>
                                 {
-                                    level !== 'Graduate Student' ?
-                                        <div className="row mt-3">
+                                    level !== 'Bachelor Degree' && level !== 'Undergraduate Student' ? (
+                                        < div className="row mt-3">
                                             <div className="col-md-4">
                                                 <label htmlFor="university2">Master Degree:</label>
                                                 <input
@@ -521,6 +558,7 @@ const Education = () => {
                                                     value={university2}
                                                     onChange={(e) => set_university2(e.target.value)}
                                                     placeholder="College/University 2"
+                                                    required
                                                 />
                                             </div>
 
@@ -531,6 +569,7 @@ const Education = () => {
                                                     className="form-control m-0 w-100"
                                                     onChange={(e) => set_state3(e.target.value)}
                                                     value={state3}
+                                                    required
                                                 >
                                                     <option value="">Select State</option>
                                                     {stateList.map((item) => (
@@ -548,8 +587,9 @@ const Education = () => {
                                                     className="form-control m-0 w-100"
                                                     onChange={(e) => set_graduateYr2(e.target.value)}
                                                     value={graduateYr2}
+                                                    required
                                                 >
-                                                    <option>Select Year</option>
+                                                    <option value="">Select Year</option>
                                                     {d_list.map((item) => (
                                                         <option key={item} value={item}>
                                                             {item}
@@ -558,10 +598,11 @@ const Education = () => {
                                                 </select>
                                             </div>
                                         </div>
-                                        : null
+                                    ) : null
                                 }
                                 {
-                                    level !== 'Bachelor Degree' && level !== 'Master Degree' ?
+                                    level !== 'Undergraduate Student' && level !== 'Bachelor Degree' &&
+                                        level !== 'Master Degree' ? (
                                         <div className="row mt-3">
                                             <div className="col-md-4">
                                                 <label htmlFor="university2">Doctorate Degree:</label>
@@ -572,6 +613,7 @@ const Education = () => {
                                                     value={university3}
                                                     onChange={(e) => set_university3(e.target.value)}
                                                     placeholder="College/University 3"
+                                                    required
                                                 />
                                             </div>
 
@@ -582,6 +624,7 @@ const Education = () => {
                                                     className="form-control m-0 w-100"
                                                     onChange={(e) => set_doctorateState(e.target.value)}
                                                     value={doctorateState}
+                                                    required
                                                 >
                                                     <option value="">Select State</option>
                                                     {stateList.map((item) => (
@@ -599,8 +642,9 @@ const Education = () => {
                                                     className="form-control m-0 w-100"
                                                     onChange={(e) => setDoctorateGraduateYear(e.target.value)}
                                                     value={doctorateGraduateYear}
+                                                    required
                                                 >
-                                                    <option>Select Year</option>
+                                                    <option value="">Select Year</option>
                                                     {d_list.map((item) => (
                                                         <option key={item} value={item}>
                                                             {item}
@@ -609,23 +653,30 @@ const Education = () => {
                                                 </select>
                                             </div>
                                         </div>
-                                        :
-                                        null}
-
+                                    ) : null
+                                }
 
                                 <div className="row mt-3">
                                     <div className="col-md-4">
                                         <label htmlFor="degree">Upload Highest Degree:</label>
+                                        <div className='d-flex align-items-center'>
 
-                                        <div className="form-outline">
-                                            <input
-                                                type="file"
-                                                accept=".pdf, .jpeg, .png, .jpg, .doc"
-                                                id="degreeFile"
-                                                name="degreeFile"
-                                                className="form-control m-0"
-                                                onChange={handleFileUpload}
-                                            />
+                                            <div className="form-outline">
+                                                <input
+                                                    type="file"
+                                                    accept=".pdf, .jpeg, .png, .jpg, .doc"
+                                                    id="degreeFile"
+                                                    name="degreeFile"
+                                                    className="form-control m-0"
+                                                    onChange={handleFileUpload}
+                                                    required
+                                                />
+                                            </div>
+                                            {degreeFile ? (
+                                                <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
+                                            ) : (
+                                                <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -636,6 +687,7 @@ const Education = () => {
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_state4(e.target.value)}
                                             value={state4}
+                                            required
                                         >
                                             <option value="">Select State</option>
                                             {stateList.map((item) => (
@@ -657,11 +709,9 @@ const Education = () => {
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_graduagteYr3(e.target.value)}
                                             value={graduagteYr3}
+                                            required
                                         >
-
-                                            <option>
-                                                Select Year
-                                            </option>
+                                            <option value="">Select Year</option>
                                             {d_list.map((item) => (
                                                 <option
                                                     key={item}
@@ -686,24 +736,33 @@ const Education = () => {
                                     className="form-control m-0"
                                     onChange={certified}
                                     placeholder='Select Certificate'
+                                    required
                                 >
-                                    <option value="" disabled selected>Select Certificate</option>
+                                    <option value="" disabled>Select Certificate</option>
                                     {certificate_list}
                                 </select>
                                 {(certificate.length && certificate !== 'Not Certified') ? (
-                                    <div className="form-outline">
-                                        <input
-                                            type="file"
-                                            accept=".pdf, .jpeg, .png, .jpg, .doc"
-                                            id="certificateFile"
-                                            name="certificateFile"
-                                            className="form-control m-0"
-                                            onChange={handleCertUpload}
-                                        />
+                                    <div className='d-flex justify-content-center align-items-center'>
+                                        <div className="form-outline">
+                                            <input
+                                                type="file"
+                                                accept=".pdf, .jpeg, .png, .jpg, .doc"
+                                                id="certificateFile"
+                                                name="certificateFile"
+                                                className="form-control m-0 mr-2"
+                                                onChange={handleCertUpload}
+                                                required
+                                            />
+                                        </div>
+                                        {certificateFile ? (
+                                            <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
+                                        ) : (
+                                            <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+                                        )}
                                     </div>
                                 ) : null}
                             </div>
-                            {(certificate.length && certificate !== 'Not Certified') ?
+                            {(certificate.length && certificate !== 'Not Certified') ? (
                                 <>
                                     <div className="col-md-4">
                                         <label htmlFor="state5">Select State:</label>
@@ -711,6 +770,7 @@ const Education = () => {
                                             id="state5"
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_state5(e.target.value)}
+                                            required
                                         >
                                             <option value="">Select State</option>
                                             {stateList.map((item) => (
@@ -728,21 +788,22 @@ const Education = () => {
                                         <label htmlFor="expiration">Expiration:</label>
                                         <input
                                             type="date"
+                                            min={new Date().toISOString().split('T')[0]}
                                             id="expiration"
                                             className="form-control m-0"
                                             value={expiration}
-                                            onChange={(e) => set_expiration(e.target.value)}
+                                            onBlur={handleBlur}
+                                            onChange={handleDateChange}
                                             placeholder="Expiration"
                                         />
                                     </div>
                                 </>
-                                : null
-                            }
+                            ) : null}
                         </div>
 
-                        <div className="row mt-3 justify-content-between ">
+                        <div className="row mt-3 justify-content-between">
                             <div className="col-md-4">
-                                <label htmlFor="language">Select Native (Primery) Language:</label>
+                                <label htmlFor="language">Select Native (Primary) Language:</label>
                                 <Select
                                     isMulti={false}
                                     placeholder="Select Native Languages"
@@ -752,6 +813,7 @@ const Education = () => {
                                     defaultValue={language}
                                     value={language}
                                     options={languageOptions}
+                                    required
                                 />
                             </div>
 
@@ -769,7 +831,6 @@ const Education = () => {
                             </div>
                         </div>
                     </div>
-
                     <div className="tutor-tab-education-experience">
                         <div className="education-work-experience-logo">
                             <img
@@ -786,16 +847,13 @@ const Education = () => {
                             style={{ height: '400px' }}
                             placeholder="Enter Your Work Experience"
                             className="tutor-tab-education-experience-details"
+                            required
                         ></textarea>
                     </div>
 
-                    {
-                        <Actions
-                            onSave={() => { console.log('hit sabe') }}
-                        />
-                    }
+                    <Actions />
                 </form>
-            </div>
+            </div >
         </>
 
     );

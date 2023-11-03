@@ -75,7 +75,7 @@ const getAll = (tableName) => {
 /**
  * 
  * @param {String} tableName 
- * @param {Object} condition object, key=column name, values= value against it
+ * @param {{}} condition object, key=column name, values= value against it
  * @param {String} casting string -> cast 1 column taht is presrnt in condition
  * @returns String => Query
  */

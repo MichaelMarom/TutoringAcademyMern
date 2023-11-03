@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const Rates = () => {
     return (
-        <TutorLayout>
+        <TutorLayout showLegacyFooter={false}>
             <RatesComp />
         </TutorLayout>
     );

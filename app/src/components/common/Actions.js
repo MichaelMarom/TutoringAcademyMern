@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from './Button';
 
 const actionsStyle = {
     position: 'fixed',
@@ -11,6 +12,7 @@ const actionsStyle = {
 };
 
 const Actions = ({
+    loading = false,
     onSave = () => { },
     onBack = () => { },
     onEdit = () => { },
@@ -27,7 +29,9 @@ const Actions = ({
                         <button onClick={onEdit} className="btn btn-warning" disabled>Edit</button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onSave} className="btn btn-primary">Save</button>
+                        <Button handleClick={onSave} className="btn btn-primary" type="submit" loading={loading}>
+                            Save
+                        </Button>
                     </div>
                     <div className="col-1">
                         <button onClick={onNext} className="btn btn-success">Next</button>

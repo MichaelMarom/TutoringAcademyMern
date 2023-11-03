@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Button({ loading=false, type="button", handleClick = () => { }, children, className='' }) {
+function Button({ loading = false, type = "button", handleClick = () => { }, children, className = '', ...otherProps }) {
 
     // const buttonClass = type === 'inverted' ? 'btn-inverted' : 'btn-default';
     return (
@@ -9,6 +9,7 @@ function Button({ loading=false, type="button", handleClick = () => { }, childre
             disabled={loading}
             type={type}
             onClick={handleClick}
+            {...otherProps}
         >
             {loading && (
                 <span

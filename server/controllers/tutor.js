@@ -283,39 +283,48 @@ let post_form_two = async (req, res) => {
 let post_form_three = (req, res) => {
 
 
-    let { MutiStudentHourlyRate, MutiStudentOption, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode } = req.body;
+    let { MutiStudentHourlyRate, MutiStudentOption, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
     marom_db(async (config) => {
-        const sql = require('mssql');
-        console.log('uploading data...')
+        try {
 
-        var poolConnection = await sql.connect(config);
-        let result;
-        if (poolConnection) {
-            console.log('hitr')
+            const sql = require('mssql');
+            console.log('uploading data...')
 
-            let recordExisted = await poolConnection.request().query(
-                findByAnyIdColumn('TutorRates', { AcademyId }, 'varchar')
-            )
-            console.log(recordExisted)
-            if (recordExisted.recordset.length) {
-                result = await poolConnection.request().query(
-                    `UPDATE TutorRates SET MutiStudentHourlyRate = '${MutiStudentHourlyRate}', MutiStudentOption = '${MutiStudentOption}', CancellationPolicy = '${CancellationPolicy}', FreeDemoLesson = '${FreeDemoLesson}', ConsentRecordingLesson = '${ConsentRecordingLesson}', ActivateSubscriptionOption = '${ActivateSubscriptionOption}', SubscriptionPlan = '${SubscriptionPlan}', DiscountCode = '${DiscountCode}' WHERE cast(AcademyId as varchar) = '${AcademyId}'`
+            var poolConnection = await sql.connect(config);
+            let result;
+            if (poolConnection) {
+                console.log('hitr')
+
+                let recordExisted = await poolConnection.request().query(
+                    findByAnyIdColumn('TutorRates', { AcademyId }, 'varchar')
                 )
-            } else {
-                result = await poolConnection.request().query(
-                    `
-                        INSERT INTO "TutorRates"(MutiStudentOption,MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,ConsentRecordingLesson,ActivateSubscriptionOption,SubscriptionPlan,AcademyId, DiscountCode)
-                        VALUES ('${MutiStudentOption}', '${MutiStudentHourlyRate}', '${CancellationPolicy}','${FreeDemoLesson}','${ConsentRecordingLesson}','${ActivateSubscriptionOption}','${SubscriptionPlan}','${AcademyId}','${DiscountCode}')
+                console.log(recordExisted)
+                if (recordExisted.recordset.length) {
+                    result = await poolConnection.request().query(
+                        `UPDATE TutorRates SET MutiStudentHourlyRate = '${MutiStudentHourlyRate}', MutiStudentOption = '${MutiStudentOption}', CancellationPolicy = '${CancellationPolicy}', FreeDemoLesson = '${FreeDemoLesson}', ConsentRecordingLesson = '${ConsentRecordingLesson}', ActivateSubscriptionOption = '${ActivateSubscriptionOption}', SubscriptionPlan = '${SubscriptionPlan}', DiscountCode = '${DiscountCode}', CodeShareable=${CodeShareable ? 1 : 0},  MultiStudent=${MultiStudent ? 1 : 0}
+                         WHERE cast(AcademyId as varchar) = '${AcademyId}'`
+                    )
+                    console.log(result, 'heheheh')
+                } else {
+                    result = await poolConnection.request().query(
                         `
-                )
-            }
+                            INSERT INTO "TutorRates"(MutiStudentOption,MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,ConsentRecordingLesson,ActivateSubscriptionOption,SubscriptionPlan,AcademyId, DiscountCode,MultiStudent,CodeShareable)
+                            VALUES ('${MutiStudentOption}', '${MutiStudentHourlyRate}', '${CancellationPolicy}','${FreeDemoLesson}','${ConsentRecordingLesson}','${ActivateSubscriptionOption}','${SubscriptionPlan}','${AcademyId}','${DiscountCode}',${MultiStudent ? 1 : 0},${CodeShareable ? 1 : 0})
+                            `
+                    )
+                }
 
-            console.log(result)
-            result.rowsAffected[0] === 1
-                ?
-                res.send({ bool: true, mssg: 'Data Was Successfully Saved' })
-                :
-                res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
+                console.log(result)
+                result.rowsAffected[0] === 1
+                    ?
+                    res.send({ bool: true, mssg: 'Data Was Successfully Saved' })
+                    :
+                    res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
         }
 
     })

@@ -29,7 +29,7 @@ const Actions = ({
                         <button onClick={onEdit} className="btn btn-warning" disabled>Edit</button>
                     </div>
                     <div className="col-1">
-                        <Button handleClick={onSave} className="btn btn-primary" type="submit" loading={loading}>
+                        <Button handleClick={onSave} className="btn btn-primary" type="submit" loading={loading} >
                             Save
                         </Button>
                     </div>

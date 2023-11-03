@@ -29,6 +29,69 @@ const Rates = () => {
     useState("");
   let [SubscriptionPlan, setSubscriptionPlan] = useState("");
 
+  const [discountEnabled, setDiscountEnabled] = useState(false);
+  const [classTeaching, setClassTeaching] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [discountCode, setDiscountCode] = useState(generateDiscountCode());
+  const [loading, setLoading] = useState(false);
+
+  const [dataFetched, setDataFetched] = useState(false)
+  const [changesMade, setChangesMade] = useState(false);
+
+
+  useEffect(() => {
+    const initialState = {
+      MultiStudentOption,
+      MultiStudentHourlyRate,
+      CancellationPolicy,
+      FreeDemoLesson,
+      ConsentRecordingLesson,
+      ActivateSubscriptionOption,
+      SubscriptionPlan,
+      discountEnabled,
+      classTeaching,
+      copied,
+      discountCode,
+      loading,
+    };
+    const stateVariablesToMonitor = [
+      MultiStudentOption,
+      MultiStudentHourlyRate,
+      CancellationPolicy,
+      FreeDemoLesson,
+      ConsentRecordingLesson,
+      ActivateSubscriptionOption,
+      SubscriptionPlan,
+      discountEnabled,
+      classTeaching,
+      copied,
+      discountCode,
+      loading,
+    ];
+    console.log('useEffect', dataFetched)
+    const changesDetected = dataFetched ? stateVariablesToMonitor.some((stateVar) => {
+      return stateVar !== initialState[stateVar];
+    }) : false;
+    setDataFetched(false)
+    if (dataFetched) {
+      console.log('dddd');
+    }
+
+    // setChangesMade(changesDetected);
+  }, [
+    MultiStudentOption,
+    MultiStudentHourlyRate,
+    CancellationPolicy,
+    FreeDemoLesson,
+    ConsentRecordingLesson,
+    ActivateSubscriptionOption,
+    SubscriptionPlan,
+    discountEnabled,
+    classTeaching,
+    copied,
+    discountCode,
+    loading,
+  ])
 
   useEffect(() => {
     get_tutor_rates(window.localStorage.getItem("tutor_user_id"))
@@ -44,6 +107,8 @@ const Rates = () => {
           setActivateSubscriptionOption(result[0].ActivateSubscriptionOption);
           setSubscriptionPlan(result[0].SubscriptionPlan);
           setDiscountCode(result[0].DiscountCode)
+          setClassTeaching(result[0].MultiStudent)
+          setDiscountEnabled(result[0].CodeShareable)
 
           let multiStudentCheckbox = document.querySelector(
             "#multi-student-checkbox"
@@ -102,6 +167,7 @@ const Rates = () => {
       .catch((err) => {
         console.log(err);
       });
+    setDataFetched(true)
   }, []);
 
   let saver = async () => {
@@ -114,73 +180,13 @@ const Rates = () => {
       ActivateSubscriptionOption,
       SubscriptionPlan,
       window.localStorage.getItem("tutor_user_id"),
-      discountCode
+      discountCode,
+      discountEnabled,
+      classTeaching
     );
 
     return response;
   };
-
-  // if (document.querySelector("#tutor-save")) {
-  //   document.querySelector("#tutor-save").onclick = async () => {
-  //     console.log(
-  //       MultiStudentOption.length,
-  //       MultiStudentHourlyRate.length,
-  //       CancellationPolicy.length,
-  //       FreeDemoLesson.length,
-  //       ConsentRecordingLesson.length,
-  //       ActivateSubscriptionOption.length,
-  //       SubscriptionPlan.length
-  //     );
-
-  //     if (
-  //       MultiStudentOption === true ||
-  //       (MultiStudentOption === false &&
-  //         MultiStudentHourlyRate.length > 0 &&
-  //         CancellationPolicy.length > 0 &&
-  //         FreeDemoLesson.length > 0 &&
-  //         ConsentRecordingLesson.length > 0 &&
-  //         ActivateSubscriptionOption === true) ||
-  //       (ActivateSubscriptionOption === false && SubscriptionPlan.length > 0)
-  //     ) {
-  //       document
-  //         .querySelector(".save-overlay")
-  //         .setAttribute("id", "save-overlay");
-  //       let response = await saver();
-  //       if (response.bool) {
-  //         console.log(response);
-
-  //         setTimeout(() => {
-  //           document.querySelector(".save-overlay").removeAttribute("id");
-  //         }, 1000);
-
-  //         document
-  //           .querySelector(".tutor-popin")
-  //           .setAttribute("id", "tutor-popin");
-  //         document.querySelector(".tutor-popin").style.background = "#000";
-  //         document.querySelector(".tutor-popin").innerHTML = response.mssg;
-  //         setTimeout(() => {
-  //           document.querySelector(".tutor-next").setAttribute("id", "next");
-  //           document.querySelector(".tutor-popin").removeAttribute("id");
-  //         }, 5000);
-  //       } else {
-  //         setTimeout(() => {
-  //           document.querySelector(".save-overlay").removeAttribute("id");
-  //         }, 1000);
-
-  //         document
-  //           .querySelector(".tutor-popin")
-  //           .setAttribute("id", "tutor-popin");
-  //         document.querySelector(".tutor-popin").style.background = "red";
-  //         document.querySelector(".tutor-popin").innerHTML = response.mssg;
-  //         setTimeout(() => {
-  //           document.querySelector(".tutor-popin").removeAttribute("id");
-  //         }, 5000);
-  //       }
-  //     } else {
-  //       alert("Please Ensure All Input Fields Contains A Value");
-  //     }
-  //   };
-  // }
 
 
   useEffect(() => {
@@ -198,11 +204,7 @@ const Rates = () => {
   ];
   let subscription_dicount = ["6.0%", "12.0%", "18.0%", "24.0%"];
 
-  const [discountEnabled, setDiscountEnabled] = useState(false);
-  const [classTeaching, setClassTeaching] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [discountCode, setDiscountCode] = useState(generateDiscountCode());
-  const [loading, setLoading] = useState(false)
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -227,6 +229,11 @@ const Rates = () => {
       <div className="save-overlay">
         <span className="save_loader"></span>
       </div>
+      {changesMade && (
+        <div className="green-bar w-100 bg-success text-white">
+          <p>You have made changes. Save them before moving to the next tab.</p>
+        </div>
+      )}
       <div className="tutor-tab-rates">
         <div className="tutor-tab-rate-section">
           <form onSubmit={handleSubmit}>
@@ -245,9 +252,10 @@ const Rates = () => {
               >
                 <input
                   type="checkbox"
-                  onInput={(e) =>
+                  onChange={(e) =>
                     setActivateSubscriptionOption(e.target.checked ? true : false)
                   }
+                  checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
                   style={{ cursor: "pointer", height: "20px", width: "20px" }}
                   name="subscription-plan"
                   id="subscription-plan"
@@ -375,7 +383,7 @@ const Rates = () => {
               </div>
               <div className="p-2 mt-4 highlight">
 
-                XXXXXX
+                The American public schools are suffering from accute shortage of teachers. if you hold teacher's certificate, and willing to teach full class of students, you are able to post your ad on the portal message board. and charge higher rate for your skills. Similarly, a school in a need for a substitute teacher, can find your account which is flagged accordingly.
               </div>
               <div className="form-check form-switch d-flex align-items-center gap-2 mt-4">
                 <input
@@ -399,15 +407,21 @@ const Rates = () => {
                   <FaInfoCircle size={20} color="gray" />
                 </Tooltip>
               </div>
-              <div className="input-group mb-3">
+              <div className="input-group">
                 <span className="input-group-text">$</span>
                 <input
                   type="text"
                   className="form-control m-0 py-4"
                   aria-label="Amount (to the nearest dollar)"
+                  value={MultiStudentHourlyRate}
+                  onChange={(e) => {
+                    if (e.target.value < 1000)
+                      setMultiStudentHourlyRate(e.target.value)
+                  }}
                 />
                 <span className="input-group-text">.00</span>
               </div>
+              <span className="small text-secondary">Amount should be less than $999 </span>
             </div>
             <Actions loading={loading} />
           </form>

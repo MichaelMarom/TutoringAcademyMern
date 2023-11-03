@@ -7,7 +7,7 @@ import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
 import { useDispatch } from 'react-redux';
 import { postStudentBookings } from '../../redux/student_store/studentBookings';
-import Actions from '../../components/student/Actions';
+import Actions from '../../components/common/Actions';
 import Loading from '../../components/common/Loading';
 import { toast } from 'react-toastify';
 export const Feedback = () => {

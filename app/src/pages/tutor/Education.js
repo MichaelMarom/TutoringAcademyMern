@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const Education = () => {
   return (
-    <TutorLayout>
+    <TutorLayout showLegacyFooter={false} >
       <EducationComp />
     </TutorLayout>
   );

@@ -3,7 +3,7 @@ import AmountCalc from './Accounting/AmountCalc';
 import AccountingTable from './Accounting/AccountingTable';
 import BankDetails from './Accounting/BankDetails';
 import { get_bank_details, get_payment_report, post_bank_details } from '../../axios/student';
-import Actions from './Actions';
+import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
 import Loading from '../common/Loading';
 import { convertToDate } from '../common/Calendar/Calendar';

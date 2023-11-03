@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../axios/tutor';
 import career from '../../images/career.png';
 import Select, { components } from 'react-select'
+import Actions from '../common/Actions';
 
 const languages = [
     'Afrikaans',
@@ -509,7 +510,7 @@ const Education = () => {
                                     </div>
                                 </div>
                                 {
-                                     level !== 'Graduate Student' ?
+                                    level !== 'Graduate Student' ?
                                         <div className="row mt-3">
                                             <div className="col-md-4">
                                                 <label htmlFor="university2">Master Degree:</label>
@@ -787,6 +788,12 @@ const Education = () => {
                             className="tutor-tab-education-experience-details"
                         ></textarea>
                     </div>
+
+                    {
+                        <Actions
+                            onSave={() => { console.log('hit sabe') }}
+                        />
+                    }
                 </form>
             </div>
         </>

@@ -30,7 +30,7 @@ const Actions = ({
                         <button onClick={onSave} className="btn btn-primary">Save</button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onNext} className="btn btn-primary">Next</button>
+                        <button onClick={onNext} className="btn btn-success">Next</button>
                     </div>
                 </div>
             </div>

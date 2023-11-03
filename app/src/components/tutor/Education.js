@@ -362,7 +362,6 @@ const Education = () => {
     let [event, set_event] = useState('all')
 
     let edu_level = e => {
-        console.log(e.target.value)
         if (e.target.value === 'No Academic Education') {
             set_opacity('.5')
             set_event('none')
@@ -571,7 +570,7 @@ const Education = () => {
                                                     className="form-control m-0"
                                                     value={university3}
                                                     onChange={(e) => set_university3(e.target.value)}
-                                                    placeholder="College/University 2"
+                                                    placeholder="College/University 3"
                                                 />
                                             </div>
 
@@ -759,7 +758,7 @@ const Education = () => {
                                 <label htmlFor="other-languages">Select Secondary language(s):</label>
                                 <Select
                                     isMulti
-                                    placeholder="Select other languages"
+                                    placeholder="Select other language(s)"
                                     className="language-selector w-100"
                                     id="other-languages"
                                     value={othelang}

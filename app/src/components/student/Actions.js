@@ -24,7 +24,7 @@ const Actions = ({
                         <button onClick={onBack} className="btn btn-secondary">Back</button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onEdit} className="btn btn-warning">Edit</button>
+                        <button onClick={onEdit} className="btn btn-warning" disabled>Edit</button>
                     </div>
                     <div className="col-1">
                         <button onClick={onSave} className="btn btn-primary">Save</button>

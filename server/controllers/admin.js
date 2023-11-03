@@ -132,10 +132,11 @@ let get_tutor_new_subject = async (req, res) => {
     async function setUpDoc() {
         newSub.map(async (item) => {
             let tutor = await tutorName(item.AcademyId);
-            console.log(tutor, 'tuenc')
+            //console.log(tutor, 'tuenc')
             book.push({ item: item, tutor: tutor[0].FirstName + ' ' + tutor[0].LastName })
 
-            if (newSub.length === book.length) {
+            if (newSub.length/2 >= book.length) {
+                console.log(book)
                 res.send(book)
             }
         })

@@ -6,6 +6,9 @@ import TutorCollabTools from "./TutorCollabTools";
 
 const TutorCollabHeader = () => {
 
+    let [PanelChangeMssg, setPanelChangeMssg] = useState(['Show Panel', 'Hide Panel'])
+    let [PanelChangeBool, setPanelChangeBool] = useState(true)
+
     let location = useLocation();
     let navigate = useNavigate();
 
@@ -46,6 +49,10 @@ const TutorCollabHeader = () => {
     });*/
      
 
+    useEffect(() => {
+        
+    }, [])
+
     function stopWatch() {
         if (timer) {
             count++;
@@ -58,16 +65,19 @@ const TutorCollabHeader = () => {
             if (second == 60) {
                 minute++;
                 second = 0;
+                window.localStorage.setItem('collabMinuteHand', minute)
             }
      
             if (minute == 60) {
                 hour++;
                 minute = 0;
                 second = 0;
+                window.localStorage.setItem('collabHourHand', hour)
+
             }
      
-            let hrString = hour;
-            let minString = minute;
+            let hrString = window.localStorage.getItem('collabHourHand');
+            let minString = window.localStorage.getItem('collabMinuteHand');
             let secString = second;
             let countString = count;
      
@@ -98,6 +108,7 @@ const TutorCollabHeader = () => {
     }
 
     let handleAsidePanel = e => {
+        setPanelChangeBool(!PanelChangeBool)
         let tutorAsideElem = document.querySelector('.TutorAside');
         if(tutorAsideElem.hasAttribute('id')){
             tutorAsideElem.removeAttribute('id')
@@ -106,6 +117,8 @@ const TutorCollabHeader = () => {
 
         }
     }
+
+
 
     
     return ( 
@@ -149,7 +162,7 @@ const TutorCollabHeader = () => {
                     </div>
 
                     <button onClick={handleAsidePanel}>
-                        Hide Video Panel 
+                        {PanelChangeBool ? PanelChangeMssg[1] : PanelChangeMssg[0]}
                     </button>
                 </div>
             </div>

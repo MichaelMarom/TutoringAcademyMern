@@ -3,7 +3,7 @@ import { socket } from "../../socket";
 
 const TutorCollabFooter = () => {
 
-    let [accessState, setAccessState] = useState('Emeka is restricted')
+    let [accessState, setAccessState] = useState('Student Emeka is restricted')
 
 
     useEffect(() => {
@@ -36,11 +36,11 @@ const TutorCollabFooter = () => {
                     </div>
 
                     <div className="TutorBoardAccessActions" style={{width: '40%', display: 'flex', padding: '5px 15px 5px 5px'}}>
-                        <button onClick={socket.emit('tutorBoardAccessResponse', true)} style={{color: 'green', margin: '0 5px 0 5px', borderRadius: '10px', padding: '10px', width: '50%', height: '100%'}}>
+                        <button onClick={e => socket.emit('tutorBoardAccessResponse', true)} style={{color: 'green', margin: '0 5px 0 5px', borderRadius: '10px', padding: '10px', width: '50%', height: '100%'}}>
                             Allow
                         </button>
 
-                        <button onClick={socket.emit('tutorBoardAccessResponse', false)} style={{color: 'red', margin: '0 5px 0 5px', borderRadius: '10px', padding: '10px', width: '50%', height: '100%'}}>
+                        <button onClick={e => socket.emit('tutorBoardAccessResponse', false)} style={{color: 'red', margin: '0 5px 0 5px', borderRadius: '10px', padding: '10px', width: '50%', height: '100%'}}>
                             Reject
                         </button>
                     </div>

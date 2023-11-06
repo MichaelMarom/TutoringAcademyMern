@@ -222,11 +222,11 @@ export let upload_form_two = (level, university1, university2, university3, degr
 }
 
 //not using
-export let upload_form_three = (MutiStudentHourlyRate, MutiStudentOption, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent) => {
+export let upload_form_three = (MutiStudentHourlyRate, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/form-three', {
-            MutiStudentHourlyRate, MutiStudentOption, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent
+            MutiStudentHourlyRate, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent
         })
             .then((result) => {
                 resolve(result.data)
@@ -514,6 +514,17 @@ export const fetchStudentsBookings = async (tutorId) => {
     }
 };
 
+
+export const updateTutorDisableslots = async (tutorAcademyId, body) => {
+    try {
+        const { data } = await instance.put(`/tutor/update/${tutorAcademyId}`, body);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}
 export const addDisabledDates = async (date) => {
     try {
         const response = await instance.post("/api/store-disabled-dates", date);

@@ -7,9 +7,9 @@
         height: fit-content;
     }
     .disabled-date,.disabled-slot {
-        background-color: orange; /* Example: Gray background for disabled dates */
-        color: #888; /* Example: Gray text color for disabled dates */
-        pointer-events: none; /* Example: Make disabled dates non-clickable */
+        /* background-color: orange;  */
+        color: #888;
+        pointer-events: none;
       }
       
     html,body{

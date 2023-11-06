@@ -284,7 +284,7 @@ let post_form_two = async (req, res) => {
 let post_form_three = (req, res) => {
 
 
-    let { MutiStudentHourlyRate, MutiStudentOption, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
+    let { MutiStudentHourlyRate, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
     marom_db(async (config) => {
         try {
 
@@ -302,15 +302,14 @@ let post_form_three = (req, res) => {
                 console.log(recordExisted)
                 if (recordExisted.recordset.length) {
                     result = await poolConnection.request().query(
-                        `UPDATE TutorRates SET MutiStudentHourlyRate = '${MutiStudentHourlyRate}', MutiStudentOption = '${MutiStudentOption}', CancellationPolicy = '${CancellationPolicy}', FreeDemoLesson = '${FreeDemoLesson}', ConsentRecordingLesson = '${ConsentRecordingLesson}', ActivateSubscriptionOption = '${ActivateSubscriptionOption}', SubscriptionPlan = '${SubscriptionPlan}', DiscountCode = '${DiscountCode}', CodeShareable=${CodeShareable ? 1 : 0},  MultiStudent=${MultiStudent ? 1 : 0}
+                        `UPDATE TutorRates SET MutiStudentHourlyRate = '${MutiStudentHourlyRate}', CancellationPolicy = '${CancellationPolicy}', FreeDemoLesson = '${FreeDemoLesson}', ConsentRecordingLesson = '${ConsentRecordingLesson}', ActivateSubscriptionOption = '${ActivateSubscriptionOption}', SubscriptionPlan = '${SubscriptionPlan}', DiscountCode = '${DiscountCode}', CodeShareable=${CodeShareable ? 1 : 0},  MultiStudent=${MultiStudent ? 1 : 0}
                          WHERE cast(AcademyId as varchar) = '${AcademyId}'`
                     )
-                    console.log(result, 'heheheh')
                 } else {
                     result = await poolConnection.request().query(
                         `
-                            INSERT INTO "TutorRates"(MutiStudentOption,MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,ConsentRecordingLesson,ActivateSubscriptionOption,SubscriptionPlan,AcademyId, DiscountCode,MultiStudent,CodeShareable)
-                            VALUES ('${MutiStudentOption}', '${MutiStudentHourlyRate}', '${CancellationPolicy}','${FreeDemoLesson}','${ConsentRecordingLesson}','${ActivateSubscriptionOption}','${SubscriptionPlan}','${AcademyId}','${DiscountCode}',${MultiStudent ? 1 : 0},${CodeShareable ? 1 : 0})
+                            INSERT INTO "TutorRates"(MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,ConsentRecordingLesson,ActivateSubscriptionOption,SubscriptionPlan,AcademyId, DiscountCode,MultiStudent,CodeShareable)
+                            VALUES ( '${MutiStudentHourlyRate}', '${CancellationPolicy}','${FreeDemoLesson}','${ConsentRecordingLesson}','${ActivateSubscriptionOption}','${SubscriptionPlan}','${AcademyId}','${DiscountCode}',${MultiStudent ? 1 : 0},${CodeShareable ? 1 : 0})
                             `
                     )
                 }

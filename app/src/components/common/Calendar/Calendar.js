@@ -3,8 +3,7 @@ import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import EventModal from "../EventModal/EventModal";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { fetchStudentsBookings, get_tutor_setup } from "../../../axios/tutor";
+import { fetchStudentsBookings, get_tutor_setup, updateTutorDisableslots } from "../../../axios/tutor";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,6 +12,7 @@ import Loading from '../Loading'
 import { getStudentBookings, postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
 import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 import CustomAgenda from "./CustomAgenda";
+import '../../../styles/common.css';
 moment.locale("en-GB");
 
 const localizer = momentLocalizer(moment);
@@ -28,7 +28,7 @@ const myMessages = {
 
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
-const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
+const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
 
   const [activeView, setActiveView] = useState(views.MONTH)
   const dispatch = useDispatch();
@@ -58,25 +58,29 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
   //apis functions
   const updateTutorDisableRecord = async () => {
-    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${tutorAcademyId}`, {
+    const result = await updateTutorDisableslots(tutorAcademyId, {
       enableHourSlots,
       disableDates,
       disableWeekDays,
       disableHourSlots,
       enabledDays,
-      disableHoursRange: disabledHours
-    });
+      disableHoursRange: disabledHours,
+      disableColor: disableColor || null
+    })
+
   }
+
   const getTutorSetup = async () => {
     const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
-    console.log(result)
-    if (result.length) {
+    console.log(result, Object.keys(result).length, 'fetched', dataFetched)
+    if (Object.keys(result).length) {
       setEnableHourSlots(JSON.parse(result.enableHourSlots));
       setEnabledDays(JSON.parse(result.enabledDays))
       setDisableDates(JSON.parse(result.disableDates));
       setDisableHourSlots(JSON.parse(result.disableHourSlots));
       setDisabledWeekDays(JSON.parse(result.disableWeekDays));
       setDisabledHours(JSON.parse(result.disableHoursRange));
+      setDisableColor(result.disableColor)
     }
     setDataFetched(true);
   }
@@ -117,9 +121,13 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   }, [activeTab])
 
   useEffect(() => {
-    if (dataFetched && !isStudentLoggedIn)
-      updateTutorDisableRecord();
-  }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched]);
+    if (dataFetched && !isStudentLoggedIn) {
+      setTimeout(() => {
+        toast.success("Saving Disabled Slots ....")
+        updateTutorDisableRecord()
+      }, 1000);
+    }
+  }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
 
   const handleBulkEventCreate = (type) => {
     if (reservedSlots.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
@@ -180,6 +188,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
 
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
+    if (!disableColor) { toast.warning("Please select color before disabling slots!"); return }
     if (clickedUpperSlot && activeView != views.MONTH) return;
     if (clickedDate.getTime() < (new Date()).getTime()) {
       toast.warning(`Cannot ${!isStudentLoggedIn ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
@@ -363,6 +372,9 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
       }
       else if (existInDisableHourSlots) {
         return {
+          style: {
+            backgroundColor: disableColor
+          },
           className: 'disable-slot',
         }
       }
@@ -371,6 +383,9 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         return formattedTime === start;
       }) && !existInEnableSlots && !existInDisableHourSlots) {
         return {
+          style: {
+            backgroundColor: disableColor
+          },
           className: 'disabled-slot',
           onClick: () => { window.alert('This slot is disabled.'); }
         };
@@ -403,6 +418,9 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
       })
       if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
         return {
+          style: {
+            backgroundColor: disableColor
+          },
           className: "disabled-date",
           onClick: (e) => {
             e.preventDefault();
@@ -475,22 +493,14 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   };
 
   const handleViewChange = (view) => setActiveView(view)
-  const event2 = [{
-    id: 2,
-    title: 'Lunch with Client',
-    start: new Date(2023, 10, 26, 12, 30), // Date and time when the event starts
-    end: new Date(2023, 10, 26, 13, 30),   // Date and time when the event ends
-    description: 'Meet with the client to discuss project requirements and milestones.',
-    location: 'Restaurant XYZ',
-  }];
 
-  
+
   if (!dataFetched)
     return <Loading />
   return (
     <div className="h-100">
       <Calendar
-        views={["day", "week", "month", "agenda"]}
+        views={["day", "week", "month"]}
         localizer={localizer}
         selectable={true}
         defaultView={activeView}

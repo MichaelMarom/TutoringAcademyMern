@@ -31,12 +31,8 @@ code {
 .rbc-time-slot.disable-slot,
 .rbc-day-bg.disabled-date.rbc-today,
 .disabled-date.rbc-day-slot.rbc-time-column.rbc-now.rbc-today {
-  background-color: orange !important;
+  /* background-color: orange !important; */
 }
-
-/* .reserved-slot {
-  background-color: yellow !important;
-} */
 
 .rbc-event-label {
   display: none !important;

@@ -15,7 +15,8 @@ import App from './routes';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
-    <ToastContainer />
+    <ToastContainer position="bottom-center"
+      className="custom-toast-container" />
     <Provider store={store}>
       <Router>
         <App />

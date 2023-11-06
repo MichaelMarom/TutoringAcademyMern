@@ -6,6 +6,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import Tooltip from "../common/ToolTip";
 import { copyToClipboard } from "../../helperFunctions/generalHelperFunctions";
 import Actions from "../common/Actions";
+import '../../styles/common.css'
 import { toast } from "react-toastify";
 
 const generateDiscountCode = () => {
@@ -20,7 +21,6 @@ const generateDiscountCode = () => {
   return code;
 };
 const Rates = () => {
-  let [MultiStudentOption, setMultiStudentOption] = useState(false);
   let [MultiStudentHourlyRate, setMultiStudentHourlyRate] = useState("");
   let [CancellationPolicy, setCancellationPolicy] = useState("");
   let [FreeDemoLesson, setFreeDemoLesson] = useState("");
@@ -37,69 +37,14 @@ const Rates = () => {
 
   const [dataFetched, setDataFetched] = useState(false)
   const [changesMade, setChangesMade] = useState(false);
+  const [dbState, setDbState] = useState({});
 
-
-  useEffect(() => {
-    const initialState = {
-      MultiStudentOption,
-      MultiStudentHourlyRate,
-      CancellationPolicy,
-      FreeDemoLesson,
-      ConsentRecordingLesson,
-      ActivateSubscriptionOption,
-      SubscriptionPlan,
-      discountEnabled,
-      classTeaching,
-      copied,
-      discountCode,
-      loading,
-    };
-    const stateVariablesToMonitor = [
-      MultiStudentOption,
-      MultiStudentHourlyRate,
-      CancellationPolicy,
-      FreeDemoLesson,
-      ConsentRecordingLesson,
-      ActivateSubscriptionOption,
-      SubscriptionPlan,
-      discountEnabled,
-      classTeaching,
-      copied,
-      discountCode,
-      loading,
-    ];
-    console.log('useEffect', dataFetched)
-    const changesDetected = dataFetched ? stateVariablesToMonitor.some((stateVar) => {
-      return stateVar !== initialState[stateVar];
-    }) : false;
-    setDataFetched(false)
-    if (dataFetched) {
-      console.log('dddd');
-    }
-
-    // setChangesMade(changesDetected);
-  }, [
-    MultiStudentOption,
-    MultiStudentHourlyRate,
-    CancellationPolicy,
-    FreeDemoLesson,
-    ConsentRecordingLesson,
-    ActivateSubscriptionOption,
-    SubscriptionPlan,
-    discountEnabled,
-    classTeaching,
-    copied,
-    discountCode,
-    loading,
-  ])
-
-  useEffect(() => {
+  const fetchDataFromApi = () => {
     get_tutor_rates(window.localStorage.getItem("tutor_user_id"))
       .then((result) => {
         console.log(result[0]);
-
-        if (result[0]) {
-          setMultiStudentOption(result[0].MutiStudentOption);
+        if (Object.keys(result[0]).length) {
+          setDbState(result[0]);
           setMultiStudentHourlyRate(result[0].MutiStudentHourlyRate);
           setCancellationPolicy(result[0].CancellationPolicy);
           setFreeDemoLesson(result[0].FreeDemoLesson);
@@ -113,9 +58,6 @@ const Rates = () => {
           let multiStudentCheckbox = document.querySelector(
             "#multi-student-checkbox"
           );
-          MultiStudentOption === "true"
-            ? (multiStudentCheckbox.checked = true)
-            : (multiStudentCheckbox.checked = false);
 
           let subscriptionPlan = document.querySelector("#subscription-plan");
           ActivateSubscriptionOption === "true"
@@ -168,12 +110,41 @@ const Rates = () => {
         console.log(err);
       });
     setDataFetched(true)
+  }
+  useEffect(() => {
+    fetchDataFromApi()
   }, []);
+
+  const currentState = {
+    MutiStudentHourlyRate: MultiStudentHourlyRate,
+    CancellationPolicy,
+    FreeDemoLesson,
+    ConsentRecordingLesson,
+    ActivateSubscriptionOption,
+    SubscriptionPlan,
+    CodeShareable: discountEnabled,
+    MultiStudent: classTeaching,
+    DiscountCode: discountCode,
+  };
+
+  const compareStates = () => {
+    for (const key in currentState) {
+      console.log(key, currentState, dbState, currentState[key] !== dbState?.[key], 'comparison')
+      if (currentState[key] !== dbState?.[key]) {
+        setChangesMade(true);
+        return;
+      }
+    }
+    setChangesMade(false);
+  };
+
+  useEffect(() => {
+    compareStates();
+  }, [currentState, dbState]);
 
   let saver = async () => {
     let response = await upload_form_three(
       MultiStudentHourlyRate,
-      MultiStudentOption,
       CancellationPolicy,
       FreeDemoLesson,
       ConsentRecordingLesson,
@@ -210,7 +181,11 @@ const Rates = () => {
     e.preventDefault()
     setLoading(true)
     let res = await saver()
-    if (res.bool) { toast.success(res.mssg) }
+    if (res.bool) {
+      setChangesMade(false)
+      fetchDataFromApi()
+      toast.success(res.mssg)
+    }
     else {
       toast.error("Failed to save record")
     }
@@ -230,11 +205,11 @@ const Rates = () => {
         <span className="save_loader"></span>
       </div>
       {changesMade && (
-        <div className="green-bar w-100 bg-success text-white">
-          <p>You have made changes. Save them before moving to the next tab.</p>
+        <div className="green-bar w-100 bg-success text-white fs-5 text-decoration-underline d-flex justify-content-center m-0">
+          <p className="m-2">You have made changes. Save them before moving to the next tab.</p>
         </div>
       )}
-      <div className="tutor-tab-rates">
+      <div className="tutor-tab-rates container">
         <div className="tutor-tab-rate-section">
           <form onSubmit={handleSubmit}>
 
@@ -345,42 +320,44 @@ const Rates = () => {
                   <FaInfoCircle size={20} color="gray" />
                 </Tooltip>
               </div>
-              <div>
-                <h6 className="mt-4 d-inline">Your personal code</h6>
-                <Tooltip text="Generate New Code">
-                  <IoMdRefresh
-                    size={20}
-                    className="d-inline"
-                    onClick={() => setDiscountCode(generateDiscountCode())}
-                  />
-                </Tooltip>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control m-0 h-100 p-2"
-                    value={discountCode}
-                    readOnly
-                  />
-
-                  <label
-                    className="m-0 input-group-text"
-                    type="button"
-                    id="inputGroupFileAddon04"
-                  >
-                    <IoMdCopy
+              {
+                discountEnabled &&
+                <div>
+                  <h6 className="mt-4 d-inline">Your personal code</h6>
+                  <Tooltip text="Generate New Code">
+                    <IoMdRefresh
                       size={20}
-                      color="gray"
-                      onClick={() => {
-                        copyToClipboard(discountCode);
-                        setCopied(true);
-                      }}
+                      className="d-inline"
+                      onClick={() => setDiscountCode(generateDiscountCode())}
                     />
-                  </label>
-                </div>
-                {copied && (
-                  <p className="text-success d-block">Code copied to clipboard!</p>
-                )}
-              </div>
+                  </Tooltip>
+                  <div className="input-group w-50">
+                    <input
+                      type="text"
+                      className="form-control m-0 h-100 p-2"
+                      value={discountCode}
+                      readOnly
+                    />
+
+                    <label
+                      className="m-0 input-group-text"
+                      type="button"
+                      id="inputGroupFileAddon04"
+                    >
+                      <IoMdCopy
+                        size={20}
+                        color="gray"
+                        onClick={() => {
+                          copyToClipboard(discountCode);
+                          setCopied(true);
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {copied && (
+                    <p className="text-success d-block">Code copied to clipboard!</p>
+                  )}
+                </div>}
               <div className="p-2 mt-4 highlight">
 
                 The American public schools are suffering from accute shortage of teachers. if you hold teacher's certificate, and willing to teach full class of students, you are able to post your ad on the portal message board. and charge higher rate for your skills. Similarly, a school in a need for a substitute teacher, can find your account which is flagged accordingly.
@@ -407,23 +384,30 @@ const Rates = () => {
                   <FaInfoCircle size={20} color="gray" />
                 </Tooltip>
               </div>
-              <div className="input-group">
-                <span className="input-group-text">$</span>
-                <input
-                  type="text"
-                  className="form-control m-0 py-4"
-                  aria-label="Amount (to the nearest dollar)"
-                  value={MultiStudentHourlyRate}
-                  onChange={(e) => {
-                    if (e.target.value < 1000)
-                      setMultiStudentHourlyRate(e.target.value)
-                  }}
-                />
-                <span className="input-group-text">.00</span>
-              </div>
-              <span className="small text-secondary">Amount should be less than $999 </span>
+              {
+                classTeaching &&
+                <>
+                  <div className="input-group  w-50">
+                    <span className="input-group-text">$</span>
+                    <input
+                      type="text"
+                      className="form-control m-0 py-4"
+                      aria-label="Amount (to the nearest dollar)"
+                      value={MultiStudentHourlyRate}
+                      onChange={(e) => {
+                        if (e.target.value < 1000)
+                          setMultiStudentHourlyRate(e.target.value)
+                      }}
+                    />
+                    <span className="input-group-text">.00</span>
+                  </div>
+                  <span className="small text-secondary">Amount should be less than $999 </span>
+                </>
+              }
             </div>
-            <Actions loading={loading} />
+            <Actions
+              unSavedChanges={changesMade}
+              loading={loading} />
           </form>
         </div>
       </div>

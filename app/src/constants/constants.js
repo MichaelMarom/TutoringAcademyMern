@@ -30,6 +30,7 @@ export const days = [
   "Thursday",
   "Friday",
   "Saturday",
+  "Holidays"
 ];
 
 

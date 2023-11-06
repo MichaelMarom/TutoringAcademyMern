@@ -107,9 +107,46 @@ let set_student_status = (req, res) => {
 }
 
 let get_tutor_new_subject = async (req, res) => {
+    let book = []
+
+     function getTutorNewSubject(cb){
+        connecteToDB.then(
+            poolConnection =>
+            poolConnection.request().query(`SELECT * From NewTutorSubject `)
+            .then((result) => cb(result.recordset))
+            .catch(err => console.log(err)))
+        .catch(err => console.log(err))
+     }
+
+     getTutorNewSubject(async(result) => {
+
+         for(let i = 0; i < result.length; i++){
+             console.log([i])
+            let tutor = await tutorName(result[i].AcademyId);
+
+            book.push({ item: result[i], tutor: tutor[0].FirstName + ' ' + tutor[0].LastName })
+            console.log('length check :',result.length , book.length,i)
+
+            if (i === result.length - 1) {
+                console.log(book)
+                res.send(book)
+            }
+         }
+       
+     })
+
+     let  tutorName = async(id) => {
+        return connecteToDB.then(poolConnection =>
+            poolConnection.request().query(`SELECT * FROM TutorSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+                .then((result) => {
+                    return (result.recordset);
+                })
+                .catch(err => console.log(err))
+        )
+    }
 
 
-    let newSub = await connecteToDB.then(poolConnection =>
+    /*let newSub = await connecteToDB.then(poolConnection =>
         poolConnection.request().query(`SELECT * From NewTutorSubject `)
             .then((result) => {
                 return (result.recordset);
@@ -141,7 +178,7 @@ let get_tutor_new_subject = async (req, res) => {
             }
         })
     }
-    setUpDoc()
+    setUpDoc()*/
 }
 
 

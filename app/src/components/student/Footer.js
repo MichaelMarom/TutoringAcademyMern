@@ -58,7 +58,7 @@ const Footer = () => {
 
             <div className="tutor-footer">
                 <ul>
-                    <li className="p-1" ><button className="btn btn-primary fs-4 m-0"  onClick={back}>back</button></li>
+                    <li className="p-1" ><button className="btn btn-primary fs-4 m-0"  onClick={back}>Back</button></li>
                     
                     <li className="p-1" id="student-clear" ><button className="btn btn-danger fs-4 m-0"  onClick={clear}>Clear records</button></li>
 

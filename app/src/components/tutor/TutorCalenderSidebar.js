@@ -47,14 +47,14 @@ function TutorCalenderSidebar({
                                 }`}
                             onClick={() => handleTabClick('day')}
                         >
-                            Disable Hours
+                            Blocked Hours
                         </button>
                         <button
                             className={`btn btn-sm ${activeTab === 'month' ? 'btn-primary ' : 'btn-secondary'
                                 }`}
                             onClick={() => handleTabClick('month')}
                         >
-                            Disable Week Days
+                            Blooked Week Days
                         </button>
                     </div>
                     <div className="highlight small lh-sm">
@@ -95,14 +95,14 @@ function TutorCalenderSidebar({
                                 }`}
                             onClick={() => handleTabClick('day')}
                         >
-                            Disable Hours
+                            Blocked Hours
                         </button>
                         <button
                             className={`btn btn-sm ${activeTab === 'month' ? 'btn-primary' : 'btn-secondary'
                                 }`}
                             onClick={() => handleTabClick('month')}
                         >
-                            Disable Week Days
+                            Blocked Week Days
                         </button>
                     </div>
                     <div className="highlight small lh-sm">

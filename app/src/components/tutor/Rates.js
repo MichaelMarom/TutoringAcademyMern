@@ -272,7 +272,7 @@ const Rates = () => {
                 save by paying upfront on multi sessions. The Academy will forward
                 you 50% from the discounted amount upfront. For example; student
                 selects the 12 hours option, and you charge $45.00/hr, then $45.00
-                X 12 = $540 -10% = $486. from this amount the academy will forward
+                X 12 = $540 -12% = $475.20 From this amount the academy will forward
                 you 50% upfront, and the balance upon completion.
               </div>
 
@@ -395,13 +395,13 @@ const Rates = () => {
                   checked={classTeaching}
                 />
                 <label className="form-check-label" for="flexSwitchCheckChecked">
-                  My Charge for teaching a whole school class.
+                  My hourly Charge for teaching a whole school class.
                 </label>
 
 
 
                 <Tooltip
-                  text="Fill your amount for teaching whole class in usd"
+                  text="Fill your hourly amount for teaching whole class in US$"
                   direction="left"
                 >
                   <FaInfoCircle size={20} color="gray" />

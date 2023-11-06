@@ -1033,7 +1033,7 @@ const TutorSetup = () => {
                         onClick={() => handleOptionClick("upload")}
                       >
                         <BsCloudUpload size={15} /> <br />
-                        Upload a Video
+                        Upload Video
                       </label>
                     </div>
                   </div>

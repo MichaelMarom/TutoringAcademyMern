@@ -10,6 +10,7 @@ let post_new_subject = (req, res) => {
 
     let { faculty, subject, reason, AcademyId, facultyId } = req.body;
 
+    console.log(faculty, subject, reason, AcademyId, facultyId)
     let date = new Date();
 
     marom_db(async (config) => {
@@ -463,7 +464,6 @@ let get_degree = (req, res) => {
 
     })
 }
-
 
 let get_certificates = (req, res) => {
     marom_db(async (config) => {

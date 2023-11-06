@@ -95,7 +95,7 @@ const LoginPage = () => {
                                         </div>
                                         <div className='w-100 d-flex justify-content-end text-primary'>
                                             <div onClick={() => setOpenModel(true)}>
-                                                forget password
+                                                forgot password?
                                             </div>
                                         </div>
 

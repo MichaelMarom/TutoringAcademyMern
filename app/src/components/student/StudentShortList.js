@@ -85,7 +85,9 @@ const StudentShortList = () => {
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
                 <div className="form-into-prompt shadow-sm" style={{ padding: '20px' }}>
                     {response.length ?
-                        <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> To view complete tutor's profile include presentation video, double click on his/hers picture.</div> :
+                        <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> 
+                        To view complete tutor's profile include presentation video, double click on his/hers picture.</div> 
+                        :
                         <div className='text-danger'> no record found!</div>
 
                     }
@@ -110,6 +112,7 @@ const StudentShortList = () => {
                                             const tutorSetup = item.tutorData;
                                             const tutorDemoLesson = item.tutorDemoLesson;
                                             const tutorShortList = item.tutorShortList;
+                                            console.log(tutorSetup)
                                             return <tr onDoubleClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)} key={index}>
 
                                                 <td>{<img src={tutorSetup?.Photo} style={{ height: '100px', width: '120px' }} />}</td>

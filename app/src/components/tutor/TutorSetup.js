@@ -141,7 +141,7 @@ const TutorSetup = () => {
         setSelectedVideoOption("upload");
 
         let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`;
-        frame1.insertAdjacentHTML("afterbegin", img);
+        frame1?.insertAdjacentHTML("afterbegin", img);
       }
     };
     fetchTutorSetup();
@@ -474,7 +474,7 @@ const TutorSetup = () => {
 
         set_photo(reader.result);
 
-        frame.insertAdjacentHTML("afterbegin", img);
+        frame?.insertAdjacentHTML("afterbegin", img);
       };
       reader.readAsDataURL([...f.files][0]);
     }

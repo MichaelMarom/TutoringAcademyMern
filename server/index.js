@@ -1,5 +1,3 @@
-
-
 const { express, path, Pusher, fs, parser, cookieParser, mocha, mongodb, morgan, io, cors, shortId, jwt } = require('./modules');
 const { ConnectToMongoDb, marom_db, sql, connecteToDB } = require('./db')
 const { STUDENT_ROUTES } = require('./routes/student');

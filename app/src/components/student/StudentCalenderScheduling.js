@@ -14,6 +14,7 @@ const StudentCalenderScheduling = () => {
   const [tutorTime, setTutorTime] = useState('');
   const [disabledHours, setDisabledHours] = useState([]);
   const { selectedTutor } = useSelector(state => state.selectedTutor)
+  console.log(selectedTutor)
   const { user } = useSelector(state => state.user);
   const { subject } = useSelector(state => state.subject)
 
@@ -23,8 +24,8 @@ const StudentCalenderScheduling = () => {
     setTutorTime(convertGMTOffsetToLocalString(selectedTutor.GMT))
   }, [selectedTutor])
 
-  if (!selectedTutor.AcademyId)
-    return <div className="text-danger mt-4" onClick={()=>{nav('/student/feedback')}}>Please select tutor to Book lessons</div>
+  if (!selectedTutor.academyId)
+    return <div className="text-danger mt-4" onClick={() => { nav('/student/feedback') }}>Please select tutor to Book lessons</div>
   return (
     <div>
       <div className='align-items-center justify-content-center mt-5 d-flex gap-4'>
@@ -41,7 +42,12 @@ const StudentCalenderScheduling = () => {
           </div>
         </div>
         <div className='px-5 col-9'>
-          <ShowCalendar activeTab={activeTab} disableWeekDays={disableWeekDays} disabledHours={disabledHours} setDisabledWeekDays={setDisabledWeekDays} setDisabledHours={setDisabledHours} />
+          <ShowCalendar
+            activeTab={activeTab}
+            disableWeekDays={disableWeekDays}
+            disabledHours={disabledHours}
+            setDisabledWeekDays={setDisabledWeekDays}
+            setDisabledHours={setDisabledHours} />
         </div>
       </div>
     </div>

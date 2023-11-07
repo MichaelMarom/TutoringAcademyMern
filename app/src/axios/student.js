@@ -120,7 +120,6 @@ export let upload_student_short_list = (items) => {
 
 export let get_student_short_list = async (student) => {
     try {
-        console.log(student, 'estudent')
         const {data} = await axiosInstance.get(`/student/short-list/${student}`)
         return data;
     }

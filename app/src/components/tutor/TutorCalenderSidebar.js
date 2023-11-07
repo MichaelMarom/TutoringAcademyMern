@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { hours, days } from '../../constants/constants'
+import React, { useEffect, useRef, useState } from 'react';
+import { hours, days } from '../../constants/constants';
+import { BsCheckCircle } from 'react-icons/bs';
 
 function TutorCalenderSidebar({
     activeTab,
@@ -15,23 +16,31 @@ function TutorCalenderSidebar({
     // const [disableWeekDays, setDisabledWeekDays] = useState([]);
     // const [disabledHours, setDisabledHours] = useState([]);
 
+    const hoursChecboxes = useRef(null);
+    useEffect(() => {
+        if (hoursChecboxes.current) {
+            const element = hoursChecboxes.current;
+            const middle = element.scrollHeight / 2;
+            element.scrollTop = middle;
+        }
+    }, [activeTab]);
+
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
 
     const handleCheckboxClick = (day, timeRange) => {
         if (activeTab === 'month') {
-            // Handle checkbox clicks for the 'month' tab
             if (disableWeekDays.includes(day)) {
                 setDisabledWeekDays(disableWeekDays.filter((d) => d !== day));
             } else {
                 setDisabledWeekDays([...disableWeekDays, day]);
             }
         } else if (activeTab === 'day') {
-            // Handle checkbox clicks for the 'day' tab
-            if (disabledHours.includes(timeRange)) {
-                setDisabledHours(disabledHours.filter((range) => range !== timeRange));
-            } else {
+            if (disabledHours.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])) {
+                setDisabledHours(disabledHours.filter((range) => range[0] !== timeRange[0]));
+            }
+            else {
                 setDisabledHours([...disabledHours, timeRange]);
             }
         }
@@ -67,15 +76,22 @@ function TutorCalenderSidebar({
             </div>
             <div className={`h-100 tab-pane ${activeTab === 'month' ? 'active' : ''}`} id="months">
                 <div className='w-100 p-2'>
-                    <label>Please select color from the pallet below</label>
-                    <input className='p-0'
-                        onChange={(e) => setDisableColor(e.target.value)}
-                        value={disableColor || "#5ed387"}
+                    <label>Click on the pallet below to select a color indicating your blocked slots:</label>
+                    <div className='d-flex justify-content-center align-items-center'>
+                        <div className='d-flex ' 
                         style={{
-                            width: "20px",
-                            height: "20px"
+                            marginRight:"5px"
                         }}
-                        type="color" />
+                        >Select Blockout Color</div>
+                        <input className='p-0 m-0'
+                            onChange={(e) => setDisableColor(e.target.value)}
+                            value={disableColor || "#5ed387"}
+                            style={{
+                                width: "120px",
+                                height: "20px"
+                            }}
+                            type="color" />
+                    </div>
                 </div>
                 <div className="form-scheduling-cnt-left h-100 w-100">
 
@@ -117,29 +133,28 @@ function TutorCalenderSidebar({
                         not be able to book lessons for your blocked hours.
                     </div>
 
-                    <div className="form-scheduling-hours">
-                        {hours.map((timeRange, index) => 
-                           {
-                               console.log(timeRange, disabledHours)
-                               return  (<div className="form-check" key={index}>
+                    <div className="form-scheduling-hours" ref={hoursChecboxes}>
+                        {hours.map((timeRange, index) => {
+                            return (<div className="form-check" key={index}>
                                 <input
                                     type="checkbox"
                                     id={`hour-${index}`}
-                                    className={`form-check-input ${timeRange.midnight ? 'gray-checkbox' : ''}`}
-                                    checked={disabledHours.some(range => range[0] === timeRange.start && range[1] === timeRange.end)}
+                                    className={`form-check-input ${timeRange[2] === 'midnight' ? "gray-checkbox" : ""}`}
+                                    checked={disabledHours.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])}
                                     onChange={() => handleCheckboxClick(null, timeRange)}
                                 />
                                 <label className="form-check-label small lh-sm" htmlFor={`hour-${index}`}>
-                                    {timeRange.start} to {timeRange.end}
+                                    {timeRange[0]} to {timeRange[1]}
                                 </label>
-                            </div>)}
+                            </div>)
+                        }
                         )}
 
                     </div>
 
                     <div className="highlight small lh-sm">
                         Double click on a blocked weekday or hour, will unblock the
-                        day or hour for that day, or the specific hour.
+                        day or the specific hour for that day.
                     </div>
                 </div>
             </div>

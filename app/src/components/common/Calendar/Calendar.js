@@ -12,6 +12,8 @@ import Loading from '../Loading'
 import { getStudentBookings, postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
 import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 import CustomAgenda from "./CustomAgenda";
+import { useLocation } from 'react-router-dom';
+
 import '../../../styles/common.css';
 moment.locale("en-GB");
 
@@ -28,15 +30,29 @@ const myMessages = {
 
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
-const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
+const ShowCalendar = ({
+  setActiveTab = () => { },
+  setDisableColor = () => { },
+  disableColor = '',
+  activeTab,
+  disableWeekDays,
+  disabledHours,
+  setDisabledWeekDays,
+  setDisabledHours
+}) => {
 
   const [activeView, setActiveView] = useState(views.MONTH)
   const dispatch = useDispatch();
 
   const { user } = useSelector(state => state.user);
   const { selectedTutor } = useSelector(state => state.selectedTutor)
+  const location = useLocation();
 
-  const isStudentLoggedIn = user[0].parentEmail ? true : false
+  // Extract student information from the URL
+  const isStudentRoute = (location.pathname.split('/'))[1] === 'student';
+  console.log(isStudentRoute, location.pathname.split('/'));
+
+  const isStudentLoggedIn = user[0].role === 'student' ? true : user[0].role === 'admin' && isStudentRoute ? true : false
 
   const [enabledDays, setEnabledDays] = useState([]);
   const [disableDates, setDisableDates] = useState([]);
@@ -72,8 +88,8 @@ const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDay
 
   const getTutorSetup = async () => {
     const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
-    console.log(result, Object.keys(result).length, 'fetched', dataFetched)
-    if (Object.keys(result).length) {
+    console.log(result, isStudentLoggedIn, tutorAcademyId, selectedTutor)
+    if (Object.keys(result ? result : {}).length) {
       setEnableHourSlots(JSON.parse(result.enableHourSlots));
       setEnabledDays(JSON.parse(result.enabledDays))
       setDisableDates(JSON.parse(result.disableDates));
@@ -123,7 +139,7 @@ const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDay
   useEffect(() => {
     if (dataFetched && !isStudentLoggedIn) {
       setTimeout(() => {
-        toast.success("Saving Disabled Slots ....")
+        toast.success("Saving Blocked out Slots ....")
         updateTutorDisableRecord()
       }, 1000);
     }
@@ -188,7 +204,7 @@ const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDay
 
 
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
-    if (!disableColor) { toast.warning("Please select color before disabling slots!"); return }
+    if (!isStudentRoute && !disableColor) { toast.warning("Please select color before disabling slots!"); return }
     if (clickedUpperSlot && activeView != views.MONTH) return;
     if (clickedDate.getTime() < (new Date()).getTime()) {
       toast.warning(`Cannot ${!isStudentLoggedIn ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
@@ -354,7 +370,21 @@ const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDay
       const existInEnableSlots = enableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime())
 
       const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime());
+      const existInDefaultHours = disabledHours.some(slot => {
+        const startTime = moment('9:00 PM', 'h:mm A');
+        const endTime = moment('8:00 AM', 'h:mm A');
 
+        const momentTime = moment(formattedTime, 'h:mm A');
+
+        if (endTime.isBefore(startTime)) {
+          return slot[0] === formattedTime && momentTime.isBetween(startTime, moment('11:59 PM', 'h:mm A'), undefined, '[]') ||
+            momentTime.isBetween(moment('12:00 AM', 'h:mm A'), endTime, undefined, '[]');
+        }
+
+        return slot[0] === formattedTime && momentTime.isBetween(startTime, endTime, undefined, '[]');
+      })
+
+      //swithes checks
       if (existsinReservedSlots) {
         return {
           className: 'reserved-slot'
@@ -379,12 +409,12 @@ const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDay
         }
       }
       else if (date.getTime() >= (new Date()).getTime() && disabledHours && disabledHours.some((timeRange) => {
-        const [start, end] = timeRange;
+        const [start] = timeRange;
         return formattedTime === start;
       }) && !existInEnableSlots && !existInDisableHourSlots) {
         return {
           style: {
-            backgroundColor: disableColor
+            backgroundColor: existInDefaultHours ? "lightgray" : disableColor
           },
           className: 'disabled-slot',
           onClick: () => { window.alert('This slot is disabled.'); }
@@ -494,6 +524,16 @@ const ShowCalendar = ({ setDisableColor, disableColor, activeTab, disableWeekDay
 
   const handleViewChange = (view) => setActiveView(view)
 
+  //handle scroll
+  useEffect(() => {
+    const timeContent = document.querySelector('.rbc-time-content');
+    console.log(activeView, activeTab)
+    setActiveTab(activeView === 'week' ? 'day' : activeView)
+    if (timeContent) {
+      const middle = timeContent.scrollHeight / 3.5;
+      timeContent.scrollTop = middle;
+    }
+  }, [activeView]);
 
   if (!dataFetched)
     return <Loading />

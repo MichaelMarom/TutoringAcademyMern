@@ -57,9 +57,14 @@ const Scheduling = () => {
             </div>
             <div className='px-5 col-9'>
               <ShowCalendar
+                setActiveTab={setActiveTab}
                 setDisableColor={setDisableColor}
                 disableColor={disableColor}
-                activeTab={activeTab} disableWeekDays={disableWeekDays} disabledHours={disabledHours} setDisabledWeekDays={setDisabledWeekDays} setDisabledHours={setDisabledHours} />
+                activeTab={activeTab}
+                disableWeekDays={disableWeekDays}
+                disabledHours={disabledHours}
+                setDisabledWeekDays={setDisabledWeekDays}
+                setDisabledHours={setDisabledHours} />
 
             </div>
           </div>

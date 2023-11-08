@@ -1073,8 +1073,127 @@ const post_tutor_setup = (req, res) => {
     })
 }
 
+let get_tutor_market_data = async (req, res) => {
+
+    let { id } = req.query;
+
+
+    let TutortData = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+            .then((result) => {
+
+                return (result.recordset);
+            })
+            .catch(err => console.log(err))
+            .catch(err => console.log(err))
+    )
+
+    let Exprience = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * FROM Experience`)
+            .then((result) => {
+
+                return (result.recordset);
+            })
+            .catch(err => console.log(err))
+    )
+
+    let EducationalLevel = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * FROM EducationalLevel`)
+            .then((result) => {
+
+                return (result.recordset);
+                //res.status(200).send()
+                //console.log(result)
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+            .catch(err => console.log(err))
+    )
+
+    let CertificateTypes = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * FROM CertificateTypes`)
+            .then((result) => {
+
+                return (result.recordset);
+                //res.status(200).send()
+                //console.log(result)
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+            .catch(err => console.log(err))
+    )
+
+    let Subjects = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT Id,FacultyId,SubjectName FROM Subjects`)
+            .then((result) => {
+
+                return (result.recordset);
+                //res.status(200).send()
+                //console.log(result)
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+            .catch(err => console.log(err))
+    )
+
+    let Faculty = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * FROM Faculty`)
+            .then((result) => {
+
+                return (result.recordset);
+                //res.status(200).send()
+                //console.log(result)
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+            .catch(err => console.log(err))
+    )
+
+    let GMT = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * FROM GMT`)
+            .then((result) => {
+
+                return (result.recordset);
+                //res.status(200).send()
+                //console.log(result)
+                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
+            })
+            .catch(err => console.log(err))
+            .catch(err => console.log(err))
+    )
+
+    new Promise((resolve, reject) => {
+        resolve(TutortData)
+    })
+        .then((TutortData) => {
+            return { TutortData, Exprience }
+        })
+        .then(({ TutortData, Exprience }) => {
+            return { TutortData, EducationalLevel, Exprience }
+        })
+        .then(({ TutortData, EducationalLevel, Exprience }) => {
+            return { TutortData, EducationalLevel, Exprience, CertificateTypes }
+        })
+        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes }) => {
+            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }
+        })
+        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
+            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty }
+        })
+        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
+            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT }
+        })
+        .then((result) => {
+            res.send(result)
+        })
+
+
+}
+
+
 module.exports = {
     subjects,
+    get_tutor_market_data,
     post_tutor_setup,
     faculties,
     post_form_one,

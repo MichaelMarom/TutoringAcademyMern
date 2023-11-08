@@ -35,7 +35,8 @@ const StudentShortList = () => {
             firstName: item.tutorData?.FirstName,
             lastName: item.tutorData?.LastName,
             subject: item.tutorShortList.Subject,
-            rate: item.tutorShortList.Rate
+            rate: item.tutorShortList.Rate,
+            disableColor: item.tutorData?.disableColor
         }))
         navigate('/student/schedule')
     }
@@ -85,8 +86,8 @@ const StudentShortList = () => {
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
                 <div className="form-into-prompt shadow-sm" style={{ padding: '20px' }}>
                     {response.length ?
-                        <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}> 
-                        To view complete tutor's profile include presentation video, double click on his/hers picture.</div> 
+                        <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}>
+                            To view complete tutor's profile include presentation video, double click on his/hers picture.</div>
                         :
                         <div className='text-danger'> no record found!</div>
 

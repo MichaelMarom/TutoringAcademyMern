@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
 import Loading from '../Loading'
 import { getStudentBookings, postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
-import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
+import { isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 import CustomAgenda from "./CustomAgenda";
 import { useLocation } from 'react-router-dom';
 
@@ -31,6 +31,7 @@ const myMessages = {
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
 const ShowCalendar = ({
+  student = {},
   setActiveTab = () => { },
   setDisableColor = () => { },
   disableColor = '',
@@ -67,7 +68,7 @@ const ShowCalendar = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedSlot, setClickedSlot] = useState({})
   const tutorId = selectedTutor.academyId;
-  const studentId = user[0].academyId;
+  const studentId = student.AcademyId
   const subjectName = selectedTutor.subject;
 
   const { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
@@ -102,8 +103,10 @@ const ShowCalendar = ({
   }
 
   const fetchBookings = async () => {
-    if (isStudentLoggedIn)
-      dispatch(getStudentBookings(user[0].academyId, selectedTutor.academyId));
+    if (isStudentLoggedIn) {
+      console.log(student, selectedTutor);
+      dispatch(getStudentBookings(student.AcademyId, selectedTutor.academyId));
+    }
     else {
       console.log(user, 'user loggedin')
       const response = await fetchStudentsBookings(tutorAcademyId);
@@ -120,7 +123,7 @@ const ShowCalendar = ({
 
   useEffect(() => {
     fetchBookings();
-  }, [selectedTutor, user])
+  }, [selectedTutor, user, student])
 
   const onRequestClose = () => {
     setSelectedSlots([]);
@@ -167,7 +170,7 @@ const ShowCalendar = ({
         id: uuidv4(),
         title: type == 'reserved' ? 'Reserved' :
           type === 'intro' ? 'Intro' : "Booked",
-        studentName: user[0].firstName,
+        studentName: student.FirstName,
         createdAt: new Date(),
         subject: selectedTutor.subject
       }
@@ -175,10 +178,10 @@ const ShowCalendar = ({
 
     //handle delete type later todo
     if (type === 'reserved' || type === 'intro') {
-      dispatch(postStudentBookings({ studentId: user[0].academyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
+      dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
     }
     else if (type === 'booked') {
-      dispatch(postStudentBookings({ studentId: user[0].academyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
+      dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
   }
 
@@ -571,6 +574,7 @@ const ShowCalendar = ({
         messages={myMessages}
       />
       <EventModal
+        student={student}
         isOpen={isModalOpen}
         selectedSlots={selectedSlots}
         setSelectedSlots={setSelectedSlots}

@@ -17,6 +17,7 @@ const Header = () => {
         { name: 'Short List', url: 'short-list' },
         { name: 'Accounting', url: 'accounting' },
         { name: 'Calender Scheduling', url: 'schedule' },
+        { name: "Feedback", url: 'feedback' },
         { name: 'Terms Of Use', url: 'term-of-use' },
         { name: 'Message Board', url: 'my-students' },
         { name: 'Market place', url: 'market-place' },

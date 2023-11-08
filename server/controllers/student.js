@@ -382,13 +382,6 @@ let get_my_data = async (req, res) => {
         res.send(books)
     })
 
-
-
-
-
-
-
-
 }
 
 let get_student_short_list_data = (req, res) => {

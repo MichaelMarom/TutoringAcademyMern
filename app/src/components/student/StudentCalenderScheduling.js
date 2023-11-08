@@ -6,6 +6,7 @@ import useClock from '../../hooks/Clock';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { formatName } from '../../helperFunctions/generalHelperFunctions';
 import { convertGMTOffsetToLocalString, showDate } from '../../helperFunctions/timeHelperFunctions';
+import { get_my_data } from '../../axios/student';
 
 
 const StudentCalenderScheduling = () => {
@@ -14,6 +15,7 @@ const StudentCalenderScheduling = () => {
   const [tutorTime, setTutorTime] = useState('');
   const [disabledHours, setDisabledHours] = useState([]);
   const { selectedTutor } = useSelector(state => state.selectedTutor)
+  const [student, setStudent] = useState({})
   console.log(selectedTutor)
   const { user } = useSelector(state => state.user);
   const { subject } = useSelector(state => state.subject)
@@ -24,8 +26,19 @@ const StudentCalenderScheduling = () => {
     setTutorTime(convertGMTOffsetToLocalString(selectedTutor.GMT))
   }, [selectedTutor])
 
+  useEffect(() => {
+    const getStudentDetails = async () => {
+      const res = await get_my_data(localStorage.getItem('student_user_id'))
+      console.log(res[1][0],'estudent');
+      setStudent(res[1][0][0])
+    }
+    getStudentDetails()
+  }, [])
+
   if (!selectedTutor.academyId)
-    return <div className="text-danger mt-4" onClick={() => { nav('/student/feedback') }}>Please select tutor to Book lessons</div>
+    return <div className="text-danger mt-4">
+      Please select tutor to Book lessons
+    </div>
   return (
     <div>
       <div className='align-items-center justify-content-center mt-5 d-flex gap-4'>
@@ -43,6 +56,8 @@ const StudentCalenderScheduling = () => {
         </div>
         <div className='px-5 col-9'>
           <ShowCalendar
+            student={student}
+            disableColor={selectedTutor.disableColor}
             activeTab={activeTab}
             disableWeekDays={disableWeekDays}
             disabledHours={disabledHours}

@@ -8,6 +8,7 @@ import career from '../../images/career.png';
 import Select, { components } from 'react-select'
 import Actions from '../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const languages = [
     'Afrikaans',
@@ -447,7 +448,12 @@ const Education = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         let res = await saver()
-        console.log(res);
+        if (res) {
+            toast.success('Education record saved Successfully')
+        }
+        else {
+            toast.success('Failed to save Record Successfully')
+        }
     }
 
     return (

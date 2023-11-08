@@ -1,0 +1,48 @@
+@keyframes blink {
+    0% {
+      opacity: 0.9;
+    }
+    50% {
+      opacity: 0.3ToastContainer ;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .blinking-button {
+    animation: blink 1s infinite;
+  }
+  .custom-toast-container{
+      bottom:100px
+  }
+  
+  /* calender */
+  .rbc-btn-group button:nth-child(1) {
+    background-color: yellow !important;
+    color: #000 !important;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+  }
+  
+  .rbc-btn-group button:nth-child(2)  {
+    background-color: #4caf50 !important;
+    color: #fff !important;
+  }
+  
+  .rbc-btn-group button:nth-child(3)  {
+      background-color: #007bff !important;
+    color: #fff !important;
+  }
+
+  .rbc-btn-group .rbc-active{
+      padding: 8px;
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5) !important;
+  }
+  .form-check-input.gray-checkbox:checked {
+    background-color: lightgray;
+    border-color: black;
+}
+.rbc-toolbar-label{
+    font-size: 20px;
+    font-weight: 900;
+}

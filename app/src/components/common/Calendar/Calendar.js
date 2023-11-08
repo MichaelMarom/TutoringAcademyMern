@@ -3,16 +3,18 @@ import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import EventModal from "../EventModal/EventModal";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { fetchStudentsBookings, get_tutor_setup } from "../../../axios/tutor";
+import { fetchStudentsBookings, get_tutor_setup, updateTutorDisableslots } from "../../../axios/tutor";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
 import Loading from '../Loading'
 import { getStudentBookings, postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
-import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
+import { isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 import CustomAgenda from "./CustomAgenda";
+import { useLocation } from 'react-router-dom';
+
+import '../../../styles/common.css';
 moment.locale("en-GB");
 
 const localizer = momentLocalizer(moment);
@@ -28,15 +30,30 @@ const myMessages = {
 
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
-const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWeekDays, setDisabledHours }) => {
+const ShowCalendar = ({
+  student = {},
+  setActiveTab = () => { },
+  setDisableColor = () => { },
+  disableColor = '',
+  activeTab,
+  disableWeekDays,
+  disabledHours,
+  setDisabledWeekDays,
+  setDisabledHours
+}) => {
 
   const [activeView, setActiveView] = useState(views.MONTH)
   const dispatch = useDispatch();
 
   const { user } = useSelector(state => state.user);
   const { selectedTutor } = useSelector(state => state.selectedTutor)
+  const location = useLocation();
 
-  const isStudentLoggedIn = user[0].parentEmail ? true : false
+  // Extract student information from the URL
+  const isStudentRoute = (location.pathname.split('/'))[1] === 'student';
+  console.log(isStudentRoute, location.pathname.split('/'));
+
+  const isStudentLoggedIn = user[0].role === 'student' ? true : user[0].role === 'admin' && isStudentRoute ? true : false
 
   const [enabledDays, setEnabledDays] = useState([]);
   const [disableDates, setDisableDates] = useState([]);
@@ -51,39 +68,45 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedSlot, setClickedSlot] = useState({})
   const tutorId = selectedTutor.academyId;
-  const studentId = user[0].academyId;
+  const studentId = student.AcademyId
   const subjectName = selectedTutor.subject;
 
   const { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
 
   //apis functions
   const updateTutorDisableRecord = async () => {
-    await axios.put(`${process.env.REACT_APP_BASE_URL}/tutor/update/${tutorAcademyId}`, {
+    const result = await updateTutorDisableslots(tutorAcademyId, {
       enableHourSlots,
       disableDates,
       disableWeekDays,
       disableHourSlots,
       enabledDays,
-      disableHoursRange: disabledHours
-    });
+      disableHoursRange: disabledHours,
+      disableColor: disableColor || null
+    })
+
   }
+
   const getTutorSetup = async () => {
     const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
-    console.log(result)
-    if (result.length) {
+    console.log(result, isStudentLoggedIn, tutorAcademyId, selectedTutor)
+    if (Object.keys(result ? result : {}).length) {
       setEnableHourSlots(JSON.parse(result.enableHourSlots));
       setEnabledDays(JSON.parse(result.enabledDays))
       setDisableDates(JSON.parse(result.disableDates));
       setDisableHourSlots(JSON.parse(result.disableHourSlots));
       setDisabledWeekDays(JSON.parse(result.disableWeekDays));
       setDisabledHours(JSON.parse(result.disableHoursRange));
+      setDisableColor(result.disableColor)
     }
     setDataFetched(true);
   }
 
   const fetchBookings = async () => {
-    if (isStudentLoggedIn)
-      dispatch(getStudentBookings(user[0].academyId, selectedTutor.academyId));
+    if (isStudentLoggedIn) {
+      console.log(student, selectedTutor);
+      dispatch(getStudentBookings(student.AcademyId, selectedTutor.academyId));
+    }
     else {
       console.log(user, 'user loggedin')
       const response = await fetchStudentsBookings(tutorAcademyId);
@@ -100,7 +123,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
   useEffect(() => {
     fetchBookings();
-  }, [selectedTutor, user])
+  }, [selectedTutor, user, student])
 
   const onRequestClose = () => {
     setSelectedSlots([]);
@@ -117,9 +140,13 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   }, [activeTab])
 
   useEffect(() => {
-    if (dataFetched && !isStudentLoggedIn)
-      updateTutorDisableRecord();
-  }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched]);
+    if (dataFetched && !isStudentLoggedIn) {
+      setTimeout(() => {
+        toast.success("Saving Blocked out Slots ....")
+        updateTutorDisableRecord()
+      }, 1000);
+    }
+  }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
 
   const handleBulkEventCreate = (type) => {
     if (reservedSlots.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
@@ -143,7 +170,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         id: uuidv4(),
         title: type == 'reserved' ? 'Reserved' :
           type === 'intro' ? 'Intro' : "Booked",
-        studentName: user[0].firstName,
+        studentName: student.FirstName,
         createdAt: new Date(),
         subject: selectedTutor.subject
       }
@@ -151,10 +178,10 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
     //handle delete type later todo
     if (type === 'reserved' || type === 'intro') {
-      dispatch(postStudentBookings({ studentId: user[0].academyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
+      dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
     }
     else if (type === 'booked') {
-      dispatch(postStudentBookings({ studentId: user[0].academyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
+      dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
   }
 
@@ -180,6 +207,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
 
 
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
+    if (!isStudentRoute && !disableColor) { toast.warning("Please select color before disabling slots!"); return }
     if (clickedUpperSlot && activeView != views.MONTH) return;
     if (clickedDate.getTime() < (new Date()).getTime()) {
       toast.warning(`Cannot ${!isStudentLoggedIn ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
@@ -345,7 +373,21 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
       const existInEnableSlots = enableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime())
 
       const existInDisableHourSlots = disableHourSlots.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime());
+      const existInDefaultHours = disabledHours.some(slot => {
+        const startTime = moment('9:00 PM', 'h:mm A');
+        const endTime = moment('8:00 AM', 'h:mm A');
 
+        const momentTime = moment(formattedTime, 'h:mm A');
+
+        if (endTime.isBefore(startTime)) {
+          return slot[0] === formattedTime && momentTime.isBetween(startTime, moment('11:59 PM', 'h:mm A'), undefined, '[]') ||
+            momentTime.isBetween(moment('12:00 AM', 'h:mm A'), endTime, undefined, '[]');
+        }
+
+        return slot[0] === formattedTime && momentTime.isBetween(startTime, endTime, undefined, '[]');
+      })
+
+      //swithes checks
       if (existsinReservedSlots) {
         return {
           className: 'reserved-slot'
@@ -363,14 +405,20 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
       }
       else if (existInDisableHourSlots) {
         return {
+          style: {
+            backgroundColor: disableColor
+          },
           className: 'disable-slot',
         }
       }
       else if (date.getTime() >= (new Date()).getTime() && disabledHours && disabledHours.some((timeRange) => {
-        const [start, end] = timeRange;
+        const [start] = timeRange;
         return formattedTime === start;
       }) && !existInEnableSlots && !existInDisableHourSlots) {
         return {
+          style: {
+            backgroundColor: existInDefaultHours ? "lightgray" : disableColor
+          },
           className: 'disabled-slot',
           onClick: () => { window.alert('This slot is disabled.'); }
         };
@@ -403,6 +451,9 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
       })
       if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
         return {
+          style: {
+            backgroundColor: disableColor
+          },
           className: "disabled-date",
           onClick: (e) => {
             e.preventDefault();
@@ -475,22 +526,24 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
   };
 
   const handleViewChange = (view) => setActiveView(view)
-  const event2 = [{
-    id: 2,
-    title: 'Lunch with Client',
-    start: new Date(2023, 10, 26, 12, 30), // Date and time when the event starts
-    end: new Date(2023, 10, 26, 13, 30),   // Date and time when the event ends
-    description: 'Meet with the client to discuss project requirements and milestones.',
-    location: 'Restaurant XYZ',
-  }];
 
-  
+  //handle scroll
+  useEffect(() => {
+    const timeContent = document.querySelector('.rbc-time-content');
+    console.log(activeView, activeTab)
+    setActiveTab(activeView === 'week' ? 'day' : activeView)
+    if (timeContent) {
+      const middle = timeContent.scrollHeight / 3.5;
+      timeContent.scrollTop = middle;
+    }
+  }, [activeView]);
+
   if (!dataFetched)
     return <Loading />
   return (
     <div className="h-100">
       <Calendar
-        views={["day", "week", "month", "agenda"]}
+        views={["day", "week", "month"]}
         localizer={localizer}
         selectable={true}
         defaultView={activeView}
@@ -521,6 +574,7 @@ const ShowCalendar = ({ activeTab, disableWeekDays, disabledHours, setDisabledWe
         messages={myMessages}
       />
       <EventModal
+        student={student}
         isOpen={isModalOpen}
         selectedSlots={selectedSlots}
         setSelectedSlots={setSelectedSlots}

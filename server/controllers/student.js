@@ -302,22 +302,27 @@ const get_student_short_list = async (req, res) => {
         let studentBook = [];
 
         studentShortList.map((item) => {
-            console.log(item.AcademyId, 'item')
-            let tutorData = tutorProfile[0].filter((tutor) =>
-                tutor.AcademyId === item.AcademyId)[0];
+            console.log(item.AcademyId, 'item Asiya. n. Bf922ad')
+            let tutorData = tutorProfile[0].filter((tutor) => {
+                console.log({ dd: tutor.AcademyId, SID: tutor.SID, FirstName: tutor.FirstName, lastname: tutor.LastName },
+                    { dd: item.AcademyId, SID: item.SID, FirstName: item.FirstName, lastname: item.LastName })
+                return tutor.AcademyId === item.AcademyId
+            })[0];
             let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId)[0];
             let bookName = shortId.generate();
+            console.log(bookName, tutorData, 'recod')
+            if (Object.keys(tutorData ? tutorData : {})?.length) {
+                bookName = {
+                    tutorDemoLesson: tutorDemoLesson,
+                    tutorData: tutorData,
+                    tutorShortList: item,
+                };
 
-            bookName = {
-                tutorDemoLesson: tutorDemoLesson,
-                tutorData: tutorData,
-                tutorShortList: item,
-            };
-
-            studentBook.push(bookName);
+                studentBook.push(bookName);
+            }
         });
-
-        res.status(200).send(Object.values(studentBook));
+        console.log(studentBook, 'stu')
+        res.status(200).send((studentBook));
     } catch (err) {
         console.log(err);
     }
@@ -377,13 +382,6 @@ let get_my_data = async (req, res) => {
         res.send(books)
     })
 
-
-
-
-
-
-
-
 }
 
 let get_student_short_list_data = (req, res) => {
@@ -393,7 +391,7 @@ let get_student_short_list_data = (req, res) => {
             .then((result) => {
 
                 res.send(result.recordset);
-                 })
+            })
             .catch(err => console.log(err))
     )
 
@@ -410,7 +408,7 @@ let get_student_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-              })
+            })
             .catch(err => console.log(err))
             .catch(err => console.log(err))
     )
@@ -420,7 +418,7 @@ let get_student_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                })
+            })
             .catch(err => console.log(err))
     )
 

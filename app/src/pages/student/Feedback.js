@@ -121,9 +121,12 @@ export const Feedback = () => {
 
     useEffect(() => {
         const getBookings = async () => {
-            const data = await get_student_events(studentId, tutorId);
-            setBookedSlots(JSON.parse(data.bookedSlots))
-            setReservedSlots(JSON.parse(data.reservedSlots))
+            // const data = await get_student_events(studentId, tutorId);
+            // console.log(data);
+            // if (data) {
+            //     setBookedSlots(JSON.parse(data.bookedSlots))
+            //     setReservedSlots(JSON.parse(data.reservedSlots))
+            // }
         }
         getBookings()
     }, [])

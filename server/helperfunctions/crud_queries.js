@@ -56,14 +56,15 @@ const update = (tableName, values, where, returnUpdated = true) => {
 
 
 const updateById = (id, tableName, fields) => {
-    const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays } = fields;
+    const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays, disableColor } = fields;
     const query = `UPDATE ${tableName}
         SET disableDates = '${JSON.stringify(disableDates)}',
         disableWeekDays = '${JSON.stringify(disableWeekDays)}',
         disableHourSlots =  '${JSON.stringify(disableHourSlots)}', 
         enableHourSlots =' ${JSON.stringify(enableHourSlots)}',
         disableHoursRange='${JSON.stringify(disableHoursRange)}',
-        enabledDays='${JSON.stringify(enabledDays)}'
+        enabledDays='${JSON.stringify(enabledDays)}',
+        disableColor='${disableColor}'
         WHERE CONVERT(VARCHAR, AcademyId)  = '${id}';`
     return query;
 }

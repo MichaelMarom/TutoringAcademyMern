@@ -13,6 +13,7 @@ const actionsStyle = {
 
 const Actions = ({
     loading = false,
+    unSavedChanges = false,
     onSave = () => { },
     onBack = () => { },
     onEdit = () => { },
@@ -23,18 +24,18 @@ const Actions = ({
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-1">
-                        <button onClick={onBack} className="btn btn-secondary">Back</button>
+                        <button type='button' onClick={onBack} className="btn btn-secondary">Back</button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onEdit} className="btn btn-warning" disabled>Edit</button>
+                        <button onClick={onEdit} type='button' className="btn btn-warning" disabled>Edit</button>
                     </div>
                     <div className="col-1">
-                        <Button handleClick={onSave} className="btn btn-primary" type="submit" loading={loading} >
+                        <Button handleClick={onSave} className={`btn btn-primary ${unSavedChanges ? 'blinking-button' : ''}`} type="submit" loading={loading} >
                             Save
                         </Button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onNext} className="btn btn-success">Next</button>
+                        <button onClick={onNext} type='button' className="btn btn-success">Next</button>
                     </div>
                 </div>
             </div>

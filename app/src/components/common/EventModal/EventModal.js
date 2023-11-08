@@ -8,6 +8,7 @@ import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/gene
 
 
 function EventModal({
+  student = {},
   isOpen,
   onRequestClose,
   selectedSlots,
@@ -22,7 +23,7 @@ function EventModal({
   const [canPostEvents, setCanPostEvents] = useState(true)
 
   const { selectedTutor } = useSelector(state => state.selectedTutor)
-  const { user } = useSelector(state => state.user)
+  // const { user } = useSelector(state => state.user)
 
   const handleRemoveSlot = (startTime) => {
     setSelectedSlots(selectedSlots.filter((slot) => slot.start.getTime() !== startTime.getTime()))
@@ -135,7 +136,7 @@ function EventModal({
           (selectedType === 'intro' || selectedType === 'booked') &&
           <div>
             <SlotsInvoice
-              studentName={formatName(user.firstName, user.lastName)}
+              studentName={formatName(student.FirstName, student.LastName)}
               tutorName={formatName(selectedTutor.firstName, selectedTutor.lastName)}
               invoiceNumber={123}
               selectedSlots={clickedSlot.start ? [clickedSlot] : selectedSlots}

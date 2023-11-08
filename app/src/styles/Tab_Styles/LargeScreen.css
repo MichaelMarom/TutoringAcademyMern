@@ -860,7 +860,7 @@ html,body{
         flex-direction: column;
         gap: 0px;
         height: auto;
-        overflow: scroll;
+        overflow-y: scroll;
         border: 1px solid #80808029;
         border-radius: 3px;
         padding: 5px;

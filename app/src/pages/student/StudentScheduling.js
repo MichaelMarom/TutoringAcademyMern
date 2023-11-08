@@ -4,7 +4,7 @@ import StudentLayout from '../../layouts/StudentLayout'
 
 const StudentScheduling = () => {
   return (
-    <StudentLayout>
+    <StudentLayout showLegacyFooter={false} >
       <StudentCalenderScheduling />
     </StudentLayout>
   )

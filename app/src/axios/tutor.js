@@ -514,6 +514,22 @@ export const fetchStudentsBookings = async (tutorId) => {
     }
 };
 
+export let get_tutor_market_data = (id) => {
+
+    return new Promise((resolve, reject) => {
+
+
+        axios.get('http://localhost:9876/tutor/market-data', { params: { id } })
+            .then((result) => {
+                resolve(result.data)
+            })
+            .catch((err) => {
+                reject(err)
+            })
+
+    })
+}
+
 
 export const updateTutorDisableslots = async (tutorAcademyId, body) => {
     try {

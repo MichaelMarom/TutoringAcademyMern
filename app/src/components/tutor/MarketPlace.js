@@ -1,77 +1,49 @@
-import { useTable } from 'react-table';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { get_student_market_data } from "../../axios/student";
+import { G } from "@react-pdf/renderer";
+import Ads from "./Ads";
 
-import { COLUMNS,DATA } from '../../Tables/Market/columns';
-import { useMemo } from 'react';
+const StudentMarketPlace = () => {
 
-const MarketPlace = () => {
-    const [data, useData] = useState([]);
+    let [activeTab, setActiveTab] = useState('')
 
-    useEffect(() => {
-        let next = document.querySelector('.tutor-next')
+    let handleActiveOption = e => {
+        let elem = e.currentTarget;
 
-        if(next && next.hasAttribute('id')){
-            next.removeAttribute('id');
+        let src =  elem.dataset.src;
+
+        [...elem.parentElement.children].filter(item => item.hasAttribute('id'))[0].removeAttribute('id')
+        elem.setAttribute('id', 'student-market-place-header-active');
+
+        if(src === 'ads'){
+            setActiveTab(<Ads />)
+        }else{
+            setActiveTab('')
         }
-    }, [])
-
-    const columns = useMemo(() => COLUMNS, []);
 
 
-    const tableInstance = useTable({columns, data})
-
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
-
+    }
+    
+    
 
     return ( 
+        
         <>
-            <div className="tutor-tab-market-place">
-                <div className="tutor-tab-subject-data-tabs">
-                    <div id="active">Math</div>
-                    <div>My Subjects</div>
-                    <div>Schedule</div>
-                    <div>Post Ads</div>
-                    <div>View Market Ads</div>
-                    
-                </div>
-
-                <table {...getTableProps()}>
-                        <thead>
-                            {
-                                headerGroups.map((headerGroup) => (
-                                    <tr {...headerGroup.getHeaderGroupProps()}>
-                                        {
-                                            headerGroup.headers.map((column) => (
-                                                <th {...column.getHeaderProps()}>
-                                                    {column.render('Header')}
-                                                </th>
-                                            ))
-                                        }
-                                    </tr>
-                                ))
-                            }
-                        </thead>
-
-                        <tbody {...getTableBodyProps()}>
-                            {rows.map((row) => {
-                                prepareRow(row);
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {row.cells.map((cell) => {
-                                            return (
-                                                <td {...cell.getCellProps()}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+           <div className="student-market-place-header">
+                <ul>
+                    <li onClick={handleActiveOption} id="student-market-place-header-active"><a>The market place</a></li>
+                    <li data-src='ads'  onClick={handleActiveOption}><a>Advertise</a></li>
+                    <li onClick={handleActiveOption}><a>Tutor's bid</a></li>
+                </ul>
             </div>
+
+            {
+                activeTab
+            }
+
+
         </>
      );
 }
  
-export default MarketPlace;
+export default StudentMarketPlace;

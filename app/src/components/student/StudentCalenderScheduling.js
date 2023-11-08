@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import ShowCalendar from '../common/Calendar/Calendar'
-import moment from 'moment';
 import { useSelector } from 'react-redux';
-import useClock from '../../hooks/Clock';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 import { formatName } from '../../helperFunctions/generalHelperFunctions';
-import { convertGMTOffsetToLocalString, showDate } from '../../helperFunctions/timeHelperFunctions';
+import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { get_my_data } from '../../axios/student';
 
 
@@ -17,10 +15,6 @@ const StudentCalenderScheduling = () => {
   const { selectedTutor } = useSelector(state => state.selectedTutor)
   const [student, setStudent] = useState({})
   console.log(selectedTutor)
-  const { user } = useSelector(state => state.user);
-  const { subject } = useSelector(state => state.subject)
-
-  const nav = useNavigate()
 
   useEffect(() => {
     setTutorTime(convertGMTOffsetToLocalString(selectedTutor.GMT))

@@ -9,6 +9,7 @@ function BookedLessons({
   handleRowSelect,
   selectedEvent
 }) {
+  console.log(events);
   return (
     <table>
       <thead className="thead-light">

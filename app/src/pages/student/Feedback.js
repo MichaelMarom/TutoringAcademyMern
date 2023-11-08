@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import StudentLayout from '../../layouts/StudentLayout';
 import BookedLessons from '../../components/student/Feedback/BookedLessons'
 import QuestionFeedback from '../../components/student/Feedback/QuestionFeedback'
-import { get_feedback, get_student_events, save_student_events } from '../../axios/student';
+import { get_feedback, get_payment_report, get_student_events, save_student_events } from '../../axios/student';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
 import { useDispatch } from 'react-redux';
@@ -34,6 +34,7 @@ export const Feedback = () => {
     const [bookedSlots, setBookedSlots] = useState([])
 
     const [selectedEvent, setSelectedEvent] = useState({})
+    const [feedbackData, setFeedbackData] = useState([])
 
     const handleEmojiClick = (id, star) => {
         const updatedQuestions = [...questions];
@@ -74,7 +75,8 @@ export const Feedback = () => {
         setSelectedEvent(event)
     }
 
-    const studentId = 'Naomi. C. M8bc074';
+
+    const studentId = localStorage.getItem('student_user_id');
     const tutorId = 'Michael. C. M5ea887';
     const ShortlistId = 28;
     const dispatch = useDispatch()
@@ -110,26 +112,54 @@ export const Feedback = () => {
 
     useEffect(() => {
         const fetchFeedback = async () => {
-            const data = await get_feedback(ShortlistId);
-            console.log(data)
-            if (data) {
-                // setReservedSlots((data.reservedSlots))
-            }
+            // const data = await get_feedback(ShortlistId);
+            // console.log(data)
+            // if (data) {
+            //     // setReservedSlots((data.reservedSlots))
+            // }
         }
         fetchFeedback()
     }, [])
 
+    const transformFeedbackData = (item) => {
+        const bookedSlots = JSON.parse(item.bookedSlots);
+        const reservedSlots = JSON.parse(item.reservedSlots);
+        console.log(bookedSlots, reservedSlots, item, 'slostF');
+        const updatedPaymentReport_booked = bookedSlots.map(slot => ({
+            ...slot,
+            tutorId: item.tutorId,
+        }));
+
+        const updatedPaymentReport_reserved = reservedSlots.map(slot => ({
+            ...slot,
+            tutorId: item.tutorId,
+        }));
+
+        const combinedPaymentData = updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
+        const final = combinedPaymentData.filter(data => data.type != 'reserved')
+        return final
+    };
+
     useEffect(() => {
-        const getBookings = async () => {
-            // const data = await get_student_events(studentId, tutorId);
-            // console.log(data);
-            // if (data) {
-            //     setBookedSlots(JSON.parse(data.bookedSlots))
-            //     setReservedSlots(JSON.parse(data.reservedSlots))
-            // }
-        }
-        getBookings()
-    }, [])
+        const fetchPaymentReport = async () => {
+            const data = await get_payment_report(studentId);
+            console.log(data)
+            const uniqueData = data.reduce((unique, item) => {
+                if (unique.some(detail => detail.tutorId === item.tutorId)) {
+                    return unique
+                }
+                else {
+                    return [...unique, item]
+                }
+            }, [])
+            console.log(uniqueData, 'des')
+
+            const transformedData = uniqueData.map(item => transformFeedbackData(item)).flat();
+            setFeedbackData([...feedbackData, ...transformedData]);
+        };
+
+        fetchPaymentReport();
+    }, []);
 
     if (loading)
         return <Loading />
@@ -140,7 +170,7 @@ export const Feedback = () => {
                     <div className="col-md-6">
                         <h2>Booked Lessons</h2>
                         <BookedLessons
-                            events={bookedSlots.concat(reservedSlots)}
+                            events={feedbackData}
                             handleRowSelect={handleRowSelect}
                             setSelectedEvent={setSelectedEvent}
                             selectedEvent={selectedEvent}
@@ -157,7 +187,7 @@ export const Feedback = () => {
                                     <label for="exampleTextarea">Write Feedback about your tutor, relevant subject and about session</label>
                                     <textarea className="form-control" id="exampleTextarea" rows="4"
                                         value={selectedEvent.comment ? selectedEvent.comment : comment}
-                                        onChange={(e) => setComment(e.target.value)}></textarea>
+                                        onChange={(e) => setComment(e.target.value)} />
                                 </div>
                             </div>
                         </div>

@@ -105,18 +105,17 @@ const StudentAccounting = () => {
     const transformIntoPaymentReport = (item) => {
         const bookedSlots = JSON.parse(item.bookedSlots);
         const reservedSlots = JSON.parse(item.reservedSlots);
+        console.log(bookedSlots, reservedSlots, item, 'slostF');
         const updatedPaymentReport_booked = bookedSlots.map(slot => ({
             ...slot,
             tutorId: item.tutorId,
             subject: item.Subject,
-            rate: item.rate,
         }));
 
         const updatedPaymentReport_reserved = reservedSlots.map(slot => ({
             ...slot,
             tutorId: item.tutorId,
             subject: item.Subject,
-            rate: item.rate,
         }));
 
         const combinedPaymentData = updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
@@ -126,14 +125,26 @@ const StudentAccounting = () => {
 
     useEffect(() => {
         const fetchPaymentReport = async () => {
-            const data = await get_payment_report('Naomi. C. M8bc074');
-            const transformedData = data.map(item => transformIntoPaymentReport(item)).flat();
+            const studentId = localStorage.getItem('student_user_id')
+            const data = await get_payment_report(studentId);
+            console.log(data)
+            const uniqueData = data.reduce((unique, item) => {
+                if (unique.some(detail => detail.tutorId === item.tutorId)) {
+                    return unique
+                }
+                else {
+                    return [...unique, item]
+                }
+            }, [])
+            console.log(uniqueData,'des')
+
+            const transformedData = uniqueData.map(item => transformIntoPaymentReport(item)).flat();
             setPaymentReportData([...paymentReportData, ...transformedData]);
         };
 
         fetchPaymentReport();
     }, []);
-    console.log(paymentReportData, paymentReportData.length)
+
     const totalAmount = paymentReportData
         .filter((row) => {
             if (!startDate || !endDate) return true;

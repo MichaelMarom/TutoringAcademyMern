@@ -172,7 +172,8 @@ const ShowCalendar = ({
           type === 'intro' ? 'Intro' : "Booked",
         studentName: student.FirstName,
         createdAt: new Date(),
-        subject: selectedTutor.subject
+        subject: selectedTutor.subject,
+        rate: selectedTutor.rate
       }
     })
 

@@ -14,10 +14,10 @@ function BookedLessons({
     <table>
       <thead className="thead-light">
         <tr>
-          <th scope="col">Date</th>
-          <th scope="col">Lesson</th>
+          <th scope="col" className='col-md-3'>Date</th>
+          <th scope="col" className='col-md-2'>Lesson</th>
           <th scope="col">Subject</th>
-          <th scope="col">Rating</th>
+          <th scope="col" className='col-md-3'>Rating</th>
           <th scope="col">Comment</th>
           <th scope="col">Action</th>
         </tr>
@@ -35,7 +35,7 @@ function BookedLessons({
             </td>
 
             <td>
-              <button className={`btn ${selectedEvent.id === event.id ? 'btn-primary' : 'btn-secondary'}`}
+              <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'}`}
                 onClick={() => handleRowSelect(event)}>Select</button>
             </td>
           </tr>

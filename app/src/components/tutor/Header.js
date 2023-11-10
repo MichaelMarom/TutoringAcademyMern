@@ -16,6 +16,15 @@ const Header = () => {
     let [tutorState, setTutorState] = useState('Pending')
 
     let { screenName } = useSelector(s => s.screenName);
+
+    useEffect(() => {
+        const element = document.getElementById('tutor-tab-header-list-active');
+        if (element) {
+            console.log('enter')
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [location]);
+
     const tabs = [
         { url: 'intro', name: 'Introduction' },
         { url: 'setup', name: 'Tutor Setup' },
@@ -114,7 +123,8 @@ const Header = () => {
                         >
                             <a>{tab.name}</a>
                         </li>
-                    ))} </ul>
+                    ))}
+                </ul>
 
                 {/*<div className="tutor-status" style={{padding: '5px',height: '30px',background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red',color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff'}}>
                     {tutorState}

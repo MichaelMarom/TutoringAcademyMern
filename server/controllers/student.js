@@ -274,7 +274,7 @@ const get_student_short_list = async (req, res) => {
         let shortList = async () => {
             let poolConnection = await connecteToDB;
             let result = await poolConnection.request().query(
-                find('StudentShortList', { Student: req.params.student }, { Student: 'VARCHAR' })
+                find('StudentShortList', { Student: req.params.student }, 'AND', { Student: 'VARCHAR' })
             );
             return result.recordset;
         };
@@ -694,7 +694,92 @@ const payment_report = async (req, res) => {
     })
 }
 
+const get_feedback_questions = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    getAll('FeedbackQuestions')
+                );
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const get_feedback_of_questions = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `SELECT fq.questionText as questionText, f.rating as star, fq.SID as SID
+                  FROM Feedback f
+                  JOIN feedbackQuestions fq ON f.feedbackQuestionsId = fq.SID
+                  WHERE f.StudentId = '${req.params.StudentId}'
+                  AND f.TutorId = '${req.params.TutorId}'
+                  AND f.SessionId = '${req.params.SessionId}'`
+                );
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const post_feedback_questions = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            console.log(req.body)
+            if (poolConnection) {
+                let result
+                result = await poolConnection.request().query(
+                    `SELECT * FROM Feedback WHERE SessionId = '${req.body.SessionId}'
+                     AND TutorId = '${req.body.TutorId}' AND FeedBackQuestionsId = ${req.body.FeedbackQuestionsId}`
+                );
+                console.log(result)
+                if (result.recordset.length) {
+                    result = await poolConnection.request().query(
+                        update('Feedback', req.body, {
+                            SessionId: req.body.SessionId,
+                            TutorId: req.body.TutorId,
+                            FeedBackQuestionsId: req.body.FeedbackQuestionsId
+                        })
+                    );
+                }
+                else {
+                    result = await poolConnection.request().query(
+                        insert('Feedback', req.body)
+                    );
+                }
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 module.exports = {
+    post_feedback_questions,
+    get_feedback_of_questions,
+    get_feedback_questions,
     upload_form_one,
     get_student_setup,
     get_student_grade,

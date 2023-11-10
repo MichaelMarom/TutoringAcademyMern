@@ -25,7 +25,7 @@ const insert = (tableName, values) => {
  * 
  * @param {String} tableName 
  * @param {{}} values key value to update the table fields
- * @param {{}} where key value for where [key] = [value]
+ * @param {{}} where keys values for where [key] = [value]
  * @param {true} returnUpdated retuen updated value or not
  * @returns 
  */
@@ -70,7 +70,9 @@ const updateById = (id, tableName, fields) => {
 }
 
 const getAll = (tableName) => {
-    return `SELECT * FROM ${tableName}`;
+    const query = `SELECT * FROM ${tableName}`;
+    console.log(query)
+    return query;
 }
 
 /**
@@ -96,9 +98,9 @@ const find = (tableName, where, opr = 'AND', casting = {}) => {
 
     for (const key in where) {
         if (where.hasOwnProperty(key)) {
-            const castType = casting[key] || 'varchar';
-            const castedColumn = `CAST(${key} AS ${castType})`;
-            conditions.push(`${castedColumn} = '${where[key]}'`);
+            const castType = casting[key];
+            const column = castType ? `CAST(${key} AS ${castType})` : key;
+            conditions.push(`${column} = '${where[key]}'`);
         }
     }
 

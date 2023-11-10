@@ -6,10 +6,18 @@ const Header = () => {
 
 
     let nav = useNavigate()
-    const location = useLocation();
-
     let [screen_name, set_screen_name] = useState('')
     const [activeTab, setActiveTab] = useState('')
+    const location = useLocation();
+
+    useEffect(() => {
+        const element = document.getElementById('student-tab-header-list-active');
+        if (element) {
+            console.log('enter')
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [location.pathname,activeTab]);
+
     const tabs = [
         { name: 'Introduction', url: 'intro' },
         { name: 'Student Setup', url: 'setup' },

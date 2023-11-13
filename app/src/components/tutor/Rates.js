@@ -20,14 +20,15 @@ const generateDiscountCode = () => {
   }
   return code;
 };
+
 const Rates = () => {
+
   let [MultiStudentHourlyRate, setMultiStudentHourlyRate] = useState("");
-  let [CancellationPolicy, setCancellationPolicy] = useState("");
   let [FreeDemoLesson, setFreeDemoLesson] = useState("");
-  let [ConsentRecordingLesson, setConsentRecordingLesson] = useState("");
   let [ActivateSubscriptionOption, setActivateSubscriptionOption] =
     useState("");
   let [SubscriptionPlan, setSubscriptionPlan] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const [discountEnabled, setDiscountEnabled] = useState(false);
   const [classTeaching, setClassTeaching] = useState(false);
@@ -37,6 +38,9 @@ const Rates = () => {
 
   const [dataFetched, setDataFetched] = useState(false)
   const [changesMade, setChangesMade] = useState(false);
+  const [selectedCancellationPolicy, setSelectedCancPolicy] = useState('')
+  const [ConsentRecordingLesson, setConsentRecordingLesson] = useState(false)
+  const [IntroSessionDiscount, setIntroSessionDiscount] = useState(true)
   const [dbState, setDbState] = useState({});
 
   const fetchDataFromApi = () => {
@@ -46,7 +50,7 @@ const Rates = () => {
         if (Object.keys(result[0]).length) {
           setDbState(result[0]);
           setMultiStudentHourlyRate(result[0].MutiStudentHourlyRate);
-          setCancellationPolicy(result[0].CancellationPolicy);
+          setSelectedCancPolicy(result[0].CancellationPolicy);
           setFreeDemoLesson(result[0].FreeDemoLesson);
           setConsentRecordingLesson(result[0].ConsentRecordingLesson);
           setActivateSubscriptionOption(result[0].ActivateSubscriptionOption);
@@ -54,10 +58,7 @@ const Rates = () => {
           setDiscountCode(result[0].DiscountCode)
           setClassTeaching(result[0].MultiStudent)
           setDiscountEnabled(result[0].CodeShareable)
-
-          let multiStudentCheckbox = document.querySelector(
-            "#multi-student-checkbox"
-          );
+          setIntroSessionDiscount(result[0].IntroSessionDiscount)
 
           let subscriptionPlan = document.querySelector("#subscription-plan");
           ActivateSubscriptionOption === "true"
@@ -117,7 +118,7 @@ const Rates = () => {
 
   const currentState = {
     MutiStudentHourlyRate: MultiStudentHourlyRate,
-    CancellationPolicy,
+    CancellationPolicy: selectedCancellationPolicy,
     FreeDemoLesson,
     ConsentRecordingLesson,
     ActivateSubscriptionOption,
@@ -145,7 +146,7 @@ const Rates = () => {
   let saver = async () => {
     let response = await upload_form_three(
       MultiStudentHourlyRate,
-      CancellationPolicy,
+      selectedCancellationPolicy,
       FreeDemoLesson,
       ConsentRecordingLesson,
       ActivateSubscriptionOption,
@@ -153,7 +154,8 @@ const Rates = () => {
       window.localStorage.getItem("tutor_user_id"),
       discountCode,
       discountEnabled,
-      classTeaching
+      classTeaching,
+      IntroSessionDiscount
     );
 
     return response;
@@ -292,16 +294,97 @@ const Rates = () => {
                   </tbody>
                 </table>
               </div>
+
+              <div className="">
+                <div className="dropdown">
+                  <label>Tutor Cancellation Policy</label>
+                  <button
+                    className="btn btn-secondary dropdown-toggle mr-3"
+                    type="button"
+                    onClick={() => setIsOpen(!isOpen)}
+                  >
+                    {selectedCancellationPolicy.length ? `${selectedCancellationPolicy}hr   ` : " Select"}
+                  </button>
+                  {isOpen && (
+                    <div className="dropdown-menu show">
+                      <div className="dropdown-item" onClick={() => {
+                        setSelectedCancPolicy('4')
+                        setIsOpen(false)
+                      }}>
+                        4hr.
+
+                      </div>
+                      <div className="dropdown-item" onClick={() => {
+                        setSelectedCancPolicy('8')
+                        setIsOpen(false)
+                      }}>
+                        8hr.
+
+                      </div>
+                      <div className="dropdown-item" onClick={() => {
+                        setSelectedCancPolicy('12')
+                        setIsOpen(false)
+                      }}>
+                        12hr.
+                      </div>
+
+                      <div className="dropdown-item" onClick={() => {
+                        setSelectedCancPolicy('24')
+                        setIsOpen(false)
+                      }}>
+                        24hr
+                      </div>
+                      <div className="dropdown-item" onClick={() => {
+                        setSelectedCancPolicy('48')
+                        setIsOpen(false)
+                      }}>
+                        48 hr.
+                      </div>
+                    </div>
+                  )}
+                  <Tooltip text="cancellation policy toolti[" width="200px">
+                    <FaInfoCircle size={20} color="gray" />
+                  </Tooltip>
+                </div>
+                <div className="form-check form-switch d-flex gap-3">
+                  <input
+                    className="form-check-input "
+                    type="checkbox"
+                    role="switch"
+                    onChange={() => setIntroSessionDiscount(!IntroSessionDiscount)}
+                    checked={IntroSessionDiscount}
+                  />
+                  <label className="form-check-label mr-3" for="flexSwitchCheckChecked">
+                    50% Intro Session
+                  </label>
+                  <Tooltip text="The academy mandate an |intro| sessions a for new student as a prerequisite to book sessions with a new tutor. 50% discount motivate student to select you. " width="200px">
+                    <FaInfoCircle size={20} color="gray" />
+                  </Tooltip>
+                </div>
+                <div className="form-check form-switch d-flex gap-3">
+                  <input
+                    className="form-check-input "
+                    type="checkbox"
+                    role="switch"
+                    onChange={() => setConsentRecordingLesson(!ConsentRecordingLesson)}
+                    checked={ConsentRecordingLesson}
+                  />
+                  <label className="form-check-label" for="flexSwitchCheckChecked">
+                    Consent Recording Session
+                  </label>
+                  <Tooltip text=" Consent Recording Session tooltip">
+                    <FaInfoCircle size={20} color="gray" className=" mr-3" />
+                  </Tooltip>
+                </div>
+              </div>
             </div>
 
             <div className="p-4 w-50 float-end">
-              <h6>Tutor Own Students</h6>
+              <h6>Tutor's Own Students</h6>
               <div className="highlight">
-                To tutor your own students on plateform. Use Code below and
-                forward to your students to use with thier registration. We will
-                reduce our service fee begin these students to flat 10%.
-                (reduction from 20%). You can offer this reduction to your
-                students as a "Discount" by checking the box below.
+                To tutor your own current students on plateform, forward the Code below to your students to be used with thier registration.
+                That will reduce our service fee for these students by 10%. You need to generate new code for each of your students.
+
               </div>
               <div className="form-check form-switch d-flex align-items-center gap-2">
                 <input
@@ -316,14 +399,14 @@ const Rates = () => {
                   My Student's 10% markup
                 </label>
 
-                <Tooltip text="Check this box so that students can avail discounts">
+                <Tooltip text="Provide the code below to be used at student's setup tab. It will reduce the platform service charge by 10%. You must generate new code for each of your students" width="200px">
                   <FaInfoCircle size={20} color="gray" />
                 </Tooltip>
               </div>
               {
                 discountEnabled &&
                 <div>
-                  <h6 className="mt-4 d-inline">Your personal code</h6>
+                  <h6 className="mt-4 d-inline">Your Student's new code</h6>
                   <Tooltip text="Generate New Code">
                     <IoMdRefresh
                       size={20}
@@ -372,7 +455,7 @@ const Rates = () => {
                   checked={classTeaching}
                 />
                 <label className="form-check-label" for="flexSwitchCheckChecked">
-                  My hourly Charge for teaching a whole school class.
+                  My hourly Charge for teaching a whole school class (up to 30 students).
                 </label>
 
 

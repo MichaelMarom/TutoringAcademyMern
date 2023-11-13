@@ -120,7 +120,7 @@ export let upload_student_short_list = (items) => {
 
 export let get_student_short_list = async (student) => {
     try {
-        const {data} = await axiosInstance.get(`/student/short-list/${student}`)
+        const { data } = await axiosInstance.get(`/student/short-list/${student}`)
         return data;
     }
     catch (err) {
@@ -225,6 +225,43 @@ export const get_payment_report = async (studentId) => {
         return data
     }
     catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export const get_all_feedback_questions = async () => {
+    try {
+        const { data } = await axiosInstance.get('/questions/list');
+        return data;
+    } catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export const get_feedback_to_question = async (sessionId, tutorId, studentId) => {
+    try {
+        const { data } = await axiosInstance.get(`/questions/${studentId}/${tutorId}/${sessionId}`);
+        return data;
+    } catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export const post_feedback_to_question = async (sessionId, tutorId, studentId, feedbackQuestionId, rating) => {
+    const body = {
+        SessionId: sessionId,
+        FeedbackQuestionsId: feedbackQuestionId,
+        rating,
+        TutorId: tutorId,
+        StudentId: studentId
+    }
+    try {
+        const { data } = await axiosInstance.post(`/questions`, body);
+        return data;
+    } catch (err) {
         console.log(err)
         return err
     }

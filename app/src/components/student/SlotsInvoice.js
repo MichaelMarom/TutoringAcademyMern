@@ -1,9 +1,9 @@
 import React from 'react';
-import moment from 'moment';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import logo from '../../images/tutoring Logo.png'
 
 const SlotsInvoice = ({
+  selectedType,
   studentName,
   tutorName,
   invoiceNumber,
@@ -11,9 +11,14 @@ const SlotsInvoice = ({
   subject,
   rate,
   handleAccept,
-  handleClose
+  handleClose,
+  introDiscountEnabled
 }) => {
-  const subtotal = selectedSlots.length * parseInt(rate.split('$')[1]);
+  const subtotal = selectedSlots.length * (introDiscountEnabled ?
+    (parseInt(rate.split('$')[1]) / 2) :
+    parseInt(rate.split('$')[1]));
+
+  const rateHalf = (rate) => parseInt(rate.split('$')[1]) / 2;
 
   return (
     <div className="container mt-4">
@@ -24,12 +29,13 @@ const SlotsInvoice = ({
               <img src={logo} style={{
                 width: "100%",
                 height: "100px"
-
               }} />
             </div>
             <div className="card-body">
               <div className="mb-4">
                 <h4 className='text-center mb-3' style={{ fontSize: '16px' }}>Invoice</h4>
+                <h5 className='text-center mb-3 text-danger font-weight-bold'
+                  style={{ fontSize: '16px' }}>Avail 50% discount on Intro Session</h5>
                 <h6 style={{ fontSize: '12px' }}>Student: {studentName}</h6>
                 <h6 style={{ fontSize: '12px' }}>Tutor: {tutorName}</h6>
                 <h6 style={{ fontSize: '12px' }}>Invoice #: {invoiceNumber}</h6>
@@ -48,7 +54,10 @@ const SlotsInvoice = ({
                     <tr key={index}>
                       <td className='border-0'>{showDate(slot.start)}</td>
                       <td className='border-0'>{subject}</td>
-                      <td className='border-0'>{rate}</td>
+                      {(introDiscountEnabled && selectedType === 'intro') ? <>
+                        <td className='border-0'>  <s>{rate}</s> ${rateHalf(rate)}.00</td>
+                      </>
+                        : <td className='border-0'> {rate}</td>}
                     </tr>
                   ))}
                   <tr>

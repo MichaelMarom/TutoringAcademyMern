@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import StudentLayout from '../../layouts/StudentLayout';
 import BookedLessons from '../../components/student/Feedback/BookedLessons'
 import QuestionFeedback from '../../components/student/Feedback/QuestionFeedback'
-import { get_feedback, get_student_events, save_student_events } from '../../axios/student';
+import { get_all_feedback_questions, get_feedback, get_feedback_to_question, get_payment_report, get_student_events, post_feedback_to_question, save_student_events } from '../../axios/student';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
 import { useDispatch } from 'react-redux';
@@ -10,36 +10,37 @@ import { postStudentBookings } from '../../redux/student_store/studentBookings';
 import Actions from '../../components/common/Actions';
 import Loading from '../../components/common/Loading';
 import { toast } from 'react-toastify';
+import DebounceInput from '../../components/common/DebounceInput';
 export const Feedback = () => {
-    const [questions, setQuestions] = useState([
-        {
-            id: 1,
-            title: 'Feedback',
-            star: null,
-        },
-        {
-            id: 2,
-            title: 'How is your experience with this tutor?',
-            star: null,
-        },
-        {
-            id: 3,
-            title: 'What is your overall rating for this session?',
-            star: null,
-        },
-    ]);
+    const [questions, setQuestions] = useState([]);
     const [comment, setComment] = useState('')
-    const [reservedSlots, setReservedSlots] = useState([])
     const [loading, setLoading] = useState(false)
+    const [reservedSlots, setReservedSlots] = useState([])
     const [bookedSlots, setBookedSlots] = useState([])
+    const [questionLoading, setQuestionLoading] = useState(false);
 
     const [selectedEvent, setSelectedEvent] = useState({})
+    const [feedbackData, setFeedbackData] = useState([])
+    const studentId = localStorage.getItem('student_user_id');
+    const [pendingChange, setPendingChange] = useState(null);
 
-    const handleEmojiClick = (id, star) => {
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        const getALlFeedbackQuestion = async () => {
+            const data = await get_all_feedback_questions();
+            setQuestions(data)
+        }
+        getALlFeedbackQuestion();
+
+    }, [])
+
+    const handleEmojiClick = async (id, star) => {
         const updatedQuestions = [...questions];
-        const questionIndex = updatedQuestions.findIndex((question) => question.id === id);
+        const questionIndex = updatedQuestions.findIndex((question) => question.SID === id);
 
         if (questionIndex !== -1) {
+            const data = await post_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId, id, star);
             updatedQuestions[questionIndex].star = star;
             setQuestions([...updatedQuestions]);
             if (selectedEvent.type === 'booked') {
@@ -52,6 +53,10 @@ export const Feedback = () => {
                     }
                     return slot
                 })
+                await dispatch(postStudentBookings({
+                    studentId, tutorId: selectedEvent.tutorId,
+                    bookedSlots: updatedBookedSlots, reservedSlots
+                }));
                 setBookedSlots([...updatedBookedSlots])
             }
             else {
@@ -64,29 +69,69 @@ export const Feedback = () => {
                     }
                     return slot
                 })
+                await dispatch(postStudentBookings({
+                    studentId, tutorId: selectedEvent.tutorId,
+                    bookedSlots, reservedSlots: updatedReservedSlots
+                }));
 
                 setReservedSlots([...updatedReservedSlots])
             }
         }
     };
 
+
+
     const handleRowSelect = (event) => {
         setSelectedEvent(event)
     }
 
-    const studentId = 'Naomi. C. M8bc074';
-    const tutorId = 'Michael. C. M5ea887';
-    const ShortlistId = 28;
-    const dispatch = useDispatch()
-
-    const onSave = async () => {
+    const handleDynamicSave = async (value) => {
         setLoading(true)
-        const data = await dispatch(postStudentBookings({ studentId, tutorId, bookedSlots, reservedSlots }));
-        (data.response?.status === 400) ?
-            toast.error("Error while saving the data") :
-            toast.success('Data Succesfully Saved')
+        const updatedSlots = (selectedEvent.type === 'booked'
+            ? bookedSlots
+            : reservedSlots).map(slot => {
+                if (slot.id === selectedEvent.id) {
+                    slot.comment = value;
+                }
+                return slot
+            })
+        if (selectedEvent.type === 'booked') {
+            // setBookedSlots([...updatedSlots])
+            const data = await dispatch(postStudentBookings({
+                studentId, tutorId: selectedEvent.tutorId,
+                bookedSlots: updatedSlots, reservedSlots
+            }));
+            (data.response?.status === 400) ?
+                toast.error("Error while saving the data") :
+                toast.success('Data Succesfully Saved')
+        }
+        else {
+            const data = await dispatch(postStudentBookings({
+                studentId, tutorId: selectedEvent.tutorId,
+                bookedSlots, reservedSlots: updatedSlots
+            }));
+            // setReservedSlots([...updatedSlots])
+            data?.response?.status === 400 && toast.error("Error while saving the data");
+
+            // toast.success('Data Succesfully Saved')
+        }
         setLoading(false)
     }
+
+    const handleTextChange = (event) => {
+        const updatedValue = event.target.value;
+        setComment(updatedValue);
+
+        if (pendingChange) {
+            clearTimeout(pendingChange);
+        }
+
+        const timeout = setTimeout(() => {
+            handleDynamicSave(updatedValue);
+        }, 1000);
+
+        setPendingChange(timeout);
+    };
 
     useEffect(() => {
         const updatedSlots = (selectedEvent.type === 'booked'
@@ -108,39 +153,81 @@ export const Feedback = () => {
         setComment('')
     }, [selectedEvent.id])
 
+    const transformFeedbackData = (item) => {
+        const bookedSlots = JSON.parse(item.bookedSlots);
+        const reservedSlots = JSON.parse(item.reservedSlots);
+        const updatedPaymentReport_booked = bookedSlots.map(slot => ({
+            ...slot,
+            tutorId: item.tutorId,
+        }));
+
+        const updatedPaymentReport_reserved = reservedSlots.map(slot => ({
+            ...slot,
+            tutorId: item.tutorId,
+        }));
+
+        const combinedPaymentData = updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
+        const final = combinedPaymentData.filter(data => data.type != 'reserved')
+        return final
+    };
+
     useEffect(() => {
-        const fetchFeedback = async () => {
-            const data = await get_feedback(ShortlistId);
-            console.log(data)
-            if (data) {
-                // setReservedSlots((data.reservedSlots))
+        const fetchPaymentReport = async () => {
+            const data = await get_payment_report(studentId);
+            const uniqueData = data.reduce((unique, item) => {
+                if (unique.some(detail => detail.tutorId === item.tutorId)) {
+                    return unique
+                }
+                else {
+                    return [...unique, item]
+                }
+            }, [])
+            const transformedData = uniqueData.map(item => transformFeedbackData(item)).flat();
+            setFeedbackData(transformedData);
+        };
+
+        fetchPaymentReport();
+    }, []);
+
+
+    useEffect(() => {
+        if (selectedEvent.id) {
+            setQuestionLoading(true)
+            const fetchFeedbackToQuestion = async () => {
+                const data = await get_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId)
+                console.log(data)
+                if (data.length)
+                    setQuestions(data)
+                setQuestionLoading(false)
             }
+            fetchFeedbackToQuestion()
         }
-        fetchFeedback()
-    }, [])
 
-    useEffect(() => {
-        const getBookings = async () => {
-            // const data = await get_student_events(studentId, tutorId);
-            // console.log(data);
-            // if (data) {
-            //     setBookedSlots(JSON.parse(data.bookedSlots))
-            //     setReservedSlots(JSON.parse(data.reservedSlots))
-            // }
-        }
-        getBookings()
-    }, [])
+        const categorizedData = feedbackData.reduce(
+            (acc, obj) => {
+                if ((obj.type === 'intro' || obj.type === 'reserved') && obj.tutorId === selectedEvent.tutorId) {
+                    acc.reservedSlots.push(obj);
+                } else if (obj.type === 'booked' && obj.tutorId === selectedEvent.tutorId) {
+                    acc.bookedSlots.push(obj);
+                }
+                return acc;
+            },
+            { reservedSlots: [], bookedSlots: [] }
+        );
 
-    if (loading)
-        return <Loading />
+        setReservedSlots(categorizedData.reservedSlots);
+        setBookedSlots(categorizedData.bookedSlots);
+
+    }, [selectedEvent])
+
     return (
         <StudentLayout showLegacyFooter={false} >
             <div className="container mt-5">
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className={`${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>
                         <h2>Booked Lessons</h2>
                         <BookedLessons
-                            events={bookedSlots.concat(reservedSlots)}
+                            events={feedbackData}
                             handleRowSelect={handleRowSelect}
                             setSelectedEvent={setSelectedEvent}
                             selectedEvent={selectedEvent}
@@ -148,16 +235,20 @@ export const Feedback = () => {
                     </div>
                     {
                         selectedEvent.id &&
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <h4>Feedback on {showDate(selectedEvent.start, wholeDateFormat)} Session</h4>
                             <div className="questions">
                                 <QuestionFeedback
-                                    questions={questions} handleEmojiClick={handleEmojiClick} />
+                                    loading={questionLoading}
+                                    questions={questions}
+                                    handleEmojiClick={handleEmojiClick}
+                                />
                                 <div className="form-group">
-                                    <label for="exampleTextarea">Write Feedback about your tutor, relevant subject and about session</label>
+                                    <label for="exampleTextarea">Please write a short description of your impression about this lesson</label>
+
                                     <textarea className="form-control" id="exampleTextarea" rows="4"
                                         value={selectedEvent.comment ? selectedEvent.comment : comment}
-                                        onChange={(e) => setComment(e.target.value)}></textarea>
+                                        onChange={handleTextChange} />
                                 </div>
                             </div>
                         </div>
@@ -165,7 +256,9 @@ export const Feedback = () => {
                 </div>
             </div>
 
-            <Actions onSave={onSave} />
+            <Actions
+                saveDisabled={true}
+            />
         </StudentLayout>
     )
 }

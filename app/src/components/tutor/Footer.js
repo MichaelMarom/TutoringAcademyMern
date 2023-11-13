@@ -7,20 +7,11 @@ import { setSaveTo } from "../../redux/tutor_store/save";
 const Footer = () => {
     let navigate = useNavigate();
     let dispatch = useDispatch();
-    let location = useLocation();
 
     let urls = [
         'intro','setup','education','rates','accounting','subjects','my-students','scheduling','term-of-use','market-place','collaboration','tutor-profile'
     ]
 
-    useEffect(() => {
-        if(location.pathname.split('/').splice(-1)[0] === 'setup'){
-            document.querySelector('#tutor-clear').style.display = 'flex'
-        }else{
-            document.querySelector('#tutor-clear').style.display = 'none'
-
-        }
-    }, [location])
 
     let next = (e) => {
 
@@ -72,13 +63,6 @@ const Footer = () => {
         }, 3500)
     }
 
-    let clear = e => {
-        document.querySelector('.screen-name').innerHTML = ''
-        window.localStorage.setItem('tutor_screen_name', null)
-        window.localStorage.setItem('tutor_user_id', null)
-        let url = location.pathname
-        navigate(`${url}`)
-    }
 
     let save = () => {
         dispatch(setSaveTo(window.localStorage.getItem('tutor_tab_index')));
@@ -86,14 +70,11 @@ const Footer = () => {
             console.log('save tutor');
         }
     }
-    //nav(`tutor/${e.target.dataset.url}`)
     return (
         <>
 
             <div className="tutor-footer">
                 <ul>
-                    <li id="tutor-clear" className="p-1"><button type="button" className="btn btn-danger fs-4 m-0" onClick={clear}>Clear records</button></li>
-                    
                     <li className="p-1"><button type="button" className="btn btn-primary fs-4 m-0" onClick={back}>back</button></li>
 
                     <li id="tutor-edit" className="p-1"><button type="button" className="btn btn-secondary fs-4 m-0">edit</button></li>

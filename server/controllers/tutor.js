@@ -284,7 +284,7 @@ let post_form_two = async (req, res) => {
 let post_form_three = (req, res) => {
 
 
-    let { MutiStudentHourlyRate, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
+    let { MutiStudentHourlyRate, IntroSessionDiscount, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
     marom_db(async (config) => {
         try {
 
@@ -302,14 +302,32 @@ let post_form_three = (req, res) => {
                 console.log(recordExisted)
                 if (recordExisted.recordset.length) {
                     result = await poolConnection.request().query(
-                        `UPDATE TutorRates SET MutiStudentHourlyRate = '${MutiStudentHourlyRate}', CancellationPolicy = '${CancellationPolicy}', FreeDemoLesson = '${FreeDemoLesson}', ConsentRecordingLesson = '${ConsentRecordingLesson}', ActivateSubscriptionOption = '${ActivateSubscriptionOption}', SubscriptionPlan = '${SubscriptionPlan}', DiscountCode = '${DiscountCode}', CodeShareable=${CodeShareable ? 1 : 0},  MultiStudent=${MultiStudent ? 1 : 0}
+                        `UPDATE TutorRates 
+                        SET MutiStudentHourlyRate = '${MutiStudentHourlyRate}', 
+                        CancellationPolicy = '${CancellationPolicy}', 
+                        FreeDemoLesson = '${FreeDemoLesson}',
+                         ConsentRecordingLesson = '${ConsentRecordingLesson}',
+                          ActivateSubscriptionOption = '${ActivateSubscriptionOption}', 
+                          SubscriptionPlan = '${SubscriptionPlan}',
+                           DiscountCode = '${DiscountCode}', 
+                           CodeShareable=${CodeShareable ? 1 : 0},  
+                           MultiStudent=${MultiStudent ? 1 : 0},
+                           IntroSessionDiscount=${IntroSessionDiscount ? 1 : 0}
                          WHERE cast(AcademyId as varchar) = '${AcademyId}'`
                     )
                 } else {
                     result = await poolConnection.request().query(
                         `
-                            INSERT INTO "TutorRates"(MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,ConsentRecordingLesson,ActivateSubscriptionOption,SubscriptionPlan,AcademyId, DiscountCode,MultiStudent,CodeShareable)
-                            VALUES ( '${MutiStudentHourlyRate}', '${CancellationPolicy}','${FreeDemoLesson}','${ConsentRecordingLesson}','${ActivateSubscriptionOption}','${SubscriptionPlan}','${AcademyId}','${DiscountCode}',${MultiStudent ? 1 : 0},${CodeShareable ? 1 : 0})
+                            INSERT INTO "TutorRates"
+                            (MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,
+                                ConsentRecordingLesson,ActivateSubscriptionOption,
+                                SubscriptionPlan,AcademyId, DiscountCode,MultiStudent,
+                                CodeShareable,IntroSessionDiscount)
+                            VALUES ( '${MutiStudentHourlyRate}', 
+                            '${CancellationPolicy}','${FreeDemoLesson}',
+                            '${ConsentRecordingLesson}','${ActivateSubscriptionOption}',
+                            '${SubscriptionPlan}','${AcademyId}','${DiscountCode}',${MultiStudent ? 1 : 0},
+                            ${CodeShareable ? 1 : 0},${IntroSessionDiscount ? 1 : 0})
                             `
                     )
                 }
@@ -1085,25 +1103,25 @@ let get_tutor_market_data = async (req, res) => {
                 return (result.recordset);
             })
             .catch(err => console.log(err))
-            .catch(err => console.log(err))
     )
 
     let Exprience = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM Experience`)
+        poolConnection.request().query(`SELECT * From Experience WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
                 return (result.recordset);
             })
             .catch(err => console.log(err))
+
     )
 
     let EducationalLevel = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM EducationalLevel`)
+        poolConnection.request().query(`SELECT * From EducationalLevel WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
                 return (result.recordset);
                 //res.status(200).send()
-                //console.log(result)
+                console.log('educational level: ', result)
                 //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
@@ -1111,7 +1129,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let CertificateTypes = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM CertificateTypes`)
+        poolConnection.request().query(`SELECT * FROM CertificateTypes WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
                 return (result.recordset);
@@ -1124,7 +1142,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let Subjects = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT Id,FacultyId,SubjectName FROM Subjects`)
+        poolConnection.request().query(`SELECT Id,FacultyId,SubjectName FROM Subjects WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
                 return (result.recordset);
@@ -1137,7 +1155,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let Faculty = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM Faculty`)
+        poolConnection.request().query(`SELECT * FROM Faculty WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
                 return (result.recordset);
@@ -1150,7 +1168,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let GMT = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM GMT`)
+        poolConnection.request().query(`SELECT * FROM GMT WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
                 return (result.recordset);
@@ -1184,7 +1202,7 @@ let get_tutor_market_data = async (req, res) => {
             return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT }
         })
         .then((result) => {
-            res.send(result)
+            //console.log(result)
         })
 
 

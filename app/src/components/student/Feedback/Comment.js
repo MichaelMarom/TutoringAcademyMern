@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FaComment } from 'react-icons/fa';
+import { FaComment, FaRegComment } from 'react-icons/fa';
+
 const commentContainerStyle = {
     position: 'relative',
     display: 'inline-block',
@@ -34,11 +35,13 @@ const Comment = ({ comment }) => {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <FaComment style={commentIconStyle} />
             {
                 comment ?
-                    <div style={commentTextStyle}>{comment}</div>
-                    : null
+                    <>
+                        {<FaComment style={commentIconStyle} color={`green`} />}
+                        <div style={commentTextStyle}>{comment}</div>
+                    </>
+                    : <FaRegComment size={20} />
             }
         </div>
     );

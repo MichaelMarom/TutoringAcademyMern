@@ -223,7 +223,9 @@ let upload_student_short_list = async (req, res) => {
 
         let response = await connecteToDB
             .then((poolConnection) =>
-                poolConnection.request().query(`SELECT * from StudentShortList WHERE CONVERT(VARCHAR, Student) =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'`)
+                poolConnection.request().query(`SELECT * from StudentShortList WHERE CONVERT(VARCHAR, Student) 
+                =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) 
+                =  '${subject}'`)
                     .then((result) => {
 
                         return result.recordset
@@ -239,7 +241,9 @@ let upload_student_short_list = async (req, res) => {
     let uploadData = (list) => {
         connecteToDB
             .then((poolConnection) =>
-                poolConnection.request().query(`INSERT INTO StudentShortList (Subject,AcademyId,date,ScreenName,Rate,Student) values('${list[1]}', '${list[0]}', '${Date().toString()}', '${list[3]}', '${list[2]}', '${list[4]}')`)
+                poolConnection.request().query(`INSERT INTO StudentShortList 
+                (Subject,AcademyId,date,ScreenName,Rate,Student) values('${list[1]}', '${list[0]}',
+                 '${Date().toString()}', '${list[3]}', '${list[2]}', '${list[4]}')`)
                     .then((result) => {
 
                         book.push(result.rowsAffected[0]);
@@ -270,11 +274,15 @@ const get_student_short_list = async (req, res) => {
     try {
         let tutorUserData = [];
         let tutorDemoLesson = [];
-
+        console.log(req.params.student)
         let shortList = async () => {
             let poolConnection = await connecteToDB;
             let result = await poolConnection.request().query(
-                find('StudentShortList', { Student: req.params.student }, { Student: 'VARCHAR' })
+                `SELECT SSL.*, TR.*
+                FROM StudentShortList SSL
+                JOIN TutorRates TR ON CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TR.AcademyId)                
+                WHERE cast( SSL.Student as varchar) = cast('${req.params.student}' as varchar) `
+                // find('StudentShortList', { Student: req.params.student }, 'AND', { Student: 'VARCHAR' })
             );
             return result.recordset;
         };
@@ -305,10 +313,10 @@ const get_student_short_list = async (req, res) => {
             console.log(item.AcademyId, 'item Asiya. n. Bf922ad')
             let tutorData = tutorProfile[0].filter((tutor) => {
                 console.log({ dd: tutor.AcademyId, SID: tutor.SID, FirstName: tutor.FirstName, lastname: tutor.LastName },
-                    { dd: item.AcademyId, SID: item.SID, FirstName: item.FirstName, lastname: item.LastName })
-                return tutor.AcademyId === item.AcademyId
+                    { dd: item.AcademyId[0], SID: item.SID, FirstName: item.FirstName, lastname: item.LastName })
+                return tutor.AcademyId === item.AcademyId[0]
             })[0];
-            let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId)[0];
+            let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId[0])[0];
             let bookName = shortId.generate();
             console.log(bookName, tutorData, 'recod')
             if (Object.keys(tutorData ? tutorData : {})?.length) {
@@ -694,7 +702,92 @@ const payment_report = async (req, res) => {
     })
 }
 
+const get_feedback_questions = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    getAll('FeedbackQuestions')
+                );
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const get_feedback_of_questions = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `SELECT fq.questionText as questionText, f.rating as star, fq.SID as SID
+                  FROM Feedback f
+                  JOIN feedbackQuestions fq ON f.feedbackQuestionsId = fq.SID
+                  WHERE f.StudentId = '${req.params.StudentId}'
+                  AND f.TutorId = '${req.params.TutorId}'
+                  AND f.SessionId = '${req.params.SessionId}'`
+                );
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
+const post_feedback_questions = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            console.log(req.body)
+            if (poolConnection) {
+                let result
+                result = await poolConnection.request().query(
+                    `SELECT * FROM Feedback WHERE SessionId = '${req.body.SessionId}'
+                     AND TutorId = '${req.body.TutorId}' AND FeedBackQuestionsId = ${req.body.FeedbackQuestionsId}`
+                );
+                console.log(result)
+                if (result.recordset.length) {
+                    result = await poolConnection.request().query(
+                        update('Feedback', req.body, {
+                            SessionId: req.body.SessionId,
+                            TutorId: req.body.TutorId,
+                            FeedBackQuestionsId: req.body.FeedbackQuestionsId
+                        })
+                    );
+                }
+                else {
+                    result = await poolConnection.request().query(
+                        insert('Feedback', req.body)
+                    );
+                }
+
+                res.status(200).send(result.recordset);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 module.exports = {
+    post_feedback_questions,
+    get_feedback_of_questions,
+    get_feedback_questions,
     upload_form_one,
     get_student_setup,
     get_student_grade,

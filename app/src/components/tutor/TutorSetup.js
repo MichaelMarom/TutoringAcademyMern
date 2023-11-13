@@ -19,6 +19,7 @@ import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
 import { get_user_detail } from "../../axios/auth";
+import Loading from "../common/Loading";
 
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
@@ -41,6 +42,8 @@ const TutorSetup = () => {
   let [headline, set_headline] = useState("");
   let [photo, set_photo] = useState("");
   let [video, set_video] = useState("");
+
+  const [dataFetching, setDataFetching] = useState(false);
 
   let [grades, setGrades] = useState([
     { grade: "1st grade" },
@@ -67,7 +70,6 @@ const TutorSetup = () => {
   let [GMTList, setGMTList] = useState("");
   let [response_list, set_response_list] = useState("");
   let [recordedVideo, setRecordedVideo] = useState(null);
-  let [lol123, setLol123] = useState(null);
   let [data, set_data] = useState(false);
 
   let dispatch = useDispatch();
@@ -88,9 +90,10 @@ const TutorSetup = () => {
 
   useEffect(() => {
     const AcademyId = localStorage.getItem('tutor_user_id')
-    console.log(AcademyId, "aca id");
 
     const fetchTutorSetup = async () => {
+      setDataFetching(true)
+
       let result;
       if (user[0].role === 'admin') {
 
@@ -99,7 +102,7 @@ const TutorSetup = () => {
       else {
         result = await get_tutor_setup_by_userId(user[0].SID);
       }
-      localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
+      // localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       if (result.length) {
         let data = result[0];
         const selectedUserId = await get_user_detail(data.userId);
@@ -132,17 +135,11 @@ const TutorSetup = () => {
           );
         });
 
-        let frame1 = document.querySelector(".tutor-tab-photo-frame");
-
         set_video(data.Video);
         setRecordedVideo(data.VideoRecorded)
-        const lol12 = new Blob([data.VideoRecorded], { type: 'video/mp4' });
-        setLol123(lol12)
         setSelectedVideoOption("upload");
-
-        let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`;
-        frame1?.insertAdjacentHTML("afterbegin", img);
       }
+      setDataFetching(false)
     };
     fetchTutorSetup();
   }, []);
@@ -163,7 +160,7 @@ const TutorSetup = () => {
   }, []);
 
   useEffect(() => {
-    if (document.querySelector("#fname").value !== "") {
+    if (document.querySelector("#fname")?.value !== "") {
       document.querySelector("#tutor-save").style.opacity = ".3";
       document.querySelector("#tutor-save").style.pointerEvents = "none";
     }
@@ -531,6 +528,8 @@ const TutorSetup = () => {
     console.log(recordedVideo, "vbfbvfhb");
   }, [recordedVideo]);
 
+  if (dataFetching)
+    return <Loading height="80vh" />
   return (
     <>
       <div className="tutor-popin"></div>
@@ -559,7 +558,9 @@ const TutorSetup = () => {
                 style={{ display: "none" }}
                 id="photo"
               />
-              <div className="tutor-tab-photo-frame"></div>
+              <div className="tutor-tab-photo-frame">
+                <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' />
+              </div>
               <label id="btn" htmlFor="photo">
                 Upload
               </label>
@@ -986,7 +987,7 @@ const TutorSetup = () => {
               ) : selectedVideoOption === "upload" && video?.length ? (
                 <div className="tutor-tab-video-frame p-3 card">
                   <video src={video} className="w-100 h-100"
-                  controls autoplay
+                    controls autoplay
                   />
                 </div>
               ) :
@@ -1016,14 +1017,16 @@ const TutorSetup = () => {
                   </div>
                   <div className="col-md-4">
                     <div className="text-center">
-                      <input
-                        data-type="file"
-                        defaultValue={video}
-                        onChange={handleVideo}
-                        type="file"
-                        style={{ display: "none" }}
-                        id="video"
-                      />
+                      {video.length ?
+                        <input
+                          data-type="file"
+                          defaultValue={''}
+                          onChange={handleVideo}
+                          type="file"
+                          style={{ display: "none" }}
+                          id="video"
+                        />
+                        : null}
                       <label
                         id="btn"
                         htmlFor="video"

@@ -102,7 +102,6 @@ button.Toastify__close-button.Toastify__close-button--light {
   position: absolute;
   bottom: 20px;
   left: 4rem;
-  width: 100px;
   transform: translateX(-50%);
   background-color: #333;
   color: #fff;
@@ -117,7 +116,6 @@ button.Toastify__close-button.Toastify__close-button--light {
   position: absolute;
   top: -83px;
   left: -3rem;
-  width: 100px;
   transform: translateX(-50%);
   background-color: #333;
   color: #fff;

@@ -222,11 +222,13 @@ export let upload_form_two = (level, university1, university2, university3, degr
 }
 
 //not using
-export let upload_form_three = (MutiStudentHourlyRate, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent) => {
+export let upload_form_three = (MutiStudentHourlyRate, CancellationPolicy,
+    FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan,
+    AcademyId, DiscountCode, CodeShareable, MultiStudent, IntroSessionDiscount) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/form-three', {
-            MutiStudentHourlyRate, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent
+            MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent
         })
             .then((result) => {
                 resolve(result.data)

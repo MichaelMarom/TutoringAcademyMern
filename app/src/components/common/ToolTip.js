@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Tooltip = ({ text, children, direction = "top" }) => {
+const Tooltip = ({ text, children, direction = "top", width="100px" }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleMouseEnter = () => {
@@ -19,7 +19,11 @@ const Tooltip = ({ text, children, direction = "top" }) => {
     >
       {children}
       {showTooltip && (
-        <div className={`custom-tooltip ${direction}`}>{text}</div>
+        <div className={`custom-tooltip ${direction}`}
+        style={{
+          width
+        }}
+        >{text}</div>
       )}
     </div>
   );

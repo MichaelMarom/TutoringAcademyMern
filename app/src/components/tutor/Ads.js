@@ -46,20 +46,20 @@ const Ads = () => {
 
         if(window.localStorage.getItem('tutor_id') !== null){
             get_tutor_market_data(window.localStorage.getItem('tutor_id'))
-            .then(({TutorData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT}) => {
-                alert(TutorData[0].ScreenName)
-                set_screen_name(TutorData[0].ScreenName) 
-                set_grade(TutorData[0].Grade)
-                set_country(TutorData[0].Country)
-                set_lang(TutorData[0].Language)
-                set_gmt_list(GMT)
+            .then((result) => {
+                console.log(result)
+                // set_screen_name(TutorData[0].ScreenName) 
+                // set_grade(TutorData[0].Grade)
+                // set_country(TutorData[0].Country)
+                // set_lang(TutorData[0].Language)
+                // set_gmt_list(GMT)
 
-                set_education_list(EducationalLevel)
-                set_certificate_list(CertificateTypes)
-                set_exprience_list(Exprience)
-                set_subject(Subjects)
-                set_subject_list([])
-                set_faculty_list(Faculty)
+                // set_education_list(EducationalLevel)
+                // set_certificate_list(CertificateTypes)
+                // set_exprience_list(Exprience)
+                // set_subject(Subjects)
+                // set_subject_list([])
+                // set_faculty_list(Faculty)
 
 
 
@@ -241,7 +241,7 @@ const Ads = () => {
                         </div>
                         
 
-                        <textarea style={{height: '150px', width: '500px', padding: '10px'}} value={`I am tutor ${screen_name}, I teach  (Subject) for students (Grade). I am (education level) with experience of (teaching experience). I leave in (Country), time zone (GMT). I can teach students within (UTC) time zones. Please look at my calendar-scheduling  for availability, and my profile for my work experience and promotions.`} ></textarea>
+                        <textarea style={{height: '150px', width: '500px', padding: '10px'}} value={`My name is ${screen_name}, I teach (Subject) for students (Grade). I am (education level) with experience of (teaching experience). I live in (Country), time zone (GMT). I can teach students within (UTC) time zones. Please look at my calendar-scheduling for availability, and my profile for my work experience and promotions.`} ></textarea>
 
                     </div>
 

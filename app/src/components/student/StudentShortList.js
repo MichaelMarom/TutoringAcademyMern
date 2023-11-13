@@ -4,8 +4,6 @@ import { useMemo } from 'react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
-import axios from 'axios';
-import { useCallback } from 'react';
 import containerVariants from '../constraint';
 import { get_student_short_list } from '../../axios/student';
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +26,7 @@ const StudentShortList = () => {
     const { selectedTutor } = useSelector(state => state.selectedTutor);
 
     const handleNavigateToSchedule = async (item) => {
-        await dispatch(setTutor({
+        dispatch(setTutor({
             id: item.tutorSetup?.SID,
             academyId: item.tutorData?.AcademyId,
             GMT: item.tutorData?.GMT,
@@ -36,7 +34,8 @@ const StudentShortList = () => {
             lastName: item.tutorData?.LastName,
             subject: item.tutorShortList.Subject,
             rate: item.tutorShortList.Rate,
-            disableColor: item.tutorData?.disableColor
+            disableColor: item.tutorData?.disableColor,
+            introDiscountEnabled: item.tutorShortList.IntroSessionDiscount || false
         }))
         navigate('/student/schedule')
     }

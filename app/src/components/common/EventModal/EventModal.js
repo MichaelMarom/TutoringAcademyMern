@@ -136,12 +136,14 @@ function EventModal({
           (selectedType === 'intro' || selectedType === 'booked') &&
           <div>
             <SlotsInvoice
+            selectedType={selectedType}
               studentName={formatName(student.FirstName, student.LastName)}
               tutorName={formatName(selectedTutor.firstName, selectedTutor.lastName)}
               invoiceNumber={123}
               selectedSlots={clickedSlot.start ? [clickedSlot] : selectedSlots}
               subject={selectedTutor.subject}
               rate={selectedTutor.rate}
+              introDiscountEnabled={selectedTutor.introDiscountEnabled}
               handleAccept={handleAccept}
               handleClose={onRequestClose}
             />

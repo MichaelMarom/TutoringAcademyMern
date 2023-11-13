@@ -244,7 +244,7 @@ export const Feedback = () => {
                                     handleEmojiClick={handleEmojiClick}
                                 />
                                 <div className="form-group">
-                                    <label for="exampleTextarea">Write Feedback about your tutor, relevant subject and about session</label>
+                                    <label for="exampleTextarea">Please write a short description of your impression about this lesson</label>
 
                                     <textarea className="form-control" id="exampleTextarea" rows="4"
                                         value={selectedEvent.comment ? selectedEvent.comment : comment}

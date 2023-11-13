@@ -24,9 +24,6 @@ const views = {
   DAY: 'day',
   MONTH: 'month'
 }
-const myMessages = {
-  // agenda: 'BookedLessons', // Change this to your custom tab name
-};
 
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
@@ -51,8 +48,6 @@ const ShowCalendar = ({
 
   // Extract student information from the URL
   const isStudentRoute = (location.pathname.split('/'))[1] === 'student';
-  console.log(isStudentRoute, location.pathname.split('/'));
-
   const isStudentLoggedIn = user[0].role === 'student' ? true : user[0].role === 'admin' && isStudentRoute ? true : false
 
   const [enabledDays, setEnabledDays] = useState([]);
@@ -530,14 +525,17 @@ const ShowCalendar = ({
 
   //handle scroll
   useEffect(() => {
-    const timeContent = document.querySelector('.rbc-time-content');
-    console.log(activeView, activeTab)
+    console.log(activeView, activeTab, isStudentRoute)
     setActiveTab(activeView === 'week' ? 'day' : activeView)
-    if (timeContent) {
-      const middle = timeContent.scrollHeight / 3.5;
-      timeContent.scrollTop = middle;
+    const weekTab = document.querySelector('.rbc-time-content');
+    if (weekTab) {
+      const middle = weekTab.scrollHeight / 3.5;
+      weekTab.scrollTop = middle;
     }
-  }, [activeView]);
+  }, [activeView, isStudentRoute]);
+  useEffect(()=>{
+    if(isStudentRoute) setActiveView('week')
+  },[location])
 
   if (!dataFetched)
     return <Loading />
@@ -572,7 +570,6 @@ const ShowCalendar = ({
         dayPropGetter={dayPropGetter}
         slotPropGetter={slotPropGetter}
         onView={handleViewChange}
-        messages={myMessages}
       />
       <EventModal
         student={student}

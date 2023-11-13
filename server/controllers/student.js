@@ -223,7 +223,9 @@ let upload_student_short_list = async (req, res) => {
 
         let response = await connecteToDB
             .then((poolConnection) =>
-                poolConnection.request().query(`SELECT * from StudentShortList WHERE CONVERT(VARCHAR, Student) =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'`)
+                poolConnection.request().query(`SELECT * from StudentShortList WHERE CONVERT(VARCHAR, Student) 
+                =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) 
+                =  '${subject}'`)
                     .then((result) => {
 
                         return result.recordset
@@ -239,7 +241,9 @@ let upload_student_short_list = async (req, res) => {
     let uploadData = (list) => {
         connecteToDB
             .then((poolConnection) =>
-                poolConnection.request().query(`INSERT INTO StudentShortList (Subject,AcademyId,date,ScreenName,Rate,Student) values('${list[1]}', '${list[0]}', '${Date().toString()}', '${list[3]}', '${list[2]}', '${list[4]}')`)
+                poolConnection.request().query(`INSERT INTO StudentShortList 
+                (Subject,AcademyId,date,ScreenName,Rate,Student) values('${list[1]}', '${list[0]}',
+                 '${Date().toString()}', '${list[3]}', '${list[2]}', '${list[4]}')`)
                     .then((result) => {
 
                         book.push(result.rowsAffected[0]);
@@ -270,11 +274,15 @@ const get_student_short_list = async (req, res) => {
     try {
         let tutorUserData = [];
         let tutorDemoLesson = [];
-
+        console.log(req.params.student)
         let shortList = async () => {
             let poolConnection = await connecteToDB;
             let result = await poolConnection.request().query(
-                find('StudentShortList', { Student: req.params.student }, 'AND', { Student: 'VARCHAR' })
+                `SELECT SSL.*, TR.*
+                FROM StudentShortList SSL
+                JOIN TutorRates TR ON CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TR.AcademyId)                
+                WHERE cast( SSL.Student as varchar) = cast('${req.params.student}' as varchar) `
+                // find('StudentShortList', { Student: req.params.student }, 'AND', { Student: 'VARCHAR' })
             );
             return result.recordset;
         };
@@ -305,10 +313,10 @@ const get_student_short_list = async (req, res) => {
             console.log(item.AcademyId, 'item Asiya. n. Bf922ad')
             let tutorData = tutorProfile[0].filter((tutor) => {
                 console.log({ dd: tutor.AcademyId, SID: tutor.SID, FirstName: tutor.FirstName, lastname: tutor.LastName },
-                    { dd: item.AcademyId, SID: item.SID, FirstName: item.FirstName, lastname: item.LastName })
-                return tutor.AcademyId === item.AcademyId
+                    { dd: item.AcademyId[0], SID: item.SID, FirstName: item.FirstName, lastname: item.LastName })
+                return tutor.AcademyId === item.AcademyId[0]
             })[0];
-            let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId)[0];
+            let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId[0])[0];
             let bookName = shortId.generate();
             console.log(bookName, tutorData, 'recod')
             if (Object.keys(tutorData ? tutorData : {})?.length) {

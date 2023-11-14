@@ -73,7 +73,10 @@ function EventModal({
               <SlotPill selectedSlots={[clickedSlot]} handleRemoveSlot={() => setClickedSlot({})} selectedType={selectedType} />
             </div> :
             <div>
-              <SlotPill selectedSlots={selectedSlots} handleRemoveSlot={handleRemoveSlot} selectedType={selectedType} />
+              <SlotPill 
+              selectedSlots={selectedSlots} 
+              handleRemoveSlot={handleRemoveSlot} 
+              selectedType={selectedType} />
             </div>
           }
           <div className="form-group d-flex flex-column">

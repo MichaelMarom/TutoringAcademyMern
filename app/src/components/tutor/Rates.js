@@ -175,9 +175,13 @@ const Rates = () => {
     { Header: "Select" },
     { Header: "Discount" },
   ];
-  let subscription_dicount = ["6.0%", "12.0%", "18.0%", "24.0%"];
-
-
+  let subscription_discount = [
+    { discount: "0%", hours: '1-5' },
+    { discount: "6.0%", hours: '6' },
+    { discount: "12.0%", hours: '12' },
+    { discount: "18.0%", hours: '18' },
+    { discount: "24.0%", hours: '24' }
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -215,7 +219,7 @@ const Rates = () => {
         <div className="tutor-tab-rate-section">
           <form onSubmit={handleSubmit}>
 
-            <div className="tutor-tab-rate-box">
+            <div className="tutor-tab-rate-box" style={{ height: "80vh" }}>
               <h6>Subscription Plan</h6>
 
               <div
@@ -256,8 +260,9 @@ const Rates = () => {
               <div
                 className="rate-table"
                 style={{
-                  pointerEvents: "none",
-                  opacity: ".5",
+                  pointerEvents: ActivateSubscriptionOption === "true"
+                    || ActivateSubscriptionOption === true ? "auto" : "none",
+                  opacity: "0.5",
                 }}
               >
                 <table>
@@ -269,26 +274,26 @@ const Rates = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {subscription_dicount.map((item, index) => (
+                    {subscription_discount.map((item, index) => (
                       <tr key={index}>
-                        <td>{(index + 1) * 6}</td>
-
+                        <td>{item.hours}</td>
                         <td>
                           <input
-                            onInput={(e) => setSubscriptionPlan(e.target.value)}
+                            onInput={(e) => { setSubscriptionPlan(e.target.value) }}
                             type="radio"
+                            value={item.hours}
+                            checked={item.hours === "1-5"}
                             name="student-subscription"
                             id="student-subscription"
                             style={{
-                              margin: "8px 0 0 0",
-                              cursor: "pointer",
-                              height: "20px",
-                              width: "20px",
+                              height: '20px',
+                              width: '20px',
                             }}
                           />
+
                         </td>
 
-                        <td>{item}</td>
+                        <td>{item.discount}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -343,7 +348,7 @@ const Rates = () => {
                     </div>
                   )}
                   <Tooltip text="cancellation policy toolti[" width="200px">
-                    <FaInfoCircle size={20} color="gray" />
+                    <FaInfoCircle size={20} color="#0096ff" />
                   </Tooltip>
                 </div>
                 <div className="form-check form-switch d-flex gap-3">
@@ -358,7 +363,7 @@ const Rates = () => {
                     50% Intro Session
                   </label>
                   <Tooltip text="The academy mandate an |intro| sessions a for new student as a prerequisite to book sessions with a new tutor. 50% discount motivate student to select you. " width="200px">
-                    <FaInfoCircle size={20} color="gray" />
+                    <FaInfoCircle size={20} color="#0096ff" />
                   </Tooltip>
                 </div>
                 <div className="form-check form-switch d-flex gap-3">
@@ -373,7 +378,7 @@ const Rates = () => {
                     Consent Recording Session
                   </label>
                   <Tooltip text=" Consent Recording Session tooltip">
-                    <FaInfoCircle size={20} color="gray" className=" mr-3" />
+                    <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
                   </Tooltip>
                 </div>
               </div>
@@ -400,7 +405,7 @@ const Rates = () => {
                 </label>
 
                 <Tooltip text="Provide the code below to be used at student's setup tab. It will reduce the platform service charge by 10%. You must generate new code for each of your students" width="200px">
-                  <FaInfoCircle size={20} color="gray" />
+                  <FaInfoCircle size={20} color="#0096ff" />
                 </Tooltip>
               </div>
               {
@@ -429,7 +434,7 @@ const Rates = () => {
                     >
                       <IoMdCopy
                         size={20}
-                        color="gray"
+                        color="#0096ff"
                         onClick={() => {
                           copyToClipboard(discountCode);
                           setCopied(true);
@@ -464,7 +469,7 @@ const Rates = () => {
                   text="Fill your hourly amount for teaching whole class in US$"
                   direction="left"
                 >
-                  <FaInfoCircle size={20} color="gray" />
+                  <FaInfoCircle size={20} color="#0096ff" />
                 </Tooltip>
               </div>
               {
@@ -474,6 +479,7 @@ const Rates = () => {
                     <span className="input-group-text">$</span>
                     <input
                       type="text"
+                      required
                       className="form-control m-0 py-4"
                       aria-label="Amount (to the nearest dollar)"
                       value={MultiStudentHourlyRate}

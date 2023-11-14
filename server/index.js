@@ -50,10 +50,14 @@ io(server, { cors: { origin: '*' } }).on('connection', socket => {
             console.log(subject, AcademyId, Student)
             connecteToDB
                 .then((poolConnection) =>
-                    poolConnection.request().query(`DELETE FROM StudentShortList WHERE  CONVERT(VARCHAR, Student) =  '${Student}' AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'`)
+                    poolConnection.request().query(`DELETE FROM StudentShortList 
+                    WHERE  CONVERT(VARCHAR, Student) =  '${Student}'
+                     AND CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' 
+                     AND CONVERT(VARCHAR, Subject) =  '${subject}'`)
                         .then((result) => {
-
-                            console.log('deleted data successfully')
+                            result.rowsAffected[0] ?
+                                console.log('deleted data successfully') :
+                                console.log('No data found to be deleted')
 
                             //res.status(200).send()
                             //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  

@@ -129,4 +129,12 @@ button.Toastify__close-button.Toastify__close-button--light {
 .record-button__Button-sc-1n5amwk-0.jbBlLf {
   margin: 0 !important;
 }
-/*  */
+/* checkbox */
+
+input[type="checkbox"] {
+  accent-color: green
+}
+.form-check-input:checked {
+  background-color: green;
+  border-color: green;
+}

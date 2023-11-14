@@ -15,6 +15,7 @@ import CustomAgenda from "./CustomAgenda";
 import { useLocation } from 'react-router-dom';
 
 import '../../../styles/common.css';
+import SlotPill from "../../student/SlotPill";
 moment.locale("en-GB");
 
 const localizer = momentLocalizer(moment);
@@ -533,14 +534,15 @@ const ShowCalendar = ({
       weekTab.scrollTop = middle;
     }
   }, [activeView, isStudentRoute]);
-  useEffect(()=>{
-    if(isStudentRoute) setActiveView('week')
-  },[location])
+  
+  useEffect(() => {
+    if (isStudentRoute) setActiveView('week')
+  }, [location])
 
   if (!dataFetched)
     return <Loading />
   return (
-    <div className="h-100">
+    <div style={{height:"80%"}}>
       <Calendar
         views={["day", "week", "month"]}
         localizer={localizer}

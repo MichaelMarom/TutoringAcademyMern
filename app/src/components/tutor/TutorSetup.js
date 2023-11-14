@@ -173,10 +173,10 @@ const TutorSetup = () => {
         .setAttribute("id", "save-overlay");
       let response = await saver();
       if (response.status === 200) {
-        window.localStorage.setItem(
-          "tutor_user_id",
-          response.data[0]?.AcademyId
-        );
+        // window.localStorage.setItem(
+        //   "tutor_user_id",
+        //   response.data[0]?.AcademyId
+        // );
         window.localStorage.setItem(
           "tutor_screen_name",
           response.data[0]?.TutorScreenname

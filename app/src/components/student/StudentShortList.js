@@ -112,12 +112,14 @@ const StudentShortList = () => {
                                             const tutorSetup = item.tutorData;
                                             const tutorDemoLesson = item.tutorDemoLesson;
                                             const tutorShortList = item.tutorShortList;
-                                            console.log(tutorSetup)
                                             return <tr onDoubleClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)} key={index}>
-
-                                                <td>{<img src={tutorSetup?.Photo} style={{ height: '100px', width: '120px' }} />}</td>
+                                                <td>{
+                                                    <img src={tutorSetup?.Photo} style={{ height: '100px', width: '120px' }} />}</td>
                                                 <td>
-                                                    <input type='checkbox' style={{ height: '20px', width: '20px' }} defaultChecked={tutorDemoLesson?.FreeDemoLesson === 'yes' ? true : false} />
+                                                    <input type='checkbox'
+                                                        style={{ height: '20px', width: '20px' }}
+                                                        checked={tutorShortList?.IntroSessionDiscount || false}
+                                                    />
                                                 </td>
                                                 <td>
                                                     {tutorShortList?.Subject}

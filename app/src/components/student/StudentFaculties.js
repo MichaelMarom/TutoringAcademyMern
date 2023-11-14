@@ -5,12 +5,15 @@ import { COLUMNS, DATA } from '../../Tables/Faculty/columns';
 import { useMemo } from 'react';
 import { get_student_short_list_data, get_tutor_subject, upload_student_short_list } from '../../axios/student';
 import { socket } from '../../socket';
+import Actions from '../common/Actions';
+import { toast } from 'react-toastify';
 
 const StudentFaculties = () => {
 
     const [response, setResponse] = useState([]);
     const [data, setData] = useState([]);
     const columns = useMemo(() => COLUMNS, []);
+    const [checkBoxClicked, setCheckBoxClicked] = useState("")
 
     useEffect(() => {
         const fetchTutorSubject = async () => {
@@ -72,9 +75,9 @@ const StudentFaculties = () => {
 
 
     useEffect(() => {
-        document.querySelector('#student-save').onclick = () => {
+        // document.querySelector('#student-save').onclick = () => {
+        if (checkBoxClicked.type?.length) {
             document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
-
             let list = [...document.querySelectorAll('#student-tutor')];
             let doc = list.filter(item =>
                 item.children[0].checked === true
@@ -83,7 +86,6 @@ const StudentFaculties = () => {
             let data = doc.map(item => item.dataset.id)
 
             if (data[0]) {
-                console.log(data, 'data123')
                 let list = data[0].split('-')
                 let res = upload_student_short_list(data);
 
@@ -93,9 +95,7 @@ const StudentFaculties = () => {
                         document.querySelector('.save-overlay').removeAttribute('id');
                     }, 1000);
 
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').style.background = '#000';
-                    document.querySelector('.tutor-popin').innerHTML = 'Data was uploaded successfully...'
+                    toast.success("Your selected record was uploaded to your short list")
                     setTimeout(() => {
                         if (document.querySelector('.tutor-popin')) {
                             document.querySelector('.tutor-popin').removeAttribute('id');
@@ -116,7 +116,8 @@ const StudentFaculties = () => {
                 }
             }
         }
-    }, [])
+        // }
+    }, [checkBoxClicked])
 
     useEffect(() => {
         get_student_short_list_data(window.localStorage.getItem('student_user_id'))
@@ -138,7 +139,7 @@ const StudentFaculties = () => {
 
     let multi_student_cols = [{ Header: '# Select' }, { Header: 'Subject' }, { Header: 'Tutor' }, { Header: 'Experience' }, { Header: 'Certification', }, { Header: 'State', }, { Header: 'Expiration', }, { Header: 'Rate', }]
 
-    let handleBadData = e => {
+    let handleSavedDeleteData = e => {
 
         let elem = e.target;
 
@@ -146,8 +147,13 @@ const StudentFaculties = () => {
         let id = pElem.dataset;
 
         if (!elem.checked) {
+            toast.error("This record was removed from your shortlist")
             socket.emit('studentIllShorList', { id })
         }
+        else {
+            setCheckBoxClicked(elem)
+        }
+
 
     }
 
@@ -249,11 +255,10 @@ const StudentFaculties = () => {
                                             response.map((item) => {
                                                 let faculty = item[0] || {};
                                                 let experience = item[1] || {};
-                                                console.log(item[0], item[1], '0,1')
                                                 return <tr>
                                                     <td id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
 
-                                                        <input onInput={handleBadData} type='checkbox' style={{ height: '20px', width: '20px' }} />
+                                                        <input onInput={handleSavedDeleteData} type='checkbox' style={{ height: '20px', width: '20px' }} />
                                                     </td>
 
                                                     <td>{faculty.subject}</td>
@@ -270,7 +275,8 @@ const StudentFaculties = () => {
                                                         {experience.CertificateState}
                                                     </td>
                                                     <td>
-                                                        {new Date(experience.CertificateExpiration).toLocaleDateString()}
+                                                        {experience.CertificateExpiration.length ?
+                                                            new Date(experience.CertificateExpiration).toLocaleDateString() : "-"}
                                                     </td>
                                                     <td>{faculty.rate}</td>
                                                 </tr>
@@ -291,6 +297,7 @@ const StudentFaculties = () => {
 
                 </div>
             </div>
+            <Actions saveDisabled={true} />
         </>
     );
 }

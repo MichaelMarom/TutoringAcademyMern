@@ -30,10 +30,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    console.log('render')
-    if (user[0] && user[0].role === 'admin')
+    if (user[0] && user[0].role !== 'admin')
       get_tutor_setup_by_userId(user[0].SID).then((result) => {
-        localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
+        console.log(result[0], user[0].SID)
+        // localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       });
   }, [user]);
 

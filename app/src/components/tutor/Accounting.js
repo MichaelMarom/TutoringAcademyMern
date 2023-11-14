@@ -199,7 +199,10 @@ const Accounting = () => {
                     <div style={{display: 'inline-block', width: '100%', padding: '0'}}>
                        
                         <div  style={{float: 'left', margin: '0 0 20px 0', width: '50%'}}>
-                            <input defaultChecked={payment_option === 'Paypal' ? 'defaultChecked' : ''} style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} type="radio" onInput={handle_bank} value='Paypal' name='p-method' id="" />  
+                            <input defaultChecked={payment_option === 'Paypal' ? 'defaultChecked' : ''} 
+                            style={{float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small'}} 
+                            type="radio" onInput={handle_bank} 
+                            value='Paypal' name='p-method' id="" />  
                             <span>Paypal</span> 
                         </div>
 

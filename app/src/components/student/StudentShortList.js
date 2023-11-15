@@ -35,7 +35,8 @@ const StudentShortList = () => {
             subject: item.tutorShortList.Subject,
             rate: item.tutorShortList.Rate,
             disableColor: item.tutorData?.disableColor,
-            introDiscountEnabled: item.tutorShortList.IntroSessionDiscount || false
+            introDiscountEnabled: item.tutorShortList.IntroSessionDiscount || false,
+            activateSubscriptionOption: item.tutorShortList.ActivateSubscriptionOption === "true"
         }))
         navigate('/student/schedule')
     }

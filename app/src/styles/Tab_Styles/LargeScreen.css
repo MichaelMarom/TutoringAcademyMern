@@ -887,6 +887,28 @@ html,body{
         font-weight: bold;
         border-radius: 5px;
     }
+
+    .tutor-teaching-subject{
+        height: 100px;
+        width: 350px;
+        padding: 5px;
+        overflow: auto;
+        border-radius: 10px;
+        background-color: #efefef;
+    }
+
+    .tutor-teaching-subject div{
+        padding: 8px;
+        float: left;
+        font-size: small;
+        margin: 6px 4px 6px 4px;
+        background-color: #2471A3;
+        color: #fff;
+        border-radius: 5px;
+    }
+
+    
+
 }
 
 

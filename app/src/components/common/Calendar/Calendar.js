@@ -124,7 +124,8 @@ const ShowCalendar = ({
 
   useEffect(() => {
     fetchBookings();
-  }, [selectedTutor, user, student])
+    //remove student //changes made
+  }, [selectedTutor, user])
 
   const onRequestClose = () => {
     setSelectedSlots([]);
@@ -151,8 +152,6 @@ const ShowCalendar = ({
 
   const handleBulkEventCreate = (type) => {
     if (reservedSlots?.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
-      console.log('ende12r')
-
       dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...clickedSlot, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== clickedSlot.id) }));
       return
     }
@@ -399,7 +398,7 @@ const ShowCalendar = ({
       const existInDisableHourSlots = disableHourSlots?.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime());
       const existInDefaultHours = disabledHours?.some(slot => {
         const startTime = moment('9:00 PM', 'h:mm A');
-        const endTime = moment('8:00 AM', 'h:mm A');
+        const endTime = moment('7:00 AM', 'h:mm A');
 
         const momentTime = moment(formattedTime, 'h:mm A');
 
@@ -591,7 +590,7 @@ const ShowCalendar = ({
   if (!dataFetched)
     return <Loading height="60vh" />
   return (
-    <div style={{ height: "80%" }}>
+    <div style={{ height: "100%" }}>
       <Calendar
         views={["day", "week", "month"]}
         localizer={localizer}

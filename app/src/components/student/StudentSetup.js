@@ -121,7 +121,7 @@ const StudentSetup = () => {
                     let frame1 = document.querySelector(".tutor-tab-photo-frame");
 
                     let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`
-                    frame1.insertAdjacentHTML("afterbegin", img)
+                    frame1?.insertAdjacentHTML("afterbegin", img)
 
                 }
                 // const result = await upload_form_one()
@@ -450,7 +450,7 @@ const StudentSetup = () => {
 
                 set_photo(reader.result)
 
-                frame.insertAdjacentHTML("afterbegin", img)
+                frame?.insertAdjacentHTML("afterbegin", img)
 
 
             }

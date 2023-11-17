@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { get_student_market_data } from "../../axios/student";
 import { G } from "@react-pdf/renderer";
 import { get_tutor_market_data } from "../../axios/tutor";
+import TutorNewSubject from "../../pages/Admin/NewSubject";
 
 const Ads = () => {
 
@@ -30,7 +31,6 @@ const Ads = () => {
     let [activeFaculty, setActiveFaculty] = useState('')
 
 
-    //let [range_max, set_range_max] = useState(range_min)
     
 
     useEffect(() => {
@@ -142,16 +142,13 @@ const Ads = () => {
 
                         <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Subject</label>
-                            <select>
-                                <option value={''}>Select</option>
+                            <div className="tutor-teaching-subject">
+
                                 {
-                                    subject_list.map(item => {
-                                        return(
-                                            <option value={item.SubjectName}>{item.SubjectName}</option>
-                                        )
-                                    })
+                                    subject_list .map((item,index) => <div key={index}>{item.subject}</div>)
                                 }
-                            </select>
+                               
+                            </div>
                         </div>
 
                         {/*<div className="input-cnt" style={{display: 'flex', alignItems: 'center', justifyContent: 'left'}}>
@@ -166,11 +163,18 @@ const Ads = () => {
                             <select>
                                 <option value={''}>Select</option>
                                 {
-                                    education_list.map(item => {
-                                        return(
-                                            <option value={item.Level}>{item.Level}</option>
-                                        )
-                                    })
+                                    education_list.map(item => 
+                                       
+                                        education[0].EducationalLevel === item.Level 
+                                        ?
+                                        <option selected value={item.Level}>{item.Level}</option>
+
+                                        :
+
+                                        <option value={item.Level}>{item.Level}</option>
+
+
+                                    )
                                 }
                             </select>
                         </div>
@@ -181,11 +185,15 @@ const Ads = () => {
                             <select>
                                 <option value={''}>Select</option>
                                 {
-                                    exprience_list.map(item => {
-                                        return(
-                                            <option value={item.TutorExperience}>{item.TutorExperience}</option>
-                                        )
-                                    })
+                                    exprience_list.map(item => 
+                                        education[0].EducationalLevelExperience.trim() === item.TutorExperience 
+                                        ?
+                                        <option selected value={item.TutorExperience}>{item.TutorExperience}</option>
+
+                                        :
+ 
+                                        <option value={item.TutorExperience}>{item.TutorExperience}</option>
+                                    )
                                 }
                             </select>
                         </div>

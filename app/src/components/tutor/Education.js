@@ -130,7 +130,6 @@ const Education = () => {
     let [state3, set_state3] = useState([]);
     let [state4, set_state4] = useState([]);
     let [state5, set_state5] = useState([]);
-    let [state6, set_state6] = useState([]);
     let [doctorateState, set_doctorateState] = useState([])
 
     let [experience, set_experience] = useState('');
@@ -153,16 +152,29 @@ const Education = () => {
     let [data, set_data] = useState(false);
     let [files, set_files] = useState('');
 
+    const [degreeFile, setDegreeFile] = useState(null);
+    const [degreeFileContent, setDegreeFileContent] = useState('')
+    const [certificateFile, setCertificateFile] = useState(null);
+    const [certFileContent, setCertFileContent] = useState('')
+    const [dataFetched, setDataFetched] = useState(false)
+    let [db_edu_level, set_db_edu_level] = useState('');
+    let [db_edu_cert, set_db_edu_cert] = useState('');
     useEffect(() => {
-        setCertificateFile(null)
-        setCertFileContent(null)
-        setDegreeFile(null)
-        setDegreeFileContent(null)
-    }, [level])
+
+        if (dataFetched && db_edu_level !== level) {
+            setDegreeFile(null)
+            setDegreeFileContent(null)
+        }
+        if (dataFetched && db_edu_cert !== certificate) {
+            setCertificateFile(null)
+            setCertFileContent(null)
+        }
+    }, [level, certificate])
 
     const handleLanguageChange = (selectedOption) => {
         set_othelang(selectedOption);
     }
+
     useEffect(() => {
         const currentYear = (new Date()).getFullYear();
         const range = (start, stop, step) => Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
@@ -177,93 +189,32 @@ const Education = () => {
     let user_id = window.localStorage.getItem('tutor_user_id');
 
     let saver = () => {
-        let response = upload_form_two(level, university1, university2, university3, degree, JSON.stringify(degreeFile), certificate, JSON.stringify(certificateFile), JSON.stringify(language), state2, state3, state4, state5, state6, doctorateState, experience, graduateYr1, graduateYr2, graduagteYr3, doctorateGraduateYear, expiration, JSON.stringify(othelang), workExperience, user_id)
+        let response = upload_form_two(level,
+            university1,
+            university2,
+            university3,
+            degree,
+            degreeFileContent,
+            certificate,
+            certFileContent,
+            JSON.stringify(language),
+            state2,
+            state3,
+            state4,
+            state5,
+            [],
+            doctorateState,
+            experience,
+            graduateYr1,
+            graduateYr2,
+            graduagteYr3,
+            doctorateGraduateYear,
+            expiration,
+            JSON.stringify(othelang),
+            workExperience,
+            user_id)
         return response;
     }
-
-    // const tutorSaveBtn = document.querySelector('#tutor-save')
-    // if (tutorSaveBtn) {
-    //     tutorSaveBtn.onclick = async () => {
-
-    //         let all_inputs = [...document.querySelectorAll('input')]
-    //         let selects = [...document.querySelectorAll('select')]
-    //         let text = [...document.querySelectorAll('textarea')]
-
-    //         let all_values = [...text, ...selects, ...all_inputs];
-
-
-    //         let bool_list = []
-    //         let bools = all_values.map(item => {
-    //             let dependantFields = { degree: 'degreeFile', certificate: "certificateFile" }
-    //             if (item.value === '') {
-    //                 console.log(document.querySelectorAll('[autocomplete="off"]')[0] === item, document.querySelector('[autocomplete="off"]'), document.querySelectorAll('[autocomplete="off"]')[0], item, language, ';;lolll')
-    //                 if ((dependantFields[item.name] && (item.value && all_values.find(input => input.name === dependantFields[item.name])?.value)) || (document.querySelectorAll('[autocomplete="off"]')[0] === item && Object.keys(language).length) || (document.querySelectorAll('[autocomplete="off"]')[1] === item && othelang.length)) {
-    //                     console.log(true, item, '123')
-    //                     bool_list.push(true)
-    //                 }
-    //                 else if (!dependantFields[item.name]) {
-    //                     if (item.dataset.type === 'file') {
-    //                         if (item.nextElementSibling) {
-    //                             item.nextElementSibling.setAttribute('id', 'err-border');
-    //                         }
-    //                     } else {
-    //                         item.setAttribute('id', 'err-border');
-    //                     }
-    //                     if (document.querySelector('[autocomplete="off"]') === item) {
-    //                         document.querySelector('.language-selector').style.border = "1px solid red";
-    //                     }
-    //                     bool_list.push(false)
-    //                 }
-    //                 else {
-    //                     bool_list.push(true)
-    //                 }
-    //             } else {
-    //                 if (item.dataset.type === 'file') {
-    //                     if (item.nextElementSibling) {
-    //                         item.nextElementSibling.removeAttribute('id');
-    //                     }
-    //                 } else {
-    //                     item.removeAttribute('id');
-    //                 }
-
-    //                 bool_list.push(true)
-    //             }
-    //         })
-
-    //         let result = bool_list.filter(item => item === false)
-    //         if (result.length === 0) {
-    //             document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
-    //             let response = await saver();
-    //             if (response) {
-    //                 setTimeout(() => {
-    //                     document.querySelector('.save-overlay').removeAttribute('id');
-    //                 }, 1000);
-
-    //                 document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
-    //                 document.querySelector('.tutor-popin').style.background = '#000';
-    //                 document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
-    //                 setTimeout(() => {
-    //                     document.querySelector('.tutor-next').setAttribute('id', 'next')
-    //                     document.querySelector('.tutor-popin').removeAttribute('id');
-    //                 }, 5000);
-    //             } else {
-    //                 setTimeout(() => {
-    //                     document.querySelector('.save-overlay').removeAttribute('id');
-    //                 }, 1000);
-
-    //                 document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
-    //                 document.querySelector('.tutor-popin').style.background = 'red';
-    //                 document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
-    //                 setTimeout(() => {
-    //                     document.querySelector('.tutor-popin').removeAttribute('id');
-    //                 }, 5000);
-
-    //             }
-
-
-    //         }
-    //     }
-    // }
 
     useEffect(() => {
         get_my_edu(window.localStorage.getItem('tutor_user_id'))
@@ -272,7 +223,6 @@ const Education = () => {
                 if (result.length > 0) {
                     let data = result[0];
                     set_files(data)
-                    console.log(data)
                     set_workExperience(data.WorkExperience)
                     set_university1(data.College1)
                     set_university2(data.College2)
@@ -297,13 +247,17 @@ const Education = () => {
 
                     set_degree(data.Degree)
                     set_certificate(data.Certificate)
+                    set_db_edu_cert(data.Certificate)
 
-                    setDegreeFile(JSON.parse(data.DegreeFile))
-                    setCertificateFile(JSON.parse(data.CertificateFile))
+                    setDegreeFileContent(data.DegreeFile)
+                    setCertFileContent(data.CertificateFile)
 
                     set_level(data.EducationalLevel)
+                    set_db_edu_level(data.EducationalLevel)
+
                     set_expiration(data.CertificateExpiration)
                     set_experience(data.EducationalLevelExperience)
+                    setDataFetched(true)
                 } else {
                     set_files(null)
                 }
@@ -348,9 +302,16 @@ const Education = () => {
         get_degree()
             .then((data) => {
                 let list = data.recordset.map((item) =>
-                    <option key={item.Degree} selected={item.Degree === degree ? 'selected' : ''} className={item.Degree} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Degree}>{item.Degree}</option>
+                    <option key={item.Degree} selected={item.Degree === degree ? 'selected' : ''}
+                        className={item.Degree} style={{
+                            height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                            borderRadius: '0'
+                        }} value={item.Degree}>{item.Degree}</option>
                 );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Degree</option>
+                let head = <option key='null' style={{
+                    height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                    borderRadius: '0'
+                }} value=''>Degree</option>
 
                 list.unshift(head);
                 set_degree_list(list)
@@ -385,36 +346,12 @@ const Education = () => {
             })
     }, [data])
 
-    let [opacity, set_opacity] = useState('1')
-    let [event, set_event] = useState('all')
-
     let edu_level = e => {
-        if (e.target.value === 'No Academic Education') {
-            set_opacity('.5')
-            set_event('none')
-        } else {
-            set_opacity('1')
-            set_event('all')
-        }
         set_level(e.target.value)
     }
 
-    let [certified_opacity, set_certified_opacity] = useState('1')
-    let [certified_event, set_certified_event] = useState('all')
-
-    const [degreeFile, setDegreeFile] = useState(null);
-    const [degreeFileContent, setDegreeFileContent] = useState('')
-    const [certificateFile, setCertificateFile] = useState(null);
-    const [certFileContent, setCertFileContent] = useState('')
 
     let certified = e => {
-        if (e.target.value === 'Not Certified') {
-            set_certified_opacity('.5')
-            set_certified_event('none')
-        } else {
-            set_certified_opacity('1')
-            set_certified_event('all')
-        }
         set_certificate(e.target.value)
     }
     const handleFileUpload = (event) => {
@@ -422,11 +359,11 @@ const Education = () => {
 
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                const content = e.target.result;
-                setDegreeFileContent(content);
+            reader.onload = () => {
+                const base64 = reader.result
+                setDegreeFileContent(base64);
             };
-            reader.readAsText(file);
+            reader.readAsDataURL(file);
             setDegreeFile(file);
         }
     }
@@ -436,11 +373,11 @@ const Education = () => {
 
         if (file) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                const content = e.target.result;
-                setCertFileContent(content);
+            reader.onload = () => {
+                const base64 = reader.result
+                setCertFileContent(base64);
             };
-            reader.readAsText(file);
+            reader.readAsDataURL(file);
             setCertificateFile(file);
         }
     }
@@ -455,7 +392,6 @@ const Education = () => {
             toast.success('Failed to save Record Successfully')
         }
     }
-
     return (
         <>
             <div className='tutor-popin'></div>
@@ -501,7 +437,6 @@ const Education = () => {
 
                         {level !== 'No Academic Education' && level.length ? (
                             <>
-
                                 <div className="row mt-3">
                                     <div className="col-md-4">
                                         <label htmlFor="university1">Bachelor Degree:</label>
@@ -678,7 +613,7 @@ const Education = () => {
                                                     required
                                                 />
                                             </div>
-                                            {degreeFile ? (
+                                            {(degreeFileContent && degreeFileContent.length) ? (
                                                 <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
                                             ) : (
                                                 <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
@@ -760,7 +695,7 @@ const Education = () => {
                                                 required
                                             />
                                         </div>
-                                        {certificateFile ? (
+                                        {(certFileContent?.length) ? (
                                             <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
                                         ) : (
                                             <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>

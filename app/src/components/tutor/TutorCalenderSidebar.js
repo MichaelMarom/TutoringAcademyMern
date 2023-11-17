@@ -78,10 +78,10 @@ function TutorCalenderSidebar({
                 <div className='w-100 p-2'>
                     <label>Click on the pallet below to select a color indicating your blocked slots:</label>
                     <div className='d-flex justify-content-center align-items-center'>
-                        <div className='d-flex ' 
-                        style={{
-                            marginRight:"5px"
-                        }}
+                        <div className='d-flex '
+                            style={{
+                                marginRight: "5px"
+                            }}
                         >Select Blockout Color</div>
                         <input className='p-0 m-0'
                             onChange={(e) => setDisableColor(e.target.value)}
@@ -125,7 +125,7 @@ function TutorCalenderSidebar({
                 </div>
             </div>
 
-            <div className={`tab-pane h-100 ${activeTab === 'day' ? 'active' : ''}`} id="days">
+            <div className={`tab-pane ${activeTab === 'day' ? 'active' : ''}`} id="days" style={{ height: "92%" }}>
                 <div className="form-scheduling-cnt-left flex-column d-flex  justify-content-between h-100 w-100">
 
                     <div className="highlight small lh-sm">
@@ -141,7 +141,8 @@ function TutorCalenderSidebar({
                                     type="checkbox"
                                     id={`hour-${index}`}
                                     className={`form-check-input ${timeRange[2] === 'midnight' ? "gray-checkbox" : ""}`}
-                                    checked={disabledHours?.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])}
+                                    checked={disabledHours?.some(range =>
+                                        range[0] === timeRange[0] && range[1] === timeRange[1])}
                                     onChange={() => handleCheckboxClick(null, timeRange)}
                                 />
                                 <label className="form-check-label small lh-sm" htmlFor={`hour-${index}`}>

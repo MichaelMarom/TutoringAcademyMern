@@ -48,9 +48,9 @@ const TutorTable = () => {
         }
     }
 
-    let redirect_to_tutor_setup = tutor_user_id => {
-        console.log(tutor_user_id)
+    let redirect_to_tutor_setup = (tutor_user_id, screenName) => {
         window.localStorage.setItem('tutor_user_id', tutor_user_id);
+        window.localStorage.setItem('tutor_screen_name', screenName)
         window.localStorage.setItem('user_role', 'admin');
         navigate('/tutor/setup')
     }
@@ -73,7 +73,7 @@ const TutorTable = () => {
 
                                 data.map((item) =>
 
-                                    <tr key={item.SID} onDoubleClick={e => { redirect_to_tutor_setup(item.AcademyId) }}>
+                                    <tr key={item.SID} onDoubleClick={e => { redirect_to_tutor_setup(item.AcademyId, item.TutorScreenname) }}>
                                         <td data-src={null}>
                                             <div className="dropdown">
                                                 <button style={{ background: '#f6f6f6', border: 'none', outline: 'none', color: '#000' }} className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1 status-btn" data-bs-toggle="dropdown" aria-expanded="false">

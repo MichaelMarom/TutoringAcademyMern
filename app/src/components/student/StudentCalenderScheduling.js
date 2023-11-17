@@ -85,7 +85,7 @@ const StudentCalenderScheduling = () => {
       Please select tutor to Book lessons
     </div>
   return (
-    <div>
+    <div className="px-5">
       <div className={`d-flex ${selectedTutor.activateSubscriptionOption ? "justify-content-end" : ""}`}>
         <div className={`${selectedTutor.activateSubscriptionOption ? "w-75 " : "w-100"} align-items-center justify-content-between mt-3 d-flex row flex-row m-2`}
         >
@@ -121,7 +121,12 @@ const StudentCalenderScheduling = () => {
 
         </div>
       </div >
-      <div className='d-flex' style={{ height: "80vh" }}>
+
+
+      <div className="highlight small lh-sm mb-3">
+        Double click on an aviable (unblocked) slots. You must first book an introduction lesson. Most tutors will discount the 'intro' by 50%. You must conduct the "Introductionary" (Intro) lesson, and provide feedback before you can "Book" the next lesson with that tutor. You can book multiple lessons for a discount. For that reason you can "Reserve" slots for 60 minutes until you make your selection.
+      </div>
+      <div className='d-flex' style={{ height: "65vh" }}>
         {selectedTutor.activateSubscriptionOption && <div className="px-2 col-3 mt-3">
           <h4 className='text-center '>Subscription Discount</h4>
           <div
@@ -160,10 +165,8 @@ const StudentCalenderScheduling = () => {
             </table>
           </div>
         </div>}
-        <div className={`px-5 ${selectedTutor.activateSubscriptionOption ? "col-9" : "col-12"} `}>
-          <div className="highlight small lh-sm mb-3">
-            Double click on an aviable (unblocked) slots. You must first book an introduction lesson. Most tutors will discount the 'intro' by 50%. You must conduct the "Introductionary" (Intro) lesson, and provide feedback before you can "Book" the next lesson with that tutor. You can book multiple lessons for a discount. For that reason you can "Reserve" slots for 60 minutes until you make your selection.
-          </div>
+        <div className={` ${selectedTutor.activateSubscriptionOption ? "col-9" : "col-12"} `}>
+
           <ShowCalendar
             student={student}
             disableColor={selectedTutor.disableColor}

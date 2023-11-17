@@ -266,3 +266,13 @@ export const post_feedback_to_question = async (sessionId, tutorId, studentId, f
         return err
     }
 }
+
+export const update_student_shortlist = async (AcademyId, studentId, subject, body) => {
+    try {
+        const { data } = await axiosInstance.put(`/student/short-list/${AcademyId}/${studentId}/${subject}`, body)
+        return data;
+    }
+    catch (err) {
+        return err
+    }
+}

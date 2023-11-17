@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
+import StarRating from '../../student/Feedback/StarRating';
 
 function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reservedSlots }) {
     const [remainingTime, setRemainingTime] = useState(calculateRemainingTime(event.createdAt));
@@ -30,7 +31,6 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
             const currentTime = moment();
             const inputTime = moment(event.createdAt);
             const diffInMinutes = currentTime.diff(inputTime, 'minutes');
-            console.log(diffInMinutes, 'll')
             //5 min extra after expire
             if (diffInMinutes >= 65 && event.type === 'reserved') {
                 handleSetReservedSlots(reservedSlots.filter(slot => event.id !== slot.id));
@@ -83,7 +83,13 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
                     {event.title} by {event.studentName}
                     {event.type === 'reserved' &&
                         <div>
-                            {String(remainingTime.minutes).padStart(2, '0')} : {String(remainingTime.seconds).padStart(2, '0')}
+                            {String(remainingTime.minutes).padStart(2, '0')} :
+                            {String(remainingTime.seconds).padStart(2, '0')}
+                        </div>
+                    }
+                    {event.rating &&
+                        <div >
+                            <StarRating rating={event.rating} />
                         </div>
                     }
                 </div>

@@ -169,7 +169,7 @@ const ShowCalendar = ({
         studentName: student.FirstName,
         createdAt: new Date(),
         subject: selectedTutor.subject,
-        rate: selectedTutor.rate
+        rate: (type === 'intro' && selectedTutor.introDiscountEnabled) ? `$${(parseInt(selectedTutor.rate.split('$')[1]) / 2)}.00` : selectedTutor.rate
       }
     })
 
@@ -534,7 +534,7 @@ const ShowCalendar = ({
       weekTab.scrollTop = middle;
     }
   }, [activeView, isStudentRoute]);
-  
+
   useEffect(() => {
     if (isStudentRoute) setActiveView('week')
   }, [location])
@@ -542,7 +542,7 @@ const ShowCalendar = ({
   if (!dataFetched)
     return <Loading />
   return (
-    <div style={{height:"80%"}}>
+    <div style={{ height: "80%" }}>
       <Calendar
         views={["day", "week", "month"]}
         localizer={localizer}

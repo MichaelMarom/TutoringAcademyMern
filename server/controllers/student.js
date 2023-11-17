@@ -3,6 +3,32 @@ const { insert, getAll, findById, findByAnyIdColumn, update, find } = require('.
 const { express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
 
+const executeQuery = async (query, res) => {
+    try {
+        const db = await marom_db(() => { })
+        await marom_db(async (config) => {
+            try {
+                const sql = require('mssql');
+                const poolConnection = await sql.connect(config);
+                if (poolConnection) {
+                    const result = await poolConnection.request().query(
+                        query
+                    );
+                    console.log(result, 'in ecudyte')
+                    res.status(200).send(result?.recordset)
+                }
+            }
+            catch (err) {
+                console.log(err);
+                res.status(400).send(err)
+            }
+        })
+    } catch (error) {
+        console.error('Error in executeQuery:', error.message);
+        return error
+    }
+};
+
 
 let upload_form_one = (req, res) => {
 
@@ -223,8 +249,6 @@ let upload_student_short_list = async (req, res) => {
     let book = []
     let { items } = req.body;
 
-
-
     let checkDuplicates = async (subject, AcademyId, Student) => {
 
         let response = await connecteToDB
@@ -341,6 +365,22 @@ const get_student_short_list = async (req, res) => {
         console.log(err);
     }
 };
+
+const update_shortlist = async (req, res) => {
+    try {
+        const query = update("StudentShortList", req.body, req.params, { AcademyId: "varchar", Student: "varchar", Subject: "varchar" })
+        const result = await executeQuery(query, res);
+        console.log(result, 'hehe')
+        if (result?.recordset?.length === 0) {
+            throw new Error('Update failed: Record not found');
+        }
+        // res.status(200).send(result?.recordset)
+    } catch (error) {
+        console.error('Error in updateRecord:', error.message);
+        res.status(400).send(error)
+
+    }
+}
 
 
 let get_my_data = async (req, res) => {
@@ -792,6 +832,7 @@ const post_feedback_questions = async (req, res) => {
 
 module.exports = {
     post_feedback_questions,
+    update_shortlist,
     get_feedback_of_questions,
     get_feedback_questions,
     upload_form_one,

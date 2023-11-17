@@ -17,7 +17,7 @@ const AccountingTable = ({ tableData }) => {
             height: '60vh'
         }}>
             <h2>Payment Report</h2>
-            <table className="table">
+            {tableData.length ? <table className="table">
                 <thead className="thead-dark" style={{
                     background: "black"
                 }}>
@@ -45,7 +45,7 @@ const AccountingTable = ({ tableData }) => {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </table> : <div className='text-danger'>No Record Found</div>}
         </div>
     )
 }

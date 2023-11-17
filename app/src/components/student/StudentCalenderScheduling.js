@@ -3,8 +3,7 @@ import ShowCalendar from '../common/Calendar/Calendar'
 import { useSelector } from 'react-redux';
 import { formatName } from '../../helperFunctions/generalHelperFunctions';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
-import { get_my_data } from '../../axios/student';
-import SlotPill from './SlotPill';
+import { get_my_data, update_student_shortlist } from '../../axios/student';
 
 
 const StudentCalenderScheduling = () => {
@@ -12,7 +11,7 @@ const StudentCalenderScheduling = () => {
   const [activeTab, setActiveTab] = useState('month');
   const [tutorTime, setTutorTime] = useState('');
   const [disabledHours, setDisabledHours] = useState([]);
-  const [activeSubscription, setActiveSubscription] = useState('')
+  const [subscriptionHours, setActiveSubscriptionHours] = useState(null)
   const { selectedTutor } = useSelector(state => state.selectedTutor)
   const [student, setStudent] = useState({})
 
@@ -22,14 +21,26 @@ const StudentCalenderScheduling = () => {
     { Header: "Discount" },
   ];
   let subscription_discount = [
-    { discount: "0%", hours: '1-5' },
-    { discount: "6.0%", hours: '6' },
-    { discount: "12.0%", hours: '12' },
+    { discount: "0%", hours: '1-5', value: 5 },
+    { discount: "6.0%", hours: 6, value: 6 },
+    { discount: "12.0%", hours: 12, value: 12 },
   ];
 
   useEffect(() => {
     setTutorTime(convertGMTOffsetToLocalString(selectedTutor.GMT))
+    setActiveSubscriptionHours(selectedTutor.discountHours)
   }, [selectedTutor])
+
+  useEffect(() => {
+    const update = async () => {
+      console.log(student.AcademyId)
+      if (subscriptionHours && student.AcademyId?.length) {
+        const res = await update_student_shortlist(selectedTutor.academyId, student.AcademyId, selectedTutor.subject, { DiscountHours: subscriptionHours });
+        console.log(res)
+      }
+    }
+    update()
+  }, [subscriptionHours, student])
 
   useEffect(() => {
     const getStudentDetails = async () => {
@@ -38,6 +49,7 @@ const StudentCalenderScheduling = () => {
     }
     getStudentDetails()
   }, [])
+
   const getTimeDifferenceClass = (difference) => {
     if (difference >= -3 && difference <= 3) {
       return 'text-bg-success';
@@ -70,37 +82,42 @@ const StudentCalenderScheduling = () => {
     </div>
   return (
     <div>
-      <div className='d-flex justify-content-end'>
-        <div className={`w-75 align-items-center justify-content-between mt-3 d-flex row flex-row `}
+      <div className={`d-flex ${selectedTutor.activateSubscriptionOption ? "justify-content-end" : ""}`}>
+        <div className={`${selectedTutor.activateSubscriptionOption ? "w-75 " : "w-100"} align-items-center justify-content-between mt-3 d-flex row flex-row m-2`}
         >
-          <div className='d-flex gap-4 col-3 card m-2'>
+          <div className='d-flex col-3 card m-2'>
             <div className='card-body'>
               <h4 className='d-inline mr-2 card-title'>
                 Tutor:
               </h4>
-              <h6 className='card-subtitle'>
+              <h6 className='card-subtitle  text-start'>
                 {formatName(selectedTutor.firstName, selectedTutor.lastName)}</h6>
               <div className='d-inline ml-2 card-text'>
                 {tutorTime}
               </div>
             </div>
-
           </div>
 
-          <div className='col-3'>
+          <div className='col-4'>
             <h5 className={`d-inline mr-2 card ${getTimeDifferenceClass(calculateTimeDifference())} text-bg-success px-1`}>
               Time zones  Difference: {calculateTimeDifference()}
             </h5>
 
           </div>
-          <div className='ml-4 col-3'>
-            <h4 className='d-inline ml-4'>
-              My Time:  {convertGMTOffsetToLocalString(student.GMT)}
-            </h4>
+          <div className='d-flex col-3 card m-2'>
+            <div className='card-body'>
+              <h4 className='d-inline mr-2 card-title'>
+                My Time:
+              </h4>
+              <h6 className='card-subtitle text-start'>
+                {convertGMTOffsetToLocalString(student.GMT)}
+              </h6>
+            </div>
           </div>
+
         </div>
-      </div>
-      <div className='d-flex' style={{ height: "90vh" }}>
+      </div >
+      <div className='d-flex' style={{ height: "80vh" }}>
         {selectedTutor.activateSubscriptionOption && <div className="px-2 col-3 mt-3">
           <h4 className='text-center '>Subscription Discount</h4>
           <div
@@ -120,9 +137,9 @@ const StudentCalenderScheduling = () => {
                     <td>{item.hours}</td>
                     <td>
                       <input
-                        onInput={(e) => { setActiveSubscription(e.target.value) }}
+                        onChange={() => setActiveSubscriptionHours(item.value)}
                         type="radio"
-                        value={item.hours}
+                        checked={item.value === subscriptionHours}
                         name="student-subscription"
                         id="student-subscription"
                         style={{
@@ -153,7 +170,7 @@ const StudentCalenderScheduling = () => {
             setDisabledHours={setDisabledHours} />
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

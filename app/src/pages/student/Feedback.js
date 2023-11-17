@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 import StudentLayout from '../../layouts/StudentLayout';
 import BookedLessons from '../../components/student/Feedback/BookedLessons'
 import QuestionFeedback from '../../components/student/Feedback/QuestionFeedback'
-import { get_all_feedback_questions, get_feedback, get_feedback_to_question, get_payment_report, get_student_events, post_feedback_to_question, save_student_events } from '../../axios/student';
+import { get_all_feedback_questions, get_feedback_to_question, get_payment_report, get_student_events, post_feedback_to_question, save_student_events } from '../../axios/student';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
 import { useDispatch } from 'react-redux';
 import { postStudentBookings } from '../../redux/student_store/studentBookings';
 import Actions from '../../components/common/Actions';
-import Loading from '../../components/common/Loading';
 import { toast } from 'react-toastify';
-import DebounceInput from '../../components/common/DebounceInput';
+import { convertToDate } from '../../components/common/Calendar/Calendar';
+
 export const Feedback = () => {
     const [questions, setQuestions] = useState([]);
     const [comment, setComment] = useState('')
@@ -78,8 +78,6 @@ export const Feedback = () => {
             }
         }
     };
-
-
 
     const handleRowSelect = (event) => {
         setSelectedEvent(event)
@@ -154,8 +152,17 @@ export const Feedback = () => {
     }, [selectedEvent.id])
 
     const transformFeedbackData = (item) => {
-        const bookedSlots = JSON.parse(item.bookedSlots);
-        const reservedSlots = JSON.parse(item.reservedSlots);
+        let bookedSlots = JSON.parse(item.bookedSlots);
+        let reservedSlots = JSON.parse(item.reservedSlots);
+        console.log(bookedSlots, reservedSlots)
+        bookedSlots = bookedSlots.filter(slot => {
+            console.log(showDate(slot.end, wholeDateFormat), (new Date()).toLocaleString())
+            return convertToDate(slot.end).getTime() < (new Date()).getTime()
+        })
+        reservedSlots = reservedSlots.filter(slot => {
+            console.log(showDate(slot.end, wholeDateFormat), (new Date()).toLocaleString())
+            return convertToDate(slot.end).getTime() < (new Date()).getTime()
+        })
         const updatedPaymentReport_booked = bookedSlots.map(slot => ({
             ...slot,
             tutorId: item.tutorId,
@@ -226,12 +233,15 @@ export const Feedback = () => {
                 <div className="row">
                     <div className={`${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>
                         <h2>Booked Lessons</h2>
-                        <BookedLessons
-                            events={feedbackData}
-                            handleRowSelect={handleRowSelect}
-                            setSelectedEvent={setSelectedEvent}
-                            selectedEvent={selectedEvent}
-                        />
+                        {feedbackData.length ?
+                            <BookedLessons
+                                events={feedbackData}
+                                handleRowSelect={handleRowSelect}
+                                setSelectedEvent={setSelectedEvent}
+                                selectedEvent={selectedEvent}
+                            /> :
+                            <div className='text-danger'>No Record Found</div>
+                        }
                     </div>
                     {
                         selectedEvent.id &&

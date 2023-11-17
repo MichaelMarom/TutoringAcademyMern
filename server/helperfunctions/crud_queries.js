@@ -29,7 +29,7 @@ const insert = (tableName, values) => {
  * @param {true} returnUpdated retuen updated value or not
  * @returns 
  */
-const update = (tableName, values, where, returnUpdated = true) => {
+const update = (tableName, values, where, casting = {}, returnUpdated = true) => {
     const updateFieldsArray = Object.keys(values);
 
     const setClause = updateFieldsArray.map((field, index) => {
@@ -44,7 +44,8 @@ const update = (tableName, values, where, returnUpdated = true) => {
         const whereValue = typeof where[field] === 'object'
             ? `'${JSON.stringify(where[field])}'`
             : `'${where[field]}'`;
-        return `${field} = ${whereValue}`;
+        const fieldCasting = casting[field] || '';
+        return `${casting[field] ? `CAST(${field} AS ${fieldCasting})` : `${field}`} = ${whereValue}`;
     }).join(' AND ');
 
     const query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause};

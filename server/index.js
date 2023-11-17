@@ -4,7 +4,7 @@ const { STUDENT_ROUTES } = require('./routes/student');
 const { ADMIN_ROUTES } = require('./routes/admin');
 const { TUTOR_ROUTES } = require('./routes/tutor');
 const AUTH_ROUTERS = require('./routes/auth');
-
+const COMMON_ROUTERS = require('./routes/common')
 
 const app = express();
 app.use(cors({ origin: '*' }))
@@ -15,6 +15,7 @@ app.use(TUTOR_ROUTES);
 app.use(ADMIN_ROUTES);
 app.use(STUDENT_ROUTES);
 app.use(AUTH_ROUTERS)
+app.use(COMMON_ROUTERS)
 
 
 var server = app.listen(process.env.PORT, _ => console.log('app is live @', process.env.PORT));

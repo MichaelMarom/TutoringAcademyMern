@@ -14,7 +14,7 @@ const SlotsInvoice = ({
   handleClose,
   introDiscountEnabled
 }) => {
-  const subtotal = selectedSlots.length * (introDiscountEnabled ?
+  const subtotal = selectedSlots.length * ((introDiscountEnabled && selectedType === 'intro') ?
     (parseInt(rate.split('$')[1]) / 2) :
     parseInt(rate.split('$')[1]));
 
@@ -33,9 +33,13 @@ const SlotsInvoice = ({
             </div>
             <div className="card-body">
               <div className="mb-4">
-                <h4 className='text-center mb-3' style={{ fontSize: '16px' }}>Invoice</h4>
-                <h5 className='text-center mb-3 text-danger font-weight-bold'
-                  style={{ fontSize: '16px' }}>Avail 50% discount on Intro Session</h5>
+                <h4 className='text-center mb-3' style={{ fontSize: '16px' }}>
+                Invoice</h4>
+                {
+                  (selectedType === 'intro' && introDiscountEnabled) &&
+                  < h5 className='text-center mb-3 text-danger font-weight-bold'
+                    style={{ fontSize: '16px' }}>Avail 50% discount on Intro Session</h5>
+                }
                 <h6 style={{ fontSize: '12px' }}>Student: {studentName}</h6>
                 <h6 style={{ fontSize: '12px' }}>Tutor: {tutorName}</h6>
                 <h6 style={{ fontSize: '12px' }}>Invoice #: {invoiceNumber}</h6>
@@ -83,7 +87,7 @@ const SlotsInvoice = ({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

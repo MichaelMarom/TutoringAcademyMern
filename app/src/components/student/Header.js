@@ -3,7 +3,21 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 
 const Header = () => {
-
+    const tabs = [
+        { name: 'Introduction', url: 'intro' },
+        { name: 'Student Setup', url: 'setup' },
+        { name: 'Faculties', url: 'faculties' },
+        { name: 'Short List', url: 'short-list' },
+        { name: 'Accounting', url: 'accounting' },
+        // { name: 'Book Session', url: 'booking' },
+        { name: "Feedback", url: 'feedback' },
+        { name: 'Calender', url: 'calender' },
+        { name: 'Terms Of Use', url: 'term-of-use' },
+        { name: 'Message Board', url: 'my-students' },
+        { name: 'Market place', url: 'market-place' },
+        { name: 'Collaboration', url: 'collaboration' },
+        { name: 'Profile', url: 'profile' },
+    ];
 
     let nav = useNavigate()
     let [screen_name, set_screen_name] = useState('')
@@ -18,20 +32,7 @@ const Header = () => {
         }
     }, [location.pathname, activeTab]);
 
-    const tabs = [
-        { name: 'Introduction', url: 'intro' },
-        { name: 'Student Setup', url: 'setup' },
-        { name: 'Faculties', url: 'faculties' },
-        { name: 'Short List', url: 'short-list' },
-        { name: 'Accounting', url: 'accounting' },
-        { name: 'Calender Scheduling', url: 'schedule' },
-        { name: "Feedback", url: 'feedback' },
-        { name: 'Terms Of Use', url: 'term-of-use' },
-        { name: 'Message Board', url: 'my-students' },
-        { name: 'Market place', url: 'market-place' },
-        { name: 'Collaboration', url: 'collaboration' },
-        { name: 'Profile', url: 'profile' },
-    ];
+
     useEffect(() => {
         let name = window.localStorage.getItem('student_screen_name');
         set_screen_name(name)

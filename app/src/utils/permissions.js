@@ -29,6 +29,7 @@ import TutorClass from "../pages/tutor/TutotClass";
 import StudentClass from "../pages/student/StudentClass";
 import { Feedback } from "../pages/student/Feedback";
 import Chat from "../pages/Chat";
+import { Schedules } from "../pages/student/Schedules";
 
 const rolePermissions = {
   tutor: [
@@ -54,7 +55,8 @@ const rolePermissions = {
     { path: "/student/short-list", component: <StudentShortLists /> },
     { path: "/student/accounting", component: <StudentAccountings /> },
     { path: "/student/market-place", component: <StudentMarketPlace /> },
-    { path: "/student/schedule", component: <StudentScheduling /> },
+    { path: "/student/booking", component: <StudentScheduling /> },
+    { path: "/student/calender", component: <Schedules /> },
     { path: "/student/term-of-use", component: <StudentTermOfUse /> },
     { path: "/student/profile", component: <StudentProfile /> },
     { path: '/student/feedback', component: <Feedback /> },

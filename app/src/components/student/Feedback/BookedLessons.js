@@ -5,6 +5,7 @@ import Comment from './Comment';
 import StarRating from './StarRating';
 import { convertToDate } from '../../common/Calendar/Calendar';
 import { useSelector } from 'react-redux';
+import Tooltip from '../../common/ToolTip';
 
 function BookedLessons({
   events,
@@ -14,11 +15,14 @@ function BookedLessons({
 }) {
 
   const { shortlist } = useSelector(state => state.shortlist)
-  const [tutorPhoto, setTutorPhoto] = useState(null);
+  const [eventsWithPhoto, setEventsWithPhoto] = useState([])
 
   useEffect(() => {
     const updatedEvents = events.map(event => {
-      const matchingTutor = shortlist.find(tutor => tutor.tutorData.AcademyId === event.tutor);
+      const matchingTutor = shortlist.find(tutor => {
+        return (tutor.tutorData.AcademyId === event.tutor
+          || (tutor.tutorData.AcademyId === event.tutorId))
+      })
 
       if (matchingTutor) {
         return {
@@ -30,9 +34,10 @@ function BookedLessons({
       return event;
     });
 
-    setEvents(updatedEvents);
+    setEventsWithPhoto(updatedEvents);
   }, [events, shortlist]);
 
+  console.log(eventsWithPhoto)
   return (
     <table>
       <thead className="thead-light">
@@ -47,10 +52,13 @@ function BookedLessons({
         </tr>
       </thead>
       <tbody>
-        {events.map((event, index) => (
-          <tr key={index}>
+        {eventsWithPhoto.map((event, index) => (
+          <tr key={index} style={{ 
+            animation: event.feedbackEligible ? 'blinking 1s infinite' : 'none' }}>
             <td>
-              <img src={event.photo} alt="tutor image" height={60} width={60} />
+              <Tooltip text={event.tutorId}>
+                <img src={event.photo} alt={event.tutorId} height={60} width={60} />
+              </Tooltip>
             </td>
             <td>{showDate(convertToDate(event.start), wholeDateFormat)}</td>
             <td>{event.subject}</td>
@@ -63,7 +71,7 @@ function BookedLessons({
 
             <td>
               <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'}`}
-                onClick={() => handleRowSelect(event)}>Select</button>
+                onClick={() => handleRowSelect(event)} disabled={!event.feedbackEligible}>Select</button>
             </td>
           </tr>
         ))}

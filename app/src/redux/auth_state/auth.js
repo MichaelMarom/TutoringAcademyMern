@@ -1,6 +1,5 @@
 // slice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchEvents, storeEventAPI } from "../../axios/tutor";
 
 // Create a slice with your event-related reducers
 const slice = createSlice({

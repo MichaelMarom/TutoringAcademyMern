@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { showDate } from '../../../helperFunctions/timeHelperFunctions'
 import { wholeDateFormat } from '../../../constants/constants'
-import { get_payment_report } from '../../../axios/student'
 
 const AccountingTable = ({ tableData }) => {
 
-    const studentId = localStorage.getItem('student_user_id');
     const convertAcademyToScreenName = (inputName) => {
+        console.log(inputName)
         const res = inputName.split('.')[0] + '. ' + inputName.split('.')[1] + '.'
         return res
-
     }
+
     return (
         <div className="col-md-8" style={{
             overflowY: 'auto',
@@ -27,7 +26,6 @@ const AccountingTable = ({ tableData }) => {
                         <th className='text-white bg-dark'>Subject</th>
                         <th className='text-white bg-dark'>Rate</th>
                         <th className='text-white bg-dark'>Type</th>
-                        <th className='text-white bg-dark col-1'>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,10 +36,6 @@ const AccountingTable = ({ tableData }) => {
                             <td>{row.subject}</td>
                             <td>{row.rate}</td>
                             <td>{row.title}</td>
-
-                            <td>
-                                <button className="btn btn-primary">Details</button>
-                            </td>
                         </tr>
                     ))}
                 </tbody>

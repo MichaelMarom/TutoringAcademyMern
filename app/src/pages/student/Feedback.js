@@ -158,25 +158,26 @@ export const Feedback = () => {
         let bookedSlots = JSON.parse(item.bookedSlots);
         let reservedSlots = JSON.parse(item.reservedSlots);
         console.log(bookedSlots, reservedSlots)
-        bookedSlots = bookedSlots.filter(slot => {
-            console.log(showDate(slot.end, wholeDateFormat), (new Date()).toLocaleString())
-            return convertToDate(slot.end).getTime() < (new Date()).getTime()
+        bookedSlots = bookedSlots.map(slot => {
+            if (convertToDate(slot.end).getTime() < (new Date()).getTime()) {
+                return {
+                    ...slot,
+                    feedbackEligible: true
+                }
+            }
+            return slot
         })
-        reservedSlots = reservedSlots.filter(slot => {
-            console.log(showDate(slot.end, wholeDateFormat), (new Date()).toLocaleString())
-            return convertToDate(slot.end).getTime() < (new Date()).getTime()
+        reservedSlots = reservedSlots.map(slot => {
+            if (convertToDate(slot.end).getTime() < (new Date()).getTime()) {
+                return {
+                    ...slot,
+                    feedbackEligible: true
+                }
+            }
+            return slot
         })
-        const updatedPaymentReport_booked = bookedSlots.map(slot => ({
-            ...slot,
-            tutorId: item.tutorId,
-        }));
 
-        const updatedPaymentReport_reserved = reservedSlots.map(slot => ({
-            ...slot,
-            tutorId: item.tutorId,
-        }));
-
-        const combinedPaymentData = updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
+        const combinedPaymentData = reservedSlots.concat(bookedSlots);
         const final = combinedPaymentData.filter(data => data.type != 'reserved')
         return final
     };
@@ -237,13 +238,17 @@ export const Feedback = () => {
                     <div className={`${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>
                         <h2>Booked Lessons</h2>
                         {feedbackData.length ?
-                            <BookedLessons
-                                setEvents={setFeedbackData}
-                                events={feedbackData}
-                                handleRowSelect={handleRowSelect}
-                                setSelectedEvent={setSelectedEvent}
-                                selectedEvent={selectedEvent}
-                            /> :
+                            <>
+                                <div style={{ fontSize: "14px" }}>Lessons blinking by green border are ready for your feedback</div>
+                                <BookedLessons
+                                    setEvents={setFeedbackData}
+                                    events={feedbackData}
+                                    handleRowSelect={handleRowSelect}
+                                    setSelectedEvent={setSelectedEvent}
+                                    selectedEvent={selectedEvent}
+                                />
+                            </>
+                            :
                             <div className='text-danger'>No Record Found</div>
                         }
                     </div>

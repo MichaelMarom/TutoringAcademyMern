@@ -238,7 +238,7 @@ const ShowCalendar = ({
     }
     if (slotInfo.action === "doubleClick") {
       if (!isStudentLoggedIn) {
-        if (disableWeekDays && disableWeekDays.includes(dayName)) {
+        if (disableWeekDays && disableWeekDays?.includes(dayName)) {
           if (activeView !== views.MONTH) {
 
             if (!enableHourSlots?.some(date => convertToDate(date).getTime() === slotInfo.start.getTime())) {
@@ -343,7 +343,7 @@ const ShowCalendar = ({
               // handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "asiya", createdAt: moment().subtract(1, "minutes").toDate() })
             }
           }
-          else if (disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+          else if (disableWeekDays?.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
             alert("This slot is blocked, please select a white slot.");
           }
           else if (existInDisableHourSlots || !existInEnableSlots && disabledHours?.some((timeRange) => {
@@ -472,7 +472,7 @@ const ShowCalendar = ({
         const storedMomentDate = moment(storeDate);
         return storedMomentDate.isSame(slotDateMoment, 'day')
       })
-      if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+      if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays?.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
         return {
           style: {
             backgroundColor: disableColor

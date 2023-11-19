@@ -79,25 +79,6 @@ const StudentAccounting = () => {
         fetchBankDetails()
     }, [])
 
-    const generateDummyRecords = () => {
-        const records = [];
-        const today = new Date();
-
-        for (let i = 0; i < 10; i++) {
-            const recordDate = new Date(today);
-            recordDate.setDate(today.getDate() - i);
-            records.push({
-                date: recordDate,
-                tutor: `Tutor ${i}`,
-                subject: `Subject ${i}`,
-                rate: 50 + i * 5,
-            });
-        }
-        return records;
-    };
-
-    const tableData = generateDummyRecords();
-
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [paymentReportData, setPaymentReportData] = useState([]);
@@ -106,19 +87,8 @@ const StudentAccounting = () => {
         const bookedSlots = JSON.parse(item.bookedSlots);
         const reservedSlots = JSON.parse(item.reservedSlots);
         console.log(bookedSlots, reservedSlots, item, 'slostF');
-        const updatedPaymentReport_booked = bookedSlots.map(slot => ({
-            ...slot,
-            tutorId: item.tutorId,
-            subject: item.Subject,
-        }));
 
-        const updatedPaymentReport_reserved = reservedSlots.map(slot => ({
-            ...slot,
-            tutorId: item.tutorId,
-            subject: item.Subject,
-        }));
-
-        const combinedPaymentData = updatedPaymentReport_reserved.concat(updatedPaymentReport_booked);
+        const combinedPaymentData = reservedSlots.concat(bookedSlots);
         const final = combinedPaymentData.filter(data => data.type != 'reserved')
         return final
     };

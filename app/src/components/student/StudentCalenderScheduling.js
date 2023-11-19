@@ -6,10 +6,13 @@ import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperF
 import { get_my_data, update_student_shortlist } from '../../axios/student';
 import { useDispatch } from 'react-redux';
 import { setStudent } from '../../redux/student_store/studentData';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 const StudentCalenderScheduling = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [disableWeekDays, setDisabledWeekDays] = useState([]);
   const [activeTab, setActiveTab] = useState('month');
   const [tutorTime, setTutorTime] = useState('');
@@ -18,6 +21,13 @@ const StudentCalenderScheduling = () => {
   const { selectedTutor } = useSelector(state => state.selectedTutor)
 
   const { student } = useSelector(state => state.student);
+
+  useEffect(() => {
+    if (!selectedTutor.academyId) {
+      toast.warning("Please click 'View Schedule' to continue booking sessions!")
+      navigate('/student/short-list')
+    };
+  }, [selectedTutor])
 
   let subscription_cols = [
     { Header: "Hours" },

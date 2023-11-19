@@ -31,7 +31,7 @@ const StudentShortList = () => {
             activateSubscriptionOption: item.tutorShortList.ActivateSubscriptionOption === "true",
             discountHours: item.tutorShortList.DiscountHours
         }))
-        navigate('/student/schedule')
+        navigate('/student/booking')
     }
 
     function convertGMTToLocalTime(gmtOffset) {
@@ -41,10 +41,8 @@ const StudentShortList = () => {
     }
     let multi_student_cols = [{ Header: 'Photo' }, { Header: 'Demo Lesson @50%' }, { Header: 'Subject' }, { Header: 'Tutor Name' }, { Header: 'Country' }, { Header: 'Tutor Time' }, { Header: 'Tutor Schedule' }, { Header: 'Tutor Profile' }, { Header: 'Rate' }, { Header: 'Hire' }]
 
-    let redirect_to_tutor_profile = tutor_user_id => {
-        // window.localStorage.setItem('tutor_user_id', tutor_user_id);
-        // window.localStorage.setItem('user_role', 'admin');
-        // navigate('/tutor/tutor-profile')
+    let redirect_to_tutor_profile = () => {
+        navigate('/tutor/tutor-profile')
     }
 
 
@@ -103,7 +101,7 @@ const StudentShortList = () => {
                                                     {convertGMTToLocalTime(tutorSetup?.GMT).toLocaleString()}
                                                 </td>
                                                 <td>
-                                                    <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>View Schedule</button>
+                                                    <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>Book Lesson</button>
                                                 </td>
                                                 <td>
                                                     <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>View Profile</button>

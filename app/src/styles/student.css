@@ -405,3 +405,12 @@
 .best:active {
  color: green; /* Change background color on click */
 }
+
+
+/* feedback */
+@keyframes blinking {
+  50% {
+    border: 1px solid green; 
+    box-shadow: 0 0 10px green;
+  }
+}

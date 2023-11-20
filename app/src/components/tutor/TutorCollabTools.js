@@ -1,7 +1,8 @@
 import p1 from '../../images/pencil-tip-svgrepo-com (1).svg';
 
 import sl from '../../images/line-straight-svgrepo-com.svg';
-
+import imageSvg from '../../images/image-file-svgrepo-com.svg';
+import fileSvg from '../../images/file-holder-svgrepo-com.svg';
 import shapesImage from '../../images/shapes-svgrepo-com (1).svg';
 import circelImage from '../../images/circle-thin-svgrepo-com.svg';
 import paintImage from '../../images/fill-svgrepo-com.svg';
@@ -361,39 +362,39 @@ const TutorCollabTools = () => {
 
     let handleFileChange = e => {
 
-        if(e.target.name === 'photo'){
+        var canvas = document.querySelector('canvas');
+        var ctx = canvas.getContext('2d');
+
+        //if(e.target.name === 'photo'){
 
             let file = e.target.files;
+            console.log(file)
 
             let r = new FileReader()
 
             r.onload = res => {
 
-                let src = r.result 
-                document.querySelector(`#${floatId.current}`).src = src;
+                var img = new Image();
+
+                // Set the source of the image
+                img.style.height = '70px'
+                img.style.width = '100px'
+                img.src = r.result;
+
+                // When the image has loaded, draw it onto the canvas
+                img.onload = function() {
+                    // Draw the image at coordinates (x, y)
+                    ctx.drawImage(img, 100, 50, 250, 220); // Adjust the coordinates as needed
+                };
+
+                // ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
             }
 
             r.readAsDataURL(file[0]);
 
-        }else if(e.target.name === 'video'){
-
-            let file = e.target.files;
-
-            let r = new FileReader()
-
-            r.onload = res => {
-                let src;
-
-                src = r.result
-                
-                document.querySelector(`#${floatId.current}`).src = src;
-            }
-
-            r.readAsDataURL(file[0]);
-
-        }else{
-            
-        }
+        //}
     }
 
     let handleFillColor = e => {
@@ -640,6 +641,32 @@ const TutorCollabTools = () => {
                 <button onClick={handleEraserThickness} data-tool='eraser' style={{padding: '5px'}} >
                     <img src={eraserImage} style={{height: '35px', width: '35px'}} alt="..." />
                 </button>
+
+                <button data-tool='photo' style={{padding: '5px'}} >
+                    
+                    <label htmlFor='photo'><img src={imageSvg} style={{height: '35px', width: '35px'}} alt="..." /></label>
+                </button>
+
+                <button data-tool='file' style={{padding: '5px'}} >
+                    <label htmlFor='doc'><img src={fileSvg} style={{height: '35px', width: '35px'}} alt="..." /></label>
+                </button>
+
+                <> 
+
+                    <input style={{display: 'none'}} type="file" name="doc" id="doc" />
+
+                    <input style={{display: 'none'}} accept='image/*' onChange={handleFileChange} type="file" name="photo" id="photo" />
+                </>
+
+                
+
+                {
+                    <div dangerouslySetInnerHTML={{__html:
+                        floatingFile.map((item) => {
+                            return item
+                        })
+                    }} />
+                }
 
             </div>
 

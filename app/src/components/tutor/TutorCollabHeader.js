@@ -6,21 +6,21 @@ import TutorCollabTools from "./TutorCollabTools";
 
 const TutorCollabHeader = () => {
 
-    let [PanelChangeMssg, setPanelChangeMssg] = useState(['Show Panel', 'Hide Panel'])
+    let [PanelChangeMssg, setPanelChangeMssg] = useState(['Show Video', 'Hide Video'])
     let [PanelChangeBool, setPanelChangeBool] = useState(true)
 
     let location = useLocation();
     let navigate = useNavigate();
 
     let [hr,setHr] = useState(0)
-    let [min,setMin] = useState(0)
+    let [min,setMin] = useState(50)
     let [sec,setSec] = useState(0)
     let [msec,setMsec] = useState(0)
 
     let timer = false;
 
     let hour = 0;
-    let minute = 0;
+    let minute = 50;
     let second = 0;
     let count = 0;
 
@@ -58,23 +58,27 @@ const TutorCollabHeader = () => {
             count++;
      
             if (count == 100) {
-                second++;
+                second--;
                 count = 0;
             }
      
-            if (second == 60) {
-                minute++;
-                second = 0;
+            if (second == 0) {
+                minute--;
+                second = 60;
                 window.localStorage.setItem('collabMinuteHand', minute)
             }
-     
-            if (minute == 60) {
-                hour++;
-                minute = 0;
-                second = 0;
-                window.localStorage.setItem('collabHourHand', hour)
 
+            if(minute < 6){
+                alert("This lesson is to be finished in 5 minutes.")
             }
+     
+            // if (minute == 60) {
+            //     hour++;
+            //     minute = 0;
+            //     second = 0;
+            //     window.localStorage.setItem('collabHourHand', hour)
+
+            // }
      
             let hrString = window.localStorage.getItem('collabHourHand');
             let minString = window.localStorage.getItem('collabMinuteHand');
@@ -145,20 +149,20 @@ const TutorCollabHeader = () => {
                 </div>
                 <div className="right">
                     <div>
-                        <span className="digit" id="hr">
+                        {/* {<span className="digit" id="hr">
                             {hr}</span>
                         <span className="txt">Hr</span>
-                        &nbsp;&nbsp;
+                        &nbsp;&nbsp;} */}
                         <span className="digit" id="min">
                             {min}</span>
                         <span className="txt">Min</span>
-                        {/*&nbsp;&nbsp;
+                        &nbsp;&nbsp;
                         <span className="digit" id="sec">
                             {sec}</span>
                         <span className="txt">Sec</span>
-                        &nbsp;&nbsp;
+                        {/* {&nbsp;&nbsp;
                         <span className="digit" id="count">
-    {msec}</span>*/}
+    {msec}</span>} */}
                     </div>
 
                     <button onClick={handleAsidePanel}>

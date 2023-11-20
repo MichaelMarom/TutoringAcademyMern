@@ -3,7 +3,7 @@ import { socket } from "../../socket";
 
 const TutorCollabFooter = () => {
 
-    let [accessState, setAccessState] = useState('Student Emeka is restricted')
+    let [accessState, setAccessState] = useState('Shift whiteboard to Student Emeka. ')
 
 
     useEffect(() => {
@@ -28,7 +28,11 @@ const TutorCollabFooter = () => {
     return ( 
         <>
             <div className="TutorCollabFooter">
-                <div className="TutorBoardAccessIndicator">
+
+                <div className="TutorBoardAccessBoard" style={{width: '60%', height: '100%', float: 'left ', display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'left', overflow: 'auto', padding: '10px'}}>
+                    <div style={{flexShrink: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #000', padding: '10px'}}>Board 1</div>
+                </div>
+                <div className="TutorBoardAccessIndicator"style={{float: 'right'}}>
                     <div className="TutorBoardAccessMessage" style={{width: '60%'}}>
                         {
                             accessState

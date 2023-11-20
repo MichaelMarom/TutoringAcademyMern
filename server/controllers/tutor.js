@@ -162,6 +162,7 @@ let post_form_one = (req, res) => {
             IdVerified: null || null,
             BackgroundVerified: null || null,
             AcademyId: UserId || null,
+            Status: 'Pending' || null,
             Grades: grades || null,
             userId
         };

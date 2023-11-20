@@ -53,7 +53,7 @@ const StudentShortList = () => {
                 <div className="form-into-prompt shadow-sm" style={{ padding: '20px' }}>
                     {response.length ?
                         <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}>
-                            To view complete tutor's profile include presentation video, double click on his/hers picture.</div>
+                            To view complete tutor's profile include presentation video, click on 'View Profile' button, or double click on tutor's picture.</div>
                         :
                         <div className='text-danger'> no record found!</div>
 

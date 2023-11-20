@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const Scheduling = () => {
   return (
-    <TutorLayout>
+    <TutorLayout showLegacyFooter={false}>
       <SchedulingComp />
     </TutorLayout>
   );

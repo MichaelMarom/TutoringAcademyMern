@@ -37,7 +37,6 @@ function BookedLessons({
     setEventsWithPhoto(updatedEvents);
   }, [events, shortlist]);
 
-  console.log(eventsWithPhoto)
   return (
     <table>
       <thead className="thead-light">
@@ -53,8 +52,7 @@ function BookedLessons({
       </thead>
       <tbody>
         {eventsWithPhoto.map((event, index) => (
-          <tr key={index} style={{ 
-            animation: event.feedbackEligible ? 'blinking 1s infinite' : 'none' }}>
+          <tr key={index}>
             <td>
               <Tooltip text={event.tutorId}>
                 <img src={event.photo} alt={event.tutorId} height={60} width={60} />
@@ -70,7 +68,8 @@ function BookedLessons({
             </td>
 
             <td>
-              <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'}`}
+              <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'} `}
+                style={{ animation: (event.feedbackEligible && !event.rating) ? 'blinking 1s infinite' : 'none' }}
                 onClick={() => handleRowSelect(event)} disabled={!event.feedbackEligible}>Select</button>
             </td>
           </tr>

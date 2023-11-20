@@ -14,8 +14,8 @@ import StudentSetup from "../pages/student/StudentSetup";
 import StudentFaculty from "../pages/student/StudentFaculty";
 import StudentShortLists from "../pages/student/StudentShortList";
 import StudentAccountings from "../pages/student/StudentAccounting";
-import Tutor_Table from "../pages/Admin/Tutor";
-import Student_Table from "../pages/Admin/Student";
+import TutorTable from "../pages/Admin/Tutor";
+import StudentTable from "../pages/Admin/Student";
 import StudentScheduling from "../pages/student/StudentScheduling";
 import StudentTermOfUse from "../pages/student/TermOfUse";
 import StudentMarketPlace from "../components/student/StudentMarketPlace";
@@ -63,8 +63,8 @@ const rolePermissions = {
     { path: '/chat', component: <Chat /> }
   ],
   admin: [
-    { path: "/admin/tutor-data", component: <Tutor_Table /> },
-    { path: "/admin/student-data", component: <Student_Table /> },
+    { path: "/admin/tutor-data", component: <TutorTable /> },
+    { path: "/admin/student-data", component: <StudentTable /> },
     { path: "/admin/new-subject", component: <TutorNewSubject /> },
   ],
   common: [

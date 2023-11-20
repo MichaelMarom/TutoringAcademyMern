@@ -46,9 +46,13 @@ function TutorCalenderSidebar({
         }
     };
 
+    const checkboxChecked = (timeRangeOne, timeRangeTwo) => {
+        return disabledHours?.some(range =>
+            range[0] === timeRangeOne && range[1] === timeRangeTwo)
+    }
 
     return (
-        <div className="tab-content card h-100">
+        <div className="tab-content card h-100" style={{ overflowY: "auto" }}>
             <div className='d-flex'>
 
                 <button
@@ -107,6 +111,12 @@ function TutorCalenderSidebar({
                                     type="checkbox"
                                     id={day.toLowerCase()}
                                     className="form-check-input"
+                                    style={{
+                                        accentColor: disableWeekDays?.includes(day)
+                                            ? disableColor : "#fff",
+                                        backgroundColor: disableWeekDays?.includes(day)
+                                            ? disableColor : "#fff",
+                                    }}
                                     checked={disableWeekDays?.includes(day)}
                                     onChange={() => handleCheckboxClick(day)}
                                 />
@@ -119,9 +129,54 @@ function TutorCalenderSidebar({
 
                     <div className="highlight small lh-sm">
                         Double click on a blocked weekday or hour, Will unblock the
-                        day, or the specific hour for that day.
+                        day, or the specific hour for that day.11
                     </div>
+                    <div className='text-end'>
+                        <div className='highlight'>Below legend show what each color represent in calender.</div>
+                        <ul className="list-group">
+                            <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
+                                fontSize: "12px",
+                                fontFamily: "inherit"
+                            }}>
+                                Tutor BlockOut Days/Slots
+                                <div className="border" style={{ width: "40px", height: "20px", background: disableColor }}></div>
+                            </li>
+                            <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
+                                fontSize: "12px",
+                                fontFamily: "inherit"
+                            }}>
+                                Students Intro Sessions
+                                <div className="border" style={{ width: "40px", height: "20px", background: "lightblue" }}></div>
 
+                            </li>
+                            <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
+                                fontSize: "12px",
+                                fontFamily: "inherit"
+                            }}>
+                                Students Booked Sessions
+                                <div className="border" style={{ width: "40px", height: "20px", background: "lightgreen" }}></div>
+
+                            </li>
+                            <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
+                                fontSize: "12px",
+                                fontFamily: "inherit"
+                            }}>
+                                Students Reserved Session
+                                <div className="border" style={{ width: "40px", height: "20px", background: "lightyellow" }}></div>
+
+                            </li>
+                            <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
+                                fontSize: "12px",
+                                fontFamily: "inherit"
+                            }}>
+                                Default disable slots
+                                <div className="border" style={{ width: "40px", height: "20px", background: "lightgray" }}></div>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
                 </div>
             </div>
 
@@ -140,9 +195,17 @@ function TutorCalenderSidebar({
                                 <input
                                     type="checkbox"
                                     id={`hour-${index}`}
+                                    style={{
+                                        accentColor: timeRange[2] !== 'midnight' && checkboxChecked(timeRange[0], timeRange[1])
+                                            ? disableColor : timeRange[2] === 'midnight' && checkboxChecked(timeRange[0], timeRange[1]) ?
+                                                "lightgray" : "#fff",
+                                        backgroundColor: timeRange[2] !== 'midnight' && checkboxChecked(timeRange[0], timeRange[1])
+                                            ? disableColor : timeRange[2] === 'midnight' && checkboxChecked(timeRange[0], timeRange[1]) ?
+                                                "lightgray" : "#fff",
+
+                                    }}
                                     className={`form-check-input ${timeRange[2] === 'midnight' ? "gray-checkbox" : ""}`}
-                                    checked={disabledHours?.some(range =>
-                                        range[0] === timeRange[0] && range[1] === timeRange[1])}
+                                    checked={checkboxChecked(timeRange[0], timeRange[1])}
                                     onChange={() => handleCheckboxClick(null, timeRange)}
                                 />
                                 <label className="form-check-label small lh-sm" htmlFor={`hour-${index}`}>

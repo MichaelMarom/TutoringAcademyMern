@@ -106,9 +106,9 @@ const StudentAccounting = () => {
                     return [...unique, item]
                 }
             }, [])
-            console.log(uniqueData,'des')
+            console.log(uniqueData, 'des')
 
-            const transformedData = uniqueData.map(item => transformIntoPaymentReport(item)).flat();
+            const transformedData = uniqueData.map(item => transformIntoPaymentReport(item)).flat().filter(slot => slot.studentId === studentId);
             setPaymentReportData([...paymentReportData, ...transformedData]);
         };
 

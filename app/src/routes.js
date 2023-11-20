@@ -40,7 +40,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(setShortlist())
-  }, [])
+  }, [localStorage.getItem('student_user_id')])
 
 
   useEffect(() => {

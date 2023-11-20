@@ -31,3 +31,7 @@ export const copyToClipboard = (text) => {
 
   document.body.removeChild(textArea);
 };
+
+export const convertTutorIdToName = (academyId) => {
+  return academyId.split('.')[0] + " "+academyId.split('.')[1][1]
+}

@@ -1,14 +1,9 @@
 import React from 'react'
 import { showDate } from '../../../helperFunctions/timeHelperFunctions'
 import { wholeDateFormat } from '../../../constants/constants'
+import { convertTutorIdToName } from '../../../helperFunctions/generalHelperFunctions'
 
 const AccountingTable = ({ tableData }) => {
-
-    const convertAcademyToScreenName = (inputName) => {
-        console.log(inputName)
-        const res = inputName.split('.')[0] + '. ' + inputName.split('.')[1] + '.'
-        return res
-    }
 
     return (
         <div className="col-md-8" style={{
@@ -32,7 +27,7 @@ const AccountingTable = ({ tableData }) => {
                     {tableData.map((row, index) => (
                         <tr key={index}>
                             <td>{showDate(row.start, wholeDateFormat)}</td>
-                            <td>{convertAcademyToScreenName(row.tutorId)}</td>
+                            <td>{convertTutorIdToName(row.tutorId)}</td>
                             <td>{row.subject}</td>
                             <td>{row.rate}</td>
                             <td>{row.title}</td>

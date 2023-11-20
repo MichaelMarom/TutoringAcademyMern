@@ -1,6 +1,7 @@
 // slice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { get_student_events, save_student_events } from "../../axios/student";
+import { get_student_tutor_events, save_student_events } from "../../axios/student";
+import { fetchStudentsBookings } from "../../axios/tutor";
 import { convertToDate } from "../../components/common/Calendar/Calendar";
 
 const slice = createSlice({
@@ -59,9 +60,13 @@ export const setBookedSlots = (bookedSlots) => {
 export function getStudentBookings(studentId, tutorId) {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading(true));
-        const result = await get_student_events(studentId, tutorId);
-        dispatch(slice.actions.setReservedSlots(result.studentId ? JSON.parse(result.reservedSlots) : []))
-        dispatch(slice.actions.setBookedSlots(result.studentId ? JSON.parse(result.bookedSlots) : []))
+        const result = await fetchStudentsBookings(tutorId);
+        if (result.length) {
+            const reservedSlots = result.map(data => JSON.parse(data.reservedSlots)).flat()
+            const bookedSlots = result.map(data => JSON.parse(data.bookedSlots)).flat()
+            dispatch(slice.actions.setReservedSlots(reservedSlots))
+            dispatch(slice.actions.setBookedSlots(bookedSlots))
+        }
         return result;
     };
 }

@@ -3,8 +3,14 @@ import moment from 'moment';
 import StarRating from '../../student/Feedback/StarRating';
 import { useSelector } from 'react-redux';
 import { convertToDate } from './Calendar';
+import { convertTutorIdToName } from '../../../helperFunctions/generalHelperFunctions';
 
-function CustomEvent({ isStudentLoggedIn, event, handleEventClick, handleSetReservedSlots, reservedSlots }) {
+function CustomEvent({
+    event,
+    isStudentLoggedIn,
+    handleEventClick = () => { },
+    handleSetReservedSlots,
+    reservedSlots }) {
     const [remainingTime, setRemainingTime] = useState(calculateRemainingTime(event.createdAt));
     const [extraFiveMinStart, setExtraFiveMinStart] = useState(false);
     const { student } = useSelector(state => state.student)
@@ -88,7 +94,7 @@ function CustomEvent({ isStudentLoggedIn, event, handleEventClick, handleSetRese
             ) : (
                 <div>
                     {event.title} {isStudentLoggedIn &&
-                        student.FirstName !== event.studentName ? `` : `by ${event.studentName}`}
+                        student.FirstName !== event.studentName ? `` : `by ${isStudentLoggedIn ? convertTutorIdToName(event.tutorId) : event.studentName}`}
                     {event.type === 'reserved' &&
                         <div>
                             {String(remainingTime.minutes).padStart(2, '0')} :

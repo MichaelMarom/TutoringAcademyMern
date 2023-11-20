@@ -169,9 +169,20 @@ export const save_student_events = async (body) => {
     await axiosInstance.post('/student/booking', body);
 }
 
-export const get_student_events = async (studentId, tutorId) => {
+export const get_student_tutor_events = async (studentId, tutorId) => {
     const { data } = await axiosInstance.get(`/student/booking/${studentId}/${tutorId}`);
     return data;
+}
+
+export const get_student_events = async (studentId) => {
+    try {
+        const { data } = await axiosInstance.get(`/student/booking/${studentId}`);
+        return data;
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
 }
 
 export const post_bank_details = async (payload) => {
@@ -195,29 +206,6 @@ export const get_bank_details = async (id) => {
         return err
     }
 }
-
-export const get_feedback = async (id) => {
-    try {
-        const { data } = await axiosInstance.get(`/student/feedback/${id}`);
-        return data
-    }
-    catch (err) {
-        console.log(err)
-        return err
-    }
-}
-
-export const post_feedback = async (payload) => {
-    try {
-        const { data } = await axiosInstance.post(`/student/feedback`, payload);
-        return data
-    }
-    catch (err) {
-        console.log(err)
-        return err
-    }
-}
-
 
 export const get_payment_report = async (studentId) => {
     try {

@@ -439,7 +439,7 @@ const Education = () => {
                             <>
                                 <div className="row mt-3">
                                     <div className="col-md-4">
-                                        <label htmlFor="university1">Bachelor Degree:</label>
+                                        <label htmlFor="university1">Bachelor Degree College or university:</label>
                                         <input
                                             type="text"
                                             id="university1"
@@ -452,7 +452,7 @@ const Education = () => {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label htmlFor="state1">Select State:</label>
+                                        <label htmlFor="state1">Select University State:</label>
                                         <select
                                             id="state1"
                                             className="form-control m-0 w-100"
@@ -491,7 +491,7 @@ const Education = () => {
                                     level !== 'Bachelor Degree' && level !== 'Undergraduate Student' ? (
                                         < div className="row mt-3">
                                             <div className="col-md-4">
-                                                <label htmlFor="university2">Master Degree:</label>
+                                                <label htmlFor="university2">Master Degree University:</label>
                                                 <input
                                                     type="text"
                                                     id="university2"
@@ -504,7 +504,7 @@ const Education = () => {
                                             </div>
 
                                             <div className="col-md-4">
-                                                <label htmlFor="state3">Select State:</label>
+                                                <label htmlFor="state3">Select University State:</label>
                                                 <select
                                                     id="state3"
                                                     className="form-control m-0 w-100"
@@ -546,7 +546,7 @@ const Education = () => {
                                         level !== 'Master Degree' ? (
                                         <div className="row mt-3">
                                             <div className="col-md-4">
-                                                <label htmlFor="university2">Doctorate Degree:</label>
+                                                <label htmlFor="university2"> Doctorate Degree University:</label>
                                                 <input
                                                     type="text"
                                                     id="university2"
@@ -559,7 +559,7 @@ const Education = () => {
                                             </div>
 
                                             <div className="col-md-4">
-                                                <label htmlFor="state3">Select State:</label>
+                                                <label htmlFor="state3">Select University State:</label>
                                                 <select
                                                     id="state3"
                                                     className="form-control m-0 w-100"
@@ -599,7 +599,7 @@ const Education = () => {
 
                                 <div className="row mt-3">
                                     <div className="col-md-4">
-                                        <label htmlFor="degree">Upload Highest Degree:</label>
+                                        <label htmlFor="degree">Upload Highest Degree Diploma:</label>
                                         <div className='d-flex align-items-center'>
 
                                             <div className="form-outline">
@@ -622,7 +622,7 @@ const Education = () => {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label htmlFor="state4">Select State:</label>
+                                        <label htmlFor="state4">Select University State:</label>
                                         <select
                                             id="state4"
                                             className="form-control m-0 w-100"
@@ -644,7 +644,7 @@ const Education = () => {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label htmlFor="yr3">Graduation Year:</label>
+                                        <label htmlFor="yr3">Diploma earned Year:</label>
                                         <select
                                             id="yr3"
                                             className="form-control m-0 w-100"
@@ -706,7 +706,7 @@ const Education = () => {
                             {(certificate.length && certificate !== 'Not Certified') ? (
                                 <>
                                     <div className="col-md-4">
-                                        <label htmlFor="state5">Select State:</label>
+                                        <label htmlFor="state5">Select University State:</label>
                                         <select
                                             id="state5"
                                             className="form-control m-0 w-100"

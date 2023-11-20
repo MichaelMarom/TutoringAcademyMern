@@ -8,6 +8,7 @@ import { formatName, isEqualTwoObjectsRoot } from "../../../helperFunctions/gene
 
 
 function EventModal({
+  isStudentLoggedIn = false,
   student = {},
   isOpen,
   onRequestClose,
@@ -37,7 +38,7 @@ function EventModal({
   }
 
   useEffect(() => {
-    const existIntroSession = reservedSlots?.some(slot => slot.type === 'intro' && selectedTutor.subject === slot.subject)
+    const existIntroSession = reservedSlots?.some(slot => slot.type === 'intro' && selectedTutor.subject === slot.subject && (!isStudentLoggedIn || slot.studentId === student.AcademyId))
     if (existIntroSession && selectedType === 'intro' && selectedSlots[0]?.start) {
       toast.warning('Cannot add more than 1 Intro Session!')
       setCanPostEvents(false)
@@ -45,7 +46,8 @@ function EventModal({
     else if ((!existIntroSession && selectedType !== 'intro') && selectedSlots[0]?.start) {
       setCanPostEvents(false)
       toast.warning('Can not reserve or book lesson before the intro Session')
-    } else if (existIntroSession && selectedType === 'intro' && selectedSlots.length > 1) {
+    }
+     else if (existIntroSession && selectedType === 'intro' && selectedSlots.length > 1) {
       setCanPostEvents(false)
       toast.warning('Cannot book more than 1 Intro session!')
     }
@@ -73,10 +75,10 @@ function EventModal({
               <SlotPill selectedSlots={[clickedSlot]} handleRemoveSlot={() => setClickedSlot({})} selectedType={selectedType} />
             </div> :
             <div>
-              <SlotPill 
-              selectedSlots={selectedSlots} 
-              handleRemoveSlot={handleRemoveSlot} 
-              selectedType={selectedType} />
+              <SlotPill
+                selectedSlots={selectedSlots}
+                handleRemoveSlot={handleRemoveSlot}
+                selectedType={selectedType} />
             </div>
           }
           <div className="form-group d-flex flex-column">
@@ -139,7 +141,7 @@ function EventModal({
           (selectedType === 'intro' || selectedType === 'booked') &&
           <div>
             <SlotsInvoice
-            selectedType={selectedType}
+              selectedType={selectedType}
               studentName={formatName(student.FirstName, student.LastName)}
               tutorName={formatName(selectedTutor.firstName, selectedTutor.lastName)}
               invoiceNumber={123}

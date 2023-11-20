@@ -67,7 +67,7 @@ const ShowCalendar = ({
   const studentId = student.AcademyId
   const subjectName = selectedTutor.subject;
 
-  const { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
+  let { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
 
   //apis functions
   const updateTutorDisableRecord = async () => {
@@ -150,24 +150,34 @@ const ShowCalendar = ({
     }
   }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
 
+  const filterOtherSudentSession = (givenReservedSlots = []) => {
+    let updatedReservedSlot = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot => slot.studentId === student.AcademyId);
+    let updatedBookedSlots = bookedSlots.filter(slot => slot.studentId === student.AcademyId);
+    return { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots };
+  }
+
   const handleBulkEventCreate = (type) => {
     if (reservedSlots?.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
+      let { reservedSlots, bookedSlots } = filterOtherSudentSession()
       dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...clickedSlot, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== clickedSlot.id) }));
       return
     }
     if (reservedSlots?.some(slot => {
       console.log(slot.type === 'intro'
         , slot.subject === selectedTutor.subject
-        , slot.end.getTime() > (new Date()).getTime(), !slot.rating && slot.studentName === student.FirstName, slot.studentName)
+        , slot.end.getTime() > (new Date()).getTime(),
+        !slot.rating && slot.studentName === student.FirstName,
+        slot.studentName)
       return slot.type === 'intro'
         && slot.subject === selectedTutor.subject
+        && slot.studentName === student.FirstName
         && (slot.end.getTime() > (new Date()).getTime() ||
-          (!slot.rating && slot.studentName === student.FirstName))
+          (!slot.rating))
     })) {
       toast.warning("We are sorry, your intro session must be conducted and rated first")
       return;
     }
-    if ((selectedSlots.length && selectedSlots[0].type === 'reserved') + reservedSlots.length > 6) {
+    if ((selectedSlots.length && selectedSlots[0].type === 'reserved') && reservedSlots.length > 6) {
       toast.warning("Cannot Reserve more than 6 slots")
       return;
     }
@@ -191,25 +201,28 @@ const ShowCalendar = ({
     if (type === 'reserved' || type === 'intro') {
       console.log('ende12r')
 
+      let { reservedSlots, bookedSlots } = filterOtherSudentSession()
       dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
     }
     else if (type === 'booked') {
       console.log('ende12r')
 
+      let { reservedSlots, bookedSlots } = filterOtherSudentSession()
       dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
   }
 
   const handleRemoveReservedSlot = (reservedSlots) => {
     console.log('ende12r')
-
-    dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots }));
+    let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherSudentSession(reservedSlots)
+    dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
   }
 
   const handleSetReservedSlots = (reservedSlots) => {
     console.log('ende12r')
 
-    dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots }));
+    let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherSudentSession(reservedSlots)
+    dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
   }
 
   const handleDateClick = (slotInfo) => {
@@ -624,6 +637,7 @@ const ShowCalendar = ({
       />
       <EventModal
         student={student}
+        isStudentLoggedIn={isStudentLoggedIn}
         isOpen={isModalOpen}
         selectedSlots={selectedSlots}
         setSelectedSlots={setSelectedSlots}

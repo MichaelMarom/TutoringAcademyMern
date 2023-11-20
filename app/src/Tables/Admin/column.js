@@ -50,10 +50,10 @@ export const COLUMNS = [
         Header: 'BG Verified',
         accessor: 'BG Verified',
     },
-    {
+    /*{
         Header: 'Video',
         accessor: 'Video',
-    }
+    }*/
 ];
 
 

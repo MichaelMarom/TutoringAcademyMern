@@ -347,7 +347,7 @@ const Rates = () => {
                       </div>
                     </div>
                   )}
-                  <Tooltip text="cancellation policy toolti[" width="200px">
+                  <Tooltip text="How many hours before the lesson, you allow the student to cancel without penalty?" width="200px">
                     <FaInfoCircle size={20} color="#0096ff" />
                   </Tooltip>
                 </div>
@@ -362,7 +362,7 @@ const Rates = () => {
                   <label className="form-check-label mr-3" for="flexSwitchCheckChecked">
                     50% Intro Session
                   </label>
-                  <Tooltip text="The academy mandate an |intro| sessions a for new student as a prerequisite to book sessions with a new tutor. 50% discount motivate student to select you. " width="200px">
+                  <Tooltip text="The academy mandate an |intro| sessions a for new student as a prerequisite to book further sessions with a new tutor. Your 50% discount motivate student to select you. " width="200px">
                     <FaInfoCircle size={20} color="#0096ff" />
                   </Tooltip>
                 </div>
@@ -377,7 +377,7 @@ const Rates = () => {
                   <label className="form-check-label" for="flexSwitchCheckChecked">
                     Consent Recording Session
                   </label>
-                  <Tooltip text=" Consent Recording Session tooltip">
+                  <Tooltip text=" By default you must consent for recording Session with the student.">
                     <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
                   </Tooltip>
                 </div>
@@ -460,13 +460,13 @@ const Rates = () => {
                   checked={classTeaching}
                 />
                 <label className="form-check-label" for="flexSwitchCheckChecked">
-                  My hourly Charge for teaching a whole school class (up to 30 students).
+                  My hourly Charge for teaching a public or private school class (up to 30 students).
                 </label>
 
 
 
                 <Tooltip
-                  text="Fill your hourly amount for teaching whole class in US$"
+                  text="Fill in your hourly amount for teaching a public 0r private school class (up to 30 students)."
                   direction="left"
                 >
                   <FaInfoCircle size={20} color="#0096ff" />

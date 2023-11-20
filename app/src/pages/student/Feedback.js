@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import StudentLayout from '../../layouts/StudentLayout';
 import BookedLessons from '../../components/student/Feedback/BookedLessons'
 import QuestionFeedback from '../../components/student/Feedback/QuestionFeedback'
-import { get_all_feedback_questions, get_feedback_to_question, get_payment_report, get_student_events, post_feedback_to_question, save_student_events } from '../../axios/student';
+import { get_all_feedback_questions, get_feedback_to_question, get_payment_report, post_feedback_to_question, save_student_events } from '../../axios/student';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
 import { useDispatch } from 'react-redux';
@@ -14,7 +14,6 @@ import { convertToDate } from '../../components/common/Calendar/Calendar';
 export const Feedback = () => {
     const [questions, setQuestions] = useState([]);
     const [comment, setComment] = useState('')
-    const [loading, setLoading] = useState(false)
     const [reservedSlots, setReservedSlots] = useState([])
     const [bookedSlots, setBookedSlots] = useState([])
     const [questionLoading, setQuestionLoading] = useState(false);
@@ -40,7 +39,7 @@ export const Feedback = () => {
         const questionIndex = updatedQuestions.findIndex((question) => question.SID === id);
 
         if (questionIndex !== -1) {
-            const data = await post_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId, id, star);
+            await post_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId, id, star);
             updatedQuestions[questionIndex].star = star;
             setQuestions([...updatedQuestions]);
             if (selectedEvent.type === 'booked') {
@@ -53,7 +52,6 @@ export const Feedback = () => {
                     }
                     return slot
                 })
-                console.log('ende12r')
                 dispatch(postStudentBookings({
                     studentId, tutorId: selectedEvent.tutorId,
                     bookedSlots: updatedBookedSlots, reservedSlots
@@ -63,6 +61,7 @@ export const Feedback = () => {
             else {
                 const updatedReservedSlots = reservedSlots.map(slot => {
                     if (slot.id === selectedEvent.id) {
+                        console.log(slot, questions)
                         slot.rating = (questions.reduce((sum, question) => {
                             sum = question.star + sum
                             return sum
@@ -70,15 +69,23 @@ export const Feedback = () => {
                     }
                     return slot
                 })
-                console.log('ende12r')
 
                 dispatch(postStudentBookings({
                     studentId, tutorId: selectedEvent.tutorId,
                     bookedSlots, reservedSlots: updatedReservedSlots
                 }));
-
+                console.log(updatedReservedSlots)
                 setReservedSlots([...updatedReservedSlots])
             }
+            setFeedbackData(feedbackData.map(slot => {
+                if (slot.id === selectedEvent.id) {
+                    slot.rating = (questions.reduce((sum, question) => {
+                        sum = question.star + sum
+                        return sum
+                    }, 0)) / questions.length;
+                }
+                return slot;
+            }))
         }
     };
 
@@ -87,7 +94,6 @@ export const Feedback = () => {
     }
 
     const handleDynamicSave = async (value) => {
-        setLoading(true)
         const updatedSlots = (selectedEvent.type === 'booked'
             ? bookedSlots
             : reservedSlots).map(slot => {
@@ -116,7 +122,6 @@ export const Feedback = () => {
 
             // toast.success('Data Succesfully Saved')
         }
-        setLoading(false)
     }
 
     const handleTextChange = (event) => {
@@ -143,10 +148,20 @@ export const Feedback = () => {
                 }
                 return slot
             })
+
+        setFeedbackData(feedbackData.map(slot => {
+            if (slot.id === selectedEvent.id) {
+                slot.comment = comment;
+            }
+            return slot;
+        }))
+        setSelectedEvent({ ...selectedEvent, comment })
         if (selectedEvent.type === 'booked')
             setBookedSlots([...updatedSlots])
         else
             setReservedSlots([...updatedSlots])
+
+
     }, [comment])
 
     useEffect(() => {
@@ -193,7 +208,7 @@ export const Feedback = () => {
                     return [...unique, item]
                 }
             }, [])
-            const transformedData = uniqueData.map(item => transformFeedbackData(item)).flat();
+            const transformedData = uniqueData.map(item => transformFeedbackData(item)).flat().filter(slot => slot.studentId === studentId);
             setFeedbackData(transformedData);
         };
 
@@ -234,12 +249,14 @@ export const Feedback = () => {
     return (
         <StudentLayout showLegacyFooter={false} >
             <div className="container mt-5">
-                <div className="row">
-                    <div className={`${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>
+                <div className="py-2 row" >
+                    <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>
                         <h2>Booked Lessons</h2>
                         {feedbackData.length ?
                             <>
-                                <div style={{ fontSize: "14px" }}>Lessons blinking by green border are ready for your feedback</div>
+                                <div style={{ fontSize: "14px" }}>
+                                    Lessons blinking by green border are ready for your feedback.
+                                    Please rate your tutor as soon as posible.</div>
                                 <BookedLessons
                                     setEvents={setFeedbackData}
                                     events={feedbackData}
@@ -263,7 +280,8 @@ export const Feedback = () => {
                                     handleEmojiClick={handleEmojiClick}
                                 />
                                 <div className="form-group">
-                                    <label for="exampleTextarea">Please write a short description of your impression about this lesson</label>
+                                    <label for="exampleTextarea">
+                                        Please write a short description of your impression about this lesson</label>
 
                                     <textarea className="form-control" id="exampleTextarea" rows="4"
                                         value={selectedEvent.comment ? selectedEvent.comment : comment}

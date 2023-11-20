@@ -100,9 +100,9 @@ const TutorTable = () => {
                                         <td data-src={null}>{null}</td>
                                         <td data-src={item.IdVerified}>{item.IdVerified}</td>
                                         <td data-src={item.BackgroundVerified}>{item.BackgroundVerified}</td>
-                                        <td data-src={null}>{
+                                        {/*<td data-src={null}>{
                                             <video src={item.Video} controls style={{ height: '80px', width: '100px' }} ></video>
-                                        }</td>
+                                        }</td>*/}
                                     </tr>
                                 )
                                 :

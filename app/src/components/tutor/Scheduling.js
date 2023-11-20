@@ -42,7 +42,7 @@ const Scheduling = () => {
     <>
       <div className="form-scheduling">
         <div className="time-period">
-          <div className='d-flex mt-5' style={{ height: "75vh" }}>
+          <div className='d-flex mt-5' style={{ height: "80vh" }}>
             <div className="px-2 col-3">
               <TutorCalenderSidebar
                 activeTab={activeTab}

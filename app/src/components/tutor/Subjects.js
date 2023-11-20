@@ -352,21 +352,23 @@ const Subjects = () => {
             </div>
             <div className="tutor-tab-subjects">
                 <div className="tutor-tab-subject-alert">
-                    <p style={{ fontSize: 'medium', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center' }}>There are 400+ subjects to select from across 29 faculties for tutoring. Didn't find your subject? List your expertise above and submit for review. We may list your subject after examination.</p>
+                    <p style={{ fontSize: 'medium', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center' }}>There are 400+ subjects across 29 faculties to select from for tutoring. Didn't find your subject? List your expertise below and upload (submit) for review. We may list your subject after examination.</p>
                 </div>
                 <div className="tutor-tab-subjects-info" style={{ display: 'flex', flexDirection: 'column', background: '#e7e7e7', position: 'relative', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', margin: 'auto' }}>
 
-                    {/*<input onInput={newSubjectCheckBox} id='new_sub_check_box' type='checkbox' style={{ height: '30px', position: 'absolute', left: '45px', top: '8px', width: '30px', margin: '10px 0 0 0', cursor: 'pointer' }} />*/}
+                <input onInput={newSubjectCheckBox} id='new_sub_check_box' type='checkbox' style={{ height: '30px', position: 'absolute', left: '45px', top: '8px', width: '30px', margin: '10px 0 0 0', cursor: 'pointer' }} />
 
                     <div style={{ width: '70%', margin: 'auto', opacity: newSubject ? '1' : '.5', pointerEvents: newSubject ? 'all' : 'none' }}>
                         <div style={{ width: '45%', padding: '5px', display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 'auto,', float: 'left', height: '100%' }}>
 
-                            <input id='new-sub' onInput={e => setNewSubjectData(e.target.value)} style={{ float: 'left', ontSize: 'small', background: '#fff', width: '180px', height: '60px', margin: '0 0 0 0' }} type='text' placeholder='Type your subject here' />
-                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            
                             <select id='new-sub' onInput={e => setNewSubjectFacultyData(e.target.value)} style={{ float: 'right', ontSize: 'small', background: '#fff', width: '180px', height: '60px', margin: '0 0 0 0' }} type='text' >
                                 <option value={''}>Select Faculty</option>
                                 {newSubjectFaculty}
                             </select>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+
+                            <input id='new-sub' onInput={e => setNewSubjectData(e.target.value)} style={{ float: 'left', ontSize: 'small', background: '#fff', width: '180px', height: '60px', margin: '0 0 0 0' }} type='text' placeholder='Type your subject here' />
 
                         </div>
 

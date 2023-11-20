@@ -162,7 +162,7 @@ html,body{
         display: flex;
         z-index: 2000;
         align-items: center;
-        justify-content: center;
+        justify-content: right;
         font-family: cursive;
         position: relative;
         background: #212F3D;
@@ -176,8 +176,9 @@ html,body{
     .tutor-tab-header ul {
         list-style-type: none;
         margin: 0;
+        float: right;
         height: 100%;
-        width: 70%;
+        width: calc(100% - 150px);
         display: flex;
         align-items: center;
         justify-content: left;
@@ -906,6 +907,78 @@ html,body{
         color: #fff;
         border-radius: 5px;
     }
+
+
+    .tutor-tab-header ul {
+        list-style-type: none;
+        margin: 0;
+        float: right;
+        height: 100%;
+        width: calc(100% - 150px);
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0 8px 0 8px;
+        background: #212F3D;
+        scroll-behavior: smooth;
+        transition: cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .tutor-acct-tab-menu ul {
+        list-style-type: none;
+        margin: 0;
+        float: right;
+        height: 100%;
+        width: calc(100% - 150px);
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0 8px 0 8px;
+        background: #212F3D;
+        scroll-behavior: smooth;
+        transition: cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .tutor-acct-tab-menu ul li {
+        padding: 15px 20px 15px 20px;
+        color: #fff;
+        display: flex;
+        transform: skew(-40deg);
+        font-size: large;
+        transition: all .2s ease-in;
+        white-space: nowrap;
+        font-weight: 400;
+        font-family: 'Times New Roman', Times, serif;
+        align-items: center;
+        justify-content: center;
+        float: left;
+        cursor: pointer;
+    }
+
+    .tutor-acct-tab-menu ul li a {
+        display: block;
+        transform: skew(40deg);
+        transition: all .2s ease-in;
+        background: transparent;
+    }
+
+    #tutor-acct-tab-menu-list-active {
+        background: #2471A3;
+        color: #F7F9F9;
+    }
+
+
+
+    .tutor-acct-tab-menu ul li:hover {
+        background: #2471A3;
+        color: #F7F9F9;
+    }
+
+
 
     
 

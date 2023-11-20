@@ -572,39 +572,44 @@ let get_student_market_data = async (req, res) => {
 
 const post_student_bookings = async (req, res) => {
     const { tutorId, studentId } = req.body;
-    connecteToDB.then(poolConnection =>
-        poolConnection.request().query(
-            find('StudentBookings', { studentId, tutorId })
-        )
-            .then((result) => {
-                if (result.recordset.length) {
-                    connecteToDB.then(poolConnection =>
-                        poolConnection.request().query(
-                            update('StudentBookings', req.body,
-                                { studentId: req.body.studentId, tutorId: req.body.tutorId }
+    if (tutorId && studentId) {
+        connecteToDB.then(poolConnection =>
+            poolConnection.request().query(
+                find('StudentBookings', { studentId, tutorId })
+            )
+                .then((result) => {
+                    if (result.recordset.length) {
+                        connecteToDB.then(poolConnection =>
+                            poolConnection.request().query(
+                                update('StudentBookings', req.body,
+                                    { studentId: req.body.studentId, tutorId: req.body.tutorId }
+                                )
                             )
-                        )
-                            .then((result) => res.send(result.recordset))
-                            .catch(err => console.log(err)))
+                                .then((result) => res.send(result.recordset))
+                                .catch(err => console.log(err)))
 
-                }
-                else {
-                    connecteToDB.then(poolConnection =>
-                        poolConnection.request().query(
-                            insert('StudentBookings', req.body)
+                    }
+                    else {
+                        connecteToDB.then(poolConnection =>
+                            poolConnection.request().query(
+                                insert('StudentBookings', req.body)
+                            )
+                                .then((result) => {
+                                    res.send(result.recordset);
+                                })
+                                .catch(err => console.log(err))
                         )
-                            .then((result) => {
-                                res.send(result.recordset);
-                            })
-                            .catch(err => console.log(err))
-                    )
-                }
-            })
-            .catch(err => console.log(err))
-    )
+                    }
+                })
+                .catch(err => console.log(err))
+        )
+    }
+    else {
+        res.status(400).send({ message: `missing params tutorId/studentId` })
+    }
 }
 
-const get_student_bookings = async (req, res) => {
+const get_student_tutor_bookings = async (req, res) => {
     const { tutorId, studentId } = req.params;
     connecteToDB.then(poolConnection =>
         poolConnection.request().query(
@@ -612,6 +617,19 @@ const get_student_bookings = async (req, res) => {
         )
             .then((result) => {
                 res.send(result.recordset[0]);
+            })
+            .catch(err => console.log(err))
+    )
+}
+
+const get_student_bookings = async (req, res) => {
+    const { studentId } = req.params;
+    connecteToDB.then(poolConnection =>
+        poolConnection.request().query(
+            find('StudentBookings', { studentId })
+        )
+            .then((result) => {
+                res.send(result.recordset);
             })
             .catch(err => console.log(err))
     )
@@ -844,6 +862,7 @@ module.exports = {
     get_student_short_list_data,
     get_student_market_data,
     get_my_data,
+    get_student_tutor_bookings,
     get_student_bookings,
     post_student_bookings,
     get_student_bank_details,

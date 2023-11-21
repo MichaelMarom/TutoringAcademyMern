@@ -54,6 +54,7 @@ const StudentSetup = () => {
     let [data, set_data] = useState(false);
     const [dateTime, setDateTime] = useState('')
     const { user } = useSelector(state => state.user)
+    const { student } = useSelector(state => state.student)
 
     let saver = async () => {
 
@@ -63,21 +64,16 @@ const StudentSetup = () => {
         return response;
     }
 
-
-
     useEffect(() => {
-        const AcademyId = localStorage.getItem('student_user_id')
-        console.log(user, AcademyId, 'user in student')
         const fetchStudentSetup = async () => {
             if (user[0].role === 'student' || user[0].role === 'admin') {
-                console.log(user)
-                const result = await get_student_setup_by_userId(AcademyId);
-                localStorage.setItem('student_screen_name', result[0].ScreenName)
-                localStorage.setItem('student_user_id', result[0].AcademyId)
-                localStorage.setItem('logged_user', JSON.stringify(result[0]))
+                // const result = await get_student_setup_by_userId(AcademyId);
+                // localStorage.setItem('student_screen_name', result[0].ScreenName)
+                // localStorage.setItem('student_user_id', result[0].AcademyId)
+                // localStorage.setItem('logged_user', JSON.stringify(result[0]))
 
-                if (result.length) {
-                    let data = result[0]
+                if (Object.keys(student)) {
+                    let data = student
                     set_fname(data.FirstName)
                     set_sname(data.LastName)
                     set_mname(data.MiddleName)
@@ -107,30 +103,20 @@ const StudentSetup = () => {
                             list[0].checked = false
                             list[1].checked = true
                         }
-
                     }
-
-
-                    //set_ParentConsent(data.ParentConsent === 'true' ? true : false)
-
                     set_parent_lname(data.ParentFirstName)
                     set_parent_fname(data.ParentLastName)
                     set_parent_email(data.ParentEmail)
-
-
-
 
                     let frame1 = document.querySelector(".tutor-tab-photo-frame");
 
                     let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`
                     frame1?.insertAdjacentHTML("afterbegin", img)
-
                 }
-                // const result = await upload_form_one()
             }
         }
         fetchStudentSetup();
-    }, [])
+    }, [student])
 
     useEffect(() => {
         let id = window.localStorage.getItem('student_user_id') !== null ? window.localStorage.getItem('student_user_id') : null
@@ -493,15 +479,15 @@ const StudentSetup = () => {
                         <div className="profile-details-cnt" >
 
                             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_fname(e.target.value)} placeholder='First Name' defaultValue={fname} type="text" id="fname" style={{ float: 'right' }} />
+                                <input onInput={e => set_fname(e.target.value)} placeholder='First Name' value={fname} type="text" id="fname" style={{ float: 'right' }} />
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_mname(e.target.value)} placeholder='Middle Name' defaultValue={mname} type="text" id="mname" style={{ float: 'right' }} />
+                                <input onInput={e => set_mname(e.target.value)} placeholder='Middle Name' value={mname} type="text" id="mname" style={{ float: 'right' }} />
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_sname(e.target.value)} placeholder='Last Name' defaultValue={sname} type="text" id="sname" style={{ float: 'right' }} />
+                                <input onInput={e => set_sname(e.target.value)} placeholder='Last Name' value={sname} type="text" id="sname" style={{ float: 'right' }} />
                             </div>
 
                             {/*<div  style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap', pointerEvents: 'none'}}>
@@ -522,16 +508,12 @@ const StudentSetup = () => {
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_pwd(e.target.value)} placeholder='Password' defaultValue={pwd} type="text" id="pwd" style={{ float: 'right' }} />
-                            </div>
-
-                            <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_cell(e.target.value)} placeholder='Cell Phone' defaultValue={cell} type="text" id="cellphn" style={{ float: 'right' }} />
+                                <input onInput={e => set_cell(e.target.value)} placeholder='Cell Phone' value={cell} type="text" id="cellphn" style={{ float: 'right' }} />
                             </div>
 
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <select onInput={e => set_lang(e.target.value)} id="state" defaultValue={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
+                                <select onInput={e => set_lang(e.target.value)} id="state" value={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
                                     <option value="null">Select Language</option>
                                     {
                                         lang_list.map(item =>
@@ -554,7 +536,7 @@ const StudentSetup = () => {
 
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <select onInput={e => set_grade(e.target.value)} id="state" defaultValue={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
+                                <select onInput={e => set_grade(e.target.value)} id="state" value={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
                                     {
                                         GradeList
                                     }
@@ -591,31 +573,31 @@ const StudentSetup = () => {
                         <div className="profile-details-cnt" style={{ float: 'left' }}>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_add1(e.target.value)} placeholder='Address 1' defaultValue={add1} type="text" id="add1" style={{ float: 'right' }} />
+                                <input onInput={e => set_add1(e.target.value)} placeholder='Address 1' value={add1} type="text" id="add1" style={{ float: 'right' }} />
                             </div>
 
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_add2(e.target.value)} placeholder='Address 2' defaultValue={add2} type="text" id="add2" style={{ float: 'right' }} />
+                                <input onInput={e => set_add2(e.target.value)} placeholder='Address 2' value={add2} type="text" id="add2" style={{ float: 'right' }} />
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" defaultValue={city} id="city" style={{ float: 'right' }} />
+                                <input onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" value={city} id="city" style={{ float: 'right' }} />
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <select onInput={e => set_state(e.target.value)} id="state" defaultValue={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
+                                <select onInput={e => set_state(e.target.value)} id="state" value={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
                                     {stateList}
 
                                 </select>
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_zipCode(e.target.value)} defaultValue={zipCode} placeholder='Zip-Code' type="text" id="zip" style={{ float: 'right' }} />
+                                <input onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip" style={{ float: 'right' }} />
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <select onInput={e => set_country(e.target.value)} id="country" defaultValue={country} style={{ float: 'right', padding: '5px', margin: '0 0 10px 0' }}>
+                                <select onInput={e => set_country(e.target.value)} id="country" value={country} style={{ float: 'right', padding: '5px', margin: '0 0 10px 0' }}>
                                     {countryList}
 
                                 </select>
@@ -623,7 +605,7 @@ const StudentSetup = () => {
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <select onInput={e => set_timeZone(e.target.value)} id="timeZone" defaultValue={timeZone} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
+                                <select onInput={e => set_timeZone(e.target.value)} id="timeZone" value={timeZone} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
                                     {GMTList}
 
                                 </select>
@@ -632,15 +614,15 @@ const StudentSetup = () => {
 
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_parent_email(e.target.value)} placeholder='Parent Email' type="text" defaultValue={parent_email} id="p-email" style={{ float: 'right' }} />
+                                <input onInput={e => set_parent_email(e.target.value)} placeholder='Parent Email' type="text" value={parent_email} id="p-email" style={{ float: 'right' }} />
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_parent_fname(e.target.value)} placeholder='Parent FirstName' type="text" defaultValue={parent_fname} id="p-fname" style={{ float: 'right' }} />
+                                <input onInput={e => set_parent_fname(e.target.value)} placeholder='Parent FirstName' type="text" value={parent_fname} id="p-fname" style={{ float: 'right' }} />
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <input onInput={e => set_parent_lname(e.target.value)} placeholder='Parent LastName' type="text" defaultValue={parent_lname} id="p-lname" style={{ float: 'right' }} />
+                                <input onInput={e => set_parent_lname(e.target.value)} placeholder='Parent LastName' type="text" value={parent_lname} id="p-lname" style={{ float: 'right' }} />
                             </div>
 
 

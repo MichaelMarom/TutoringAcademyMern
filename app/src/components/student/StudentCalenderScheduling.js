@@ -175,7 +175,6 @@ const StudentCalenderScheduling = () => {
         <div className={` ${selectedTutor.activateSubscriptionOption ? "col-9" : "col-12"} `}>
 
           <ShowCalendar
-            student={student}
             disableColor={selectedTutor.disableColor}
             activeTab={activeTab}
             disableWeekDays={disableWeekDays}

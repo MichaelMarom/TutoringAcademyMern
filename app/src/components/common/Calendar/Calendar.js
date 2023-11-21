@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
+import moment from "moment-timezone";
 import EventModal from "../EventModal/EventModal";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStudentsBookings, get_tutor_setup, updateTutorDisableslots } from "../../../axios/tutor";
@@ -9,15 +9,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
 import Loading from '../Loading'
-import {  postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
+import { postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
 import { isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 import CustomAgenda from "./CustomAgenda";
 import { useLocation } from 'react-router-dom';
 
 import '../../../styles/common.css';
-moment.locale("en-GB");
-
-const localizer = momentLocalizer(moment);
 
 const views = {
   WEEK: 'week',
@@ -28,7 +25,6 @@ const views = {
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
 const ShowCalendar = ({
-  student = {},
   setActiveTab = () => { },
   setDisableColor = () => { },
   disableColor = '',
@@ -48,11 +44,13 @@ const ShowCalendar = ({
 
   // Extract student information from the URL
   const isStudentRoute = (location.pathname.split('/'))[1] === 'student';
-  const isStudentLoggedIn = user[0].role === 'student' ? true : user[0].role === 'admin' && isStudentRoute ? true : false
+  const isStudentLoggedIn = user[0].role === 'student' ? true : user[0].role === 'admin' && isStudentRoute ? true : false;
+  const [timeZone, setTimeZone] = useState();
 
   const [enabledDays, setEnabledDays] = useState([]);
   const [disableDates, setDisableDates] = useState([]);
-
+  const { tutor } = useSelector(state => state.tutor)
+  console.log(tutor, 'titor')
   const [enableHourSlots, setEnableHourSlots] = useState([]);
   const [disableHourSlots, setDisableHourSlots] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
@@ -62,6 +60,7 @@ const ShowCalendar = ({
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedSlot, setClickedSlot] = useState({})
+  const { student } = useSelector(state => state.student)
   const tutorId = selectedTutor.academyId;
   const studentId = student.AcademyId
   const subjectName = selectedTutor.subject;
@@ -120,6 +119,26 @@ const ShowCalendar = ({
       }
     }
   }
+  console.log(timeZone, 'tutorstudejt')
+
+  useEffect(() => {
+    if (student.GMT) {
+      const offset = parseInt(student.GMT, 10);
+      const timezone = moment.tz.names().filter(name => (moment.tz(name).utcOffset()) === offset * 60);
+      setTimeZone(timezone[0] || null);
+    }
+    else {
+      if (tutor.GMT) {
+        const offset = parseInt(student.GMT, 10);
+        const timezone = moment.tz.names().filter(name => (moment.tz(name).utcOffset()) === offset * 60);
+        setTimeZone(timezone[0] || null);
+      }
+    }
+  }, [student, tutor])
+
+  useEffect(() => {
+    moment.tz.setDefault(timeZone);
+  }, [timeZone]);
 
   useEffect(() => {
     fetchBookings();
@@ -148,6 +167,11 @@ const ShowCalendar = ({
       }, 1000);
     }
   }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
+
+  const convertToGmt = (date) => {
+    let updatedDate = moment(convertToDate(date)).tz(timeZone).toDate();
+    return updatedDate;
+  };
 
   const filterOtherSudentSession = (givenReservedSlots = []) => {
     let updatedReservedSlot = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot => slot.studentId === student.AcademyId);
@@ -599,6 +623,7 @@ const ShowCalendar = ({
     if (isStudentRoute) setActiveView('week')
   }, [location])
 
+  const localizer = momentLocalizer(moment);
   if (!dataFetched)
     return <Loading height="60vh" />
   return (
@@ -608,7 +633,11 @@ const ShowCalendar = ({
         localizer={localizer}
         selectable={true}
         defaultView={activeView}
-        events={reservedSlots.concat(bookedSlots)}
+        events={reservedSlots.concat(bookedSlots).map((event) => ({
+          ...event,
+          start: convertToGmt(event.start),
+          end: convertToGmt(event.end),
+        }))}
         eventPropGetter={eventPropGetter}
         components={{
           event: event => (

@@ -17,7 +17,9 @@ import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
 import { setShortlist } from "./redux/student_store/shortlist";
 import { get_my_data } from "./axios/student";
+import * as tutorApis from "./axios/tutor"
 import { setStudent } from "./redux/student_store/studentData";
+import { setTutor } from "./redux/tutor_store/tutorData";
 
 const App = () => {
   let location = useLocation();
@@ -48,6 +50,14 @@ const App = () => {
     }
     getStudentDetails()
   }, [localStorage.getItem('student_user_id')])
+
+  useEffect(() => {
+    const getTutorDetails = async () => {
+      const res = await tutorApis.get_tutor_setup_by_acaId(localStorage.getItem('tutor_user_id'))
+      dispatch(setTutor(res[0]))
+    }
+    getTutorDetails()
+  }, [localStorage.getItem('tutor_user_id')])
 
 
   useEffect(() => {

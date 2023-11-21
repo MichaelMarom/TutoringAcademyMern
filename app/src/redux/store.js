@@ -17,6 +17,8 @@ import studentBookingsReducer from './student_store/studentBookings';
 import studentReducer from './student_store/studentData'
 import shortlistReducer from './student_store/shortlist'
 
+import tutorReducer from './tutor_store/tutorData'
+
 let store = configureStore({
   reducer: {
     user: userReducer,
@@ -25,6 +27,8 @@ let store = configureStore({
     student: studentReducer,
     shortlist: shortlistReducer,
     bookings: studentBookingsReducer,
+
+    tutor: tutorReducer,
     lineWidth: thicknessReducer,
     color: colorLineReducer,
     eraserWidth: eraserReducer,

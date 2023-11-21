@@ -5,16 +5,19 @@ import moment from 'moment-timezone';
 import { get_student_events } from '../../axios/student';
 import CustomEvent from '../../components/common/Calendar/Event';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
+import { useSelector } from 'react-redux';
 
 
 export const Schedules = () => {
     const studentId = localStorage.getItem("student_user_id");
+    const { student } = useSelector(state => state.student)
     const [reservedSlots, setReservedSlots] = useState([]);
     const [bookedSlots, setBookedSlots] = useState([]);
+    const [timeZone, setTimeZone] = useState('America/New_York');
 
     useEffect(() => {
-        moment.tz.setDefault('Asia/Karachi');
-    }, []);
+        moment.tz.setDefault(timeZone);
+    }, [timeZone]);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -28,14 +31,17 @@ export const Schedules = () => {
         fetchEvents();
     }, [])
 
+    useEffect(() => {
+        if (student.GMT) {
+            const offset = parseInt(student.GMT, 10);
+            const timezone = moment.tz.names().filter(name => (moment.tz(name).utcOffset()) === offset * 60);
+            setTimeZone(timezone[0] || null);
+        }
+    }, [student])
+
     const convertToGmt = (date) => {
-        const karachiTime = moment().tz('Asia/Karachi');
-
-        const formattedTime = karachiTime.format('YYYY-MM-DD HH:mm:ss');
-
-        console.log(`Current time in Asia/Karachi: ${formattedTime}`);
-        let updatedDate = moment(convertToDate(date));
-        return convertToDate(date);
+        let updatedDate = moment(convertToDate(date)).tz(timeZone).toDate();
+        return updatedDate;
     };
 
     const eventPropGetter = (event) => {

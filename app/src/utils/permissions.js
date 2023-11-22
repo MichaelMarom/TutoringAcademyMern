@@ -71,6 +71,6 @@ const rolePermissions = {
   ],
 };
 
-export const isAllowed = (role, route) => rolePermissions[role].some((r) => r.path === route);
+export const isAllowed = (role, route) => rolePermissions[role]?.some((r) => r.path === route);
 export default rolePermissions;
 

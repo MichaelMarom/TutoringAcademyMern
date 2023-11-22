@@ -3,13 +3,15 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 
 import { COLUMNS, DATA } from '../../Tables/Faculty/columns';
 import { useMemo } from 'react';
-import { get_student_short_list_data, get_tutor_subject, upload_student_short_list } from '../../axios/student';
+import { get_student_short_list, get_student_short_list_data, get_tutor_subject, upload_student_short_list } from '../../axios/student';
 import { socket } from '../../socket';
 import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setShortlist } from '../../redux/student_store/shortlist';
 
 const StudentFaculties = () => {
-
+    const dispatch = useDispatch()
     const [response, setResponse] = useState([]);
     const [data, setData] = useState([]);
     const columns = useMemo(() => COLUMNS, []);
@@ -73,6 +75,20 @@ const StudentFaculties = () => {
 
     }
 
+    const getShortlist = async () => {
+        const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
+        console.log(result, 'shortlists')
+        result.sort(function (a, b) {
+            if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
+                return -1;
+            }
+            if (a.tutorShortList.Subject > b.tutorShortList.Subject) {
+                return 1;
+            }
+            return 0;
+        });
+        dispatch(setShortlist(result))
+    }
 
     useEffect(() => {
         // document.querySelector('#student-save').onclick = () => {
@@ -90,10 +106,10 @@ const StudentFaculties = () => {
                 let res = upload_student_short_list(data);
 
                 if (res) {
-
                     setTimeout(() => {
                         document.querySelector('.save-overlay').removeAttribute('id');
                     }, 1000);
+                    getShortlist()
 
                     toast.success("Your selected record was uploaded to your short list")
                     setTimeout(() => {

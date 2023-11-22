@@ -1095,18 +1095,26 @@ let get_tutor_market_data = async (req, res) => {
 
     let { id } = req.query;
 
-
     let TutortData = await connecteToDB.then(poolConnection =>
         poolConnection.request().query(`SELECT * From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
-
                 return (result.recordset);
             })
             .catch(err => console.log(err))
     )
 
+    let Education = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * From Education WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+            .then((result) => {
+
+                return (result.recordset);
+            })
+            .catch(err => console.log(err))
+
+    )
+
     let Exprience = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From Experience WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+        poolConnection.request().query(`SELECT * From Experience `)
             .then((result) => {
 
                 return (result.recordset);
@@ -1116,12 +1124,11 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let EducationalLevel = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From EducationalLevel WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+        poolConnection.request().query(`SELECT * From EducationalLevel `)
             .then((result) => {
 
                 return (result.recordset);
                 //res.status(200).send()
-                console.log('educational level: ', result)
                 //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
@@ -1129,7 +1136,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let CertificateTypes = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM CertificateTypes WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+        poolConnection.request().query(`SELECT * FROM CertificateTypes `)
             .then((result) => {
 
                 return (result.recordset);
@@ -1142,7 +1149,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let Subjects = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT Id,FacultyId,SubjectName FROM Subjects WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+        poolConnection.request().query(`SELECT * FROM SubjectRates WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
                 return (result.recordset);
@@ -1155,7 +1162,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let Faculty = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM Faculty WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+        poolConnection.request().query(`SELECT * FROM Faculty `)
             .then((result) => {
 
                 return (result.recordset);
@@ -1168,7 +1175,7 @@ let get_tutor_market_data = async (req, res) => {
     )
 
     let GMT = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM GMT WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+        poolConnection.request().query(`SELECT * FROM GMT`)
             .then((result) => {
 
                 return (result.recordset);
@@ -1184,6 +1191,7 @@ let get_tutor_market_data = async (req, res) => {
         resolve(TutortData)
     })
         .then((TutortData) => {
+            //return { TutortData, Subjects }
             return { TutortData, Exprience }
         })
         .then(({ TutortData, Exprience }) => {
@@ -1201,10 +1209,17 @@ let get_tutor_market_data = async (req, res) => {
         .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
             return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT }
         })
-        .then((result) => {
-            //console.log(result)
+        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
+            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, Education }
         })
-
+        .then((result) => {
+            res.send(result)
+            console.lop(result)
+        })
+        .cach(e => {
+            console.log(e)
+        })
+      
 
 }
 

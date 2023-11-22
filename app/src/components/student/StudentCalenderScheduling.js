@@ -4,16 +4,20 @@ import { useSelector } from 'react-redux';
 import { formatName } from '../../helperFunctions/generalHelperFunctions';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { get_my_data, update_student_shortlist } from '../../axios/student';
+import { useDispatch } from 'react-redux';
+import { setStudent } from '../../redux/student_store/studentData';
 
 
 const StudentCalenderScheduling = () => {
+  const dispatch = useDispatch()
   const [disableWeekDays, setDisabledWeekDays] = useState([]);
   const [activeTab, setActiveTab] = useState('month');
   const [tutorTime, setTutorTime] = useState('');
   const [disabledHours, setDisabledHours] = useState([]);
   const [subscriptionHours, setActiveSubscriptionHours] = useState(null)
   const { selectedTutor } = useSelector(state => state.selectedTutor)
-  const [student, setStudent] = useState({})
+
+  const { student } = useSelector(state => state.student);
 
   let subscription_cols = [
     { Header: "Hours" },
@@ -45,7 +49,7 @@ const StudentCalenderScheduling = () => {
   useEffect(() => {
     const getStudentDetails = async () => {
       const res = await get_my_data(localStorage.getItem('student_user_id'))
-      setStudent(res[1][0][0])
+      dispatch(setStudent(res[1][0][0]))
     }
     getStudentDetails()
   }, [])

@@ -15,6 +15,7 @@ import Signup from "./pages/Signup";
 import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
+import { setShortlist } from "./redux/student_store/shortlist";
 
 const App = () => {
   let location = useLocation();
@@ -33,20 +34,14 @@ const App = () => {
     if (user[0] && user[0].role !== 'admin')
       get_tutor_setup_by_userId(user[0].SID).then((result) => {
         console.log(result[0], user[0].SID)
-        // localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
+        localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       });
   }, [user]);
 
+  useEffect(() => {
+    dispatch(setShortlist())
+  }, [])
 
-  const getDefaultRoute = (role) => {
-    const defaultRoutes = {
-      tutor: "/tutor/intro",
-      student: "/student/intro",
-      admin: "/admin/tutor-data",
-    };
-
-    return defaultRoutes[role] || "/login";
-  };
 
   useEffect(() => {
     if (user[0]?.role === "tutor")

@@ -37,7 +37,7 @@ function TutorCalenderSidebar({
                 setDisabledWeekDays([...disableWeekDays, day]);
             }
         } else if (activeTab === 'day') {
-            if (disabledHours.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])) {
+            if (disabledHours?.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])) {
                 setDisabledHours(disabledHours.filter((range) => range[0] !== timeRange[0]));
             }
             else {
@@ -107,7 +107,7 @@ function TutorCalenderSidebar({
                                     type="checkbox"
                                     id={day.toLowerCase()}
                                     className="form-check-input"
-                                    checked={disableWeekDays.includes(day)}
+                                    checked={disableWeekDays?.includes(day)}
                                     onChange={() => handleCheckboxClick(day)}
                                 />
                                 <label className="form-check-label small" htmlFor={day.toLowerCase()}>
@@ -131,6 +131,7 @@ function TutorCalenderSidebar({
                     <div className="highlight small lh-sm">
                         CheckBox the hours that you are not tutoring. Students will
                         not be able to book lessons for your blocked hours.
+                        By default, Gray checkboxes are blooking undesirable hours. If desired, you can unblock any hour from this group to accomodate your student(s)
                     </div>
 
                     <div className="form-scheduling-hours" ref={hoursChecboxes}>
@@ -140,7 +141,7 @@ function TutorCalenderSidebar({
                                     type="checkbox"
                                     id={`hour-${index}`}
                                     className={`form-check-input ${timeRange[2] === 'midnight' ? "gray-checkbox" : ""}`}
-                                    checked={disabledHours.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])}
+                                    checked={disabledHours?.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])}
                                     onChange={() => handleCheckboxClick(null, timeRange)}
                                 />
                                 <label className="form-check-label small lh-sm" htmlFor={`hour-${index}`}>

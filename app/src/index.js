@@ -6,9 +6,6 @@ import { BrowserRouter as Router } from "react-router-dom";
 import store from './redux/store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import Modal from 'react-modal';
-
-// Modal.setAppElement('#root');
 
 import App from './routes';
 

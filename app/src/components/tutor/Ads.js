@@ -5,10 +5,10 @@ import { get_tutor_market_data } from "../../axios/tutor";
 
 const Ads = () => {
 
-    let [screen_name, set_screen_name] = useState('')
-    let [grade, set_grade] = useState('')
-    let [lang, set_lang] = useState('')
-    let [country, set_country] = useState('')
+    let [screen_name, set_screen_name] = useState('...')
+    let [grade, set_grade] = useState('...')
+    let [lang, set_lang] = useState('...')
+    let [country, set_country] = useState('...')
 
 
     let [education_list, set_education_list] = useState([])
@@ -47,19 +47,22 @@ const Ads = () => {
         if(window.localStorage.getItem('tutor_id') !== null){
             get_tutor_market_data(window.localStorage.getItem('tutor_id'))
             .then((result) => {
-                console.log(result)
-                // set_screen_name(TutorData[0].ScreenName) 
-                // set_grade(TutorData[0].Grade)
-                // set_country(TutorData[0].Country)
-                // set_lang(TutorData[0].Language)
-                // set_gmt_list(GMT)
 
-                // set_education_list(EducationalLevel)
-                // set_certificate_list(CertificateTypes)
-                // set_exprience_list(Exprience)
-                // set_subject(Subjects)
-                // set_subject_list([])
-                // set_faculty_list(Faculty)
+                let {TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT, Education } = result
+
+                console.log(result)
+                set_screen_name(TutortData[0].TutorScreenname) 
+                set_grade(TutortData[0].Grades)
+                set_country(TutortData[0].Country)
+                set_lang(TutortData[0].Language) 
+                set_gmt_list([TutortData[0].GMT])
+                set_education(Education)
+
+                set_education_list(EducationalLevel)
+                set_certificate_list(CertificateTypes)
+                set_exprience_list(Exprience)
+                set_subject_list(Subjects)
+                set_faculty_list(Faculty)
 
 
 
@@ -117,7 +120,7 @@ const Ads = () => {
 
                         <div className="input-cnt">
                             <label htmlFor="">Tutor Language</label>
-                            <input defaultValue={country} type="text" name="" id="Ad" />
+                            <input defaultValue={lang} type="text" name="" id="Ad" />
                         </div>
 
                         
@@ -241,7 +244,7 @@ const Ads = () => {
                         </div>
                         
 
-                        <textarea style={{height: '150px', width: '500px', padding: '10px'}} value={`My name is ${screen_name}, I teach (Subject) for students (Grade). I am (education level) with experience of (teaching experience). I live in (Country), time zone (GMT). I can teach students within (UTC) time zones. Please look at my calendar-scheduling for availability, and my profile for my work experience and promotions.`} ></textarea>
+                        <textarea style={{height: '150px', width: '500px', padding: '10px'}} value={`My name is "${screen_name}", I teach "${subject_list.length < 1 ? '...' : [...subject_list.map(item => item.subject)].join(', ')}" for students "${grade}". I am "${education[0] ? education[0].EducationalLevel : '...'}" with experience of "${education[0] ? education[0].EducationalLevelExperience : '...'}". I live in "${country}", time zone "${gmt_list[0]}". I can teach students within "${utc}" time zones. Please look at my calendar-scheduling for availability, and my profile for my work experience and promotions.`} ></textarea>
 
                     </div>
 

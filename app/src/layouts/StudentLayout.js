@@ -3,6 +3,7 @@ import Header from '../components/student/Header'
 import Footer from '../components/student/Footer'
 
 const StudentLayout = ({ children, showLegacyFooter = true }) => {
+
     return (
         <div>
             <Header />

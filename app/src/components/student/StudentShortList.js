@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useEffect } from 'react';
 import containerVariants from '../constraint';
-import { get_student_short_list } from '../../axios/student';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTutor } from '../../redux/student_store/selectedTutor';
@@ -14,16 +13,9 @@ import Loading from '../common/Loading';
 const StudentShortList = () => {
 
     // columns.js
-    const [data, useData] = useState([]);
-    const [response, setResponse] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const columns = useMemo(() => COLUMNS, []);
-
     let navigate = useNavigate()
     const dispatch = useDispatch()
-
-    const { selectedTutor } = useSelector(state => state.selectedTutor);
+    const { shortlist: response, isLoading: shortlistLoading } = useSelector(state => state.shortlist)
 
     const handleNavigateToSchedule = async (item) => {
         dispatch(setTutor({
@@ -42,31 +34,6 @@ const StudentShortList = () => {
         navigate('/student/schedule')
     }
 
-    useEffect(() => {
-        setIsLoading(true)
-        get_student_short_list(window.localStorage.getItem('student_user_id'))
-            .then((result) => {
-                console.log(result, 'shortlists')
-
-                result.sort(function (a, b) {
-                    if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
-                        return -1;
-                    }
-                    if (a.tutorShortList.Subject > b.tutorShortList.Subject) {
-                        return 1;
-                    }
-                    return 0;
-                });
-
-                setResponse(result)
-                setIsLoading(false)
-            })
-            .catch((err) => {
-                setIsLoading(false)
-                console.log(err)
-            })
-    }, [])
-
     function convertGMTToLocalTime(gmtOffset) {
         const utcTime = new Date();
         const localTime = new Date(utcTime.getTime() + gmtOffset * 60 * 60 * 1000);
@@ -81,7 +48,7 @@ const StudentShortList = () => {
     }
 
 
-    if (isLoading) return <Loading />
+    if (shortlistLoading) return <Loading />
     return (
         <>
             <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>

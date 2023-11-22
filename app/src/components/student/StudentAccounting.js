@@ -129,7 +129,7 @@ const StudentAccounting = () => {
             const data = await get_payment_report(studentId);
             console.log(data)
             const uniqueData = data.reduce((unique, item) => {
-                if (unique.some(detail => detail.tutorId === item.tutorId)) {
+                if (unique?.some(detail => detail.tutorId === item.tutorId)) {
                     return unique
                 }
                 else {

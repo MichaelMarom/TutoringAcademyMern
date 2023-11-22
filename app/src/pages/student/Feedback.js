@@ -53,7 +53,8 @@ export const Feedback = () => {
                     }
                     return slot
                 })
-                await dispatch(postStudentBookings({
+                console.log('ende12r')
+                dispatch(postStudentBookings({
                     studentId, tutorId: selectedEvent.tutorId,
                     bookedSlots: updatedBookedSlots, reservedSlots
                 }));
@@ -69,7 +70,9 @@ export const Feedback = () => {
                     }
                     return slot
                 })
-                await dispatch(postStudentBookings({
+                console.log('ende12r')
+
+                dispatch(postStudentBookings({
                     studentId, tutorId: selectedEvent.tutorId,
                     bookedSlots, reservedSlots: updatedReservedSlots
                 }));
@@ -95,7 +98,7 @@ export const Feedback = () => {
             })
         if (selectedEvent.type === 'booked') {
             // setBookedSlots([...updatedSlots])
-            const data = await dispatch(postStudentBookings({
+            const data = dispatch(postStudentBookings({
                 studentId, tutorId: selectedEvent.tutorId,
                 bookedSlots: updatedSlots, reservedSlots
             }));
@@ -104,7 +107,7 @@ export const Feedback = () => {
                 toast.success('Data Succesfully Saved')
         }
         else {
-            const data = await dispatch(postStudentBookings({
+            const data = dispatch(postStudentBookings({
                 studentId, tutorId: selectedEvent.tutorId,
                 bookedSlots, reservedSlots: updatedSlots
             }));
@@ -182,7 +185,7 @@ export const Feedback = () => {
         const fetchPaymentReport = async () => {
             const data = await get_payment_report(studentId);
             const uniqueData = data.reduce((unique, item) => {
-                if (unique.some(detail => detail.tutorId === item.tutorId)) {
+                if (unique?.some(detail => detail.tutorId === item.tutorId)) {
                     return unique
                 }
                 else {
@@ -235,6 +238,7 @@ export const Feedback = () => {
                         <h2>Booked Lessons</h2>
                         {feedbackData.length ?
                             <BookedLessons
+                                setEvents={setFeedbackData}
                                 events={feedbackData}
                                 handleRowSelect={handleRowSelect}
                                 setSelectedEvent={setSelectedEvent}

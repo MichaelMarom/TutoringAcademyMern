@@ -14,12 +14,16 @@ import save from './tutor_store/save';
 import ScreenName from './tutor_store/ScreenName';
 import selectedTutorReducer from './student_store/selectedTutor';
 import studentBookingsReducer from './student_store/studentBookings';
+import studentReducer from './student_store/studentData'
+import shortlistReducer from './student_store/shortlist'
 
 let store = configureStore({
   reducer: {
     user: userReducer,
     subject: subjectReducer,
     selectedTutor: selectedTutorReducer,
+    student: studentReducer,
+    shortlist: shortlistReducer,
     bookings: studentBookingsReducer,
     lineWidth: thicknessReducer,
     color: colorLineReducer,

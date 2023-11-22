@@ -4,18 +4,19 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { get_countries, get_gmt, get_state } from '../../axios/tutor';
 import { socket } from '../../socket';
-import { get_student_grade, get_student_setup, get_student_setup_by_userId, upload_form_one } from '../../axios/student';
+import { get_student_grade, get_student_setup, get_student_setup_by_userId, get_student_short_list, upload_form_one } from '../../axios/student';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
+import { useDispatch } from 'react-redux';
+import { setShortlist } from '../../redux/student_store/shortlist';
 
 const StudentSetup = () => {
-
+    const dispatch = useDispatch()
     let [fname, set_fname] = useState('')
     let [mname, set_mname] = useState('')
     let [sname, set_sname] = useState('')
     let [email, set_email] = useState('')
     let [pwd, set_pwd] = useState('')
 
-    let [ParentConsent, set_ParentConsent] = useState(false)
     let [cell, set_cell] = useState('')
     let [acadId, set_acadId] = useState('')
     let [add1, set_add1] = useState('')
@@ -59,6 +60,9 @@ const StudentSetup = () => {
 
         return response;
     }
+
+  
+
     useEffect(() => {
         const AcademyId = localStorage.getItem('student_user_id')
         console.log(user, AcademyId, 'user in student')

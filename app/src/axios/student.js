@@ -170,7 +170,7 @@ export const save_student_events = async (body) => {
 }
 
 export const get_student_events = async (studentId, tutorId) => {
-    const { data } = await await axiosInstance.get(`/student/booking/${studentId}/${tutorId}`);
+    const { data } = await axiosInstance.get(`/student/booking/${studentId}/${tutorId}`);
     return data;
 }
 

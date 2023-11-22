@@ -37,7 +37,7 @@ function EventModal({
   }
 
   useEffect(() => {
-    const existIntroSession = reservedSlots.some(slot => slot.type === 'intro' && selectedTutor.subject === slot.subject)
+    const existIntroSession = reservedSlots?.some(slot => slot.type === 'intro' && selectedTutor.subject === slot.subject)
     if (existIntroSession && selectedType === 'intro' && selectedSlots[0]?.start) {
       toast.warning('Cannot add more than 1 Intro Session!')
       setCanPostEvents(false)

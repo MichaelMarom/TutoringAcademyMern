@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import StarRating from '../../student/Feedback/StarRating';
+import { useSelector } from 'react-redux';
+import { convertToDate } from './Calendar';
 
-function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reservedSlots }) {
+function CustomEvent({ isStudentLoggedIn, event, handleEventClick, handleSetReservedSlots, reservedSlots }) {
     const [remainingTime, setRemainingTime] = useState(calculateRemainingTime(event.createdAt));
     const [extraFiveMinStart, setExtraFiveMinStart] = useState(false);
+    const { student } = useSelector(state => state.student)
 
     useEffect(() => {
         let intervalId;
@@ -32,15 +35,19 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
             const inputTime = moment(event.createdAt);
             const diffInMinutes = currentTime.diff(inputTime, 'minutes');
             //5 min extra after expire
+            console.log(event, convertToDate(event.createdAt).toLocaleString())
             if (diffInMinutes >= 65 && event.type === 'reserved') {
-                handleSetReservedSlots(reservedSlots.filter(slot => event.id !== slot.id));
+                handleSetReservedSlots(reservedSlots.filter(slot => {
+                    if (slot.type === "reserved") console.log(event, slot)
+                    return event.id !== slot.id
+                }));
                 setExtraFiveMinStart(false)
             }
         };
 
         if (extraFiveMinStart) {
-            checkIfOlderThan65Minutes();
-            intervalId = setInterval(checkIfOlderThan65Minutes, 1000);
+            event.type === "reserved" && checkIfOlderThan65Minutes();
+            intervalId = event.type === "reserved" && setInterval(checkIfOlderThan65Minutes, 1000);
         }
 
         return () => {
@@ -80,7 +87,8 @@ function CustomEvent({ event, handleEventClick, handleSetReservedSlots, reserved
                 </div>
             ) : (
                 <div>
-                    {event.title} by {event.studentName}
+                    {event.title} {isStudentLoggedIn &&
+                        student.FirstName !== event.studentName ? `` : `by ${event.studentName}`}
                     {event.type === 'reserved' &&
                         <div>
                             {String(remainingTime.minutes).padStart(2, '0')} :

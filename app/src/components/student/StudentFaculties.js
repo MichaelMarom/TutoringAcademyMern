@@ -238,12 +238,12 @@ const StudentFaculties = () => {
 
 
                     <div className="highlight" style={{ width: '100%' }}>
-                        Click on the faculty above to view all subjects as being tought by the Tutors. Check box the Tutor(s) of interest, and "save" to your "Short" list to compare.``
+                        From the menu above, click on faculty to view all subjects as being tought by the Tutors. Checkbox from the table below the Tutor(s) of interest. They will be dynamically saved in the next "ShortList" tab to compare, and select your tutor.``
                     </div>
 
                     <div className="form-subject-search-bar">
                         <div>
-                            <label style={{ float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px' }} htmlFor="search"><h6>From the list below, select the subjects of interest, then click the "Save" botton. The selected subjects can be compared in the next "Short list" tab.                                                               </h6></label>
+                          <label style={{ float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px' }} htmlFor="search"><h6>                                                               </h6></label>
                         </div>
                     </div>
 

@@ -94,7 +94,8 @@ function CustomEvent({
             ) : (
                 <div>
                     {event.title} {isStudentLoggedIn &&
-                        student.FirstName !== event.studentName ? `` : `by ${isStudentLoggedIn ? convertTutorIdToName(event.tutorId) : event.studentName}`}
+                        student.FirstName !== event.studentName ? `` : ` ${isStudentLoggedIn ? `from ${convertTutorIdToName(event.tutorId)}` :
+                            `by ${event.studentName}`}`}
                     {event.type === 'reserved' &&
                         <div>
                             {String(remainingTime.minutes).padStart(2, '0')} :

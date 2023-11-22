@@ -28,7 +28,7 @@ function TutorCalenderSidebar({
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
-
+    console.log(disabledHours, 'disbhours')
     const handleCheckboxClick = (day, timeRange) => {
         if (activeTab === 'month') {
             if (disableWeekDays.includes(day)) {
@@ -37,18 +37,20 @@ function TutorCalenderSidebar({
                 setDisabledWeekDays([...disableWeekDays, day]);
             }
         } else if (activeTab === 'day') {
-            if (disabledHours?.some(range => range[0] === timeRange[0] && range[1] === timeRange[1])) {
+            if (disabledHours?.some(range => range[0] === timeRange[0])) {
+                console.log(';removed', disabledHours)
                 setDisabledHours(disabledHours.filter((range) => range[0] !== timeRange[0]));
             }
             else {
+                console.log(';added', disabledHours)
                 setDisabledHours([...disabledHours, timeRange]);
             }
         }
     };
 
-    const checkboxChecked = (timeRangeOne, timeRangeTwo) => {
+    const checkboxChecked = (timeRangeOne) => {
         return disabledHours?.some(range =>
-            range[0] === timeRangeOne && range[1] === timeRangeTwo)
+            range[0] === timeRangeOne )
     }
 
     return (

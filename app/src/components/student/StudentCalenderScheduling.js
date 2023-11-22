@@ -76,7 +76,6 @@ const StudentCalenderScheduling = () => {
 
   const calculateTimeDifference = () => {
     try {
-      console.log(student, selectedTutor);
       const studentOffset = parseInt(student.GMT, 10);
       const tutorOffset = parseInt(selectedTutor.GMT, 10);
 
@@ -175,6 +174,7 @@ const StudentCalenderScheduling = () => {
         <div className={` ${selectedTutor.activateSubscriptionOption ? "col-9" : "col-12"} `}>
 
           <ShowCalendar
+            timeDifference={calculateTimeDifference()}
             disableColor={selectedTutor.disableColor}
             activeTab={activeTab}
             disableWeekDays={disableWeekDays}

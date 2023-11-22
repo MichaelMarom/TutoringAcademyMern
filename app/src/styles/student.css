@@ -109,7 +109,7 @@
     .student-tab-header{
         height: 60px;
         width: 100%;
-        padding: 0;
+        padding: 0 ;
         margin: 0;
         display: flex;
         align-items: center;
@@ -132,10 +132,10 @@
     .student-tab-header  ul{
         list-style-type: none;
         margin: auto;
-        width: 70%;
+        width: calc(100% - 120px);
         display: flex;
         align-items: center;
-        justify-content: left;
+        justify-content: center;
         overflow-x: auto;
         overflow-y: hidden;
         padding: 0 8px 0 8px;
@@ -159,6 +159,8 @@
         float: left;
         cursor: pointer;
     }
+
+    .student-tab-header ul li:first-child{margin-left: 20px;}
 
     .student-tab-header ul li a {
             display: block;

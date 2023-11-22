@@ -67,11 +67,6 @@ const StudentSetup = () => {
     useEffect(() => {
         const fetchStudentSetup = async () => {
             if (user[0].role === 'student' || user[0].role === 'admin') {
-                // const result = await get_student_setup_by_userId(AcademyId);
-                // localStorage.setItem('student_screen_name', result[0].ScreenName)
-                // localStorage.setItem('student_user_id', result[0].AcademyId)
-                // localStorage.setItem('logged_user', JSON.stringify(result[0]))
-
                 if (Object.keys(student)) {
                     let data = student
                     set_fname(data.FirstName)
@@ -108,10 +103,6 @@ const StudentSetup = () => {
                     set_parent_fname(data.ParentLastName)
                     set_parent_email(data.ParentEmail)
 
-                    let frame1 = document.querySelector(".tutor-tab-photo-frame");
-
-                    let img = `<img src='${data.Photo}' style='height: 100%; width: 100%; '}} alt='photo' />`
-                    frame1?.insertAdjacentHTML("afterbegin", img)
                 }
             }
         }
@@ -407,43 +398,24 @@ const StudentSetup = () => {
             .catch((err) => {
                 console.log(err)
             })
-
-
-
-
     }, [data])
 
     let handleImage = () => {
-        let frame = document.querySelector(".tutor-tab-photo-frame");
 
         let f = document.querySelector("#photo");
 
         let type = [...f.files][0].type;
 
-
-
         if (type.split('/')[0] !== 'image') {
             alert('Only Image Can Be Uploaded To This Field')
         } else {
-            frame.innerHTML = '';
 
             let reader = new FileReader();
 
-
             reader.onload = (result) => {
-
-
-
-                let img = `<img src='${reader.result}' style='height: 100%; width: 100%; '}} alt='photo' />`
-
                 set_photo(reader.result)
-
-                frame?.insertAdjacentHTML("afterbegin", img)
-
-
             }
             reader.readAsDataURL([...f.files][0]);
-
         }
     }
 
@@ -468,7 +440,7 @@ const StudentSetup = () => {
                             <h5 style={{ whiteSpace: 'nowrap' }}>Profile Photo</h5>
                             <input type="file" data-type='file' onChange={handleImage} style={{ display: 'none' }} id="photo" />
                             <div className="tutor-tab-photo-frame">
-
+                                <img src={photo} style={{ height: "100%", width: "100%" }} alt='photo' />
                             </div>
                             <label id='btn' htmlFor="photo">
                                 Upload

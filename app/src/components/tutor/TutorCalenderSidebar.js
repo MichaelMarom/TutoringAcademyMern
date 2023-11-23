@@ -50,7 +50,7 @@ function TutorCalenderSidebar({
 
     const checkboxChecked = (timeRangeOne) => {
         return disabledHours?.some(range =>
-            range[0] === timeRangeOne )
+            range[0] === timeRangeOne)
     }
 
     return (

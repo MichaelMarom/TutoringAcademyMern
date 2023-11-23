@@ -15,6 +15,7 @@ import CustomAgenda from "./CustomAgenda";
 import { useLocation } from 'react-router-dom';
 
 import '../../../styles/common.css';
+import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 
 const views = {
   WEEK: 'week',
@@ -54,6 +55,7 @@ const ShowCalendar = ({
   const [enableHourSlots, setEnableHourSlots] = useState([]);
   const [disableHourSlots, setDisableHourSlots] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
+  const [disableDateRange, setDisableDateRange] = useState([]);
   const tutorAcademyId = localStorage.getItem('tutor_user_id')
 
   //student states
@@ -92,8 +94,8 @@ const ShowCalendar = ({
     }
     function addHoursToSubArray(subArray) {
       let newArray = subArray.slice();
-      newArray[0] = addHours(newArray[0], (timeDifference * -1));
-      newArray[1] = addHours(newArray[1], (timeDifference * -1));
+      newArray[0] = addHours(newArray[0], (timeDifference * 1));
+      newArray[1] = addHours(newArray[1], (timeDifference * 1));
       return newArray;
     }
 
@@ -103,11 +105,9 @@ const ShowCalendar = ({
 
   const getTimeZonedEnableHours = (originalDates, timeZone) => {
     if (!isStudentLoggedIn || !timeZone) return originalDates;
-    console.log(originalDates, 'org')
     return originalDates.map(dateString => {
       const date = moment.utc(convertToDate(dateString)).tz(timeZone);
       const dateObjDate = date.toDate()
-      console.log(dateObjDate, 'moment', timeZone, convertToDate(dateString) instanceof Date)
       return dateString; // You can customize the format
     });
   }
@@ -116,11 +116,13 @@ const ShowCalendar = ({
     const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
     if (Object.keys(result ? result : {}).length) {
       const updatedEnableHours = getTimeZonedEnableHours(JSON.parse(result.enableHourSlots), timeZone)
-      setEnableHourSlots(updatedEnableHours);
-      setEnabledDays(JSON.parse(result.enabledDays))
-      setDisableDates(JSON.parse(result.disableDates));
-      setDisableHourSlots(JSON.parse(result.disableHourSlots));
+      setEnableHourSlots(updatedEnableHours); //done
+
+      setDisableDates(JSON.parse(result.disableDates)); //done
+      setEnabledDays(JSON.parse(result.enabledDays)); 
       setDisabledWeekDays(JSON.parse(result.disableWeekDays));
+
+      setDisableHourSlots(JSON.parse(result.disableHourSlots)); //done
 
       console.log(updatedEnableHours?.[0], JSON.parse(result.enableHourSlots),
         JSON.parse(result.enabledDays),
@@ -128,8 +130,9 @@ const ShowCalendar = ({
         JSON.parse(result.disableHourSlots),
         JSON.parse(result.disableWeekDays))
 
-      let updatedDisableHoursRange = getTimeZonedDisableHoursRange(JSON.parse(result.disableHoursRange)) //done
-      setDisabledHours(updatedDisableHoursRange);
+      let updatedDisableHoursRange = getTimeZonedDisableHoursRange(JSON.parse(result.disableHoursRange))
+      console.log(updatedDisableHoursRange, JSON.parse(result.disableHoursRange), 'range')
+      setDisabledHours(updatedDisableHoursRange);//done
       setDisableColor(result.disableColor)
     }
     setDataFetched(true);
@@ -196,14 +199,27 @@ const ShowCalendar = ({
     (activeTab === views.MONTH) ? setActiveView(views.MONTH) : setActiveView(views.WEEK)
   }, [activeTab])
 
+  // useEffect(() => {
+  //   if (dataFetched && !isStudentLoggedIn) {
+  //     setTimeout(() => {
+  //       toast.success("Saving Blocked out Slots ....")
+  //       updateTutorDisableRecord()
+  //     }, 1000);
+  //   }
+  // }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
   useEffect(() => {
-    if (dataFetched && !isStudentLoggedIn) {
-      setTimeout(() => {
-        toast.success("Saving Blocked out Slots ....")
-        updateTutorDisableRecord()
-      }, 1000);
+    return () => {
+      toast.success("Saving Block_out slots!")
     }
-  }, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
+  }, [])
+
+  useDebouncedEffect(() => {
+    if (dataFetched && !isStudentLoggedIn) {
+      updateTutorDisableRecord();
+    }
+
+  }, 2000, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
+
 
   const convertToGmt = (date) => {
     return date;
@@ -270,13 +286,12 @@ const ShowCalendar = ({
   }
 
   const handleSetReservedSlots = (reservedSlots) => {
-    console.log('ende12r')
-
     let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherSudentSession(reservedSlots)
     dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
   }
 
   const handleDateClick = (slotInfo) => {
+    console.log('hit')
     const clickedDate = slotInfo.start;
     const dayName = moment(clickedDate).format("dddd");
     const formattedTime = moment(clickedDate).format("h:00 a");
@@ -289,6 +304,8 @@ const ShowCalendar = ({
     let endEventTime = momentStartTime.clone().minute(0).add(1, 'hour')
 
 
+
+    //some error handling
     let clickedUpperSlot = moment(slotInfo.end).diff(moment(slotInfo.start), 'days') === 1;
     const isEventAlreadyExist = (reservedSlots.concat(bookedSlots))?.some(event => (
       convertToDate(event.start).getTime() === clickedDate.getTime() || convertToDate(event.end).getTime() === slotInfo.end.getTime()));
@@ -296,10 +313,12 @@ const ShowCalendar = ({
     if (!isStudentRoute && !disableColor) { toast.warning("Please select color before disabling slots!"); return }
     if (isEventAlreadyExist && slotInfo.action === "doubleClick") { toast.warning("Event already exist in that slot. Please select another slot to continue!"); return }
     if (clickedUpperSlot && activeView != views.MONTH) return;
-    if (clickedDate.getTime() < (new Date()).getTime()) {
+    if (clickedDate.getTime() < (new Date()).getTime() && slotInfo.action === "doubleClick") {
       toast.warning(`Cannot ${!isStudentLoggedIn ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
       return
     }
+
+    // student and tutor side handling beside error handling
     if (slotInfo.action === "doubleClick") {
       if (!isStudentLoggedIn) {
         if (disableWeekDays && disableWeekDays?.includes(dayName)) {
@@ -316,7 +335,7 @@ const ShowCalendar = ({
           else {
 
             if (!enabledDays?.some(date => convertToDate(date).getTime() === slotInfo.start.getTime()))
-              setEnabledDays([...enabledDays, slotInfo.start])
+              setEnabledDays([...(enabledDays ?? []), slotInfo.start])
             else {
               const removeEnableDate = enabledDays.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime());
               setEnabledDays(removeEnableDate)
@@ -328,8 +347,21 @@ const ShowCalendar = ({
             const existInDisableDates = disableDates?.some(date =>
               convertToDate(date).getTime() === slotInfo.start.getTime());
             const reservedSlotPresentInClickedDate = reservedSlots?.some(slot => moment(slot.start).date() === moment(clickedDate).date())
+
+            //disbaleDateRange
+            const existInDisableDateRange = disableDateRange.some(date => date.start.getTime() === slotInfo.start.getTime())
+            if (!existInDisableDateRange && !reservedSlotPresentInClickedDate)
+              setDisableDateRange([...(disableDateRange ?? []), { start: slotInfo.start, end: slotInfo.end }])
+            else {
+              const removeDisableDateRange = disableDateRange.filter(date =>
+                convertToDate(date.start).getTime() !== slotInfo.start.getTime());
+              console.log(disableDateRange, 'remiving.dcd')
+              setDisableDateRange(removeDisableDateRange)
+            }
+
+            //disableDates
             if (!existInDisableDates && !reservedSlotPresentInClickedDate)
-              setDisableDates([...disableDates, slotInfo.start])
+              setDisableDates([...(disableDates ?? []), slotInfo.start])
             else {
               const removeDisableDate = disableDates.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime());
               setDisableDates(removeDisableDate)
@@ -341,7 +373,11 @@ const ShowCalendar = ({
               const storedMomentDate = moment(storedDate);
               return storedMomentDate.isSame(slotDateMoment, 'day')
             });
-            console.log(disabledHours, 'value')
+            console.log(disabledHours &&
+              disabledHours?.some((timeRange) => {
+                const [start, end] = timeRange;
+                return formattedTime >= start && formattedTime < end;
+              }) || existInDisabledDate, 'value')
             if (disabledHours &&
               disabledHours?.some((timeRange) => {
                 const [start, end] = timeRange;
@@ -355,26 +391,39 @@ const ShowCalendar = ({
               else {
                 const reservedSlotsHaveClickedSlot = reservedSlots?.some(slot => slot.start.getTime() === slotInfo.start.getTime())
                 if (!reservedSlotsHaveClickedSlot) {
-                  const removeEnableHourSlots = enableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime());
+                  const removeEnableHourSlots = enableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime()
+                    && endTime.getTime() !== convertToDate(date).getTime());
                   setEnableHourSlots(removeEnableHourSlots)
                 }
               }
-              if (disableHourSlots?.some(date => convertToDate(date).getTime() === slotInfo.start.getTime() || endTime.getTime() === convertToDate(date).getTime())) {
-                const removeDisableHourSlots = disableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
+              console.log(disableHourSlots?.some(date => convertToDate(date).getTime() === slotInfo.start.getTime() ||
+                endTime.getTime() === convertToDate(date).getTime()), 'ji')
+              if (disableHourSlots?.some(date => convertToDate(date).getTime() === slotInfo.start.getTime() ||
+                endTime.getTime() === convertToDate(date).getTime())) {
+                const removeDisableHourSlots = disableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() &&
+                  endTime.getTime() !== convertToDate(date).getTime()
                 )
+                console.log('removing')
                 setDisableHourSlots(removeDisableHourSlots)
+              }
+              else {
+                setDisableHourSlots([...(disableHourSlots ?? []), slotInfo.start, endTime])
               }
             }
             else if (!existInDisabledDate) {
-              const reservedSlotsHaveClickedSlot = reservedSlots?.some(slot => slot.start.getTime() === moment(slotInfo.start).startOf('hour').valueOf())
-              if (!disableHourSlots?.some(date => convertToDate(date).getTime() === slotInfo.start.getTime() || endTime.getTime() === convertToDate(date).getTime())) {
+              const reservedSlotsHaveClickedSlot = reservedSlots?.some(slot =>
+                slot.start.getTime() === moment(slotInfo.start).startOf('hour').valueOf())
+              if (!disableHourSlots?.some(date => convertToDate(date).getTime() === slotInfo.start.getTime() ||
+                endTime.getTime() === convertToDate(date).getTime())) {
                 if (!reservedSlotsHaveClickedSlot) {
-                  setDisableHourSlots([...disableHourSlots, slotInfo.start, endTime])
+                  console.log('adding')
+                  setDisableHourSlots([...(disableHourSlots ?? []), slotInfo.start, endTime])
                 }
               }
               else {
                 const removeDisableHourSlots = disableHourSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
                 )
+                console.log('removing12')
                 setDisableHourSlots(removeDisableHourSlots)
               }
             }
@@ -401,32 +450,17 @@ const ShowCalendar = ({
 
           //student general
           const existInReservedSlots = reservedSlots?.some(dateTime => convertToDate(dateTime).getTime() === clickedDate.getTime())
-          if (existInEnableSlots) {
-            if (existInReservedSlots) {
-              // const removeReservedSlots = reservedSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
-              // )
-              // setReservedSlots(removeReservedSlots)
-            }
-            else {
-              // handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "asiya", createdAt: moment().subtract(1, "minutes").toDate() })
-            }
-          }
-          else if (disableWeekDays?.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+          if (!existInEnableSlots && disableWeekDays?.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
             alert("This slot is blocked, please select a white slot.");
           }
           else if (existInDisableHourSlots || !existInEnableSlots && disabledHours?.some((timeRange) => {
-            const [start, end] = timeRange;
+            const [start] = timeRange;
             return formattedTime === start;
           })) {
             alert("This slot is blocked, please select a white slot.");
           }
           else {
-            if (existInReservedSlots) {
-              // const removeReservedSlots = reservedSlots.filter(date => convertToDate(date).getTime() !== slotInfo.start.getTime() && endTime.getTime() !== convertToDate(date).getTime()
-              // )
-              // setReservedSlots(removeReservedSlots)
-            }
-            else {
+            if (!existInReservedSlots) {
               if (selectedSlots.length < 6) {
                 setSelectedSlots([...selectedSlots, { start: startEventTime.toDate(), end: endEventTime.toDate(), subject: selectedTutor.subject }])
                 setIsModalOpen(true);
@@ -434,16 +468,12 @@ const ShowCalendar = ({
               else {
                 toast.error('You can not Place Hold more than 6 Slots! ')
               }
-              // handleCreateEvent({ id: uuidv4(), type: "reserved", start: startEventTime.toDate(), end: endEventTime.toDate(), name: "Jhony", createdAt: new Date() })
             }
           }
         }
       }
 
       return;
-    } else if (slotInfo.action === "click") {
-      if (isStudentLoggedIn) {
-      }
     }
   };
 
@@ -452,6 +482,7 @@ const ShowCalendar = ({
     setIsModalOpen(true);
   };
 
+  console.log(disableDateRange, 'value')
   const slotPropGetter = useCallback((date) => {
     if (date && moment(date).isSame(moment(date), 'day')) {
       const formattedTime = moment(date).format('h:00 a');
@@ -467,12 +498,25 @@ const ShowCalendar = ({
       // tutor checks
       const existInEnableSlots = enableHourSlots?.some((dateTime) => {
         const slotUTCTime = moment.utc(date);
+        // console.log(timeZone, 'ss')
         const enabledSlotUTCTime = moment(convertToDate(dateTime));
         if (moment.utc(date).isSame(moment(convertToDate(dateTime))))
-          console.log(date, slotUTCTime.format(), dateTime, 'date');
-        // return convertToDate(dateTime).getTime() === date.getTime()
-        return slotUTCTime.isSame(enabledSlotUTCTime)
+          // console.log(date, slotUTCTime.format(), dateTime, 'date');
+          // return convertToDate(dateTime).getTime() === date.getTime()
+          return slotUTCTime.isSame(enabledSlotUTCTime)
       })
+      const twentyFourHoursAgo = moment(date).subtract(24, 'hours');
+      const exist = disableDates.some(slot => moment(slot).isBetween(twentyFourHoursAgo, moment(date)))
+      if (exist) console.log(disableDates, exist, moment.utc(date).format())
+      const existInDisableDateRange = disableDateRange.some(slot => {
+        const startMoment = moment.utc(slot.start)
+        const endMoment = moment.utc(slot.end)
+        const dateMoment = moment.utc(date)
+
+        // console.log(dateMoment.format(), (startMoment).format(), endMoment.format(), 'defre');
+        return dateMoment.isBetween(startMoment, endMoment, null, '[]')
+      });
+      // if (existInDisableDateRange) console.log(moment.utc(date).format(), true)
       const existInDisableHourSlots = disableHourSlots?.some((dateTime) => convertToDate(dateTime).getTime() === date.getTime());
       const existInDefaultHours = disabledHours?.some(slot => {
         const startTime = moment('9:00 PM', 'h:mm A');
@@ -507,7 +551,7 @@ const ShowCalendar = ({
       else if (existInDisableHourSlots) {
         return {
           style: {
-            backgroundColor: disableColor
+            backgroundColor: disableColor || 'red'
           },
           className: 'disable-slot',
         }
@@ -525,13 +569,18 @@ const ShowCalendar = ({
         };
       }
       else if (existInEnableSlots) {
-        console.log('true')
         return {
           // style: {
           //   backgroundColor: "orange",
-          //   color: "yellow"
           // },
           className: 'enable-slot',
+        }
+      }
+      else if (exist) {
+        return {
+          style: {
+            backgroundColor: disableColor
+          }
         }
       }
 
@@ -555,7 +604,8 @@ const ShowCalendar = ({
         const storedMomentDate = moment(storeDate);
         return storedMomentDate.isSame(slotDateMoment, 'day')
       })
-      if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays?.includes(dayName) && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+      if (date.getTime() >= (new Date()).getTime() && disableWeekDays && disableWeekDays?.includes(dayName)
+        && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
         return {
           style: {
             backgroundColor: disableColor

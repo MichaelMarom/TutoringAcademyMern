@@ -9,6 +9,8 @@ import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperF
 import { useDispatch } from 'react-redux';
 import { setShortlist } from '../../redux/student_store/shortlist';
 import { setStudent } from '../../redux/student_store/studentData';
+import Tooltip from '../common/ToolTip';
+import { FaInfoCircle } from 'react-icons/fa';
 
 const StudentSetup = () => {
     const dispatch = useDispatch()
@@ -77,6 +79,7 @@ const StudentSetup = () => {
                     set_cell(data.Cell)
                     set_state(data.State)
 
+                    set_parentConsent(data.ParentConsent)
                     set_city(data.City)
                     set_country(data.Country)
                     set_timeZone(data.GMT)
@@ -108,6 +111,8 @@ const StudentSetup = () => {
         }
         fetchStudentSetup();
     }, [student])
+
+    console.log(parentConsent, typeof (parentConsent), 'consent');
 
     useEffect(() => {
         let id = window.localStorage.getItem('student_user_id') !== null ? window.localStorage.getItem('student_user_id') : null
@@ -312,28 +317,6 @@ const StudentSetup = () => {
         }
     }
 
-    //}, [])
-
-
-
-    let handleEmail = e => {
-        socket.emit('email', e.target.value);
-        socket.on('email', (data) => {
-            if (!data) {
-                e.target.style.border = '1px solid red';
-                e.target.nextElementSibling?.setAttribute('id', 'err-mssg');
-
-                set_email_isVerified(false)
-            } else {
-                e.target.style.border = '1px solid #000';
-                e.target.nextElementSibling?.removeAttribute('id');
-                set_email_isVerified(true)
-
-            }
-        })
-
-    }
-
     useEffect(() => {
 
         get_countries()
@@ -462,10 +445,6 @@ const StudentSetup = () => {
                                 <input onInput={e => set_sname(e.target.value)} placeholder='Last Name' value={sname} type="text" id="sname" style={{ float: 'right' }} />
                             </div>
 
-                            {/*<div  style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap', pointerEvents: 'none'}}>
-                                <input onInput={ e => set_uname(e.target.value)} placeholder='Screen Name' type="text" id="sname" style={{float: 'right'}} />
-    </div>*/}
-
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
                                 <input
                                     placeholder='Email'
@@ -505,8 +484,6 @@ const StudentSetup = () => {
                                 </select>
                             </div>
 
-
-
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
                                 <select onInput={e => set_grade(e.target.value)} id="state" value={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
                                     {
@@ -517,23 +494,30 @@ const StudentSetup = () => {
 
                             </div>
 
-
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
+                            <div style={{
+                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'
+                            }}>
 
                                 <h5>Parent video consent</h5>
-                                <div style={{ display: 'flex', flexDirection: 'row', }}>
-                                    <div className='input-cnt' style={{ height: '20px', width: '70px' }}>
-                                        <label style={{ height: '20px', width: '20px' }} htmlFor='parentConsentYes'>Yes</label>
-                                        &nbsp;&nbsp;
-                                        <input className='parentConsentOption' onInput={e => set_parentConsent(true)} data-type='radio' name='parentConsent' style={{ height: '20px', width: '20px', marginTop: '10px' }} id='parentConsentYes' type='radio' />
-                                    </div>
-
-                                    <div className='input-cnt' style={{ height: '20px', width: '70px' }}>
-
-                                        <label style={{ height: '20px', width: '20px' }} htmlFor='parentConsentNo'>No</label>
-                                        &nbsp;&nbsp;
-                                        <input className='parentConsentOption' onInput={e => set_parentConsent(false)} data-type='radio' name='parentConsent' style={{ height: '20px', width: '20px', marginTop: '10px' }} id='parentConsentNo' type='radio' />
-                                    </div>
+                                <div className="form-check form-switch d-flex gap-3" style={{ fontSize: "16px " }}>
+                                    <input
+                                        className="form-check-input "
+                                        type="checkbox"
+                                        role="switch"
+                                        style={{
+                                            width: "30px",
+                                            height: "15px"
+                                        }}
+                                        onChange={() => { console.log('hit'); set_parentConsent(!parentConsent) }}
+                                        checked={parentConsent === "true" || parentConsent === true}
+                                    />
+                                    <label className="form-check-label mr-3" for="flexSwitchCheckChecked" >
+                                        Parent(s) consent to record lesson.
+                                    </label>
+                                    <Tooltip text="Enable this switch to consent video recording.The video clip stored for 30 days, then be deleted from The academy servers." width="200px">
+                                        <FaInfoCircle size={18} color="#0096ff" />
+                                    </Tooltip>
                                 </div>
                             </div>
 

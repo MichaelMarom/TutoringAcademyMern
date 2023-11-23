@@ -24,7 +24,7 @@ const StudentCalenderScheduling = () => {
 
   useEffect(() => {
     if (!selectedTutor.academyId) {
-      toast.warning("Please click 'View Schedule' to continue booking sessions!")
+      toast.warning("Please click 'Book Lesson' button to view tutor's schedule!")
       navigate('/student/short-list')
     };
   }, [selectedTutor])

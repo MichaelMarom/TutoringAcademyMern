@@ -350,8 +350,6 @@ const TutorCollabTools = () => {
             isDrawing = false;
         }) 
 
-        
-
         function clearCanvas(e) {
             ctx.clearRect(0, 0, canvas.width, canvas.height)
         }
@@ -395,6 +393,15 @@ const TutorCollabTools = () => {
             r.readAsDataURL(file[0]);
 
         //}
+    }
+
+    let handleDocChange = e => {
+
+        let newCanvas = document.createElement('canvas')
+        const newCanvasCtx = newCanvas.getContext('2d');
+
+        
+
     }
 
     let handleFillColor = e => {
@@ -653,7 +660,7 @@ const TutorCollabTools = () => {
 
                 <> 
 
-                    <input style={{display: 'none'}} type="file" name="doc" id="doc" />
+                    <input style={{display: 'none'}} type="file" onChange={handleDocChange} name="doc" id="doc" />
 
                     <input style={{display: 'none'}} accept='image/*' onChange={handleFileChange} type="file" name="photo" id="photo" />
                 </>

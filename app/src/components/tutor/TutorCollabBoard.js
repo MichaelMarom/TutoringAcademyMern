@@ -1,10 +1,12 @@
 import { useState } from "react";
 import TutorAside from "./TutorCollabAside";
-
+import '../../styles/canvas.css'
 const TutorCollabBoard = () => {
     let [shapesCnt, setShapesCnt] = useState('')
     let [penStyle, setPenStyle] = useState('')
     let [thickness, setthickness] = useState('');
+
+    
 
     
     return ( 
@@ -16,7 +18,7 @@ const TutorCollabBoard = () => {
 
                 
 
-                <canvas id="drawPlace" style={{border:'1px solid #eee'}}>
+                <canvas id="drawPlace" className="drawPlace" style={{border:'1px solid #eee'}}>
             
                 </canvas>
             </div>

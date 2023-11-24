@@ -155,7 +155,7 @@ const TutorSetup = () => {
   useEffect(() => {
     let next = document.querySelector(".tutor-next");
     if (next && next.hasAttribute("id")) {
-      next.removeAttribute("id");
+      next?.removeAttribute("id");
     }
   }, []);
 
@@ -170,7 +170,7 @@ const TutorSetup = () => {
     document.querySelector("#tutor-save").onclick = async () => {
       document
         .querySelector(".save-overlay")
-        .setAttribute("id", "save-overlay");
+        ?.setAttribute("id", "save-overlay");
       let response = await saver();
       if (response.status === 200) {
         // window.localStorage.setItem(
@@ -184,30 +184,30 @@ const TutorSetup = () => {
         dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
         alert(`Your New Screen Name Is ${response.data[0]?.TutorScreenname}`);
         setTimeout(() => {
-          document.querySelector(".save-overlay").removeAttribute("id");
+          document.querySelector(".save-overlay")?.removeAttribute("id");
         }, 1000);
 
         document
           .querySelector(".tutor-popin")
-          .setAttribute("id", "tutor-popin");
+          ?.setAttribute("id", "tutor-popin");
         document.querySelector(".tutor-popin").style.background = "#000";
         document.querySelector(".tutor-popin").innerHTML = "Success";
         setTimeout(() => {
-          document.querySelector(".tutor-next").setAttribute("id", "next");
-          document.querySelector(".tutor-popin").removeAttribute("id");
+          document.querySelector(".tutor-next")?.setAttribute("id", "next");
+          document.querySelector(".tutor-popin")?.removeAttribute("id");
         }, 5000);
       } else {
         setTimeout(() => {
-          document.querySelector(".save-overlay").removeAttribute("id");
+          document.querySelector(".save-overlay")?.removeAttribute("id");
         }, 1000);
 
         document
           .querySelector(".tutor-popin")
-          .setAttribute("id", "tutor-popin");
+          ?.setAttribute("id", "tutor-popin");
         document.querySelector(".tutor-popin").style.background = "red";
         document.querySelector(".tutor-popin").innerHTML = "Failed";
         setTimeout(() => {
-          document.querySelector(".tutor-popin").removeAttribute("id");
+          document.querySelector(".tutor-popin")?.removeAttribute("id");
         }, 5000);
       }
     };
@@ -500,10 +500,10 @@ const TutorSetup = () => {
 
     if (charLength < length) {
       elem.style.border = "1px solid black";
-      elem.nextElementSibling.removeAttribute("id");
+      elem.nextElementSibling?.removeAttribute("id");
     } else {
       elem.style.border = "1px solid red";
-      elem.nextElementSibling.setAttribute("id", "inputValidator");
+      elem.nextElementSibling?.setAttribute("id", "inputValidator");
     }
   };
 

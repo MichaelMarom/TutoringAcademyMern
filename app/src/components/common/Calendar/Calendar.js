@@ -9,13 +9,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
 import CustomEvent from "./Event";
 import Loading from '../Loading'
-import { getStudentBookings, postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
+import {  postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
 import { isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
 import CustomAgenda from "./CustomAgenda";
 import { useLocation } from 'react-router-dom';
 
 import '../../../styles/common.css';
-import SlotPill from "../../student/SlotPill";
 moment.locale("en-GB");
 
 const localizer = momentLocalizer(moment);

@@ -132,7 +132,7 @@ function TutorCalenderSidebar({
                         day, or the specific hour for that day.11
                     </div>
                     <div className='text-end'>
-                        <div className='highlight'>Below legend show what each color represent in calender.</div>
+                        <div className='highlight'>Tutor Calendar Color legend.</div>
                         <ul className="list-group">
                             <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
                                 fontSize: "12px",

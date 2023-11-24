@@ -8,7 +8,7 @@ const TutorAcct = () => {
         let next = document.querySelector('.tutor-next')
 
         if(next && next.hasAttribute('id')){
-            next.removeAttribute('id');
+            next?.removeAttribute('id');
         }
     }, [])
 
@@ -31,9 +31,9 @@ const TutorAcct = () => {
 
         let value = e.target.value;
         if(value === 'Bank'){
-            bank_elem.setAttribute('id', 'tutor-bank-info')
+            bank_elem?.setAttribute('id', 'tutor-bank-info')
         }else{
-            bank_elem.removeAttribute('id')
+            bank_elem?.removeAttribute('id')
         }
     }
 
@@ -62,23 +62,23 @@ const TutorAcct = () => {
 
         if(payment_option === 'Bank'){
             if(negative_agent.length === 0){
-                document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
                 let response = await upload_form_four(start_day,acct_name,acct_type,bank_name,acct,routing,ssh,accumulated_hrs,commission,total_earning,payment_option,user_id);
                 if(response){
                     setTimeout(() => {
-                        document.querySelector('.save-overlay').removeAttribute('id');
+                        document.querySelector('.save-overlay')?.removeAttribute('id');
                     }, 1000);
     
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                     document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
                     setTimeout(() => {
-                        document.querySelector('.tutor-popin').removeAttribute('id');
+                        document.querySelector('.tutor-popin')?.removeAttribute('id');
                     }, 2000);
                 }else{
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                     document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
                     setTimeout(() => {
-                        document.querySelector('.tutor-popin').removeAttribute('id');
+                        document.querySelector('.tutor-popin')?.removeAttribute('id');
                     }, 2000);
     
                 }
@@ -87,24 +87,24 @@ const TutorAcct = () => {
         }else{
             console.log(negative_agent.length, positive_agent.length)
             if(negative_agent.length === 0 && positive_agent.length === 7){
-                document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
                 let response = await upload_form_four(start_day,acct_name,acct_type,bank_name,acct,routing,ssh,accumulated_hrs,commission,total_earning,payment_option,user_id);
                 if(response){
                     setTimeout(() => {
-                        document.querySelector('.save-overlay').removeAttribute('id');
+                        document.querySelector('.save-overlay')?.removeAttribute('id');
                     }, 1000);
     
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                     document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
                     setTimeout(() => {
                         
-                        document.querySelector('.tutor-popin').removeAttribute('id');
+                        document.querySelector('.tutor-popin')?.removeAttribute('id');
                     }, 2000);
                 }else{
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                     document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
                     setTimeout(() => {
-                        document.querySelector('.tutor-popin').removeAttribute('id');
+                        document.querySelector('.tutor-popin')?.removeAttribute('id');
                     }, 2000);
     
                 }

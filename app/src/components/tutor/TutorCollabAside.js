@@ -45,10 +45,10 @@ const TutorAside = () => {
     let handleVideoResize = e => {
         let element = document.querySelector('.TutorAsideVideoCnt');
         if (element.hasAttribute('id')) {
-            element.removeAttribute('id')
+            element?.removeAttribute('id')
             setScreenType(screenLarge)
         } else {
-            element.setAttribute('id', 'TutorAsideVideoCnt')
+            element?.setAttribute('id', 'TutorAsideVideoCnt')
             setScreenType(screenNormal)
 
         }
@@ -67,9 +67,9 @@ const TutorAside = () => {
         })*/
 
         if (e.target.hasAttribute('id')) {
-            e.target.removeAttribute('id')
+            e.target?.removeAttribute('id')
         } else {
-            e.target.setAttribute('id', 'collab-action')
+            e.target?.setAttribute('id', 'collab-action')
         }
 
 
@@ -86,9 +86,9 @@ const TutorAside = () => {
         })*/
 
         if (e.target.hasAttribute('id')) {
-            e.target.removeAttribute('id')
+            e.target?.removeAttribute('id')
         } else {
-            e.target.setAttribute('id', 'collab-action')
+            e.target?.setAttribute('id', 'collab-action')
         }
 
     }

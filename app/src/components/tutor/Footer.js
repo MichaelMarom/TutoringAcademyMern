@@ -27,8 +27,8 @@ const Footer = () => {
                 navigate(`tutor/${urls[new_index]}`)
                 let h = [...document.querySelector('#tutor-header-menus').children];
                 let aElem = h.filter(item => item.hasAttribute('id'))[0]
-                aElem.removeAttribute('id')
-                aElem.nextElementSibling.setAttribute('id', 'tutor-tab-header-list-active')
+                aElem?.removeAttribute('id')
+                aElem.nextElementSibling?.setAttribute('id', 'tutor-tab-header-list-active')
             }else{
                 alert('Please Save Data')
             }
@@ -53,8 +53,8 @@ const Footer = () => {
             navigate(-1)
             let h = [...document.querySelector('#tutor-header-menus').children];
             let aElem = h.filter(item => item.hasAttribute('id'))[0]
-            aElem.removeAttribute('id')
-            aElem.previousElementSibling.setAttribute('id', 'tutor-tab-header-list-active')
+            aElem?.removeAttribute('id')
+            aElem.previousElementSibling?.setAttribute('id', 'tutor-tab-header-list-active')
         } 
 
         setTimeout(() => {

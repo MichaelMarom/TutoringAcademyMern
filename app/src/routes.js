@@ -16,6 +16,8 @@ import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
 import { setShortlist } from "./redux/student_store/shortlist";
+import { get_my_data } from "./axios/student";
+import { setStudent } from "./redux/student_store/studentData";
 
 const App = () => {
   let location = useLocation();
@@ -40,6 +42,11 @@ const App = () => {
 
   useEffect(() => {
     dispatch(setShortlist())
+    const getStudentDetails = async () => {
+      const res = await get_my_data(localStorage.getItem('student_user_id'))
+      dispatch(setStudent(res[1][0][0]))
+    }
+    getStudentDetails()
   }, [localStorage.getItem('student_user_id')])
 
 

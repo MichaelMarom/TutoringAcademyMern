@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { get_countries, get_gmt, get_state } from '../../axios/tutor';
 import { socket } from '../../socket';
-import { get_student_grade, get_student_setup, get_student_setup_by_userId, get_student_short_list, upload_form_one } from '../../axios/student';
+import { get_my_data, get_student_grade, get_student_setup, get_student_setup_by_userId, get_student_short_list, upload_form_one } from '../../axios/student';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { useDispatch } from 'react-redux';
 import { setShortlist } from '../../redux/student_store/shortlist';
+import { setStudent } from '../../redux/student_store/studentData';
 
 const StudentSetup = () => {
     const dispatch = useDispatch()
@@ -57,11 +58,12 @@ const StudentSetup = () => {
     let saver = async () => {
 
         let response = await upload_form_one(fname, mname, sname, user[0].email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, user[0].SID)
-
+        const res = await get_my_data(localStorage.getItem('student_user_id'));
+        dispatch(setStudent(res[1][0][0]))
         return response;
     }
 
-  
+
 
     useEffect(() => {
         const AcademyId = localStorage.getItem('student_user_id')
@@ -139,7 +141,7 @@ const StudentSetup = () => {
         let next = document.querySelector('.next')
 
         if (next && next.hasAttribute('id')) {
-            next.removeAttribute('id');
+            next?.removeAttribute('id');
         }
     }, [])
 
@@ -233,12 +235,12 @@ const StudentSetup = () => {
                     if (item.value === '') {
 
                         if (item.dataset.type !== 'file') {
-                            item.setAttribute('id', 'err-border');
+                            item?.setAttribute('id', 'err-border');
                         }
                         bool_list.push(false)
                     } else {
                         if (item.dataset.type !== 'file') {
-                            item.removeAttribute('id');
+                            item?.removeAttribute('id');
                         }
 
                         bool_list.push(true)
@@ -256,7 +258,7 @@ const StudentSetup = () => {
             console.log(result, 'booooool')
 
             if (result.length === 0) {
-                document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
                 let response = await saver();
                 if (response.bool) {
 
@@ -267,42 +269,42 @@ const StudentSetup = () => {
                         window.localStorage.setItem('student_screen_name', response.screen_name);
                         alert(`Your New Screen Name Is ${response.screen_name}`)
                         setTimeout(() => {
-                            document.querySelector('.save-overlay').removeAttribute('id');
+                            document.querySelector('.save-overlay')?.removeAttribute('id');
                         }, 1000);
 
-                        document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                         document.querySelector('.tutor-popin').style.background = '#000';
                         document.querySelector('.tutor-popin').innerHTML = response.mssg
                         setTimeout(() => {
-                            document.querySelector('.next').setAttribute('id', 'next')
-                            document.querySelector('.tutor-popin').removeAttribute('id');
+                            document.querySelector('.next')?.setAttribute('id', 'next')
+                            document.querySelector('.tutor-popin')?.removeAttribute('id');
                         }, 5000);
 
                     } else {
                         setTimeout(() => {
-                            document.querySelector('.save-overlay').removeAttribute('id');
+                            document.querySelector('.save-overlay')?.removeAttribute('id');
                         }, 1000);
 
-                        document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                         document.querySelector('.tutor-popin').style.background = '#000';
                         document.querySelector('.tutor-popin').innerHTML = response.mssg
                         setTimeout(() => {
-                            document.querySelector('.next').setAttribute('id', 'next')
-                            document.querySelector('.tutor-popin').removeAttribute('id');
+                            document.querySelector('.next')?.setAttribute('id', 'next')
+                            document.querySelector('.tutor-popin')?.removeAttribute('id');
                         }, 5000);
                     }
 
 
                 } else {
                     setTimeout(() => {
-                        document.querySelector('.save-overlay').removeAttribute('id');
+                        document.querySelector('.save-overlay')?.removeAttribute('id');
                     }, 1000);
 
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                     document.querySelector('.tutor-popin').style.background = 'red';
                     document.querySelector('.tutor-popin').innerHTML = response.mssg
                     setTimeout(() => {
-                        document.querySelector('.tutor-popin').removeAttribute('id');
+                        document.querySelector('.tutor-popin')?.removeAttribute('id');
                     }, 5000);
 
                 }
@@ -342,12 +344,12 @@ const StudentSetup = () => {
         socket.on('email', (data) => {
             if (!data) {
                 e.target.style.border = '1px solid red';
-                e.target.nextElementSibling.setAttribute('id', 'err-mssg');
+                e.target.nextElementSibling?.setAttribute('id', 'err-mssg');
 
                 set_email_isVerified(false)
             } else {
                 e.target.style.border = '1px solid #000';
-                e.target.nextElementSibling.removeAttribute('id');
+                e.target.nextElementSibling?.removeAttribute('id');
                 set_email_isVerified(true)
 
             }

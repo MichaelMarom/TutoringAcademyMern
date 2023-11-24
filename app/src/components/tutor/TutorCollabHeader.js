@@ -115,9 +115,9 @@ const TutorCollabHeader = () => {
         setPanelChangeBool(!PanelChangeBool)
         let tutorAsideElem = document.querySelector('.TutorAside');
         if(tutorAsideElem.hasAttribute('id')){
-            tutorAsideElem.removeAttribute('id')
+            tutorAsideElem?.removeAttribute('id')
         }else{
-            tutorAsideElem.setAttribute('id', 'TutorAside')
+            tutorAsideElem?.setAttribute('id', 'TutorAside')
 
         }
     }

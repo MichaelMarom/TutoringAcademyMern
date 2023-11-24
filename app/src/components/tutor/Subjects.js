@@ -35,7 +35,7 @@ const Subjects = () => {
         let next = document.querySelector('.tutor-next')
 
         if (next && next.hasAttribute('id')) {
-            next.removeAttribute('id');
+            next?.removeAttribute('id');
         }
     }, [])
 
@@ -137,15 +137,15 @@ const Subjects = () => {
         let elem = e.currentTarget;
         //let tables = [...document.querySelectorAll('table')];
         //let active_table = tables.filter(item => !item.hasAttribute('id'));
-        //active_table[0].setAttribute('id', 'hide_table');
+        //active_table[0]?.setAttribute('id', 'hide_table');
         let index_of_elem = [...elem.parentElement.children].indexOf(elem);
         getSubject(index_of_elem + 1);
-        //tables[index_of_elem].removeAttribute('id');
+        //tables[index_of_elem]?.removeAttribute('id');
 
 
         let deactivedElem = [...elem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
-        deactivedElem.removeAttribute('id');
-        elem.setAttribute('id', 'table_options_menu')
+        deactivedElem?.removeAttribute('id');
+        elem?.setAttribute('id', 'table_options_menu')
 
 
 
@@ -204,7 +204,7 @@ const Subjects = () => {
                 let file = values.map((item, index, array) => {
                     // console.log(item[7].children, 'item')
                     if (`${item[7].children[0]?.value}.${item[7].children[1]?.value}` !== '00.00') {
-                        //document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+                        //document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
                         let doc = { faculty: item[1].dataset.src, course: item[1].innerHTML, rate: "$" + item[7].children[0]?.value + "." + item[7].children[1]?.value }
                         // item[7].children[0]?.style.border = '1px solid #000';
                         // item[7].children[1]?.style.border = '1px solid #000';
@@ -229,20 +229,20 @@ const Subjects = () => {
                         .then((result) => {
                             if (result) {
                                 setTimeout(() => {
-                                    document.querySelector('.save-overlay').removeAttribute('id');
+                                    document.querySelector('.save-overlay')?.removeAttribute('id');
                                 }, 1000);
 
-                                document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                                 document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
                                 setTimeout(() => {
-                                    document.querySelector('.tutor-popin').removeAttribute('id');
+                                    document.querySelector('.tutor-popin')?.removeAttribute('id');
                                 }, 2000);
                             } else {
 
-                                document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                                 document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
                                 setTimeout(() => {
-                                    document.querySelector('.tutor-popin').removeAttribute('id');
+                                    document.querySelector('.tutor-popin')?.removeAttribute('id');
                                 }, 2000);
 
                             }
@@ -254,7 +254,7 @@ const Subjects = () => {
                 if (errCheck.length > 0) {
                     alert('Please Ensure The Rate Field Is At Least $1')
                 } else {
-                    document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+                    document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
                     upload_agent(rate_list, AcademyId)
                 }
 
@@ -292,23 +292,23 @@ const Subjects = () => {
                 .then((result) => {
                     if (result) {
                         setTimeout(() => {
-                            document.querySelector('.save-overlay').removeAttribute('id');
+                            document.querySelector('.save-overlay')?.removeAttribute('id');
                         }, 1000);
 
-                        document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                         document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
                         setTimeout(() => {
-                            document.querySelector('.tutor-popin').removeAttribute('id');
+                            document.querySelector('.tutor-popin')?.removeAttribute('id');
                         }, 2000);
                         let list = [...document.querySelectorAll('#new-sub')]
                         let validate = list.map(item => item.value = '');
                         document.querySelector('#new_sub_check_box').checked = false
                     } else {
 
-                        document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                         document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
                         setTimeout(() => {
-                            document.querySelector('.tutor-popin').removeAttribute('id');
+                            document.querySelector('.tutor-popin')?.removeAttribute('id');
                         }, 2000);
 
                     }
@@ -332,7 +332,7 @@ const Subjects = () => {
             console.log()
             let list = [...document.querySelectorAll('#new-sub')]
             list.map(item => item.style.border = '1px solid black')
-            document.querySelector('.save-overlay').setAttribute('id', 'save-overlay');
+            document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay');
             saver()
 
         }

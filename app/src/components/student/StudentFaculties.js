@@ -53,8 +53,8 @@ const StudentFaculties = () => {
         // let clickedElem = e.currentTarget;
         // let deactivedElem = [...clickedElem?.parentElement.children ? clickedElem?.parentElement.children : []].filter(item => item.hasAttribute('id'))[0];
 
-        // deactivedElem.removeAttribute('id');
-        // clickedElem.setAttribute('id', 'form-subject-data-tabs-list-active')
+        // deactivedElem?.removeAttribute('id');
+        // clickedElem?.setAttribute('id', 'form-subject-data-tabs-list-active')
     }
 
     let handle_scroll_right = () => {
@@ -93,7 +93,7 @@ const StudentFaculties = () => {
     useEffect(() => {
         // document.querySelector('#student-save').onclick = () => {
         if (checkBoxClicked.type?.length) {
-            document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+            document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
             let list = [...document.querySelectorAll('#student-tutor')];
             let doc = list.filter(item =>
                 item.children[0].checked === true
@@ -107,27 +107,27 @@ const StudentFaculties = () => {
 
                 if (res) {
                     setTimeout(() => {
-                        document.querySelector('.save-overlay').removeAttribute('id');
+                        document.querySelector('.save-overlay')?.removeAttribute('id');
                     }, 1000);
                     getShortlist()
 
                     toast.success("Your selected record was uploaded to your short list")
                     setTimeout(() => {
                         if (document.querySelector('.tutor-popin')) {
-                            document.querySelector('.tutor-popin').removeAttribute('id');
+                            document.querySelector('.tutor-popin')?.removeAttribute('id');
                         }
                     }, 5000);
 
                 } else {
                     setTimeout(() => {
-                        document.querySelector('.save-overlay').removeAttribute('id');
+                        document.querySelector('.save-overlay')?.removeAttribute('id');
                     }, 1000);
 
-                    document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                     document.querySelector('.tutor-popin').style.background = 'red';
                     document.querySelector('.tutor-popin').innerHTML = res.mssg
                     setTimeout(() => {
-                        document.querySelector('.tutor-popin').removeAttribute('id');
+                        document.querySelector('.tutor-popin')?.removeAttribute('id');
                     }, 5000);
                 }
             }

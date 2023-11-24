@@ -28,13 +28,13 @@ const Accounting = () => {
 
                 <ul id="tutor-header-menus" class="header">
                     <li id='tutor-acct-tab-menu-list-active' onClick={e => {
-                        e.currentTarget.nextElementSibling.removeAttribute('id')
-                        e.currentTarget.setAttribute('id', 'tutor-acct-tab-menu-list-active')
+                        e.currentTarget.nextElementSibling?.removeAttribute('id')
+                        e.currentTarget?.setAttribute('id', 'tutor-acct-tab-menu-list-active')
                         setActiveSubTab(<TutorAcct />)
                     }}><a>Account Settings</a></li>
                     <li onClick={e => {
-                        e.currentTarget.previousElementSibling.removeAttribute('id')
-                        e.currentTarget.setAttribute('id', 'tutor-acct-tab-menu-list-active')
+                        e.currentTarget.previousElementSibling?.removeAttribute('id')
+                        e.currentTarget?.setAttribute('id', 'tutor-acct-tab-menu-list-active')
                         setActiveSubTab(<AcctSetup />)
                     }}><a>Tutor Account</a></li>
                 </ul>

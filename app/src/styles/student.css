@@ -414,3 +414,9 @@
     box-shadow: 0 0 10px green;
   }
 }
+@keyframes blinking_red {
+  50% {
+    border: 1px solid red; 
+    box-shadow: 0 0 10px red;
+  }
+}

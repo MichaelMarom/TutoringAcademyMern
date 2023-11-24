@@ -12,8 +12,8 @@ const StudentMarketPlace = () => {
 
         let src =  elem.dataset.src;
 
-        [...elem.parentElement.children].filter(item => item.hasAttribute('id'))[0].removeAttribute('id')
-        elem.setAttribute('id', 'student-market-place-header-active');
+        [...elem.parentElement.children].filter(item => item.hasAttribute('id'))[0]?.removeAttribute('id')
+        elem?.setAttribute('id', 'student-market-place-header-active');
 
         if(src === 'ads'){
             setActiveTab(<Ads />)

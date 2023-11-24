@@ -53,36 +53,36 @@ const TutorTable = () => {
     
 
     let acceptNewSubject = ( id,subject,AcademyId) => {
-        document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+        document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
 
         post_new_subject(id,subject,AcademyId)
         .then((response) => {
 
             if(response.bool){
                 setTimeout(() => {
-                    document.querySelector('.save-overlay').removeAttribute('id');
+                    document.querySelector('.save-overlay')?.removeAttribute('id');
                 }, 1000);
     
-                document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                 document.querySelector('.tutor-popin').style.background = '#000';
                 document.querySelector('.tutor-popin').innerHTML = response.mssg
                 setTimeout(() => {
-                    //document.querySelector('.tutor-next').setAttribute('id', 'next')
-                    document.querySelector('.tutor-popin').removeAttribute('id');
+                    //document.querySelector('.tutor-next')?.setAttribute('id', 'next')
+                    document.querySelector('.tutor-popin')?.removeAttribute('id');
                 }, 5000);
 
                 
 
             }else{
                 setTimeout(() => {
-                    document.querySelector('.save-overlay').removeAttribute('id');
+                    document.querySelector('.save-overlay')?.removeAttribute('id');
                 }, 1000);
                 
-                document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                 document.querySelector('.tutor-popin').style.background = 'red';
                 document.querySelector('.tutor-popin').innerHTML = response.mssg
                 setTimeout(() => {
-                    document.querySelector('.tutor-popin').removeAttribute('id');
+                    document.querySelector('.tutor-popin')?.removeAttribute('id');
                 }, 5000);
 
                 
@@ -96,34 +96,33 @@ const TutorTable = () => {
 
     let declineNewSubject = (subject,AcademyId ) => {
 
-        document.querySelector('.save-overlay').setAttribute('id', 'save-overlay')
+        document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
 
         delete_new_subject(subject,AcademyId)
         .then((response) => {
             if(response.bool){
                 setTimeout(() => {
-                    document.querySelector('.save-overlay').removeAttribute('id');
+                    document.querySelector('.save-overlay')?.removeAttribute('id');
                 }, 1000);
     
-                document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                 document.querySelector('.tutor-popin').style.background = '#000';
                 document.querySelector('.tutor-popin').innerHTML = response.mssg
                 setTimeout(() => {
-                    //document.querySelector('.tutor-next').setAttribute('id', 'next')
-                    document.querySelector('.tutor-popin').removeAttribute('id');
+                    document.querySelector('.tutor-popin')?.removeAttribute('id');
                 }, 5000);
 
                 
             }else{
                 setTimeout(() => {
-                    document.querySelector('.save-overlay').removeAttribute('id');
+                    document.querySelector('.save-overlay')?.removeAttribute('id');
                 }, 1000);
                 
-                document.querySelector('.tutor-popin').setAttribute('id', 'tutor-popin');
+                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
                 document.querySelector('.tutor-popin').style.background = 'red';
                 document.querySelector('.tutor-popin').innerHTML = response.mssg
                 setTimeout(() => {
-                    document.querySelector('.tutor-popin').removeAttribute('id');
+                    document.querySelector('.tutor-popin')?.removeAttribute('id');
                 }, 5000);
 
             }

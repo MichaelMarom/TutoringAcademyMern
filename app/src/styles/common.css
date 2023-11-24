@@ -3,7 +3,7 @@
       opacity: 0.9;
     }
     50% {
-      opacity: 0.3ToastContainer ;
+      opacity: 0.3;
     }
     100% {
       opacity: 1;
@@ -45,4 +45,10 @@
 .rbc-toolbar-label{
     font-size: 20px;
     font-weight: 900;
+}
+
+/**/
+
+.blinking-frame-red{
+  animation: blinking_red 1s infinite;
 }

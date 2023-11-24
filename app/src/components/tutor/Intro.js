@@ -18,7 +18,7 @@ const Intro = () => {
         let next = document.querySelector('.tutor-next')
 
         if (next && next.hasAttribute('id')) {
-            next.removeAttribute('id');
+            next?.removeAttribute('id');
         }
     }, [])
     const [data, useData] = useState([]);

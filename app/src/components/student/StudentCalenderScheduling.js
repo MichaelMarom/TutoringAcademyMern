@@ -69,10 +69,8 @@ const StudentCalenderScheduling = () => {
       return 'text-bg-success';
     } else if (difference >= -6 && difference <= 6) {
       return 'text-bg-warning';
-    } else if (difference >= -7 && difference <= 7) {
-      return 'text-bg-danger';
     } else {
-      return 'text-bg-gray';
+      return 'text-bg-danger blinking-frame-red';
     }
   };
 
@@ -113,8 +111,8 @@ const StudentCalenderScheduling = () => {
           </div>
 
           <div className='col-4'>
-            <h5 className={`d-inline mr-2 card ${getTimeDifferenceClass(calculateTimeDifference())} text-bg-success px-1`}>
-              Time zones  Difference: {calculateTimeDifference()}
+            <h5 className={`d-inline mr-2 card ${getTimeDifferenceClass(calculateTimeDifference())} px-1`}>
+              Time zones Difference: {calculateTimeDifference()}
             </h5>
 
           </div>

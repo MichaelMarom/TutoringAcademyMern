@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import StudentLayout from '../../layouts/StudentLayout';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';  // Use moment-timezone instead of moment
+import moment from 'moment-timezone';
 import { get_student_events } from '../../axios/student';
 import CustomEvent from '../../components/common/Calendar/Event';
+import { convertToDate } from '../../components/common/Calendar/Calendar';
 
-const localizer = momentLocalizer(moment);
 
 export const Schedules = () => {
     const studentId = localStorage.getItem("student_user_id");
     const [reservedSlots, setReservedSlots] = useState([]);
     const [bookedSlots, setBookedSlots] = useState([]);
+
+    useEffect(() => {
+        moment.tz.setDefault('Asia/Karachi');
+    }, []);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -24,7 +28,16 @@ export const Schedules = () => {
         fetchEvents();
     }, [])
 
-    const studentTimeZone = 'GMT+5';
+    const convertToGmt = (date) => {
+        const karachiTime = moment().tz('Asia/Karachi');
+
+        const formattedTime = karachiTime.format('YYYY-MM-DD HH:mm:ss');
+
+        console.log(`Current time in Asia/Karachi: ${formattedTime}`);
+        let updatedDate = moment(convertToDate(date));
+        return convertToDate(date);
+    };
+
     const eventPropGetter = (event) => {
         if (event.type === 'reserved') {
             return {
@@ -48,6 +61,8 @@ export const Schedules = () => {
         }
         return {};
     };
+
+    const localizer = momentLocalizer(moment);
     return (
         <StudentLayout showLegacyFooter={false}>
             <h4 className='text-center m-3'>Your Schedule</h4>
@@ -56,8 +71,8 @@ export const Schedules = () => {
                     localizer={localizer}
                     events={(reservedSlots.concat(bookedSlots)).map((event) => ({
                         ...event,
-                        start: moment.tz(event.start, studentTimeZone).toDate(),
-                        end: moment.tz(event.end, studentTimeZone).toDate(),
+                        start: convertToGmt(event.start),
+                        end: convertToGmt(event.end),
                     }))}
                     components={{
                         event: event => (

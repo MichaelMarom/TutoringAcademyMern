@@ -89,6 +89,12 @@ const Ads = () => {
                     <textarea style={{width: '50%', height: '100px', marginLeft: '20%', marginTop: '.5%'}}>
 
                     </textarea>
+
+                    <div className="input-cnt" >
+                        <label htmlFor="">Ads Header</label>
+                        
+                        <input  defaultValue={lang} type="text" name="" id="Ad" />
+                    </div>
                    
                 </div>
 
@@ -99,15 +105,13 @@ const Ads = () => {
                 <br />
 
                 <div className="student-market-place-body">
+
+                    
                     
 
                     <div className="student-market-place-body-form">
 
-                        <div className="input-cnt">
-                            <label htmlFor="">Ads Header</label>
-                         
-                            <input defaultValue={lang} type="text" name="" id="Ad" />
-                        </div>
+                        
                         <div className="input-cnt">
                             <label htmlFor="">Tutor Screen ID</label>
                             <input defaultValue={screen_name} type="text" name="" id="Ad" />
@@ -126,7 +130,7 @@ const Ads = () => {
                         
                         
 
-                        <div className="input-cnt" style={{marginBottom: '15px'}}>
+                        {/*<div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Faculty</label>
                             <select onInput={e => setActiveFaculty(e.target.value.split('-')[1])}>
                                 <option value={''}>Select Faculty</option>
@@ -138,7 +142,7 @@ const Ads = () => {
                                     })
                                 }
                             </select>
-                        </div>
+                            </div>*/}
 
                         <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Subject</label>
@@ -182,20 +186,7 @@ const Ads = () => {
 
                         <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Teaching Experience</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-                                    exprience_list.map(item => 
-                                        education[0].EducationalLevelExperience.trim() === item.TutorExperience 
-                                        ?
-                                        <option selected value={item.TutorExperience}>{item.TutorExperience}</option>
-
-                                        :
- 
-                                        <option value={item.TutorExperience}>{item.TutorExperience}</option>
-                                    )
-                                }
-                            </select>
+                            <input type="text" value={education[0].EducationalLevelExperience} />
                         </div>
 
                     </div>
@@ -206,33 +197,16 @@ const Ads = () => {
                        
                         <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Tutor's Certificate</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-                                    certificate_list.map(item => {
-                                        return(
-                                            <option value={item.CertificateType}>{item.CertificateType}</option>
-                                        )
-                                    })
-                                }
-                            </select>
+                            <input type="text" value={education[0].Certificate}  />
                         </div>
                         
 
-                        <div className="input-cnt" style={{marginBottom: '15px'}}>
-                            <label htmlFor="">Tutor's Language</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-                                    
-                                }
-                            </select>
-                        </div>
+                        
                         
                         <div className="input-cnt" style={{marginBottom: '15px'}}>
                             <label htmlFor="">Country</label>
                             
-                            <input  style={{width: '300px'}} min={0} max={12} defaultValue={0} type="number" name="" id="Ad" />
+                            <input  style={{width: '300px'}} value={country} type="number" name="" id="Ad" />
                            
                         </div>
 

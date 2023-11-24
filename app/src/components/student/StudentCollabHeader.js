@@ -99,9 +99,9 @@ const StudentCollabHeader = () => {
     let handleAsidePanel = e => {
         let studentAsideElem = document.querySelector('.StudentAside');
         if(studentAsideElem.hasAttribute('id')){
-            studentAsideElem.removeAttribute('id')
+            studentAsideElem?.removeAttribute('id')
         }else{
-            studentAsideElem.setAttribute('id', 'StudentAside')
+            studentAsideElem?.setAttribute('id', 'StudentAside')
 
         }
     }

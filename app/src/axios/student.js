@@ -264,3 +264,16 @@ export const update_student_shortlist = async (AcademyId, studentId, subject, bo
         return err
     }
 }
+
+export const getBookedSlot = async (AcademyId) => {
+    try{
+
+        let result = await axiosInstance.get('/student/booked-slot', {params: {AcademyId}})
+
+        return result
+        
+    }
+    catch (err){
+        return err
+    }
+}

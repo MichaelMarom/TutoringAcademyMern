@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getBookedSlot } from "../../axios/student";
 
 
 const Header = () => {
+
+    let navigate = useNavigate()
+    let location = useLocation()
     const tabs = [
         { name: 'Introduction', url: 'intro' },
         { name: 'Student Setup', url: 'setup' },
@@ -19,10 +23,41 @@ const Header = () => {
         { name: 'Profile', url: 'profile' },
     ];
 
+    useEffect(() => {
+        getBookedSlot(window.localStorage.getItem('student_user_id'))
+        .then(({data}) => {
+            let book = []
+            data.map(item => {
+                let result = JSON.parse(item.bookedSlots)[0].start;
+                let setDate = new Date(result).getTime()/1000
+                let newDate = new Date().getTime()/1000
+
+                let sec = (newDate - setDate)
+                let min = sec/60;
+
+                if(min <= 3 && min !== 0 ){
+
+                    if(location.pathname.split('/').splice(-1)[0] !== 'collaboration'){
+                        navigate('/student/collaboration')
+                        alert(`You are beeing redirected to your lesson which will begin soon`)
+                    }
+                    
+
+                }
+                
+
+               
+            })
+
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    },[])
+
     let nav = useNavigate()
     let [screen_name, set_screen_name] = useState('')
     const [activeTab, setActiveTab] = useState('')
-    const location = useLocation();
 
     useEffect(() => {
         const element = document.getElementById('student-tab-header-list-active');

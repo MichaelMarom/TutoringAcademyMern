@@ -848,6 +848,32 @@ const post_feedback_questions = async (req, res) => {
     })
 }
 
+function getBookedSlot(req, res) {
+
+    let { AcademyId } = req.query;
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+
+            var poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `
+                    SELECT bookedSlots From StudentBookings WHERE CONVERT(VARCHAR, studentId) = '${AcademyId}'
+                `
+                )
+                console.log(result)
+                res.status(200).send(result.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send(err)
+        }
+
+    })
+}
+
 module.exports = {
     post_feedback_questions,
     update_shortlist,
@@ -856,6 +882,7 @@ module.exports = {
     upload_form_one,
     get_student_setup,
     get_student_grade,
+    getBookedSlot,
     get_tutor_subject,
     get_student_short_list,
     upload_student_short_list,

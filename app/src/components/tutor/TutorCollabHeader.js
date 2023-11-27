@@ -55,13 +55,7 @@ const TutorCollabHeader = () => {
     let [PanelChangeMssg, setPanelChangeMssg] = useState(['Show Video', 'Hide Video'])
     let [PanelChangeBool, setPanelChangeBool] = useState(true)
 
-    useEffect(() => {
-       
-
-    }, [])
-
-   
-
+    
     let handleAsidePanel = e => {
         setPanelChangeBool(!PanelChangeBool)
         let tutorAsideElem = document.querySelector('.TutorAside');

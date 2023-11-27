@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import StudentAside from "./StudentCollabAside";
 
 const StudentCollabBoard = () => {
+
     return ( 
         <>
             <div className="StudentCollabBoard">
@@ -10,7 +12,7 @@ const StudentCollabBoard = () => {
 
                 <canvas id="drawPlace" style={{border:'1px solid #eee'}}>
             
-                </canvas>
+                </canvas> The Lesson will start in 3:00 minutes
             </div>
         </>
      );

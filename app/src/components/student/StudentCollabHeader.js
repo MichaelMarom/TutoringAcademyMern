@@ -4,49 +4,7 @@ import del from '../../images/delete-svgrepo-com.svg';
 import { useLocation, useNavigate } from "react-router-dom";
 import StudentCollabTools from "./StudentCollabTools";
 import { useSelector } from "react-redux";
-import { useTimer } from "react-timer-hook";
-
-
-
-function MyTimer({ expiryTimestamp }) {
-    const {
-      totalSeconds,
-      seconds,
-      minutes,
-      hours,
-      days,
-      isRunning,
-      start,
-      pause,
-      resume,
-      restart,
-    } = useTimer({ expiryTimestamp, onExpire: () => {
-        alert('This lesson was ended. You are directed now to the feedback screen.This lesson is marked by green blinking frame. Please rate this lesson.');
-window.location.href = '/student/feedback'
-    } });
-  
-    return (
-      <div style={{textAlign: 'right'}}>
-        {/* <h1>react-timer-hook </h1>
-        <p>Timer Demo</p> */}
-        <div style={{fontSize: 'large', color: '#fff'}}>
-          {/* <span>{days}</span>:<span>{hours}</span>: */}
-          <span className="minute-timer">{minutes} Mins</span>:<span>&nbsp;{seconds} Sec</span>
-        </div>
-        {/* <p>{isRunning ? 'Running' : 'Not running'}</p>
-        <button onClick={start}>Start</button>
-        <button onClick={pause}>Pause</button>
-        <button onClick={resume}>Resume</button>
-        <button onClick={() => {
-          // Restarts to 5 minutes timer
-          const time = new Date();
-          time.setSeconds(time.getSeconds() + 300);
-          restart(time)
-        }}>Restart</button> */}
-      </div>
-    );
-  }
-
+import { getBookedSlot } from "../../axios/student";
 const StudentCollabHeader = () => {
 
     let location = useLocation();
@@ -56,11 +14,7 @@ const StudentCollabHeader = () => {
     let [min,setMin] = useState(0)
     let [sec,setSec] = useState(0)
     let [msec,setMsec] = useState(0)
-    
-    
-    
-     
- 
+  
 
     let handleAsidePanel = e => {
         let studentAsideElem = document.querySelector('.StudentAside');
@@ -74,9 +28,31 @@ const StudentCollabHeader = () => {
     
     
 
+    useEffect(() => {
+        getBookedSlot(window.localStorage.getItem('student_user_id'))
+        .then(({data}) => {
+            let book = []
+            data.map(item => {
+                let result = JSON.parse(item.bookedSlots)[0].start;
+                let setDate = new Date(result)
+                let newDate = new Date()
+
+                //let output = newDate - setDate;
+                console.log(setDate.toTimeString(),newDate.toLocaleString())
+            })
+
+            if(book.length > 1){
+
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    },[])
+
     return ( 
         <>
-            <div className="StudentCollabHeader">
+            <div className="StudentCollabHeader" style={{marginTop: '3px'}}>
                 <div className="left">
 
                     <button>

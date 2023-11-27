@@ -12,7 +12,7 @@ const { upload_form_one, get_student_setup, get_student_grade, get_tutor_subject
     get_feedback_questions,
     get_feedback_of_questions,
     post_feedback_questions,
-    update_shortlist, get_student_bookings } = require('../controllers/student');
+    update_shortlist, get_student_bookings, getBookedSlot } = require('../controllers/student');
 const { express,
     path,
     fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt } = require('../modules');
@@ -38,6 +38,7 @@ STUDENT_ROUTES.get('/student/bank/:AcademyId', get_student_bank_details)
 STUDENT_ROUTES.post('/student/bank', parser, post_student_bank_details)
 STUDENT_ROUTES.post('/student/feedback', parser, post_student_feedback)
 STUDENT_ROUTES.get('/student/feedback/:ShortlistId', get_student_feedback)
+STUDENT_ROUTES.get('/student/booked-slot', getBookedSlot)
 
 STUDENT_ROUTES.get('/student/payment-report/:studentId', payment_report)
 STUDENT_ROUTES.get('/questions/list', get_feedback_questions)

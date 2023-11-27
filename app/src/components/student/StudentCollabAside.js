@@ -162,8 +162,6 @@ const StudentAside = () => {
         
     }, [location, peerId])
 
-
-
     let handleChat = e => {
         if(mssg !== null){
             let mssg_cnt = 

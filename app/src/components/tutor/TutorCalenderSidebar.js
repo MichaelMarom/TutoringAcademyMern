@@ -31,10 +31,10 @@ function TutorCalenderSidebar({
     console.log(disabledHours, 'disbhours')
     const handleCheckboxClick = (day, timeRange) => {
         if (activeTab === 'month') {
-            if (disableWeekDays.includes(day)) {
+            if (disableWeekDays?.includes(day)) {
                 setDisabledWeekDays(disableWeekDays.filter((d) => d !== day));
             } else {
-                setDisabledWeekDays([...disableWeekDays, day]);
+                setDisabledWeekDays([...(disableWeekDays ?? []), day]);
             }
         } else if (activeTab === 'day') {
             if (disabledHours?.some(range => range[0] === timeRange[0])) {

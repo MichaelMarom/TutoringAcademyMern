@@ -27,7 +27,7 @@ const Scheduling = () => {
       // If either day or hour is not disabled, add them
       if (dayName) {
         if (!isDayDisabled) {
-          setDisabledWeekDays([...disableWeekDays, dayName]);
+          setDisabledWeekDays([...(disableWeekDays??[]), dayName]);
         }
       }
       if (hourRange) {

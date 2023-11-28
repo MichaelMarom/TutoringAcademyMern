@@ -41,8 +41,8 @@ let store = configureStore({
     screenName: ScreenName,
     toolReq: toolReq,
     asideReq: asideReq,
-  }
-
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 })
 
 

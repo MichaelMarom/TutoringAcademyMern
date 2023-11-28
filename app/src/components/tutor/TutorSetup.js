@@ -20,6 +20,7 @@ import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperF
 import ProfileVideoRecord from "./ProfileVideoRecord";
 import { get_user_detail } from "../../axios/auth";
 import Loading from "../common/Loading";
+import { setShortlist } from "../../redux/student_store/shortlist";
 
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
@@ -173,15 +174,13 @@ const TutorSetup = () => {
         ?.setAttribute("id", "save-overlay");
       let response = await saver();
       if (response.status === 200) {
-        // window.localStorage.setItem(
-        //   "tutor_user_id",
-        //   response.data[0]?.AcademyId
-        // );
+        dispatch(setShortlist())
         window.localStorage.setItem(
           "tutor_screen_name",
           response.data[0]?.TutorScreenname
         );
         dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
+        console.log(response.data)
         alert(`Your New Screen Name Is ${response.data[0]?.TutorScreenname}`);
         setTimeout(() => {
           document.querySelector(".save-overlay")?.removeAttribute("id");

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import ShowCalendar from "../common/Calendar/Calendar";
 import TutorCalenderSidebar from "./TutorCalenderSidebar";
@@ -9,34 +9,11 @@ const Scheduling = () => {
   const [activeTab, setActiveTab] = useState("month");
   const [disableWeekDays, setDisabledWeekDays] = useState([]);
   const [disabledHours, setDisabledHours] = useState([]);
-  const [disableColor, setDisableColor] = useState(null);
+  const [disableColor, setDisableColor] = useState("#5ed387");
+  useEffect(() => {
+    console.log(disableColor)
+  }, [disableColor])
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
-  const handleCheckboxClick = (dayName, hourRange) => {
-    // Check if the day or hour is already disabled
-    const isDayDisabled = disableWeekDays.includes(dayName);
-    const isHourDisabled = disabledHours.includes(hourRange);
-    if (isDayDisabled) {
-      // If both day and hour are already disabled, remove them
-      setDisabledWeekDays(disableWeekDays.filter((day) => day !== dayName));
-    } else if (isHourDisabled) {
-      setDisabledHours(disabledHours.filter((hour) => hour !== hourRange));
-    } else {
-      // If either day or hour is not disabled, add them
-      if (dayName) {
-        if (!isDayDisabled) {
-          setDisabledWeekDays([...disableWeekDays, dayName]);
-        }
-      }
-      if (hourRange) {
-        if (!isHourDisabled) {
-          setDisabledHours([...disabledHours, hourRange]);
-        }
-      }
-    }
-  };
 
   return (
     <>

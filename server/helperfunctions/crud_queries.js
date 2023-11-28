@@ -17,7 +17,7 @@ const insert = (tableName, values) => {
     const queryValuesPart = `(` + valuesMapped + `)`;
 
     const query = `INSERT INTO ${tableName} ${fieldsArray.length ? queryFieldsPart : null} OUTPUT inserted.* VALUES ${queryValuesPart}`;
-    console.log(query)
+    // console.log(query)
     return query
 }
 
@@ -72,7 +72,7 @@ const updateById = (id, tableName, fields) => {
 
 const getAll = (tableName) => {
     const query = `SELECT * FROM ${tableName}`;
-    console.log(query)
+    // console.log(query)
     return query;
 }
 
@@ -107,7 +107,7 @@ const find = (tableName, where, opr = 'AND', casting = {}) => {
 
     const whereClause = conditions.join(` ${opr} `);
     const sql = `SELECT * FROM ${tableName} WHERE ${whereClause}`;
-    console.log(sql);
+    // console.log(sql);
     return sql;
 };
 

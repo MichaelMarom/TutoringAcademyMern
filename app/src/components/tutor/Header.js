@@ -20,7 +20,6 @@ const Header = () => {
     useEffect(() => {
         const element = document.getElementById('tutor-tab-header-list-active');
         if (element) {
-            console.log('enter')
             element.scrollIntoView({ behavior: 'smooth' });
         }
     }, [location]);
@@ -78,7 +77,6 @@ const Header = () => {
 
         let div = document.querySelector('.tutor-tab-header');
         let scroll_elem = div.children[1];
-        console.log(scroll_elem)
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = w;
 
@@ -97,7 +95,11 @@ const Header = () => {
     return (
         <>
 
-            <div className="screen-name btn-success rounded" style={{ display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed', top: '15px', zIndex: '2400', fontWeight: 'bold', color: '#fff', left: '45px', padding: '3px 5px 0', height: '30px', background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red', color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff' }}>
+            <div className="screen-name btn-success rounded" 
+            style={{ display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed', 
+            top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px', 
+            padding: '3px 5px 0', height: '30px', 
+            background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red', color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff' }}>
                 {localStorage.getItem('tutor_screen_name')}
             </div>
 

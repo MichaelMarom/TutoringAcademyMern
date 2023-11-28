@@ -36,7 +36,7 @@ const StudentShortList = () => {
         }))
         navigate('/student/booking')
     }
-
+    console.log('render')
     function convertGMTToLocalTime(gmtOffset) {
         const utcTime = new Date();
         const localTime = new Date(utcTime.getTime() + gmtOffset * 60 * 60 * 1000);
@@ -71,7 +71,7 @@ const StudentShortList = () => {
             return 'text-bg-danger blinking-frame-red';
         }
     }
-
+    console.log(shortlistLoading, 'lol')
     if (shortlistLoading) return <Loading />
     return (
         <>
@@ -130,7 +130,7 @@ const StudentShortList = () => {
                                                     </td>
                                                     <td className='col-1'>
                                                         <div className={`d-inline mr-2 card px-1 w-50 m-auto ${classByDifference(calculateTimeDifference(tutorSetup?.GMT))}`}>
-                                                            {calculateTimeDifference(tutorSetup?.GMT)}
+                                                            {calculateTimeDifference(tutorSetup?.GMT) > 0 ? `+${calculateTimeDifference(tutorSetup?.GMT)}` : calculateTimeDifference(tutorSetup?.GMT)}
                                                         </div>
                                                     </td>
                                                     <td >

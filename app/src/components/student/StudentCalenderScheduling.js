@@ -111,7 +111,7 @@ const StudentCalenderScheduling = () => {
 
           <div className='col-4'>
             <h5 className={`d-inline mr-2 card ${getTimeDifferenceClass(calculateTimeDifference())} px-1`}>
-              Time zones Difference: {calculateTimeDifference()}
+              Time zones Difference: {calculateTimeDifference() > 0 ? `+${calculateTimeDifference()}` : calculateTimeDifference()}
             </h5>
 
           </div>

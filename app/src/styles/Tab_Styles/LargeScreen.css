@@ -160,7 +160,7 @@ html,body{
         padding: 0;
         margin: 0;
         display: flex;
-        z-index: 2000;
+        z-index: 998;
         align-items: center;
         justify-content: right;
         font-family: cursive;

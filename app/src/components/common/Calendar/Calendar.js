@@ -16,6 +16,7 @@ import { useLocation } from 'react-router-dom';
 
 import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
+import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
 
 const views = {
   WEEK: 'week',
@@ -66,6 +67,8 @@ const ShowCalendar = ({
   const [disableHourSlots, setDisableHourSlots] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const [disableDateRange, setDisableDateRange] = useState([]);
+  const [isTutorSideSessionModalOpen, setIsTutorSideSessionModalOpen] = useState(false);
+
   const tutorAcademyId = localStorage.getItem('tutor_user_id')
 
   //student states
@@ -110,13 +113,13 @@ const ShowCalendar = ({
       return newArray;
     }
 
-    let updatedArray = initialArray.map(addHoursToSubArray);
+    let updatedArray = initialArray?.map(addHoursToSubArray);
     return updatedArray
   }
 
   const getTimeZonedEnableHours = (originalDates, timeZone) => {
     if (!isStudentLoggedIn || !timeZone) return originalDates;
-    return originalDates.map(dateString => {
+    return originalDates?.map(dateString => {
       const date = moment.utc(convertToDate(dateString)).tz(timeZone);
       const dateObjDate = date.toDate()
       return dateString; // You can customize the format
@@ -153,8 +156,8 @@ const ShowCalendar = ({
     if (isStudentLoggedIn) {
       const response = await fetchStudentsBookings(selectedTutor.academyId);
       if (response.length) {
-        const reservedSlots = response.map(data => JSON.parse(data.reservedSlots)).flat()
-        const bookedSlots = response.map(data => JSON.parse(data.bookedSlots)).flat()
+        const reservedSlots = response?.map(data => JSON.parse(data.reservedSlots)).flat()
+        const bookedSlots = response?.map(data => JSON.parse(data.bookedSlots)).flat()
 
         dispatch(setReservedSlots(reservedSlots))
         dispatch(setBookedSlots(bookedSlots))
@@ -163,8 +166,8 @@ const ShowCalendar = ({
     else {
       const response = await fetchStudentsBookings(tutorAcademyId);
       if (response.length) {
-        const reservedSlots = response.map(data => JSON.parse(data.reservedSlots)).flat()
-        const bookedSlots = response.map(data => JSON.parse(data.bookedSlots)).flat()
+        const reservedSlots = response?.map(data => JSON.parse(data.reservedSlots)).flat()
+        const bookedSlots = response?.map(data => JSON.parse(data.bookedSlots)).flat()
 
         dispatch(setReservedSlots(reservedSlots))
         dispatch(setBookedSlots(bookedSlots))
@@ -223,10 +226,14 @@ const ShowCalendar = ({
     //remove student //changes made
   }, [selectedTutor, user])
 
-  const onRequestClose = () => {
+  const onStudentModalRequestClose = () => {
     setSelectedSlots([]);
     setClickedSlot({})
     setIsModalOpen(false)
+  }
+
+  const onTutorModalRequestClose = () => {
+    setIsTutorSideSessionModalOpen(false)
   }
 
   useEffect(() => {
@@ -281,7 +288,7 @@ const ShowCalendar = ({
       toast.warning("Cannot Reserve more than 6 slots")
       return;
     }
-    const updatedSelectedSlots = selectedSlots.map((slot) => {
+    const updatedSelectedSlots = selectedSlots?.map((slot) => {
       return {
         ...slot,
         type,
@@ -508,7 +515,7 @@ const ShowCalendar = ({
 
   const handleEventClick = (event) => {
     setClickedSlot(event)
-    setIsModalOpen(true);
+    isStudentLoggedIn ? setIsModalOpen(true) : setIsTutorSideSessionModalOpen(true);
   };
 
   const slotPropGetter = useCallback((date) => {
@@ -790,7 +797,7 @@ const ShowCalendar = ({
         localizer={localizer}
         selectable={true}
         defaultView={activeView}
-        events={reservedSlots.concat(bookedSlots).map((event) => ({
+        events={reservedSlots.concat(bookedSlots)?.map((event) => ({
           ...event,
           start: convertToGmt(event.start),
           end: convertToGmt(event.end),
@@ -822,12 +829,12 @@ const ShowCalendar = ({
         onNavigate={handleNavigate}
       />
       <EventModal
+        isOpen={isModalOpen}
+        onRequestClose={onStudentModalRequestClose}
         student={student}
         isStudentLoggedIn={isStudentLoggedIn}
-        isOpen={isModalOpen}
         selectedSlots={selectedSlots}
         setSelectedSlots={setSelectedSlots}
-        onRequestClose={onRequestClose}
         handleBulkEventCreate={handleBulkEventCreate}
         reservedSlots={reservedSlots}
         bookedSlots={bookedSlots}
@@ -835,6 +842,13 @@ const ShowCalendar = ({
         setClickedSlot={setClickedSlot}
         handleRemoveReservedSlot={handleRemoveReservedSlot}
       />
+      <TutorEventModal
+        isOpen={isTutorSideSessionModalOpen}
+        onClose={onTutorModalRequestClose}
+        clickedSlot={clickedSlot}
+        timeZone={timeZone}
+      />
+
     </div>
   );
 };

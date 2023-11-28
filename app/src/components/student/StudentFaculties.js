@@ -251,7 +251,7 @@ const StudentFaculties = () => {
                     <div className="tables" style={{ height: '600px', width: '100%', overflow: 'auto', padding: '5px' }}>
 
                         <table>
-                            {response.length ?
+                            {response?.length ?
                                 <thead>
                                     <tr>
                                         {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>)}
@@ -263,7 +263,7 @@ const StudentFaculties = () => {
                                 </div>}
 
                             {
-                                response.length
+                                response?.length
                                     ?
                                     <tbody>
                                         {
@@ -291,7 +291,7 @@ const StudentFaculties = () => {
                                                         {experience.CertificateState}
                                                     </td>
                                                     <td>
-                                                        {experience.CertificateExpiration.length ?
+                                                        {experience.CertificateExpiration?.length ?
                                                             new Date(experience.CertificateExpiration).toLocaleDateString() : "-"}
                                                     </td>
                                                     <td>{faculty.rate}</td>

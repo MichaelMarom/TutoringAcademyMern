@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { hours, days } from '../../constants/constants';
 import { BsCheckCircle } from 'react-icons/bs';
 
@@ -12,10 +12,6 @@ function TutorCalenderSidebar({
     disableColor,
     setDisableColor
 }) {
-    // const [activeTab, setActiveTab] = useState('month');
-    // const [disableWeekDays, setDisabledWeekDays] = useState([]);
-    // const [disabledHours, setDisabledHours] = useState([]);
-
     const hoursChecboxes = useRef(null);
     useEffect(() => {
         if (hoursChecboxes.current) {
@@ -28,7 +24,7 @@ function TutorCalenderSidebar({
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
-    console.log(disabledHours, 'disbhours')
+    
     const handleCheckboxClick = (day, timeRange) => {
         if (activeTab === 'month') {
             if (disableWeekDays?.includes(day)) {
@@ -38,11 +34,9 @@ function TutorCalenderSidebar({
             }
         } else if (activeTab === 'day') {
             if (disabledHours?.some(range => range[0] === timeRange[0])) {
-                console.log(';removed', disabledHours)
                 setDisabledHours(disabledHours.filter((range) => range[0] !== timeRange[0]));
             }
             else {
-                console.log(';added', disabledHours)
                 setDisabledHours([...disabledHours, timeRange]);
             }
         }
@@ -55,6 +49,7 @@ function TutorCalenderSidebar({
 
     return (
         <div className="tab-content card h-100" style={{ overflowY: "auto" }}>
+            <div className='highlight small p-2'>To view feedback, postpone, or cancel, click on the lesson</div>
             <div className='d-flex'>
 
                 <button

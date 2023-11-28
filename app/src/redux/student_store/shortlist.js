@@ -32,8 +32,10 @@ export default slice.reducer;
 export function setShortlist() {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading())
+        if (!window.localStorage.getItem('student_user_id')) {
+            return [];
+        }
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
-        console.log(result, 'shortlists')
         result.sort(function (a, b) {
             if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
                 return -1;

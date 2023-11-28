@@ -10,12 +10,10 @@ let post_new_subject = (req, res) => {
 
     let { faculty, subject, reason, AcademyId, facultyId } = req.body;
 
-    console.log(faculty, subject, reason, AcademyId, facultyId)
     let date = new Date();
 
     marom_db(async (config) => {
         const sql = require('mssql');
-        console.log('uploading data...')
 
         var poolConnection = await sql.connect(config);
         if (poolConnection) {
@@ -68,11 +66,11 @@ let subjects = (req, res) => {
 
 let post_form_one = (req, res) => {
 
-    let { fname, mname, sname, email, pwd, acadId, cell, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId } = req.body;
+    let { fname, mname, sname, email, pwd, acadId, cell, add1, add2, city, state, zipCode,
+        country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId } = req.body;
 
     let UserId = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] + shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
     let screenName = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] : fname + '.' + ' ' + sname[0]
-    console.log(grades)
 
     let action = cb => {
         marom_db(async (config) => {
@@ -80,7 +78,6 @@ let post_form_one = (req, res) => {
             var poolConnection = await sql.connect(config);
 
             let result = poolConnection ? await get_action(poolConnection) : 'connection error';
-            console.log(result)
             cb(result);
 
         })
@@ -95,7 +92,6 @@ let post_form_one = (req, res) => {
                 const sql = require('mssql');
                 var poolConnection = await sql.connect(config);
 
-                //let result = poolConnection ? await insert_rates(poolConnection) : 'connection error';
 
                 insert_rates(poolConnection)
                     .then((result) => {
@@ -115,7 +111,6 @@ let post_form_one = (req, res) => {
                 const sql = require('mssql');
                 var poolConnection = await sql.connect(config);
 
-                // let result = poolConnection ? await update_rates(poolConnection) : 'connection error';
                 update_rates(poolConnection)
                     .then((result) => {
                         res.send({ user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Updated Successfully', type: 'update' })
@@ -170,7 +165,6 @@ let post_form_one = (req, res) => {
             insert('TutorSetup', dataObject)
         )
 
-        console.log(records, 'boolean...')
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);
     }
@@ -188,7 +182,6 @@ let post_form_two = async (req, res) => {
 
     let { level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id } = req.body;
 
-    console.log(degreeFile, certificateFile, 'hehhehehheheh')
 
     let duplicate = await connecteToDB.then(async (poolConnection) => {
         return await poolConnection.request().query(`SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${user_id}'`)
@@ -198,27 +191,12 @@ let post_form_two = async (req, res) => {
             })
             .catch(err => console.log(err))
     });
-    console.log(duplicate, 'dede')
 
     if (!duplicate.length) {
         marom_db(async (config) => {
             const sql = require('mssql');
-            console.log('uploading data...')
 
             var poolConnection = await sql.connect(config);
-            console.log(` INSERT INTO "Education" (EducationalLevel, EducationalLevelExperience, College1, 
-                College1State, College1Year, College2, College2State, College2StateYear, 
-                DoctorateCollege, DoctorateState, DoctorateGradYr,  Degree, DegreeFile, 
-                DegreeState, DegreeYear, Certificate,CertificateFile, CertificateState, 
-                CertificateExpiration, NativeLang, NativeLangState, NativeLangOtherLang, 
-                WorkExperience, AcademyId)
-            VALUES ('${level}', '${experience}', '${university1}',
-            '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
-            '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}',
-            '${state4}','${graduagteYr3}','${certificate}','${certificateFile}','${state5}',
-            '${expiration}','${language}','${state6}','${otherang}',
-            '${workExperience}', '${user_id}')`
-            )
             if (poolConnection) {
                 var resultSet = poolConnection.request().query(
                     `
@@ -295,7 +273,9 @@ let post_form_two = async (req, res) => {
 let post_form_three = (req, res) => {
 
 
-    let { MutiStudentHourlyRate, IntroSessionDiscount, CancellationPolicy, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
+    let { MutiStudentHourlyRate, IntroSessionDiscount, CancellationPolicy,
+        FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption,
+        SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
     marom_db(async (config) => {
         try {
 
@@ -305,12 +285,10 @@ let post_form_three = (req, res) => {
             var poolConnection = await sql.connect(config);
             let result;
             if (poolConnection) {
-                console.log('hitr')
 
                 let recordExisted = await poolConnection.request().query(
                     findByAnyIdColumn('TutorRates', { AcademyId }, 'varchar')
                 )
-                console.log(recordExisted)
                 if (recordExisted.recordset.length) {
                     result = await poolConnection.request().query(
                         `UPDATE TutorRates 
@@ -343,7 +321,7 @@ let post_form_three = (req, res) => {
                     )
                 }
 
-                console.log(result)
+                {/* console.log(result) */ }
                 result.rowsAffected[0] === 1
                     ?
                     res.send({ bool: true, mssg: 'Data Was Successfully Saved' })
@@ -582,7 +560,6 @@ let upload_tutor_rates = (req, res) => {
 
             let response = action(async (result, index) => {
 
-                console.log(result, index)
                 if (result) {
 
                     try {
@@ -592,11 +569,8 @@ let upload_tutor_rates = (req, res) => {
 
                             let result = poolConnection ? await insert_rates(poolConnection, item) : 'connection error';
 
-                            console.log('insert:', result);
                             book.push(result)
-                            console.log(book.length, rate_list.length)
                             if (book.length > (rate_list.length / 2)) {
-                                console.log('rates: ', true)
 
                                 res.status(200).send(true)
                             }
@@ -614,12 +588,8 @@ let upload_tutor_rates = (req, res) => {
 
                             let result = poolConnection ? await update_rates(poolConnection, item) : 'connection error';
 
-                            console.log('update:', result);
                             book.push(result)
-                            console.log(book.length, rate_list.length)
                             if (book.length > (rate_list.length / 2)) {
-                                console.log('rates: ', true)
-
                                 res.status(200).send(true)
                             }
                         })
@@ -652,7 +622,6 @@ let upload_tutor_rates = (req, res) => {
         let update_rates = async (poolConnection, item) => {
             let records = await poolConnection.request().query(`UPDATE "SubjectRates" set faculty='${item.faculty}', subject='${item.course}', rate='${item.rate}'  WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' AND CONVERT(VARCHAR, subject) = '${item.course}' `)
 
-            //console.log('records :',records)
             let result = await records.rowsAffected[0] === 1 ? true : false
             return (result);
 
@@ -666,7 +635,8 @@ let upload_tutor_rates = (req, res) => {
 
 let upload_form_four = (req, res) => {
 
-    let { start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId } = req.body;
+    let { start_day, acct_name, acct_type, bank_name, acct, routing, ssh,
+        accumulated_hrs, commission, total_earning, payment_option, AcademyId } = req.body;
 
     let checker = (cb) => {
 
@@ -689,7 +659,6 @@ let upload_form_four = (req, res) => {
 
                 let result = poolConnection ? await insert_bank_details(poolConnection) : 'connection error';
 
-                console.log('insert:', result);
 
                 if (result) {
                     res.send(true)
@@ -705,7 +674,6 @@ let upload_form_four = (req, res) => {
 
                 let result = poolConnection ? await update_bank_details(poolConnection) : 'connection error';
 
-                console.log('update:', result);
 
                 if (result) {
                     res.send(true)
@@ -717,8 +685,12 @@ let upload_form_four = (req, res) => {
     })
 
     let insert_bank_details = async (poolConnection) => {
-        let records = await poolConnection.request().query(`INSERT INTO "TutorBank"(AccountName,AccountType,BankName,Account,Routing,SSH,AccumulatedHrs,Commission,TotalEarning,PaymentOption,TutorStartDay,AcademyId)
-        VALUES ('${acct_name}', '${acct_type}','${bank_name}','${acct}','${routing}','${ssh}','${accumulated_hrs}','${commission}', '${total_earning}','${payment_option}', '${start_day}', '${AcademyId}')`)
+        let records = await poolConnection.request().query(`INSERT INTO "TutorBank"
+        (AccountName,AccountType,BankName,Account,Routing,SSH,AccumulatedHrs,Commission,
+            TotalEarning,PaymentOption,TutorStartDay,AcademyId)
+        VALUES ('${acct_name}', '${acct_type}','${bank_name}','${acct}','${routing}',
+        '${ssh}','${accumulated_hrs}','${commission}', '${total_earning}','${payment_option}',
+         '${start_day}', '${AcademyId}')`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);
@@ -731,7 +703,6 @@ let upload_form_four = (req, res) => {
             `
         )
 
-        //console.log('records :',records)
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);
 
@@ -743,7 +714,6 @@ let get_my_data = async (req, res) => {
     let { AcademyId } = req.query;
     let books = []
 
-    console.log(AcademyId)
 
     let response_0 = (resolve) => {
         marom_db(async (config) => {
@@ -789,7 +759,6 @@ let get_my_data = async (req, res) => {
 
 
     let sender = (cb) => {
-        //response_0(cb)
 
         new Promise((resolve) => {
             response_1(resolve)
@@ -811,20 +780,11 @@ let get_my_data = async (req, res) => {
             })
     })
 
-
-
-
-
-
-
-
-    //console.log(response_0, response_1);
 }
 
 
 let get_rates = (req, res) => {
     let { AcademyId } = req.query;
-    console.log(AcademyId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
@@ -847,12 +807,10 @@ let get_rates = (req, res) => {
 
 let get_tutor_rates = (req, res) => {
     let { AcademyId } = req.query;
-    console.log(AcademyId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
                 `
@@ -860,9 +818,7 @@ let get_tutor_rates = (req, res) => {
                 `
             )
                 .then((result) => {
-                    console.log(result.recordset)
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 
@@ -876,7 +832,6 @@ let faculties = (req, res) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
                 `
@@ -884,7 +839,6 @@ let faculties = (req, res) => {
                 `
             )
                 .then((result) => {
-                    console.log(result.recordset)
                     res.status(200).send(result.recordset)
                 })
                 .catch(err => console.log(err))
@@ -896,12 +850,10 @@ let faculties = (req, res) => {
 
 let get_bank_details = (req, res) => {
     let { AcademyId } = req.query;
-    console.log(AcademyId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
                 `
@@ -909,9 +861,7 @@ let get_bank_details = (req, res) => {
                 `
             )
                 .then((result) => {
-                    console.log(result.recordset)
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 
@@ -922,7 +872,6 @@ let get_bank_details = (req, res) => {
 
 
 let get_tutor_setup = (req, res) => {
-    let { userId = null, AcademyId = null } = req.query;
     marom_db(async (config) => {
         const sql = require('mssql');
 
@@ -943,7 +892,6 @@ let get_tutor_setup = (req, res) => {
 
 let get_my_edu = (req, res) => {
     let { AcademyId } = req.query;
-    console.log(AcademyId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
@@ -974,7 +922,6 @@ let storeEvents = (req, res) => {
 
             var poolConnection = await sql.connect(config);
             if (poolConnection) {
-                console.log('poolconneciotn');
                 poolConnection.request().query(
                     `
                    INSERT INTO EVENTS (endTime, startTime, title) VALUES ('${end}','${start}', '${title}')
@@ -1018,12 +965,10 @@ let storeCalenderTutorRecord = (req, res) => {
 
 let get_tutor_status = (req, res) => {
     let { AcademyId } = req.query;
-    console.log(AcademyId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
                 `
@@ -1032,7 +977,6 @@ let get_tutor_status = (req, res) => {
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 
@@ -1053,11 +997,9 @@ let fetchStudentsBookings = (req, res) => {
                     find('StudentBookings', { tutorId })
                 )
                     .then((result) => {
-                        console.log(result, 'fetch result')
                         res.status(200).send(result.recordset);
                     })
                     .catch(err => {
-                        console.log(err)
                         res.status(400).json({ message: err.message });
                     })
             }
@@ -1079,15 +1021,25 @@ const post_tutor_setup = (req, res) => {
                     findByAnyIdColumn('TutorSetup', { userId: req.body.userId })
                 );
                 if (findtutorSetup.recordset.length) {
-                    req.body.AcademyId = req.body.MiddleName.length > 0 ? req.body.FirstName + '.' + ' ' + req.body.MiddleName[0] + '.' + ' ' + req.body.LastName[0] + shortId.generate() : req.body.FirstName + '.' + ' ' + req.body.LastName[0] + shortId.generate();
-
-                    const result = await poolConnection.request().query(
-                        update('TutorSetup', req.body, { userId: req.body.userId })
+                    delete req.body["AcademyId"]
+                    const updated = await poolConnection.request().query(
+                        update('TutorSetup', req.body, { AcademyId: findtutorSetup.recordset[0].AcademyId })
                     );
-                    res.status(200).send(result.recordset);
+                    if (updated.rowsAffected[0]) {
+                        const result = await poolConnection.request().query(
+                            findByAnyIdColumn("TutorSetup", { AcademyId: findtutorSetup.recordset[0].AcademyId })
+                        );
+                        console.log(result, 'resd')
+                        res.status(200).send(result.recordset);
+                    }
+                    else
+                        res.status(200).send([]);
                 }
                 else {
-                    req.body.AcademyId = req.body.MiddleName.length > 0 ? req.body.FirstName + '.' + ' ' + req.body.MiddleName[0] + '.' + ' ' + req.body.LastName[0] + shortId.generate() : req.body.FirstName + '.' + ' ' + req.body.LastName[0] + shortId.generate();
+                    req.body.AcademyId = req.body.MiddleName.length > 0 ?
+                        req.body.FirstName + '.' + ' ' + req.body.MiddleName[0] + '.' + ' ' +
+                        req.body.LastName[0] + shortId.generate() :
+                        req.body.FirstName + '.' + ' ' + req.body.LastName[0] + shortId.generate();
 
                     const result = await poolConnection.request().query(
                         insert('TutorSetup', req.body)
@@ -1139,10 +1091,7 @@ let get_tutor_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                //res.status(200).send()
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
-            .catch(err => console.log(err))
             .catch(err => console.log(err))
     )
 
@@ -1151,12 +1100,9 @@ let get_tutor_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
-            .catch(err => console.log(err))
+
     )
 
     let Subjects = await connecteToDB.then(poolConnection =>
@@ -1164,11 +1110,7 @@ let get_tutor_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
-            .catch(err => console.log(err))
             .catch(err => console.log(err))
     )
 
@@ -1177,9 +1119,6 @@ let get_tutor_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
             .catch(err => console.log(err))
@@ -1190,9 +1129,6 @@ let get_tutor_market_data = async (req, res) => {
             .then((result) => {
 
                 return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
             })
             .catch(err => console.log(err))
             .catch(err => console.log(err))
@@ -1202,7 +1138,6 @@ let get_tutor_market_data = async (req, res) => {
         resolve(TutortData)
     })
         .then((TutortData) => {
-            //return { TutortData, Subjects }
             return { TutortData, Exprience }
         })
         .then(({ TutortData, Exprience }) => {
@@ -1225,7 +1160,6 @@ let get_tutor_market_data = async (req, res) => {
         })
         .then((result) => {
             res.send(result)
-            console.lop(result)
         })
         .cach(e => {
             console.log(e)

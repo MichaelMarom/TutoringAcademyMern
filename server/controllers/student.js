@@ -14,7 +14,6 @@ const executeQuery = async (query, res) => {
                     const result = await poolConnection.request().query(
                         query
                     );
-                    console.log(result, 'in ecudyte')
                     res.status(200).send(result?.recordset)
                 }
             }
@@ -32,7 +31,9 @@ const executeQuery = async (query, res) => {
 
 let upload_form_one = (req, res) => {
 
-    let { fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId } = req.body;
+    let { fname, mname, sname, email, lang, is_18, pwd, cell, grade,
+        add1, add2, city, state, zipCode, country,
+        timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId } = req.body;
 
     let UserId = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] + shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
 
@@ -103,7 +104,8 @@ let upload_form_one = (req, res) => {
 
 
     let get_action = async (poolConnection) => {
-        let records = await poolConnection.request().query(`SELECT * FROM "StudentSetup" WHERE CONVERT(VARCHAR, Email) = '${email.length > 8 ? email : null}'`)
+        let records = await poolConnection.request().query(`SELECT * FROM "StudentSetup" 
+        WHERE CONVERT(VARCHAR, Email) = '${email.length > 8 ? email : null}'`)
         let get_duplicate = await records.recordset;
 
         let result = get_duplicate.length > 0 ? false : true;
@@ -111,8 +113,15 @@ let upload_form_one = (req, res) => {
     }
 
     let insert_student_data = async (poolConnection) => {
-        let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName, MiddleName, LastName, Email, Password, Cell, Language, AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, ParentEmail, ParentFirstName, ParentLastName, AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
-        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}','${lang}', '${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}', '${zipCode}','${country}','${timeZone}','${parent_email}','${parent_fname}','${parent_lname}', '${UserId}','${screenName}','${photo}', 'Pending', '${parentConsent}','${userId}')`)
+        let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName,
+             MiddleName, LastName, Email, Password, Cell, Language,
+             AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, ParentEmail, 
+             ParentFirstName, 
+            ParentLastName, AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
+        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}',
+        '${lang}', '${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}', '${zipCode}',
+        '${country}','${timeZone}','${parent_email}','${parent_fname}','${parent_lname}',\
+         '${UserId}','${screenName}','${photo}', 'Pending', '${parentConsent}','${userId}')`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         //console.log(result, 'boolean...')
@@ -120,7 +129,14 @@ let upload_form_one = (req, res) => {
     }
 
     let update_student_data = async (poolConnection) => {
-        let records = await poolConnection.request().query(`UPDATE "StudentSetup" set Photo = '${photo}', Address1 = '${add1}', Address2 = '${add2}', City = '${city}', State = '${state}', ZipCode = '${zipCode}', Country = '${country}', Email = '${email}', Cell = '${cell}', GMT = '${timeZone}', Password = '${pwd}', Language='${lang}', AgeGrade='${is_18}', Grade='${grade}', ParentEmail='${parent_email}', ParentFirstName='${parent_fname}', ParentConsent='${parentConsent}', ParentLastName='${parent_lname}'  WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
+        let records = await poolConnection.request().query(`UPDATE "StudentSetup" 
+        set Photo = '${photo}', Address1 = '${add1}', Address2 = '${add2}', City = '${city}',
+         State = '${state}', ZipCode = '${zipCode}', Country = '${country}',
+          Email = '${email}', Cell = '${cell}', 
+        GMT = '${timeZone}', Password = '${pwd}', Language='${lang}', AgeGrade='${is_18}',
+         Grade='${grade}', ParentEmail='${parent_email}', ParentFirstName='${parent_fname}',
+          ParentConsent='${parentConsent}', ParentLastName='${parent_lname}'  
+          WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);
@@ -136,17 +152,12 @@ let get_student_setup = (req, res) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
                 findByAnyIdColumn('StudentSetup', req.query, 'varchar')
-                // `
-                //     SELECT * From StudentSetup WHERE CONVERT(VARCHAR, AcademyId) = '${id}' 
-                // `
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 
@@ -348,7 +359,6 @@ const get_student_short_list = async (req, res) => {
             })[0];
             let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId[0])[0];
             let bookName = shortId.generate();
-            console.log(bookName, tutorData, 'recod')
             if (Object.keys(tutorData ? tutorData : {})?.length) {
                 bookName = {
                     tutorDemoLesson: tutorDemoLesson,
@@ -359,7 +369,6 @@ const get_student_short_list = async (req, res) => {
                 studentBook.push(bookName);
             }
         });
-        console.log(studentBook, 'stu')
         res.status(200).send((studentBook));
     } catch (err) {
         console.log(err);
@@ -754,6 +763,8 @@ const payment_report = async (req, res) => {
                     JOIN StudentShortList AS r ON
                     b.studentId  = CAST( r.Student as varchar(max)) AND 
                     b.tutorId =  CAST(r.AcademyId as varchar(max))
+                    inner join TutorSetup AS ts On
+                    ts.AcademyId = CAST(r.AcademyId as varchar(max))
                     WHERE b.studentId = CAST('${studentId}' as varchar(max)); `
                 );
 

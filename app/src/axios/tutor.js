@@ -185,7 +185,8 @@ export let get_response = () => {
 }
 
 
-export let upload_form_one = (fname, uname, mname, sname, email, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
+export let upload_form_one = (fname, uname, mname, sname, email, cell, acadId, add1, add2, city, state, zipCode,
+     country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
     return new Promise((resolve, reject) => {
 
         axios.post('http://localhost:9876/tutor/form-one', {
@@ -197,8 +198,6 @@ export let upload_form_one = (fname, uname, mname, sname, email, cell, acadId, a
             .catch((err) => {
                 reject(err)
             })
-
-
 
     })
 }
@@ -555,7 +554,6 @@ export const addDisabledDates = async (date) => {
 
 export const post_tutor_setup = async (data) => {
     try {
-        console.log(data.video)
         let dataObject = {}
         if (data.photo !== undefined) dataObject.Photo = data.photo;
         if (data.video !== undefined) dataObject.Video = data.video;
@@ -580,7 +578,6 @@ export const post_tutor_setup = async (data) => {
         if (data.grades !== undefined) dataObject.Grades = data.grades;
         dataObject.TutorScreenname = data.mname.length > 0 ? data.fname + '.' + ' ' + data.mname[0] + '.' + ' ' + data.sname[0] : data.fname + '.' + ' ' + data.sname[0];
         dataObject.AcademyId = uuidv4()
-        console.log(dataObject, 'AOBNjext')
         return instance.post('/tutor/setup', dataObject)
     } catch (err) {
         console.log(err)

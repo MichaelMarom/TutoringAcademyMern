@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload, BsTrash } from "react-icons/bs";
 import moment from "moment";
+import { toast } from 'react-toastify'
 
 import {
   get_countries,
@@ -20,7 +21,8 @@ import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperF
 import ProfileVideoRecord from "./ProfileVideoRecord";
 import { get_user_detail } from "../../axios/auth";
 import Loading from "../common/Loading";
-import { setShortlist } from "../../redux/student_store/shortlist";
+
+import Actions from '../common/Actions'
 
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
@@ -46,7 +48,7 @@ const TutorSetup = () => {
 
   const [dataFetching, setDataFetching] = useState(false);
 
-  let [grades, setGrades] = useState([
+  let grades = [
     { grade: "1st grade" },
     { grade: "2nd grade" },
     { grade: "3rd grade" },
@@ -60,7 +62,7 @@ const TutorSetup = () => {
     { grade: "11th grade" },
     { grade: "12th grade" },
     { grade: "Academic" },
-  ]);
+  ]
   let [tutorGrades, setTutorGrades] = useState([]);
 
   const { user } = useSelector((state) => state.user);
@@ -72,6 +74,9 @@ const TutorSetup = () => {
   let [response_list, set_response_list] = useState("");
   let [recordedVideo, setRecordedVideo] = useState(null);
   let [data, set_data] = useState(false);
+  const [uploadPhotoClicked, setUploadPhotoClicked] = useState(false)
+  const [uploadVideoClicked, setUploadVideoClicked] = useState(false)
+
 
   let dispatch = useDispatch();
 
@@ -79,15 +84,28 @@ const TutorSetup = () => {
 
   const handleOptionClick = (option) => setSelectedVideoOption(option);
 
-  let handleTutorGrade = (e) => {
-    let elem = e.target;
-    if (elem.checked) {
-      setTutorGrades((item) => [...item, elem.getAttribute("id")]);
-    } else {
-      let list = tutorGrades.filter((item) => item !== elem.getAttribute("id"));
-      setTutorGrades(list);
+  let handleTutorGrade = (grade) => {
+    if (tutorGrades.some(item => item === grade)) {
+      const removedGrades = tutorGrades.filter(item => item !== grade)
+      setTutorGrades(removedGrades);
     }
+    else
+      setTutorGrades([...tutorGrades, grade]);
   };
+  //upload photo
+  useEffect(() => {
+    if (uploadPhotoClicked)
+      post_tutor_setup({ photo })
+
+  }, [photo])
+
+
+  //upload video
+  useEffect(() => {
+    if (selectedVideoOption === 'upload')
+      post_tutor_setup({ video })
+    console.log('upk9ad phjVIDEOtn')
+  }, [video])
 
   useEffect(() => {
     const AcademyId = localStorage.getItem('tutor_user_id')
@@ -103,7 +121,6 @@ const TutorSetup = () => {
       else {
         result = await get_tutor_setup_by_userId(user[0].SID);
       }
-      // localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       if (result.length) {
         let data = result[0];
         const selectedUserId = await get_user_detail(data.userId);
@@ -125,9 +142,9 @@ const TutorSetup = () => {
         set_headline(data.HeadLine);
         set_add1(data.Address1);
         set_add2(data.Address2);
-        setTutorGrades((ITEM) => [...ITEM, data.Grades]);
+        console.log(data.Grades, typeof (data.Grades))
+        setTutorGrades(JSON.parse((data?.Grades ?? [])));
 
-        console.log(data.Grades);
 
         let gradeList = data.Grades?.split(",") || [];
         grades.map((item) => {
@@ -160,56 +177,35 @@ const TutorSetup = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (document.querySelector("#fname")?.value !== "") {
-      document.querySelector("#tutor-save").style.opacity = ".3";
-      document.querySelector("#tutor-save").style.pointerEvents = "none";
+  const saveTutorSetup = async (e) => {
+    e.preventDefault();
+
+    document
+      .querySelector(".save-overlay")
+      ?.setAttribute("id", "save-overlay");
+    let response = await saver();
+    if (response.status === 200) {
+      window.localStorage.setItem(
+        "tutor_screen_name",
+        response.data[0]?.TutorScreenname
+      );
+      dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
+      console.log(response.data)
+      alert(`Your New Screen Name Is ${response.data[0]?.TutorScreenname}`);
+      setTimeout(() => {
+        document.querySelector(".save-overlay")?.removeAttribute("id");
+      }, 1000);
+
+      toast.success("Data saved successfully")
     }
-  }, []);
+    else {
+      setTimeout(() => {
+        document.querySelector(".save-overlay")?.removeAttribute("id");
+      }, 1000);
 
-  if (document.querySelector("#tutor-save")) {
-    document.querySelector("#tutor-save").onclick = async () => {
-      document
-        .querySelector(".save-overlay")
-        ?.setAttribute("id", "save-overlay");
-      let response = await saver();
-      if (response.status === 200) {
-        dispatch(setShortlist())
-        window.localStorage.setItem(
-          "tutor_screen_name",
-          response.data[0]?.TutorScreenname
-        );
-        dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
-        console.log(response.data)
-        alert(`Your New Screen Name Is ${response.data[0]?.TutorScreenname}`);
-        setTimeout(() => {
-          document.querySelector(".save-overlay")?.removeAttribute("id");
-        }, 1000);
+      toast.danger("Error saving the Data ")
 
-        document
-          .querySelector(".tutor-popin")
-          ?.setAttribute("id", "tutor-popin");
-        document.querySelector(".tutor-popin").style.background = "#000";
-        document.querySelector(".tutor-popin").innerHTML = "Success";
-        setTimeout(() => {
-          document.querySelector(".tutor-next")?.setAttribute("id", "next");
-          document.querySelector(".tutor-popin")?.removeAttribute("id");
-        }, 5000);
-      } else {
-        setTimeout(() => {
-          document.querySelector(".save-overlay")?.removeAttribute("id");
-        }, 1000);
-
-        document
-          .querySelector(".tutor-popin")
-          ?.setAttribute("id", "tutor-popin");
-        document.querySelector(".tutor-popin").style.background = "red";
-        document.querySelector(".tutor-popin").innerHTML = "Failed";
-        setTimeout(() => {
-          document.querySelector(".tutor-popin")?.removeAttribute("id");
-        }, 5000);
-      }
-    };
+    }
   }
 
   if (document.querySelector("#tutor-edit")) {
@@ -235,12 +231,12 @@ const TutorSetup = () => {
 
       function trackChanges(inputs, selects, textareas) {
         let list = [...inputs, ...selects, ...textareas];
-        list.map((item) => {
-          item.onChange = () => {
-            document.querySelector("#tutor-save").style.opacity = "1";
-            document.querySelector("#tutor-save").style.pointerEvents = "all";
-          };
-        });
+        // list.map((item) => {
+        //   item.onChange = () => {
+        //     document.querySelector("#tutor-save").style.opacity = "1";
+        //     document.querySelector("#tutor-save").style.pointerEvents = "all";
+        //   };
+        // });
       }
 
       trackChanges(
@@ -271,10 +267,11 @@ const TutorSetup = () => {
       intro,
       motivation,
       headline,
-      photo,
-      video,
+      // photo,
+      // video,
       tutorGrades,
       userId: user[0]?.SID,
+      grades: tutorGrades
     });
     return response;
   };
@@ -523,9 +520,11 @@ const TutorSetup = () => {
       reader.readAsArrayBuffer(blobObj);
     }
   };
+
   useEffect(() => {
     console.log(recordedVideo, "vbfbvfhb");
   }, [recordedVideo]);
+
 
   if (dataFetching)
     return <Loading height="80vh" />
@@ -542,7 +541,7 @@ const TutorSetup = () => {
         exit="exit"
         className="tutor-tab-setup"
       >
-        <form action="" className="pt-4">
+        <form onSubmit={saveTutorSetup} className="pt-4" style={{ overflowY: "auto" }}>
           <div className="d-flex justify-content-center align-items-center">
             <p>{typeof dateTime === "object" ? "" : dateTime}</p>
 
@@ -586,6 +585,7 @@ const TutorSetup = () => {
                 </label>{" "}
                 &nbsp;&nbsp;
                 <input
+                  required
                   style={{
                     margin: "2.5px 0 0 0",
                     width: "70%",
@@ -652,6 +652,7 @@ const TutorSetup = () => {
                     float: "right",
                     position: "relative",
                   }}
+                  required
                   onInput={(e) => set_sname(e.target.value)}
                   placeholder="Last Name"
                   defaultValue={sname}
@@ -677,6 +678,7 @@ const TutorSetup = () => {
                 </label>{" "}
                 &nbsp;&nbsp;
                 <input
+                  required
                   style={{
                     margin: "2.5px 0 0 0",
                     width: "70%",
@@ -710,6 +712,7 @@ const TutorSetup = () => {
                 </label>{" "}
                 &nbsp;&nbsp;
                 <input
+                  required
                   style={{
                     margin: "2.5px 0 0 0",
                     width: "70%",
@@ -777,6 +780,7 @@ const TutorSetup = () => {
                 </label>{" "}
                 &nbsp;&nbsp;
                 <input
+                  required
                   style={{
                     margin: "2.5px 0 0 0",
                     width: "70%",
@@ -837,6 +841,7 @@ const TutorSetup = () => {
                 </label>{" "}
                 &nbsp;&nbsp;
                 <input
+                  required
                   onInput={(e) => set_city(e.target.value)}
                   placeholder="City/Town"
                   type="text"
@@ -898,6 +903,7 @@ const TutorSetup = () => {
                 </label>{" "}
                 &nbsp;&nbsp;
                 <input
+                  required
                   onInput={(e) => set_zipCode(e.target.value)}
                   defaultValue={zipCode}
                   placeholder="Zip-Code"
@@ -910,19 +916,9 @@ const TutorSetup = () => {
                   }}
                 />
               </div>
-
               <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
+                style={{ display: "flex", width: "100%", justifyContent: "center", alignItems: "center", margin: "0 0 10px 0", display: "flex", justifyContent: "center", whiteSpace: "nowrap" }}>
+                <label style={{ width: "30%" }} htmlFor="country">
                   Country
                 </label>{" "}
                 &nbsp;&nbsp;
@@ -930,13 +926,8 @@ const TutorSetup = () => {
                   onInput={(e) => set_country(e.target.value)}
                   id="country"
                   value={country}
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                    padding: "5px",
-                    margin: "0 0 10px 0",
-                  }}
+                  style={{ float: "right", width: "70%", margin: "2.5px 0 0 0", padding: "5px", margin: "0 0 10px 0" }}
+                  required
                 >
                   {countryList}
                 </select>
@@ -1016,16 +1007,16 @@ const TutorSetup = () => {
                   </div>
                   <div className="col-md-4">
                     <div className="text-center">
-                      {video.length ?
-                        <input
-                          data-type="file"
-                          defaultValue={''}
-                          onChange={handleVideo}
-                          type="file"
-                          style={{ display: "none" }}
-                          id="video"
-                        />
-                        : null}
+                      {/* {video.length ? */}
+                      <input
+                        data-type="file"
+                        defaultValue={''}
+                        onChange={handleVideo}
+                        type="file"
+                        style={{ display: "none" }}
+                        id="video"
+                      />
+                      {/* : null} */}
                       <label
                         id="btn"
                         htmlFor="video"
@@ -1073,6 +1064,7 @@ const TutorSetup = () => {
             <div className="tutor-grades">
               <ul>
                 {grades.map((item) => {
+                  const isChecked = tutorGrades.includes(item.grade);
                   return (
                     <li>
                       <div
@@ -1084,34 +1076,20 @@ const TutorSetup = () => {
                           alignItems: "center",
                         }}
                       >
-                        {item.ex ? (
-                          <input
-                            style={{
-                              background: "blue",
-                              color: "blue",
-                              height: "25px",
-                              width: "25px",
-                            }}
-                            defaultChecked
-                            type="checkbox"
-                            id={item.grade}
-                            onInput={handleTutorGrade}
-                            className="grades"
-                          />
-                        ) : (
-                          <input
-                            style={{
-                              background: "blue",
-                              color: "blue",
-                              height: "25px",
-                              width: "25px",
-                            }}
-                            type="checkbox"
-                            id={item.grade}
-                            onInput={handleTutorGrade}
-                            className="grades"
-                          />
-                        )}
+                        <input
+                          style={{
+                            background: "blue",
+                            color: "blue",
+                            height: "25px",
+                            width: "25px",
+                          }}
+                          type="checkbox"
+                          checked={isChecked}
+                          id={item.grade}
+                          onInput={() => handleTutorGrade(item.grade)}
+                          className="grades"
+                        />
+
                         &nbsp;
                         <label htmlFor={item.grade}>{item.grade}</label>
                       </div>
@@ -1135,6 +1113,7 @@ const TutorSetup = () => {
             </label>
             <br />
             <input
+
               defaultValue={headline}
               maxLength={80}
               placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
@@ -1198,6 +1177,7 @@ const TutorSetup = () => {
               </div>
             </div>
           </div>
+          <Actions />
         </form>
       </motion.div>
     </>

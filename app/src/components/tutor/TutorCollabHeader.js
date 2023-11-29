@@ -21,8 +21,8 @@ function MyTimer({ expiryTimestamp }) {
       resume,
       restart,
     } = useTimer({ expiryTimestamp, onExpire: () => {
-        alert('This lesson was ended. You are directed now to the feedback screen.This lesson is marked by green blinking frame. Please rate this lesson.');
-window.location.href = '/student/feedback'
+        // alert('This lesson was ended. You are directed now to the feedback screen.This lesson is marked by green blinking frame. Please rate this lesson.');
+        window.location.href = '/student/feedback'
     } });
   
     return (
@@ -63,7 +63,6 @@ const TutorCollabHeader = () => {
             tutorAsideElem?.removeAttribute('id')
         }else{
             tutorAsideElem?.setAttribute('id', 'TutorAside')
-
         }
     }
     const time = new Date();
@@ -118,7 +117,7 @@ const TutorCollabHeader = () => {
                 </div>
             </div>
         </>
-     );
+    );
 }
  
 export default TutorCollabHeader;

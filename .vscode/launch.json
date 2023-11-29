@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "pwa-node",
+            "request": "launch",
+            "name": "Launch Program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server\\index.js",
+            "outFiles": [
+                "${workspaceFolder}/server/**/*.js",
+                "!${workspaceFolder}/server/node_modules/**/*.js",
+                "!${workspaceFolder}/serve/node_modules/**/*.js"
+            ],
+            "sourceMaps": true,
+            "env": {
+                "PORT": "9876",
+                "JWTSECRETKEY": "MichaSchool_Managemnet_system@!23",
+                "HOLIDAY_API_KEY": "6659ac25-976b-470b-9ca8-ace223382078",
+                "HOLIDAY_ABS_API_KEY": "ae677858abf044338858283038b06056"
+            }
+        }
+    ]
+}

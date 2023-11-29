@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
+import { get_holidays_by_countryCode } from '../../api/holidayApi/requests';
+import { fetch_holidays } from '../../axios/holiday';
 import { hours, days } from '../../constants/constants';
-import { BsCheckCircle } from 'react-icons/bs';
 
 function TutorCalenderSidebar({
     activeTab,
@@ -21,10 +22,12 @@ function TutorCalenderSidebar({
         }
     }, [activeTab]);
 
+    useEffect(() => { fetch_holidays('PK', 2023, 12) }, [])
+
     const handleTabClick = (tab) => {
         setActiveTab(tab);
     };
-    
+
     const handleCheckboxClick = (day, timeRange) => {
         if (activeTab === 'month') {
             if (disableWeekDays?.includes(day)) {
@@ -49,7 +52,7 @@ function TutorCalenderSidebar({
 
     return (
         <div className="tab-content card h-100" style={{ overflowY: "auto" }}>
-            <div className='highlight small p-2'>To view feedback, postpone, or cancel, click on the lesson</div>
+            <div className='highlight small p-2'>To view feedback, postpone, or cancel a lesson, click on the session.</div>
             <div className='d-flex'>
 
                 <button
@@ -83,7 +86,7 @@ function TutorCalenderSidebar({
                             style={{
                                 marginRight: "5px"
                             }}
-                        >Select Blockout Color</div>
+                        ></div>
                         <input className='p-0 m-0'
                             onChange={(e) => setDisableColor(e.target.value)}
                             value={disableColor || "#5ed387"}
@@ -125,8 +128,8 @@ function TutorCalenderSidebar({
                     </div>
 
                     <div className="highlight small lh-sm">
-                        Double click on a blocked weekday or hour, Will unblock the
-                        day, or the specific hour for that day.11
+                        Double click on a blocked day or hour, will unblock the
+                        day, or the specific hour for that day.
                     </div>
                     <div className='text-end'>
                         <div className='highlight'>Tutor Calendar Color legend.</div>
@@ -215,7 +218,7 @@ function TutorCalenderSidebar({
                     </div>
 
                     <div className="highlight small lh-sm">
-                        Double click on a blocked weekday or hour, will unblock the
+                        Double click on a blocked day or hour, will unblock the
                         day or the specific hour for that day.
                     </div>
                 </div>

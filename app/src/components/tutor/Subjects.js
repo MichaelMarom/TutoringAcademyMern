@@ -1,26 +1,18 @@
-import { useTable } from 'react-table';
 import { useState } from 'react';
 import Skeleton from 'react-loading-skeleton'
-
-import { AnimatePresence } from 'framer-motion'
-import { useMemo } from 'react';
 import { useEffect } from 'react';
 import { get_faculty, get_rates, get_subject, get_user_data, upload_new_subject, upload_tutor_rates } from '../../axios/tutor';
 import { COLUMNS } from '../../Tables/Subject/columns';
 import { socket } from '../../socket';
-//import left from './../../images/arrow-circle-left-svgrepo-com'
 
 
 const Subjects = () => {
 
-    const [data, set_data] = useState([]);
-    const [data_ready, set_data_ready] = useState(false);
     let [newSubjectFaculty, setNewSubjectFaculty] = useState([]);
 
     let [newSubjectFacultyData, setNewSubjectFacultyData] = useState('');
     let [newSubjectData, setNewSubjectData] = useState('');
     let [newSubjectReasonData, setNewSubjectReasonData] = useState('');
-    let [newSubjectFacultyIdData, setNewSubjectFacultyIdData] = useState('')
 
     let [emptyData, set_emptyData] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
 

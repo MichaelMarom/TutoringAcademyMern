@@ -124,7 +124,7 @@ const StudentProfileCnt = () => {
                             </div>
                             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
                                 
-                                    <h5>Parent video consent</h5>
+                                    <h5>Parent(s) video recording consent</h5>
                                     <div style={{display: 'flex', flexDirection: 'row',}}>
                                         <div className='input-cnt' style={{height: '20px', width: '70px'}}>
                                             <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentYes'>Yes</label>

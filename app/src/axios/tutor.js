@@ -1,18 +1,10 @@
-import axios from "axios";
 import { v4 as uuidv4 } from 'uuid'
-
-const instance = axios.create({
-    baseURL: "http://localhost:9876", // Adjust the base URL to match your backend API endpoint
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-
+import apiClient from './config'
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.post('http://localhost:9876/tutor/new-subject', {
+        apiClient.post('/tutor/new-subject', {
             faculty, subject, reason, AcademyId, facultyId
         })
             .then((result) => {
@@ -30,7 +22,7 @@ export let get_subject = (id) => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/subjects', {
+        apiClient.get('/tutor/subjects', {
             params: {
                 id
             }
@@ -52,7 +44,7 @@ export let get_faculty = () => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/faculties', {
+        apiClient.get('/tutor/faculties', {
             params: {
 
             }
@@ -74,7 +66,7 @@ export let get_tutor_status = (faculty, subject, reason, AcademyId) => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/tutor-status', {
+        apiClient.get('/tutor/tutor-status', {
             params: {
                 faculty, subject, reason, AcademyId
             }
@@ -96,7 +88,7 @@ export let get_countries = () => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/countries', {
+        apiClient.get('/tutor/countries', {
 
         })
             .then((result) => {
@@ -115,7 +107,7 @@ export let get_state = () => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/state', {
+        apiClient.get('/tutor/state', {
 
         })
             .then((result) => {
@@ -134,7 +126,7 @@ export let get_experience = () => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/experience', {
+        apiClient.get('/tutor/experience', {
 
         })
             .then((result) => {
@@ -153,7 +145,7 @@ export let get_gmt = () => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/gmt', {
+        apiClient.get('/tutor/gmt', {
 
         })
             .then((result) => {
@@ -171,7 +163,7 @@ export let get_response = () => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/response', {
+        apiClient.get('/tutor/response', {
 
         })
             .then((result) => {
@@ -189,7 +181,7 @@ export let upload_form_one = (fname, uname, mname, sname, email, cell, acadId, a
      country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
     return new Promise((resolve, reject) => {
 
-        axios.post('http://localhost:9876/tutor/form-one', {
+        apiClient.post('/tutor/form-one', {
             fname, uname, mname, sname, email, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId
         })
             .then((result) => {
@@ -207,7 +199,7 @@ export let upload_form_two = (level, university1, university2, university3, degr
     return new Promise((resolve, reject) => {
         console.log(university3, doctorateGraduateYear, doctorateState)
 
-        axios.post('http://localhost:9876/tutor/form-two', {
+        apiClient.post('/tutor/form-two', {
             level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id
         })
             .then((result) => {
@@ -226,7 +218,7 @@ export let upload_form_three = (MutiStudentHourlyRate, CancellationPolicy,
     AcademyId, DiscountCode, CodeShareable, MultiStudent, IntroSessionDiscount) => {
     return new Promise((resolve, reject) => {
 
-        axios.post('http://localhost:9876/tutor/form-three', {
+        apiClient.post('/tutor/form-three', {
             MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent
         })
             .then((result) => {
@@ -243,7 +235,7 @@ export let upload_form_three = (MutiStudentHourlyRate, CancellationPolicy,
 export let get_degree = () => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/degree', {
+        apiClient.get('/tutor/degree', {
 
         })
             .then((result) => {
@@ -259,7 +251,7 @@ export let get_degree = () => {
 export let get_level = () => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/level', {
+        apiClient.get('/tutor/level', {
 
         })
             .then((result) => {
@@ -277,7 +269,7 @@ export let get_level = () => {
 export let get_certificates = () => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/certificates', {
+        apiClient.get('/tutor/certificates', {
 
         })
             .then((result) => {
@@ -295,7 +287,7 @@ export let get_user_data = (user_id) => {
     console.log(user_id)
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/education', {
+        apiClient.get('/tutor/education', {
             params: {
                 user_id
             }
@@ -315,7 +307,7 @@ export let get_user_data = (user_id) => {
 export let upload_tutor_rates = (rate_list, AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.post('http://localhost:9876/tutor/rates', {
+        apiClient.post('/tutor/rates', {
             rate_list, AcademyId
         })
             .then((result) => {
@@ -332,7 +324,7 @@ export let upload_tutor_rates = (rate_list, AcademyId) => {
 export let get_my_data = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/my-data', {
+        apiClient.get('/tutor/my-data', {
             params: {
                 AcademyId
             }
@@ -350,7 +342,7 @@ export let get_my_data = (AcademyId) => {
 export let get_my_edu = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/my-edu', {
+        apiClient.get('/tutor/my-edu', {
             params: {
                 AcademyId
             }
@@ -369,7 +361,7 @@ export let get_my_edu = (AcademyId) => {
 export let get_rates = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/my-rate', {
+        apiClient.get('/tutor/my-rate', {
             params: {
                 AcademyId
             }
@@ -389,7 +381,7 @@ export let get_rates = (AcademyId) => {
 export let get_bank_details = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/tutor-bank-details', {
+        apiClient.get('/tutor/tutor-bank-details', {
             params: {
                 AcademyId
             }
@@ -407,7 +399,7 @@ export let get_bank_details = (AcademyId) => {
 export let get_tutor_rates = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/tutor-rate', {
+        apiClient.get('/tutor/tutor-rate', {
             params: {
                 AcademyId
             }
@@ -425,7 +417,7 @@ export let get_tutor_rates = (AcademyId) => {
 export let upload_form_four = (start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.post('http://localhost:9876/tutor/payment', {
+        apiClient.post('/tutor/payment', {
             start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId
         })
             .then((result) => {
@@ -442,7 +434,7 @@ export let upload_form_four = (start_day, acct_name, acct_type, bank_name, acct,
 export let get_tutor_setup = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
-        axios.get('http://localhost:9876/tutor/tutor-setup', {
+        apiClient.get('/tutor/tutor-setup', {
             params: {
                 AcademyId
             }
@@ -459,7 +451,7 @@ export let get_tutor_setup = (AcademyId) => {
 
 export let get_tutor_setup_by_userId = async (userId) => {
     try {
-        const { data } = await instance.get('/tutor/tutor-setup', {
+        const { data } = await apiClient.get('/tutor/tutor-setup', {
             params: {
                 userId
             }
@@ -475,7 +467,7 @@ export let get_tutor_setup_by_userId = async (userId) => {
 
 export let get_tutor_setup_by_acaId = async (AcademyId) => {
     try {
-        const { data } = await instance.get('/tutor/tutor-setup', {
+        const { data } = await apiClient.get('/tutor/tutor-setup', {
             params: {
                 AcademyId
             }
@@ -498,7 +490,7 @@ export const storeEventAPI = async (eventDetails) => {
             start: eventDetails.start,
             end: eventDetails.end,
         };
-        const response = await instance.post("/api/store-event", newEvent);
+        const response = await apiClient.post("/api/store-event", newEvent);
         return response.data;
     } catch (error) {
         console.error("Error:", error);
@@ -507,8 +499,7 @@ export const storeEventAPI = async (eventDetails) => {
 
 export const fetchStudentsBookings = async (tutorId) => {
     try {
-        const response = await instance.get(`api/bookings/${tutorId}`);
-        console.log(response, 'in axios');
+        const response = await apiClient.get(`api/bookings/${tutorId}`);
         return response.data;
     } catch (error) {
         console.error("Error:", error);
@@ -520,7 +511,7 @@ export let get_tutor_market_data = (id) => {
     return new Promise((resolve, reject) => {
 
 
-        axios.get('http://localhost:9876/tutor/market-data', { params: { id } })
+        apiClient.get('/tutor/market-data', { params: { id } })
             .then((result) => {
                 resolve(result.data)
             })
@@ -534,7 +525,7 @@ export let get_tutor_market_data = (id) => {
 
 export const updateTutorDisableslots = async (tutorAcademyId, body) => {
     try {
-        const { data } = await instance.put(`/tutor/update/${tutorAcademyId}`, body);
+        const { data } = await apiClient.put(`/tutor/update/${tutorAcademyId}`, body);
         return data
     }
     catch (err) {
@@ -544,7 +535,7 @@ export const updateTutorDisableslots = async (tutorAcademyId, body) => {
 }
 export const addDisabledDates = async (date) => {
     try {
-        const response = await instance.post("/api/store-disabled-dates", date);
+        const response = await apiClient.post("/api/store-disabled-dates", date);
         return response.data;
     } catch (error) {
         console.error("Error:", error);
@@ -578,7 +569,7 @@ export const post_tutor_setup = async (data) => {
         if (data.grades !== undefined) dataObject.Grades = data.grades;
         dataObject.TutorScreenname = data.mname.length > 0 ? data.fname + '.' + ' ' + data.mname[0] + '.' + ' ' + data.sname[0] : data.fname + '.' + ' ' + data.sname[0];
         dataObject.AcademyId = uuidv4()
-        return instance.post('/tutor/setup', dataObject)
+        return apiClient.post('/tutor/setup', dataObject)
     } catch (err) {
         console.log(err)
     }

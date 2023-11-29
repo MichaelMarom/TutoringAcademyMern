@@ -499,7 +499,7 @@ const StudentSetup = () => {
                                 width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'
                             }}>
 
-                                <h5>Parent video consent</h5>
+                                <h5>Parent(s) video recording consent</h5>
                                 <div className="form-check form-switch d-flex gap-3" style={{ fontSize: "16px " }}>
                                     <input
                                         className="form-check-input "

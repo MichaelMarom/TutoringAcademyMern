@@ -17,7 +17,7 @@ import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
 import { setShortlist } from "./redux/student_store/shortlist";
 import { get_my_data } from "./axios/student";
-import * as tutorApis from "./axios/tutor"
+
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
 
@@ -29,19 +29,28 @@ const App = () => {
   const { user } = useSelector((state) => state.user);
   const [activeRoutes, setActiveRoutes] = useState([]);
 
+  //ids
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     dispatch(setUser(storedUser ? JSON.parse(storedUser) : {}));
   }, []);
 
   useEffect(() => {
+    if (user[0]?.role === "tutor")
+      window.localStorage.setItem("tutor_tab_index", 0);
+
+    if (user[0]?.role === "student")
+      window.localStorage.setItem("student_tab_index", 0);
+  }, [user]);
+
+  useEffect(() => {
     if (user[0] && user[0].role !== 'admin')
       get_tutor_setup_by_userId(user[0].SID).then((result) => {
-        console.log(result[0], user[0].SID)
         localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
       });
   }, [user]);
 
+  //dispatch
   useEffect(() => {
     dispatch(setShortlist())
     const getStudentDetails = async () => {
@@ -52,22 +61,11 @@ const App = () => {
   }, [localStorage.getItem('student_user_id')])
 
   useEffect(() => {
-    const getTutorDetails = async () => {
-      const res = await tutorApis.get_tutor_setup_by_acaId(localStorage.getItem('tutor_user_id'))
-      dispatch(setTutor(res[0]))
-    }
-    getTutorDetails()
+    dispatch(setTutor())
   }, [localStorage.getItem('tutor_user_id')])
 
 
-  useEffect(() => {
-    if (user[0]?.role === "tutor")
-      window.localStorage.setItem("tutor_tab_index", 0);
-
-    if (user[0]?.role === "student")
-      window.localStorage.setItem("student_tab_index", 0);
-  }, [user]);
-
+  //routes
   const generateRoutes = (role) => {
     if (role && rolePermissions[role]) {
       if (role === 'admin') {
@@ -89,7 +87,6 @@ const App = () => {
       setActiveRoutes([]);
     }
   };
-
 
   useEffect(() => {
     generateRoutes(user[0]?.role);

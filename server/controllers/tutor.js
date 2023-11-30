@@ -1027,7 +1027,8 @@ const post_tutor_setup = (req, res) => {
                     );
                     if (updated.rowsAffected[0]) {
                         const result = await poolConnection.request().query(
-                            findByAnyIdColumn("TutorSetup", { AcademyId: findtutorSetup.recordset[0].AcademyId })
+                            findByAnyIdColumn("TutorSetup",
+                             { AcademyId: findtutorSetup.recordset[0].AcademyId })
                         );
                         console.log(result, 'resd')
                         res.status(200).send(result.recordset);

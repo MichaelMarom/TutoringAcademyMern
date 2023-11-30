@@ -1,5 +1,7 @@
 // slice.js
 import { createSlice } from "@reduxjs/toolkit";
+import { get_user_detail } from "../../axios/auth";
+import * as tutorApis from "../../axios/tutor"
 
 // Create a slice with your event-related reducers
 const slice = createSlice({
@@ -30,8 +32,24 @@ export default slice.reducer;
 
 export function setTutor(data) {
     return async (dispatch) => {
-        dispatch(slice.actions.setTutor(data));
-        return data;
+        dispatch(slice.actions.isLoading());
+        let result;
+        console.log(localStorage.getItem('tutor_user_id'), typeof (localStorage.getItem('tutor_user_id')))
+        if (localStorage.getItem('tutor_user_id') === "undefined") {
+            const user = localStorage.getItem('user')
+            result = await tutorApis.get_tutor_setup_by_userId(user[0].SID)
+        }
+        else {
+            result = await tutorApis.get_tutor_setup_by_acaId(localStorage.getItem('tutor_user_id'))
+        }
+
+        if (result[0]?.userId) {
+            const selectedUserId = await get_user_detail(result[0]?.userId);
+            dispatch(slice.actions.setTutor({ ...result[0], email: selectedUserId.email }));
+            localStorage.setItem('tutor_screen_name', result[0].TutorScreenname)
+            return data;
+        }
+        return null;
     };
 }
 

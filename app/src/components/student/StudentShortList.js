@@ -1,9 +1,4 @@
-import { useTable } from 'react-table';
-import { COLUMNS, DATA } from '../../Tables/Prompt/columns';
-import { useMemo } from 'react';
-import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useEffect } from 'react';
 import containerVariants from '../constraint';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';

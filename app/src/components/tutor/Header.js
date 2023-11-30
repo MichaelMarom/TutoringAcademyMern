@@ -15,7 +15,6 @@ const Header = () => {
 
     let [tutorState, setTutorState] = useState('Pending')
 
-    let { screenName } = useSelector(s => s.screenName);
 
     useEffect(() => {
         const element = document.getElementById('tutor-tab-header-list-active');
@@ -41,8 +40,8 @@ const Header = () => {
     ];
 
     useEffect(() => {
-        set_screen_name(screenName)
-    }, [screenName]);
+        set_screen_name(localStorage.getItem('tutor_screen_name'))
+    }, [localStorage.getItem('tutor_screen_name')]);
 
 
 
@@ -100,7 +99,7 @@ const Header = () => {
             top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px', 
             padding: '3px 5px 0', height: '30px', 
             background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red', color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff' }}>
-                {localStorage.getItem('tutor_screen_name')}
+                {screen_name}
             </div>
 
             <div className="tutor-tab-header shadow-sm">

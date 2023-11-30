@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import apiClient from './config'
+import {apiClient} from './config'
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
@@ -177,12 +177,12 @@ export let get_response = () => {
 }
 
 
-export let upload_form_one = (fname, uname, mname, sname, email, cell, acadId, add1, add2, city, state, zipCode,
-     country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
+export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, add1, add2, city, state, zipCode,
+    country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/form-one', {
-            fname, uname, mname, sname, email, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId
+            fname, uname, mname, lname, email, cell, acadId, add1, add2, city, state, zipCode, country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId
         })
             .then((result) => {
                 resolve(result.data)
@@ -551,7 +551,7 @@ export const post_tutor_setup = async (data) => {
         if (data.recordedVideo !== undefined) dataObject.VideoRecorded = data.recordedVideo;
         if (data.fname !== undefined) dataObject.FirstName = data.fname;
         if (data.mname !== undefined) dataObject.MiddleName = data.mname;
-        if (data.sname !== undefined) dataObject.LastName = data.sname;
+        if (data.lname !== undefined) dataObject.LastName = data.lname;
         if (data.add1 !== undefined) dataObject.Address1 = data.add1;
         if (data.add2 !== undefined) dataObject.Address2 = data.add2;
         if (data.city !== undefined) dataObject.CityTown = data.city;
@@ -567,7 +567,9 @@ export const post_tutor_setup = async (data) => {
         if (data.motivation !== undefined) dataObject.Motivate = data.motivation;
         if (data.userId !== undefined) dataObject.userId = data.userId;
         if (data.grades !== undefined) dataObject.Grades = data.grades;
-        dataObject.TutorScreenname = data.mname.length > 0 ? data.fname + '.' + ' ' + data.mname[0] + '.' + ' ' + data.sname[0] : data.fname + '.' + ' ' + data.sname[0];
+        dataObject.TutorScreenname = data.mname.length > 0 ?
+            data.fname + '.' + ' ' + data.mname[0] + '.' + ' ' + data.lname[0] :
+            data.fname + '.' + ' ' + data.lname[0];
         dataObject.AcademyId = uuidv4()
         return apiClient.post('/tutor/setup', dataObject)
     } catch (err) {

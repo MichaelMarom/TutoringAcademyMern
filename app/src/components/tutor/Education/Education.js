@@ -3,12 +3,14 @@ import { useSelector } from 'react-redux';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { FaTimesCircle } from 'react-icons/fa';
 
-import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../axios/tutor';
-import career from '../../images/career.png';
+import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../../axios/tutor';
+import career from '../../../images/career.png';
 import Select, { components } from 'react-select'
-import Actions from '../common/Actions';
+import Actions from '../../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { upload_file } from '../../../axios/file';
+import PDFViewer from './PDFViewer';
 
 const languages = [
     'Afrikaans',
@@ -368,6 +370,23 @@ const Education = () => {
         }
     }
 
+    const handleUploadToServer = async () => {
+        if (degreeFile) {
+            const formData = new FormData();
+            formData.append('file', degreeFile);
+
+            try {
+                const response = await upload_file(formData, user_id)
+
+                console.log(response.data.filePath);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        } else {
+            console.warn('Please select a file before uploading.');
+        }
+    };
+
     const handleCertUpload = (event) => {
         const file = event.target.files[0];
 
@@ -386,6 +405,7 @@ const Education = () => {
         e.preventDefault();
         let res = await saver()
         if (res) {
+            handleUploadToServer()
             toast.success('Education record saved Successfully')
         }
         else {
@@ -601,7 +621,7 @@ const Education = () => {
                                     <div className="col-md-4">
                                         <label htmlFor="degree">Upload Highest Degree Diploma:</label>
                                         <div className='d-flex align-items-center'>
-
+                                        <PDFViewer pdfUrl={'http://localhost:9876/uploads/Asiya. B6055bd-1701353026971-234401801.pdf'} />
                                             <div className="form-outline">
                                                 <input
                                                     type="file"

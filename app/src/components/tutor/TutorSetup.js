@@ -6,31 +6,28 @@ import moment from "moment";
 import { toast } from 'react-toastify'
 
 import {
-  get_countries,
-  get_gmt,
-  get_response,
-  get_state,
   get_tutor_setup_by_acaId,
   get_tutor_setup_by_userId,
   post_tutor_setup,
 } from "../../axios/tutor";
+import { get_user_detail } from "../../axios/auth";
 import containerVariants from "../constraint";
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
-import { get_user_detail } from "../../axios/auth";
 import Loading from "../common/Loading";
 
 import Actions from '../common/Actions'
+import { uploadVideo } from "../../redux/tutor_store/video";
+import { Countries, GMT, RESPONSE, STATES } from "../../constants/constants";
+import { setTutor } from "../../redux/tutor_store/tutorData";
 
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
-  let [uname, set_uname] = useState("");
   let [mname, set_mname] = useState("");
-  let [sname, set_sname] = useState("");
+  let [lname, set_sname] = useState("");
   let [cell, set_cell] = useState("");
-  let [acadId, set_acadId] = useState("");
   let [add1, set_add1] = useState("");
   let [add2, set_add2] = useState("");
   let [city, set_city] = useState("");
@@ -73,16 +70,23 @@ const TutorSetup = () => {
   let [GMTList, setGMTList] = useState("");
   let [response_list, set_response_list] = useState("");
   let [recordedVideo, setRecordedVideo] = useState(null);
-  let [data, set_data] = useState(false);
+  let [userExist, setUserExist] = useState(false);
   const [uploadPhotoClicked, setUploadPhotoClicked] = useState(false)
   const [uploadVideoClicked, setUploadVideoClicked] = useState(false)
+  const [userId, setUserId] = useState()
+
+  const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
+  const { isLoading } = useSelector(state => state.video)
 
 
   let dispatch = useDispatch();
 
   const [selectedVideoOption, setSelectedVideoOption] = useState(null);
 
-  const handleOptionClick = (option) => setSelectedVideoOption(option);
+  const handleOptionClick = (option) => {
+    setUploadVideoClicked(true);
+    setSelectedVideoOption(option);
+  }
 
   let handleTutorGrade = (grade) => {
     if (tutorGrades.some(item => item === grade)) {
@@ -94,44 +98,61 @@ const TutorSetup = () => {
   };
   //upload photo
   useEffect(() => {
-    if (uploadPhotoClicked)
-      post_tutor_setup({ photo })
+    // if (!userExist) toast.error("Other information is also required")
+    if (uploadPhotoClicked && userExist) {
+      post_tutor_setup({ photo, fname, lname, mname, userId })
+      console.log('upk9ad photo')
+    }
 
-  }, [photo])
+  }, [photo, userExist])
 
 
   //upload video
   useEffect(() => {
-    if (selectedVideoOption === 'upload')
-      post_tutor_setup({ video })
-    console.log('upk9ad phjVIDEOtn')
+    const upload_video = async () => {
+      if (uploadVideoClicked && userExist) {
+        // setUploadingVideo(true)
+        // await post_tutor_setup({ video, fname, lname, mname })
+        // setUploadingVideo(false)
+        dispatch(uploadVideo({ video, fname, lname, mname, userId }))
+        console.log('upk9ad video')
+      }
+    }
+    upload_video()
   }, [video])
+
+  console.log(isLoading, selectedVideoOption, 'videoupd')
 
   useEffect(() => {
     const AcademyId = localStorage.getItem('tutor_user_id')
 
     const fetchTutorSetup = async () => {
+      console.log('rener', tutor)
+
       setDataFetching(true)
 
       let result;
-      if (user[0].role === 'admin') {
+      // if (user[0].role === 'admin') {
 
-        result = await get_tutor_setup_by_acaId(AcademyId);
-      }
-      else {
-        result = await get_tutor_setup_by_userId(user[0].SID);
-      }
-      if (result.length) {
-        let data = result[0];
-        const selectedUserId = await get_user_detail(data.userId);
-        console.log(selectedUserId, 'ddd')
+      //   result = await get_tutor_setup_by_acaId(AcademyId);
+      // }
+      // else {
+      //   result = await get_tutor_setup_by_userId(user[0].SID);
+      // }
+      if (tutor.AcademyId) {
+        console.log(tutor)
+        let data = tutor;
+        // const selectedUserId = await get_user_detail(data.userId);
+
+        setUserId(tutor.userId)
+        setUserExist(true)
         set_fname(data.FirstName);
         set_sname(data.LastName);
         set_mname(data.MiddleName);
         set_photo(data.Photo);
         set_cell(data.CellPhone);
         set_state(data.StateProvince);
-        set_email(selectedUserId.email)
+        set_email(data.email)
         set_city(data.CityTown);
         set_country(data.Country);
         set_response_zone(data.ResponseHrs);
@@ -142,16 +163,7 @@ const TutorSetup = () => {
         set_headline(data.HeadLine);
         set_add1(data.Address1);
         set_add2(data.Address2);
-        console.log(data.Grades, typeof (data.Grades))
-        setTutorGrades(JSON.parse((data?.Grades ?? [])));
-
-
-        let gradeList = data.Grades?.split(",") || [];
-        grades.map((item) => {
-          gradeList.map((grade) =>
-            item.grade === grade ? (item.ex = true) : ""
-          );
-        });
+        setTutorGrades(JSON.parse((data?.Grades ?? '[]')));
 
         set_video(data.Video);
         setRecordedVideo(data.VideoRecorded)
@@ -160,22 +172,7 @@ const TutorSetup = () => {
       setDataFetching(false)
     };
     fetchTutorSetup();
-  }, []);
-
-  useEffect(() => {
-    let id =
-      window.localStorage.getItem("tutor_user_id") !== "null"
-        ? window.localStorage.getItem("tutor_user_id")
-        : null;
-    set_acadId(id);
-  }, []);
-
-  useEffect(() => {
-    let next = document.querySelector(".tutor-next");
-    if (next && next.hasAttribute("id")) {
-      next?.removeAttribute("id");
-    }
-  }, []);
+  }, [tutor]);
 
   const saveTutorSetup = async (e) => {
     e.preventDefault();
@@ -185,6 +182,7 @@ const TutorSetup = () => {
       ?.setAttribute("id", "save-overlay");
     let response = await saver();
     if (response.status === 200) {
+      dispatch(setTutor())
       window.localStorage.setItem(
         "tutor_screen_name",
         response.data[0]?.TutorScreenname
@@ -212,7 +210,7 @@ const TutorSetup = () => {
     document.querySelector("#tutor-edit").onclick = async () => {
       let input = [...document.querySelectorAll("input")].filter(
         (item) =>
-          item.id !== "fname" && item.id !== "mname" && item.id !== "sname"
+          item.id !== "fname" && item.id !== "mname" && item.id !== "lname"
       );
       let select = [...document.querySelectorAll("select")];
       let textarea = [...document.querySelectorAll("textarea")];
@@ -250,12 +248,10 @@ const TutorSetup = () => {
   let saver = async () => {
     let response = await post_tutor_setup({
       fname,
-      uname,
       mname,
-      sname,
+      lname,
       email: user[0].email,
       cell,
-      acadId,
       add1,
       add2,
       city,
@@ -270,185 +266,169 @@ const TutorSetup = () => {
       // photo,
       // video,
       tutorGrades,
-      userId: user[0]?.SID,
+      userId,
       grades: tutorGrades
     });
     return response;
   };
 
   useEffect(() => {
-    get_countries()
-      .then((data) => {
-        console.log(data);
-        let list = data.recordset.map((item) => (
-          <option
-            key={item.Country}
-            className={item.Country}
-            selected={item.Country === country ? "selected" : ""}
-            style={{
-              height: "80px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value={item.Country}
-          >
-            {item.Country}
-          </option>
-        ));
-        let head = (
-          <option
-            key="null"
-            style={{
-              height: "50px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value=""
-          >
-            Country
-          </option>
-        );
 
-        list.unshift(head);
-        setCountryList(list);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let countries = Countries.map((item) => (
+      <option
+        key={item.Country}
+        className={item.Country}
+        selected={item.Country === country ? "selected" : ""}
+        style={{
+          height: "80px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value={item.Country}
+      >
+        {item.Country}
+      </option>
+    ));
+    let countries_select_head = (
+      <option
+        key="null"
+        style={{
+          height: "50px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value=""
+      >
+        Country
+      </option>
+    );
 
-    get_gmt()
-      .then((data) => {
-        let list = data.recordset.map((item) => (
-          <option
-            key={item.GMT}
-            className={item.GMT}
-            selected={item.GMT === timeZone ? "selected" : ""}
-            style={{
-              height: "80px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value={item.GMT}
-          >
-            {item.GMT}
-          </option>
-        ));
-        let head = (
-          <option
-            key="null"
-            style={{
-              height: "50px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value=""
-          >
-            GMT
-          </option>
-        );
+    countries.unshift(countries_select_head);
+    setCountryList(countries);
 
-        list.unshift(head);
-        setGMTList(list);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 
-    get_state()
-      .then((data) => {
-        let list = data.recordset.map((item) => (
-          <option
-            key={item.State}
-            className={item.State}
-            selected={item.State === state ? "selected" : ""}
-            style={{
-              height: "80px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value={item.State}
-          >
-            {item.State}
-          </option>
-        ));
-        let head = (
-          <option
-            key="null"
-            style={{
-              height: "50px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value=""
-          >
-            State
-          </option>
-        );
 
-        list.unshift(head);
-        setStateList(list);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let list = GMT.map((item) => (
+      <option
+        key={item.GMT}
+        className={item.GMT}
+        selected={item.GMT === timeZone ? "selected" : ""}
+        style={{
+          height: "80px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value={item.GMT}
+      >
+        {item.GMT}
+      </option>
+    ));
+    let head = (
+      <option
+        key="null"
+        style={{
+          height: "50px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value=""
+      >
+        GMT
+      </option>
+    );
 
-    get_response()
-      .then((data) => {
-        console.log(data);
-        let list = data.recordset.map((item) => (
-          <option
-            key={item.Response}
-            className={item.Response}
-            selected={item.Response === response_zone ? "selected" : ""}
-            style={{
-              height: "80px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value={item.Response}
-          >
-            {item.Response}
-          </option>
-        ));
-        let head = (
-          <option
-            key="null"
-            style={{
-              height: "50px",
-              width: "100%",
-              outline: "none",
-              padding: "0 10px 0 10px",
-              borderRadius: "0",
-            }}
-            value=""
-          >
-            Response
-          </option>
-        );
+    list.unshift(head);
+    setGMTList(list);
 
-        list.unshift(head);
-        set_response_list(list);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [data]);
+
+
+    let states = STATES.map((item) => (
+      <option
+        key={item.State}
+        className={item.State}
+        selected={item.State === state ? "selected" : ""}
+        style={{
+          height: "80px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value={item.State}
+      >
+        {item.State}
+      </option>
+    ));
+    let states_head = (
+      <option
+        key="null"
+        style={{
+          height: "50px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value=""
+      >
+        State
+      </option>
+    );
+
+    states.unshift(states_head);
+    setStateList(states);
+
+
+
+
+    let response_list = RESPONSE.map((item) => (
+      <option
+        key={item.Response}
+        className={item.Response}
+        selected={item.Response === response_zone ? "selected" : ""}
+        style={{
+          height: "80px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value={item.Response}
+      >
+        {item.Response}
+      </option>
+    ));
+    let response_head = (
+      <option
+        key="null"
+        style={{
+          height: "50px",
+          width: "100%",
+          outline: "none",
+          padding: "0 10px 0 10px",
+          borderRadius: "0",
+        }}
+        value=""
+      >
+        Response
+      </option>
+    );
+
+    response_list.unshift(response_head);
+    set_response_list(response_list);
+
+  }, []);
 
   let handleImage = () => {
+    setUploadPhotoClicked(true)
     let frame = document.querySelector(".tutor-tab-photo-frame");
 
     let f = document.querySelector("#photo");
@@ -526,7 +506,7 @@ const TutorSetup = () => {
   }, [recordedVideo]);
 
 
-  if (dataFetching)
+  if (tutorDataLoading)
     return <Loading height="80vh" />
   return (
     <>
@@ -592,9 +572,9 @@ const TutorSetup = () => {
                     float: "right",
                     position: "relative",
                   }}
-                  onInput={(e) => set_fname(e.target.value)}
+                  onChange={(e) => set_fname(e.target.value)}
                   placeholder="First Name"
-                  defaultValue={fname}
+                  value={fname}
                   type="text"
                   id="fname"
                 />
@@ -624,7 +604,7 @@ const TutorSetup = () => {
                   }}
                   onInput={(e) => set_mname(e.target.value)}
                   placeholder="Middle Name"
-                  defaultValue={mname}
+                  value={mname}
                   type="text"
                   id="mname"
                 />
@@ -655,9 +635,9 @@ const TutorSetup = () => {
                   required
                   onInput={(e) => set_sname(e.target.value)}
                   placeholder="Last Name"
-                  defaultValue={sname}
+                  value={lname}
                   type="text"
-                  id="sname"
+                  id="lname"
                 />
               </div>
 
@@ -721,7 +701,7 @@ const TutorSetup = () => {
                   }}
                   onInput={(e) => set_cell(e.target.value)}
                   placeholder="Cell Phone"
-                  defaultValue={cell}
+                  value={cell}
                   type="text"
                   id="cellphn"
                 />
@@ -789,7 +769,7 @@ const TutorSetup = () => {
                   }}
                   onInput={(e) => set_add1(e.target.value)}
                   placeholder="Address 1"
-                  defaultValue={add1}
+                  value={add1}
                   type="text"
                   id="add1"
                 />
@@ -813,7 +793,7 @@ const TutorSetup = () => {
                 <input
                   onInput={(e) => set_add2(e.target.value)}
                   placeholder="Address 2"
-                  defaultValue={add2}
+                  value={add2}
                   type="text"
                   id="add2"
                   style={{
@@ -845,7 +825,7 @@ const TutorSetup = () => {
                   onInput={(e) => set_city(e.target.value)}
                   placeholder="City/Town"
                   type="text"
-                  defaultValue={city}
+                  value={city}
                   id="city"
                   style={{
                     float: "right",
@@ -905,7 +885,7 @@ const TutorSetup = () => {
                 <input
                   required
                   onInput={(e) => set_zipCode(e.target.value)}
-                  defaultValue={zipCode}
+                  value={zipCode}
                   placeholder="Zip-Code"
                   type="text"
                   id="zip"
@@ -970,6 +950,9 @@ const TutorSetup = () => {
             <div className="profile-video-cnt mt-3 "
               style={{ float: "right", width: "70%", height: "250px" }}
             >
+              <div className="mb-2">
+                {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
+              </div>
               {selectedVideoOption === "record" ? (
                 <div className="w-100">
                   <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
@@ -1114,7 +1097,7 @@ const TutorSetup = () => {
             <br />
             <input
 
-              defaultValue={headline}
+              value={headline}
               maxLength={80}
               placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
               onInput={(e) =>
@@ -1138,7 +1121,7 @@ const TutorSetup = () => {
               </label>
               <br />
               <textarea
-                defaultValue={intro}
+                value={intro}
                 maxLength={500}
                 placeholder="Write Your Introduction Here... e.g: (My name is Fabian and i am a graduate of Harvard University in Boston...)"
                 onInput={(e) =>
@@ -1162,7 +1145,7 @@ const TutorSetup = () => {
               </label>
               <br />
               <textarea
-                defaultValue={motivation}
+                value={motivation}
                 maxLength={500}
                 placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
                 onInput={(e) =>

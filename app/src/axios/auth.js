@@ -1,4 +1,4 @@
-import apiClient from "./config";
+import { apiClient } from "./config";
 
 export const signup = async (data) => {
     try {

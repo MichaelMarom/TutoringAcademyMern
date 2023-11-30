@@ -1,4 +1,4 @@
-import EducationComp from "../../components/tutor/Education";
+import EducationComp from "../../components/tutor/Education/Education";
 import TutorLayout from "../../layouts/TutorLayout";
 
 const Education = () => {

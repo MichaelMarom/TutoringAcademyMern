@@ -18,6 +18,7 @@ import studentReducer from './student_store/studentData'
 import shortlistReducer from './student_store/shortlist'
 
 import tutorReducer from './tutor_store/tutorData'
+import videoReducer from './tutor_store/video'
 
 let store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ let store = configureStore({
     bookings: studentBookingsReducer,
 
     tutor: tutorReducer,
+    video: videoReducer,
     lineWidth: thicknessReducer,
     color: colorLineReducer,
     eraserWidth: eraserReducer,

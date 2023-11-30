@@ -99,6 +99,906 @@ export const loggedInTutor = {
   Grades: ["8th grade", "9th grade", "7th grade", "10th grade"]
 }
 
+export const GMT = [
+  {
+    "id": 1,
+    "GMT": "00        ",
+    "Time Zone": "Greenwitch"
+  },
+  {
+    "id": 2,
+    "GMT": "+01       ",
+    "Time Zone": "West Europe"
+  },
+  {
+    "id": 3,
+    "GMT": "+02       ",
+    "Time Zone": "East Europe"
+  },
+  {
+    "id": 4,
+    "GMT": "+03       ",
+    "Time Zone": "East Africa"
+  },
+  {
+    "id": 5,
+    "GMT": "+04       ",
+    "Time Zone": "Golf Std"
+  },
+  {
+    "id": 6,
+    "GMT": "+05       ",
+    "Time Zone": "Pakistan"
+  },
+  {
+    "id": 7,
+    "GMT": "+06       ",
+    "Time Zone": "Bengladesh"
+  },
+  {
+    "id": 8,
+    "GMT": "+07       ",
+    "Time Zone": "West Indonesia"
+  },
+  {
+    "id": 9,
+    "GMT": "+08       ",
+    "Time Zone": "Singapore"
+  },
+  {
+    "id": 10,
+    "GMT": "+09       ",
+    "Time Zone": "Korea, Japan"
+  },
+  {
+    "id": 11,
+    "GMT": "+10       ",
+    "Time Zone": "Eastren AustraliaL"
+  },
+  {
+    "id": 13,
+    "GMT": "+11       ",
+    "Time Zone": "Solomon Islands"
+  },
+  {
+    "id": 14,
+    "GMT": "+12       ",
+    "Time Zone": "New Zeland Std."
+  },
+  {
+    "id": 15,
+    "GMT": "-01       ",
+    "Time Zone": "Azures Std"
+  },
+  {
+    "id": 16,
+    "GMT": "-02       ",
+    "Time Zone": "S. Georgia"
+  },
+  {
+    "id": 17,
+    "GMT": "-03       ",
+    "Time Zone": "Argentina"
+  },
+  {
+    "id": 18,
+    "GMT": "-04       ",
+    "Time Zone": "Atlantic Std."
+  },
+  {
+    "id": 19,
+    "GMT": "-05       ",
+    "Time Zone": "Eastren Std."
+  },
+  {
+    "id": 20,
+    "GMT": "-06       ",
+    "Time Zone": "Central Std."
+  },
+  {
+    "id": 21,
+    "GMT": "-07       ",
+    "Time Zone": "Mountain Std."
+  },
+  {
+    "id": 22,
+    "GMT": "-08       ",
+    "Time Zone": "Pacific Std."
+  },
+  {
+    "id": 23,
+    "GMT": "-09       ",
+    "Time Zone": "Alaska Std."
+  },
+  {
+    "id": 25,
+    "GMT": "-10       ",
+    "Time Zone": "Hawaii Std."
+  },
+  {
+    "id": 26,
+    "GMT": "-11       ",
+    "Time Zone": "Niue"
+  },
+  {
+    "id": 27,
+    "GMT": "-12       ",
+    "Time Zone": "Baker Island"
+  }
+]
+
+export const Countries = [
+  {
+    "Country": "USA"
+  },
+  {
+    "Country": "Canada"
+  },
+  {
+    "Country": "India"
+  },
+  {
+    "Country": "Greece"
+  },
+  {
+    "Country": "Jordan"
+  },
+  {
+    "Country": "Portugal"
+  },
+  {
+    "Country": "Azrabijan"
+  },
+  {
+    "Country": "Sweeden"
+  },
+  {
+    "Country": "Hunduras"
+  },
+  {
+    "Country": "UAE"
+  },
+  {
+    "Country": "Hungary"
+  },
+  {
+    "Country": "Tajikistan"
+  },
+  {
+    "Country": "Belarus"
+  },
+  {
+    "Country": "Austria"
+  },
+  {
+    "Country": "papua"
+  },
+  {
+    "Country": "Serbia"
+  },
+  {
+    "Country": "Israel"
+  },
+  {
+    "Country": "Switzerland"
+  },
+  {
+    "Country": "Togo"
+  },
+  {
+    "Country": "Sierra leone"
+  },
+  {
+    "Country": "Hong Kong"
+  },
+  {
+    "Country": "Laos"
+  },
+  {
+    "Country": "Paraguay"
+  },
+  {
+    "Country": "Bulgaria"
+  },
+  {
+    "Country": "Libya"
+  },
+  {
+    "Country": "Lebanon"
+  },
+  {
+    "Country": "Nicaragua"
+  },
+  {
+    "Country": "Kyrgyzstan"
+  },
+  {
+    "Country": "El Salvador"
+  },
+  {
+    "Country": "Turkemenistan"
+  },
+  {
+    "Country": "Singapore"
+  },
+  {
+    "Country": "Denmark"
+  },
+  {
+    "Country": "Finland"
+  },
+  {
+    "Country": "Congo"
+  },
+  {
+    "Country": "Slovakia"
+  },
+  {
+    "Country": "Norway"
+  },
+  {
+    "Country": "Oman"
+  },
+  {
+    "Country": "Palestine"
+  },
+  {
+    "Country": "Costa Rica"
+  },
+  {
+    "Country": "Liberia"
+  },
+  {
+    "Country": "Ireland"
+  },
+  {
+    "Country": "Central Africa Rep."
+  },
+  {
+    "Country": "New Zeland"
+  },
+  {
+    "Country": "Mauritania"
+  },
+  {
+    "Country": "Panama"
+  },
+  {
+    "Country": "Kuwait"
+  },
+  {
+    "Country": "Croetia"
+  },
+  {
+    "Country": "Moldova"
+  },
+  {
+    "Country": "Georgia"
+  },
+  {
+    "Country": "Eritrea"
+  },
+  {
+    "Country": "Urugway"
+  },
+  {
+    "Country": "Bosnia"
+  },
+  {
+    "Country": "Mongolia"
+  },
+  {
+    "Country": "Armenia"
+  },
+  {
+    "Country": "Jamaica"
+  },
+  {
+    "Country": "Qatar"
+  },
+  {
+    "Country": "Albania"
+  },
+  {
+    "Country": "Porto Rico"
+  },
+  {
+    "Country": "lithuania"
+  },
+  {
+    "Country": "Namibia"
+  },
+  {
+    "Country": "Gambia"
+  },
+  {
+    "Country": "Botswana"
+  },
+  {
+    "Country": "Gabon"
+  },
+  {
+    "Country": "lesoto"
+  },
+  {
+    "Country": "macadonia"
+  },
+  {
+    "Country": "Slovenia"
+  },
+  {
+    "Country": "Guinea-bissau"
+  },
+  {
+    "Country": "Latvia"
+  },
+  {
+    "Country": "Bahrain"
+  },
+  {
+    "Country": "Guinea Equitorial"
+  },
+  {
+    "Country": "Trinidad"
+  },
+  {
+    "Country": "Estonia"
+  },
+  {
+    "Country": "Timor"
+  },
+  {
+    "Country": "Mauritius"
+  },
+  {
+    "Country": "Cyprus"
+  },
+  {
+    "Country": "India"
+  },
+  {
+    "Country": "China"
+  },
+  {
+    "Country": "Indonesia"
+  },
+  {
+    "Country": "Pakistan"
+  },
+  {
+    "Country": "Brazil"
+  },
+  {
+    "Country": "Nigeria"
+  },
+  {
+    "Country": "Bangladesh"
+  },
+  {
+    "Country": "Russia"
+  },
+  {
+    "Country": "Mexico"
+  },
+  {
+    "Country": "Japan"
+  },
+  {
+    "Country": "Rthiopia"
+  },
+  {
+    "Country": "Philippines"
+  },
+  {
+    "Country": "Egypt"
+  },
+  {
+    "Country": "Vietnam"
+  },
+  {
+    "Country": "Congo DR"
+  },
+  {
+    "Country": "Turkey"
+  },
+  {
+    "Country": "Iran"
+  },
+  {
+    "Country": "Germany"
+  },
+  {
+    "Country": "Thailand"
+  },
+  {
+    "Country": "UnitedKingdom"
+  },
+  {
+    "Country": "France"
+  },
+  {
+    "Country": "Italy"
+  },
+  {
+    "Country": "Tanzania"
+  },
+  {
+    "Country": "South Africa"
+  },
+  {
+    "Country": "Myanmar"
+  },
+  {
+    "Country": "Kenya"
+  },
+  {
+    "Country": "S. Korea"
+  },
+  {
+    "Country": "Columbia"
+  },
+  {
+    "Country": "Spain"
+  },
+  {
+    "Country": "Uganda"
+  },
+  {
+    "Country": "Argentina"
+  },
+  {
+    "Country": "Algeria"
+  },
+  {
+    "Country": "Sudan"
+  },
+  {
+    "Country": "Ukraine"
+  },
+  {
+    "Country": "Iraq"
+  },
+  {
+    "Country": "Afganistan"
+  },
+  {
+    "Country": "Poland"
+  },
+  {
+    "Country": "Morocco"
+  },
+  {
+    "Country": "Saudi Arabia"
+  },
+  {
+    "Country": "Uzbekistan"
+  },
+  {
+    "Country": "peru"
+  },
+  {
+    "Country": "Angola"
+  },
+  {
+    "Country": "Malasyia"
+  },
+  {
+    "Country": "Mozambique"
+  },
+  {
+    "Country": "Ghana"
+  },
+  {
+    "Country": "Yemen"
+  },
+  {
+    "Country": "Nepal"
+  },
+  {
+    "Country": "Venezuela"
+  },
+  {
+    "Country": "Madagascar"
+  },
+  {
+    "Country": "Cameron"
+  },
+  {
+    "Country": "Cote D'Ivoire"
+  },
+  {
+    "Country": "Australia"
+  },
+  {
+    "Country": "Niger"
+  },
+  {
+    "Country": "Sri Lanka"
+  },
+  {
+    "Country": "Burkina Faso"
+  },
+  {
+    "Country": "Mali"
+  },
+  {
+    "Country": "Romania"
+  },
+  {
+    "Country": "Malawi"
+  },
+  {
+    "Country": "Chile"
+  },
+  {
+    "Country": "Kazkhstan"
+  },
+  {
+    "Country": "Zambia"
+  },
+  {
+    "Country": "Guatemala"
+  },
+  {
+    "Country": "Ecuador"
+  },
+  {
+    "Country": "Syria"
+  },
+  {
+    "Country": "Netherlands"
+  },
+  {
+    "Country": "Senegal"
+  },
+  {
+    "Country": "Columbia"
+  },
+  {
+    "Country": "Chad"
+  },
+  {
+    "Country": "Somalia"
+  },
+  {
+    "Country": "Zimbabwe"
+  },
+  {
+    "Country": "Guinea"
+  },
+  {
+    "Country": "Rwanda"
+  },
+  {
+    "Country": "Benin"
+  },
+  {
+    "Country": "Burundi"
+  },
+  {
+    "Country": "Tunisia"
+  },
+  {
+    "Country": "Bolivia"
+  },
+  {
+    "Country": "Belgium"
+  },
+  {
+    "Country": "haiti"
+  },
+  {
+    "Country": "Cuba"
+  },
+  {
+    "Country": "Sudan South"
+  },
+  {
+    "Country": "Dominican Republic"
+  },
+  {
+    "Country": "Czech Republic"
+  }
+]
+
+export const STATES = [
+  {
+    "Id": 1,
+    "State": "AK"
+  },
+  {
+    "Id": 2,
+    "State": "AZ"
+  },
+  {
+    "Id": 3,
+    "State": "AR"
+  },
+  {
+    "Id": 4,
+    "State": "CA"
+  },
+  {
+    "Id": 5,
+    "State": "CZ"
+  },
+  {
+    "Id": 6,
+    "State": "CO"
+  },
+  {
+    "Id": 7,
+    "State": "CT"
+  },
+  {
+    "Id": 8,
+    "State": "DE"
+  },
+  {
+    "Id": 9,
+    "State": "DC"
+  },
+  {
+    "Id": 10,
+    "State": "FL"
+  },
+  {
+    "Id": 11,
+    "State": "GA"
+  },
+  {
+    "Id": 12,
+    "State": "GU"
+  },
+  {
+    "Id": 13,
+    "State": "HI"
+  },
+  {
+    "Id": 14,
+    "State": "ID"
+  },
+  {
+    "Id": 15,
+    "State": "IL"
+  },
+  {
+    "Id": 16,
+    "State": "IN"
+  },
+  {
+    "Id": 17,
+    "State": "IA"
+  },
+  {
+    "Id": 18,
+    "State": "KS"
+  },
+  {
+    "Id": 19,
+    "State": "KY"
+  },
+  {
+    "Id": 20,
+    "State": "LA"
+  },
+  {
+    "Id": 21,
+    "State": "ME"
+  },
+  {
+    "Id": 22,
+    "State": "MD"
+  },
+  {
+    "Id": 23,
+    "State": "MA"
+  },
+  {
+    "Id": 24,
+    "State": "MY"
+  },
+  {
+    "Id": 25,
+    "State": "MN"
+  },
+  {
+    "Id": 26,
+    "State": "MS"
+  },
+  {
+    "Id": 27,
+    "State": "MO"
+  },
+  {
+    "Id": 28,
+    "State": "MT"
+  },
+  {
+    "Id": 29,
+    "State": "NE"
+  },
+  {
+    "Id": 30,
+    "State": "NV"
+  },
+  {
+    "Id": 31,
+    "State": "NH"
+  },
+  {
+    "Id": 32,
+    "State": "NJ"
+  },
+  {
+    "Id": 33,
+    "State": "NM"
+  },
+  {
+    "Id": 34,
+    "State": "NY"
+  },
+  {
+    "Id": 35,
+    "State": "NC"
+  },
+  {
+    "Id": 36,
+    "State": "ND"
+  },
+  {
+    "Id": 37,
+    "State": "OH"
+  },
+  {
+    "Id": 38,
+    "State": "OK"
+  },
+  {
+    "Id": 39,
+    "State": "OR"
+  },
+  {
+    "Id": 40,
+    "State": "PA"
+  },
+  {
+    "Id": 41,
+    "State": "PR"
+  },
+  {
+    "Id": 42,
+    "State": "RI"
+  },
+  {
+    "Id": 43,
+    "State": "SC"
+  },
+  {
+    "Id": 44,
+    "State": "SD"
+  },
+  {
+    "Id": 45,
+    "State": "TN"
+  },
+  {
+    "Id": 46,
+    "State": "TX"
+  },
+  {
+    "Id": 47,
+    "State": "UT"
+  },
+  {
+    "Id": 48,
+    "State": "VT"
+  },
+  {
+    "Id": 49,
+    "State": "VI"
+  },
+  {
+    "Id": 50,
+    "State": "VA"
+  },
+  {
+    "Id": 51,
+    "State": "WV"
+  },
+  {
+    "Id": 52,
+    "State": "WI"
+  },
+  {
+    "Id": 53,
+    "State": "WY"
+  },
+  {
+    "Id": 54,
+    "State": "CANADA"
+  },
+  {
+    "Id": 55,
+    "State": "NL"
+  },
+  {
+    "Id": 56,
+    "State": "PE"
+  },
+  {
+    "Id": 57,
+    "State": "NS"
+  },
+  {
+    "Id": 58,
+    "State": "NB"
+  },
+  {
+    "Id": 59,
+    "State": "QC"
+  },
+  {
+    "Id": 60,
+    "State": "ON"
+  },
+  {
+    "Id": 61,
+    "State": "MB"
+  },
+  {
+    "Id": 62,
+    "State": "SK"
+  },
+  {
+    "Id": 63,
+    "State": "AB"
+  },
+  {
+    "Id": 64,
+    "State": "BC"
+  },
+  {
+    "Id": 65,
+    "State": "YT"
+  },
+  {
+    "Id": 66,
+    "State": "NT"
+  },
+  {
+    "Id": 67,
+    "State": "NU"
+  }
+]
+
+export const RESPONSE = [
+  {
+    "id": 1,
+    "Response": "4 Hours"
+  },
+  {
+    "id": 2,
+    "Response": "8 Hours"
+  },
+  {
+    "id": 3,
+    "Response": "12 Hours"
+  },
+  {
+    "id": 4,
+    "Response": "24 Hours"
+  },
+  {
+    "id": 5,
+    "Response": "48 Hours"
+  },
+  {
+    "id": 6,
+    "Response": "72 Hours"
+  }
+]
+
 const setDefaultHours = `
 update  TutorSetup set disableHoursRange = '[["1:00 am","2:00 am"],["2:00 am","3:00 am"],["3:00 am","4:00 am"],["4:00 am","5:00 am"],["5:00 am","6:00 am"],["7:00 am","8:00 am"],["9:00 pm","10:00 pm"],["10:00 pm","11:00 pm"],["11:00 pm","12:00 am (midnight)"],["6:00 am","7:00 am"],["12:00 am","1:00 am","midnight"]]'
 ALTER TABLE TutorSetup

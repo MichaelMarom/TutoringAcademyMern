@@ -1,6 +1,9 @@
-import apiClient from "./config"
+import { apiClient } from "./config"
 
-export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId) => {
+export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell, grade,
+    add1, add2, city, state, zipCode, country, timeZone,
+    parent_fname, parent_lname, parent_email, photo, acadId,
+    parentConsent, userId) => {
 
     return new Promise((resolve, reject) => {
 
@@ -259,14 +262,14 @@ export const update_student_shortlist = async (AcademyId, studentId, subject, bo
 }
 
 export const getBookedSlot = async (AcademyId) => {
-    try{
+    try {
 
-        let result = await apiClient.get('/student/booked-slot', {params: {AcademyId}})
+        let result = await apiClient.get('/student/booked-slot', { params: { AcademyId } })
 
         return result
-        
+
     }
-    catch (err){
+    catch (err) {
         return err
     }
 }

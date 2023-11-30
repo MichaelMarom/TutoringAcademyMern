@@ -12,12 +12,8 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\server\\index.js",
-            "outFiles": [
-                "${workspaceFolder}/server/**/*.js",
-                "!${workspaceFolder}/server/node_modules/**/*.js",
-                "!${workspaceFolder}/serve/node_modules/**/*.js"
-            ],
-            "sourceMaps": true,
+            "outFiles": [],
+            "resolveSourceMapLocations": null,
             "env": {
                 "PORT": "9876",
                 "JWTSECRETKEY": "MichaSchool_Managemnet_system@!23",

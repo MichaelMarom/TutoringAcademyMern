@@ -47,6 +47,15 @@
     font-weight: 900;
 }
 
+.rbc-row.rbc-month-header{
+  background-color: #007bff;
+  color: white;
+}
+.rbc-row.rbc-time-header-cell .rbc-header{
+  background-color: #4caf50 !important;
+  color: white;
+}
+
 /**/
 
 .blinking-frame-red{

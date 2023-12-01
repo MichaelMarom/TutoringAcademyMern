@@ -1030,7 +1030,6 @@ const post_tutor_setup = (req, res) => {
                             findByAnyIdColumn("TutorSetup",
                              { AcademyId: findtutorSetup.recordset[0].AcademyId })
                         );
-                        console.log(result, 'resd')
                         res.status(200).send(result.recordset);
                     }
                     else

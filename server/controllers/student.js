@@ -351,10 +351,7 @@ const get_student_short_list = async (req, res) => {
         let studentBook = [];
 
         studentShortList.map((item) => {
-            console.log(item.AcademyId, 'item Asiya. n. Bf922ad')
             let tutorData = tutorProfile[0].filter((tutor) => {
-                console.log({ dd: tutor.AcademyId, SID: tutor.SID, FirstName: tutor.FirstName, lastname: tutor.LastName },
-                    { dd: item.AcademyId[0], SID: item.SID, FirstName: item.FirstName, lastname: item.LastName })
                 return tutor.AcademyId === item.AcademyId[0]
             })[0];
             let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId[0])[0];
@@ -379,7 +376,6 @@ const update_shortlist = async (req, res) => {
     try {
         const query = update("StudentShortList", req.body, req.params, { AcademyId: "varchar", Student: "varchar", Subject: "varchar" })
         const result = await executeQuery(query, res);
-        console.log(result, 'hehe')
         if (result?.recordset?.length === 0) {
             throw new Error('Update failed: Record not found');
         }

@@ -65,7 +65,7 @@ function TutorCalenderSidebar({
                     onClick={() => handleTabClick('month')}
 
                 >
-                    Blooked Week Days
+                    Blocked Week Days
                 </button>
                 <button
                     className={`btn btn-sm w-50 ${activeTab === 'day' ? 'btn-primary' : 'btn-success'

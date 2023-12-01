@@ -370,13 +370,31 @@ const Education = () => {
         }
     }
 
-    const handleUploadToServer = async () => {
+    const handleUploadDegreeToServer = async () => {
         if (degreeFile) {
             const formData = new FormData();
             formData.append('file', degreeFile);
 
             try {
-                const response = await upload_file(formData, user_id)
+                const filePrefix = `${user_id}-degree-${degree}`
+                const response = await upload_file(formData, filePrefix)
+
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        } else {
+            console.warn('Please select a file before uploading.');
+        }
+    };
+    const handleUploadCertificateToServer = async () => {
+        if (certificateFile) {
+            const formData = new FormData();
+            formData.append('file', certificateFile);
+
+            try {
+                const filePrefix = `${user_id}-certificate-${certificate}`
+                const response = await upload_file(formData, filePrefix)
 
                 console.log(response.data.filePath);
             } catch (error) {
@@ -405,7 +423,8 @@ const Education = () => {
         e.preventDefault();
         let res = await saver()
         if (res) {
-            handleUploadToServer()
+            handleUploadDegreeToServer()
+            handleUploadCertificateToServer()
             toast.success('Education record saved Successfully')
         }
         else {
@@ -459,7 +478,8 @@ const Education = () => {
                             <>
                                 <div className="row mt-3">
                                     <div className="col-md-4">
-                                        <label htmlFor="university1">Bachelor Degree College or university:</label>
+                                        <label htmlFor="university1">{level === 'Associate Degree' ?
+                                            'College Name' : 'Bachelor Degree College or university:'}</label>
                                         <input
                                             type="text"
                                             id="university1"
@@ -472,7 +492,7 @@ const Education = () => {
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label htmlFor="state1">Select University State:</label>
+                                        <label htmlFor="state1">Select University State/Province:</label>
                                         <select
                                             id="state1"
                                             className="form-control m-0 w-100"
@@ -508,7 +528,7 @@ const Education = () => {
                                     </div>
                                 </div>
                                 {
-                                    level !== 'Bachelor Degree' && level !== 'Undergraduate Student' ? (
+                                    level !== 'Bachelor Degree' && level !== 'Undergraduate Student' && level !== 'Associate Degree' ? (
                                         < div className="row mt-3">
                                             <div className="col-md-4">
                                                 <label htmlFor="university2">Master Degree University:</label>
@@ -563,7 +583,7 @@ const Education = () => {
                                 }
                                 {
                                     level !== 'Undergraduate Student' && level !== 'Bachelor Degree' &&
-                                        level !== 'Master Degree' ? (
+                                        level !== 'Master Degree' && level !== 'Associate Degree' ? (
                                         <div className="row mt-3">
                                             <div className="col-md-4">
                                                 <label htmlFor="university2"> Doctorate Degree University:</label>
@@ -579,7 +599,7 @@ const Education = () => {
                                             </div>
 
                                             <div className="col-md-4">
-                                                <label htmlFor="state3">Select University State:</label>
+                                                <label htmlFor="state3">Select University State/Province:</label>
                                                 <select
                                                     id="state3"
                                                     className="form-control m-0 w-100"
@@ -621,28 +641,33 @@ const Education = () => {
                                     <div className="col-md-4">
                                         <label htmlFor="degree">Upload Highest Degree Diploma:</label>
                                         <div className='d-flex align-items-center'>
-                                        <PDFViewer pdfUrl={'http://localhost:9876/uploads/Asiya. B6055bd-1701353026971-234401801.pdf'} />
-                                            <div className="form-outline">
-                                                <input
-                                                    type="file"
-                                                    accept=".pdf, .jpeg, .png, .jpg, .doc"
-                                                    id="degreeFile"
-                                                    name="degreeFile"
-                                                    className="form-control m-0"
-                                                    onChange={handleFileUpload}
-                                                    required
-                                                />
-                                            </div>
+
                                             {(degreeFileContent && degreeFileContent.length) ? (
-                                                <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
+                                                <div className='d-flex w-100 justify-content-between border rounded p-2'>
+                                                    <div>Degree uploaded</div>
+                                                    <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
+                                                </div>
                                             ) : (
-                                                <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+                                                <>  <div className="form-outline">
+                                                    <input
+                                                        type="file"
+                                                        accept=".pdf, .jpeg, .png, .jpg"
+                                                        id="degreeFile"
+                                                        name="degreeFile"
+                                                        className="form-control m-0"
+                                                        onChange={handleFileUpload}
+                                                        required
+                                                    />
+                                                </div>
+                                                    <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+
+                                                </>
                                             )}
                                         </div>
                                     </div>
 
                                     <div className="col-md-4">
-                                        <label htmlFor="state4">Select University State:</label>
+                                        <label htmlFor="state4">Select University State/Province:</label>
                                         <select
                                             id="state4"
                                             className="form-control m-0 w-100"
@@ -650,7 +675,7 @@ const Education = () => {
                                             value={state4}
                                             required
                                         >
-                                            <option value="">Select State</option>
+                                            <option value="">Select State/Province</option>
                                             {stateList.map((item) => (
                                                 <option
                                                     key={item}
@@ -704,21 +729,26 @@ const Education = () => {
                                 </select>
                                 {(certificate.length && certificate !== 'Not Certified') ? (
                                     <div className='d-flex justify-content-center align-items-center'>
-                                        <div className="form-outline">
-                                            <input
-                                                type="file"
-                                                accept=".pdf, .jpeg, .png, .jpg, .doc"
-                                                id="certificateFile"
-                                                name="certificateFile"
-                                                className="form-control m-0 mr-2"
-                                                onChange={handleCertUpload}
-                                                required
-                                            />
-                                        </div>
+
                                         {(certFileContent?.length) ? (
-                                            <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
-                                        ) : (
-                                            <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+                                            <div className='d-flex w-100 justify-content-between border rounded p-2'>
+                                                <div>Certificate uploaded</div>
+                                                <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
+                                            </div>) : (
+                                            <>
+                                                <div className="form-outline">
+                                                    <input
+                                                        type="file"
+                                                        accept=".pdf, .jpeg, .png, .jpg, .doc"
+                                                        id="certificateFile"
+                                                        name="certificateFile"
+                                                        className="form-control m-0 mr-2"
+                                                        onChange={handleCertUpload}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+                                            </>
                                         )}
                                     </div>
                                 ) : null}
@@ -726,14 +756,14 @@ const Education = () => {
                             {(certificate.length && certificate !== 'Not Certified') ? (
                                 <>
                                     <div className="col-md-4">
-                                        <label htmlFor="state5">Select University State:</label>
+                                        <label htmlFor="state5">Select University State/Province:</label>
                                         <select
                                             id="state5"
                                             className="form-control m-0 w-100"
                                             onChange={(e) => set_state5(e.target.value)}
                                             required
                                         >
-                                            <option value="">Select State</option>
+                                            <option value="">Select State/Province</option>
                                             {stateList.map((item) => (
                                                 <option
                                                     key={item}
@@ -746,7 +776,7 @@ const Education = () => {
                                         </select>
                                     </div>
                                     <div className="col-md-4">
-                                        <label htmlFor="expiration">Expiration:</label>
+                                        <label htmlFor="expiration">Certificate Expiration:</label>
                                         <input
                                             type="date"
                                             min={new Date().toISOString().split('T')[0]}

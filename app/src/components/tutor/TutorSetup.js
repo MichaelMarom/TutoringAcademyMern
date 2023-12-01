@@ -20,8 +20,9 @@ import Loading from "../common/Loading";
 
 import Actions from '../common/Actions'
 import { uploadVideo } from "../../redux/tutor_store/video";
-import { Countries, GMT, RESPONSE, STATES } from "../../constants/constants";
+import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, STATES, UK_STATES, US_STATES } from "../../constants/constants";
 import { setTutor } from "../../redux/tutor_store/tutorData";
+import SelectOrTypeInput from "../common/SelectTypeInput";
 
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
@@ -44,6 +45,7 @@ const TutorSetup = () => {
   let [video, set_video] = useState("");
 
   const [dataFetching, setDataFetching] = useState(false);
+  const [dataUpdated, setDataUpdated] = useState(false)
 
   let grades = [
     { grade: "1st grade" },
@@ -66,7 +68,6 @@ const TutorSetup = () => {
 
   const [email, set_email] = useState(user[0].email)
   let [countryList, setCountryList] = useState("");
-  let [stateList, setStateList] = useState("");
   let [GMTList, setGMTList] = useState("");
   let [response_list, set_response_list] = useState("");
   let [recordedVideo, setRecordedVideo] = useState(null);
@@ -74,11 +75,25 @@ const TutorSetup = () => {
   const [uploadPhotoClicked, setUploadPhotoClicked] = useState(false)
   const [uploadVideoClicked, setUploadVideoClicked] = useState(false)
   const [userId, setUserId] = useState()
+  const [picUploading, setPicUploading] = useState(false);
+
+  const [dbCountry, setDBCountry] = useState(null)
 
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
 
+  const options = {
+    "Australia": AUST_STATES,
+    "USA": US_STATES,
+    "Canada": CAN_STATES,
+    "UnitedKingdom": UK_STATES
+  }
 
+  useEffect(() => {
+    if (country !== dbCountry) {
+      set_state('')
+    }
+  }, [country, dbCountry])
   let dispatch = useDispatch();
 
   const [selectedVideoOption, setSelectedVideoOption] = useState(null);
@@ -98,15 +113,26 @@ const TutorSetup = () => {
   };
   //upload photo
   useEffect(() => {
-    // if (!userExist) toast.error("Other information is also required")
-    if (uploadPhotoClicked && userExist) {
-      post_tutor_setup({ photo, fname, lname, mname, userId })
-      console.log('upk9ad photo')
+    const postImage = async () => {
+      if (uploadPhotoClicked && userExist) {
+        setPicUploading(true)
+        const { data } = await post_tutor_setup({ photo, fname, lname, mname, userId })
+        setPicUploading(false)
+
+        console.log()
+        setUploadPhotoClicked(false)
+        // set_photo(data[0].Photo)
+        dispatch(setTutor())
+
+        console.log(data, 'upk9ad photo')
+      }
     }
+
+    postImage()
 
   }, [photo, userExist])
 
-
+  console.log(state)
   //upload video
   useEffect(() => {
     const upload_video = async () => {
@@ -115,6 +141,7 @@ const TutorSetup = () => {
         // await post_tutor_setup({ video, fname, lname, mname })
         // setUploadingVideo(false)
         dispatch(uploadVideo({ video, fname, lname, mname, userId }))
+        // dispatch(setTutor())
         console.log('upk9ad video')
       }
     }
@@ -128,7 +155,6 @@ const TutorSetup = () => {
 
     const fetchTutorSetup = async () => {
       console.log('rener', tutor)
-
       setDataFetching(true)
 
       let result;
@@ -155,6 +181,7 @@ const TutorSetup = () => {
         set_email(data.email)
         set_city(data.CityTown);
         set_country(data.Country);
+        setDBCountry(data.Country)
         set_response_zone(data.ResponseHrs);
         set_intro(data.Introduction);
         set_motivation(data.Motivate);
@@ -169,6 +196,9 @@ const TutorSetup = () => {
         setRecordedVideo(data.VideoRecorded)
         setSelectedVideoOption("upload");
       }
+      setUploadPhotoClicked(false)
+      setDataUpdated(true)
+
       setDataFetching(false)
     };
     fetchTutorSetup();
@@ -273,8 +303,8 @@ const TutorSetup = () => {
   };
 
   useEffect(() => {
-
-    let countries = Countries.map((item) => (
+    const sortedCountries = Countries.sort((a, b) => a.Country.localeCompare(b.Country));
+    let countries = sortedCountries.map((item) => (
       <option
         key={item.Country}
         className={item.Country}
@@ -294,6 +324,7 @@ const TutorSetup = () => {
     let countries_select_head = (
       <option
         key="null"
+        value={''}
         style={{
           height: "50px",
           width: "100%",
@@ -301,7 +332,8 @@ const TutorSetup = () => {
           padding: "0 10px 0 10px",
           borderRadius: "0",
         }}
-        value=""
+        selected
+        disabled
       >
         Country
       </option>
@@ -347,47 +379,6 @@ const TutorSetup = () => {
 
     list.unshift(head);
     setGMTList(list);
-
-
-
-    let states = STATES.map((item) => (
-      <option
-        key={item.State}
-        className={item.State}
-        selected={item.State === state ? "selected" : ""}
-        style={{
-          height: "80px",
-          width: "100%",
-          outline: "none",
-          padding: "0 10px 0 10px",
-          borderRadius: "0",
-        }}
-        value={item.State}
-      >
-        {item.State}
-      </option>
-    ));
-    let states_head = (
-      <option
-        key="null"
-        style={{
-          height: "50px",
-          width: "100%",
-          outline: "none",
-          padding: "0 10px 0 10px",
-          borderRadius: "0",
-        }}
-        value=""
-      >
-        State
-      </option>
-    );
-
-    states.unshift(states_head);
-    setStateList(states);
-
-
-
 
     let response_list = RESPONSE.map((item) => (
       <option
@@ -521,642 +512,670 @@ const TutorSetup = () => {
         exit="exit"
         className="tutor-tab-setup"
       >
-        <form onSubmit={saveTutorSetup} className="pt-4" style={{ overflowY: "auto" }}>
-          <div className="d-flex justify-content-center align-items-center">
-            <p>{typeof dateTime === "object" ? "" : dateTime}</p>
-
-          </div>
-          <div className="tutor-setup-top-field container">
-            <div className="profile-photo-cnt">
-              <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
-              <input
-                type="file"
-                data-type="file"
-                onChange={handleImage}
-                style={{ display: "none" }}
-                id="photo"
-              />
-              <div className="tutor-tab-photo-frame">
-                <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' />
-              </div>
-              <label id="btn" htmlFor="photo">
-                Upload
-              </label>
-            </div>
-
-
-            <div className="profile-details-cnt pt-3"
-              style={{ float: "left", margin: "0 10px 0 10px ", width: "40%" }}
-            >
-
-              <div
-                style={{
-                  display: "flex",
-                  margin: "0 0 10px 0",
-                  padding: "0",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  First Name
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  required
-                  style={{
-                    margin: "2.5px 0 0 0",
-                    width: "70%",
-                    float: "right",
-                    position: "relative",
-                  }}
-                  onChange={(e) => set_fname(e.target.value)}
-                  placeholder="First Name"
-                  value={fname}
-                  type="text"
-                  id="fname"
-                />
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  margin: "0 0 10px 0",
-                  padding: "0",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Middle
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  style={{
-                    margin: "2.5px 0 0 0",
-                    width: "70%",
-                    float: "right",
-                    position: "relative",
-                  }}
-                  onInput={(e) => set_mname(e.target.value)}
-                  placeholder="Middle Name"
-                  value={mname}
-                  type="text"
-                  id="mname"
-                />
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  margin: "0 0 10px 0",
-                  padding: "0",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Last Name
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  style={{
-                    margin: "2.5px 0 0 0",
-                    width: "70%",
-                    float: "right",
-                    position: "relative",
-                  }}
-                  required
-                  onInput={(e) => set_sname(e.target.value)}
-                  placeholder="Last Name"
-                  value={lname}
-                  type="text"
-                  id="lname"
-                />
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  margin: "0 0 10px 0",
-                  padding: "0",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Email
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  required
-                  style={{
-                    margin: "2.5px 0 0 0",
-                    width: "70%",
-                    float: "right",
-                    position: "relative",
-                  }}
-                  placeholder="Email"
-                  value={email}
-                  type="text"
-                  id="email"
-                  readonly
-                />
-              </div>
-              <div className="err-mssg">
-                Email already exist, Please try something else...
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  margin: "0 0 10px 0",
-                  padding: "0",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  width: "100%",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Cell Phone
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  required
-                  style={{
-                    margin: "2.5px 0 0 0",
-                    width: "70%",
-                    float: "right",
-                    position: "relative",
-                  }}
-                  onInput={(e) => set_cell(e.target.value)}
-                  placeholder="Cell Phone"
-                  value={cell}
-                  type="text"
-                  id="cellphn"
-                />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "0 0 10px 0",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Response Time
-                </label>{" "}
-                &nbsp;&nbsp;
-                <select
-                  onInput={(e) => set_response_zone(e.target.value)}
-                  value={response_zone}
-                  id="resZone"
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                    padding: "5px 5px 5px 5px",
-                    margin: "0 0 10px 0",
-                  }}
-                >
-                  {response_list}
-                </select>
-              </div>
+        <form onSubmit={saveTutorSetup} className="pt-4">
+          <div style={{ overflowY: "auto", height: "90%" }}>
+            <div className="d-flex justify-content-center align-items-center">
+              <p>{typeof dateTime === "object" ? "" : dateTime}</p>
 
             </div>
-
-            <div className="profile-details-cnt pt-3"
-              style={{ float: "right", margin: "0 10px 0 10px ", width: "40%" }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  display: "flex",
-                  margin: "0 0 10px 0",
-                  padding: "0",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Address 1
-                </label>{" "}
-                &nbsp;&nbsp;
+            <div className="tutor-setup-top-field container">
+              <div className="profile-photo-cnt">
+                <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
                 <input
-                  required
-                  style={{
-                    margin: "2.5px 0 0 0",
-                    width: "70%",
-                    float: "right",
-                    position: "relative",
-                  }}
-                  onInput={(e) => set_add1(e.target.value)}
-                  placeholder="Address 1"
-                  value={add1}
-                  type="text"
-                  id="add1"
+                  type="file"
+                  data-type="file"
+                  onChange={handleImage}
+                  style={{ display: "none" }}
+                  id="photo"
                 />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "0 0 10px 0",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Address 2
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  onInput={(e) => set_add2(e.target.value)}
-                  placeholder="Address 2"
-                  value={add2}
-                  type="text"
-                  id="add2"
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "0 0 10px 0",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  City/Town
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  required
-                  onInput={(e) => set_city(e.target.value)}
-                  placeholder="City/Town"
-                  type="text"
-                  value={city}
-                  id="city"
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                  }}
-                />
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  State
-                </label>{" "}
-                &nbsp;&nbsp;
-                <select
-                  onInput={(e) => set_state(e.target.value)}
-                  id="state"
-                  value={state}
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                    padding: "5px 5px 5px 5px",
-                    margin: "0 0 10px 0",
-                  }}
-                >
-                  {stateList}
-                </select>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "0 0 10px 0",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Zip Code
-                </label>{" "}
-                &nbsp;&nbsp;
-                <input
-                  required
-                  onInput={(e) => set_zipCode(e.target.value)}
-                  value={zipCode}
-                  placeholder="Zip-Code"
-                  type="text"
-                  id="zip"
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                  }}
-                />
-              </div>
-              <div
-                style={{ display: "flex", width: "100%", justifyContent: "center", alignItems: "center", margin: "0 0 10px 0", display: "flex", justifyContent: "center", whiteSpace: "nowrap" }}>
-                <label style={{ width: "30%" }} htmlFor="country">
-                  Country
-                </label>{" "}
-                &nbsp;&nbsp;
-                <select
-                  onInput={(e) => set_country(e.target.value)}
-                  id="country"
-                  value={country}
-                  style={{ float: "right", width: "70%", margin: "2.5px 0 0 0", padding: "5px", margin: "0 0 10px 0" }}
-                  required
-                >
-                  {countryList}
-                </select>
-              </div>
-
-              <div
-                style={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  display: "flex",
-                  justifyContent: "center",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <label style={{ width: "30%" }} htmlFor="">
-                  Time Zone
-                </label>{" "}
-                &nbsp;&nbsp;
-                <select
-                  onInput={(e) => set_timeZone(e.target.value)}
-                  id="timeZone"
-                  value={timeZone}
-                  style={{
-                    float: "right",
-                    width: "70%",
-                    margin: "2.5px 0 0 0",
-                    padding: "5px 5px 5px 5px",
-                    margin: "0 0 10px 0",
-                  }}
-                >
-                  {GMTList}
-                </select>
-              </div>
-
-
-            </div>
-
-            <div className="profile-video-cnt mt-3 "
-              style={{ float: "right", width: "70%", height: "250px" }}
-            >
-              <div className="mb-2">
-                {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
-              </div>
-              {selectedVideoOption === "record" ? (
-                <div className="w-100">
-                  <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
+                <div className="mb-2">
+                  {picUploading && <Loading height="10px" iconSize="20px" loadingText="uploading picture ..." />}
                 </div>
-              ) : selectedVideoOption === "upload" && video?.length ? (
-                <div className="tutor-tab-video-frame p-3 card">
-                  <video src={video} className="w-100 h-100"
-                    controls autoplay
+                <div className="tutor-tab-photo-frame">
+                  <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' />
+                </div>
+                <label id="btn" htmlFor="photo" className="btn btn-success mt-2">
+                  Upload
+                </label>
+              </div>
+
+
+              <div className="profile-details-cnt pt-3"
+                style={{ float: "left", margin: "0 10px 0 10px ", width: "40%" }}
+              >
+
+                <div
+                  style={{
+                    display: "flex",
+                    margin: "0 0 10px 0",
+                    padding: "0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    First Name
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    required
+                    style={{
+                      margin: "2.5px 0 0 0",
+                      width: "70%",
+                      float: "right",
+                      position: "relative",
+                    }}
+                    onChange={(e) => set_fname(e.target.value)}
+                    placeholder="First Name"
+                    value={fname}
+                    type="text"
+                    id="fname"
+                    className="form-control"
                   />
                 </div>
-              ) :
-                <div className="tutor-tab-video-frame p-3 card">
-                </div>
-              }
 
-              <div className="container mt-2">
-                <div className="row justify-content-center align-items-center">
-                  <div className="col-md-4">
-                    <div className="text-center">
-                      <button
-                        type="button"
-                        className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
-                          }`}
-                        style={{ fontSize: "10px" }}
-                        onClick={() => {
-                          set_video("");
-                          handleOptionClick("record");
-                        }}
-                      >
-                        <BsCameraVideo size={15} />
-                        <br />
-                        Record Video
-                      </button>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="text-center">
-                      {/* {video.length ? */}
-                      <input
-                        data-type="file"
-                        defaultValue={''}
-                        onChange={handleVideo}
-                        type="file"
-                        style={{ display: "none" }}
-                        id="video"
-                      />
-                      {/* : null} */}
-                      <label
-                        id="btn"
-                        htmlFor="video"
-                        style={{ fontSize: "10px" }}
-                        className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
-                          }`}
-                        onClick={() => handleOptionClick("upload")}
-                      >
-                        <BsCloudUpload size={15} /> <br />
-                        Upload Video
-                      </label>
-                    </div>
-                  </div>
-                  <div className="col-md-4">
-                    <div className="text-center">
-                      <button
-                        type="button"
-                        style={{ fontSize: "10px" }}
-                        className={`btn btn-danger `}
-                        onClick={() => set_video("")}
-                      >
-                        <BsTrash size={15} />
-                        <br />
-                        Delete Video
-                      </button>
-                    </div>
-                  </div>
+                <div
+                  style={{
+                    display: "flex",
+                    margin: "0 0 10px 0",
+                    padding: "0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Middle
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    style={{
+                      margin: "2.5px 0 0 0",
+                      width: "70%",
+                      float: "right",
+                      position: "relative",
+                    }}
+                    onInput={(e) => set_mname(e.target.value)}
+                    placeholder="Middle Name"
+                    value={mname}
+                    className="form-control"
+                    type="text"
+                    id="mname"
+                  />
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    margin: "0 0 10px 0",
+                    padding: "0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Last Name
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    style={{
+                      margin: "2.5px 0 0 0",
+                      width: "70%",
+                      float: "right",
+                      position: "relative",
+                    }}
+                    required
+                    onInput={(e) => set_sname(e.target.value)}
+                    placeholder="Last Name"
+                    value={lname}
+                    type="text"
+                    id="lname"
+                    className="form-control"
+                  />
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    margin: "0 0 10px 0",
+                    padding: "0",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Email
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    className="form-control"
+                    required
+                    style={{
+                      margin: "2.5px 0 0 0",
+                      width: "70%",
+                      float: "right",
+                      position: "relative",
+                    }}
+                    placeholder="Email"
+                    value={email}
+                    type="text"
+                    id="email"
+                    readonly
+                  />
+                </div>
+                <div className="err-mssg">
+                  Email already exist, Please try something else...
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    margin: "0 0 10px 0",
+                    padding: "0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Cell Phone
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    className="form-control"
+                    required
+                    style={{
+                      margin: "2.5px 0 0 0",
+                      width: "70%",
+                      float: "right",
+                      position: "relative",
+                    }}
+                    onInput={(e) => set_cell(e.target.value)}
+                    placeholder="Cell Phone"
+                    value={cell}
+                    type="text"
+                    id="cellphn"
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 0 10px 0",
+                    display: "flex",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Response Time
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <select
+                    class="form-select"
+                    onInput={(e) => set_response_zone(e.target.value)}
+                    value={response_zone}
+                    id="resZone"
+                    style={{
+                      float: "right",
+                      width: "70%",
+                      margin: "2.5px 0 0 0",
+                      padding: "5px 5px 5px 5px",
+                      margin: "0 0 10px 0",
+                    }}
+                  >
+                    {response_list}
+                  </select>
+                </div>
+
+              </div>
+
+              <div className="profile-details-cnt pt-3"
+                style={{ float: "right", margin: "0 10px 0 10px ", width: "40%" }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    display: "flex",
+                    margin: "0 0 10px 0",
+                    padding: "0",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Address 1
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    className="form-control"
+                    required
+                    style={{
+                      margin: "2.5px 0 0 0",
+                      width: "70%",
+                      float: "right",
+                      position: "relative",
+                    }}
+                    onInput={(e) => set_add1(e.target.value)}
+                    placeholder="Address 1"
+                    value={add1}
+                    type="text"
+                    id="add1"
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 0 10px 0",
+                    display: "flex",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Address 2
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    className="form-control"
+                    onInput={(e) => set_add2(e.target.value)}
+                    placeholder="Address 2"
+                    value={add2}
+                    type="text"
+                    id="add2"
+                    style={{
+                      float: "right",
+                      width: "70%",
+                      margin: "2.5px 0 0 0",
+                    }}
+                  />
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 0 10px 0",
+                    display: "flex",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    City/Town
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    className="form-control"
+                    required
+                    onInput={(e) => set_city(e.target.value)}
+                    placeholder="City/Town"
+                    type="text"
+                    value={city}
+                    id="city"
+                    style={{
+                      float: "right",
+                      width: "70%",
+                      margin: "2.5px 0 0 0",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{ display: "flex", width: "100%", justifyContent: "center", alignItems: "center", margin: "0 0 10px 0", display: "flex", justifyContent: "center", whiteSpace: "nowrap" }}>
+                  <label style={{ width: "30%" }} htmlFor="country">
+                    Country
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <select
+                    class="form-select"
+                    onInput={(e) => set_country(e.target.value)}
+                    id="country"
+                    value={country}
+                    style={{ float: "right", width: "70%", margin: "2.5px 0 0 0", padding: "5px", margin: "0 0 10px 0" }}
+                    required
+                  >
+                    {countryList}
+                  </select>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    State/Province
+                  </label>{" "}
+                  &nbsp;&nbsp;
+
+                  {(options[country] ?? []).length ?
+                    <select
+                      onInput={(e) => set_state(e.target.value)}
+                      id="state"
+                      value={state}
+                      style={{
+                        float: "right",
+                        width: "70%",
+                        margin: "2.5px 0 0 0",
+                        padding: "5px 5px 5px 5px",
+                        margin: "0 0 10px 0",
+                      }}
+                    >
+                      <option value='' selected disabled>Select State</option>
+                      {(options[country] ?? []).map((item) => <option value={item}>{item}</option>)}
+                    </select> :
+                    <input className="form-control" type="text" value={state} onChange={(e) => set_state(e.target.value)} />
+                  }
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "0 0 10px 0",
+                    display: "flex",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Zip Code
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <input
+                    className="form-control"
+                    required
+                    onInput={(e) => set_zipCode(e.target.value)}
+                    value={zipCode}
+                    placeholder="Zip-Code"
+                    type="text"
+                    id="zip"
+                    style={{
+                      float: "right",
+                      width: "70%",
+                      margin: "2.5px 0 0 0",
+                    }}
+                  />
+                </div>
+
+
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label style={{ width: "30%" }} htmlFor="">
+                    Time Zone
+                  </label>{" "}
+                  &nbsp;&nbsp;
+                  <select
+                    class="form-select"
+                    onInput={(e) => set_timeZone(e.target.value)}
+                    id="timeZone"
+                    value={timeZone}
+                    style={{
+                      float: "right",
+                      width: "70%",
+                      margin: "2.5px 0 0 0",
+                      padding: "5px 5px 5px 5px",
+                      margin: "0 0 10px 0",
+                    }}
+                  >
+                    {GMTList}
+                  </select>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <div
-            style={{
-              fontWeight: "bold",
-              margin: "auto",
-              textAlign: "center",
-              width: "60%",
-            }}
-          >
-            <label s htmlFor="headline">
-              Grades I teach
-            </label>
-            <br />
-            <div className="tutor-grades">
-              <ul>
-                {grades.map((item) => {
-                  const isChecked = tutorGrades.includes(item.grade);
-                  return (
-                    <li>
-                      <div
-                        className="input-cnt"
-                        style={{
-                          width: "fit-content",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <input
-                          style={{
-                            background: "blue",
-                            color: "blue",
-                            height: "25px",
-                            width: "25px",
+              <div className="profile-video-cnt mt-3 "
+                style={{ float: "right", width: "70%", height: "250px" }}
+              >
+                <div className="mb-2">
+                  {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
+                </div>
+                {selectedVideoOption === "record" ? (
+                  <div className="w-100">
+                    <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
+                  </div>
+                ) : selectedVideoOption === "upload" && video?.length ? (
+                  <div className="tutor-tab-video-frame p-3 card">
+                    <video src={video} className="w-100 h-100"
+                      controls autoplay
+                    />
+                  </div>
+                ) :
+                  <div className="tutor-tab-video-frame p-3 card">
+                  </div>
+                }
+
+                <div className="container mt-2">
+                  <div className="row justify-content-center align-items-center">
+                    <div className="col-md-4">
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
+                            }`}
+                          style={{ fontSize: "10px" }}
+                          onClick={() => {
+                            set_video("");
+                            handleOptionClick("record");
                           }}
-                          type="checkbox"
-                          checked={isChecked}
-                          id={item.grade}
-                          onInput={() => handleTutorGrade(item.grade)}
-                          className="grades"
-                        />
-
-                        &nbsp;
-                        <label htmlFor={item.grade}>{item.grade}</label>
+                        >
+                          <BsCameraVideo size={15} />
+                          <br />
+                          Record Video
+                        </button>
                       </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-
-          <div
-            style={{
-              fontWeight: "bold",
-              margin: "auto",
-              textAlign: "center",
-              width: "60%",
-            }}
-          >
-            <label s htmlFor="headline">
-              Headline
-            </label>
-            <br />
-            <input
-
-              value={headline}
-              maxLength={80}
-              placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
-              onInput={(e) =>
-                counter(e.target.value, e.target, set_headline, 80)
-              }
-              type="text"
-              style={{ width: "80%", height: "50px", margin: "0 0 10px 0" }}
-            />
-            <div className="inputValidator">
-              Your have reached the max limit of 80 characters.
-            </div>
-          </div>
-
-          <div className="tutor-setup-bottom-field">
-            <div
-              className="profile-headline"
-              style={{ textAlign: "center", float: "left" }}
-            >
-              <label style={{ fontWeight: "bold" }} htmlFor="intro">
-                Introduction
-              </label>
-              <br />
-              <textarea
-                value={intro}
-                maxLength={500}
-                placeholder="Write Your Introduction Here... e.g: (My name is Fabian and i am a graduate of Harvard University in Boston...)"
-                onInput={(e) =>
-                  counter(e.target.value, e.target, set_intro, 500)
-                }
-                style={{ width: "80%", padding: "10px", height: "160px" }}
-                name=""
-                id=""
-              ></textarea>
-              <div className="inputValidator">
-                Your have reached the max limit of 500 characters.
+                    </div>
+                    <div className="col-md-4">
+                      <div className="text-center">
+                        {/* {video.length ? */}
+                        <input
+                          data-type="file"
+                          defaultValue={''}
+                          onChange={handleVideo}
+                          type="file"
+                          style={{ display: "none" }}
+                          id="video"
+                        />
+                        {/* : null} */}
+                        <label
+                          id="btn"
+                          htmlFor="video"
+                          style={{ fontSize: "10px" }}
+                          className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
+                            }`}
+                          onClick={() => handleOptionClick("upload")}
+                        >
+                          <BsCloudUpload size={15} /> <br />
+                          Upload Video
+                        </label>
+                      </div>
+                    </div>
+                    <div className="col-md-4">
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          style={{ fontSize: "10px" }}
+                          className={`btn btn-danger `}
+                          onClick={() => set_video("")}
+                        >
+                          <BsTrash size={15} />
+                          <br />
+                          Delete Video
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div
-              className="profile-motivation"
-              style={{ textAlign: "center", float: "right" }}
-            >
-              <label style={{ fontWeight: "bold" }} htmlFor="intro">
-                Motivate
-              </label>
-              <br />
-              <textarea
-                value={motivation}
-                maxLength={500}
-                placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
-                onInput={(e) =>
-                  counter(e.target.value, e.target, set_motivation)
-                }
-                style={{ width: "80%", padding: "10px", height: "160px" }}
-                name=""
-                id=""
-              ></textarea>
-              <div className="inputValidator">
-                Your have reached the max limit of 500 characters.
+
+            <hr />
+            <div className="container">
+              <div
+                className="border rounded p-2 mt-2"
+                style={{
+                  fontWeight: "bold",
+                  margin: "auto",
+                  textAlign: "center",
+                  width: "60%",
+                }}
+              >
+                <label s htmlFor="headline">
+                  Grades I teach
+                </label>
+                <br />
+                <div className="tutor-grades">
+                  <ul>
+                    {grades.map((item) => {
+                      const isChecked = tutorGrades.includes(item.grade);
+                      return (
+                        <li>
+                          <div
+                            className="input-cnt"
+                            style={{
+                              width: "fit-content",
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              style={{
+                                background: "blue",
+                                color: "blue",
+                                height: "25px",
+                                width: "25px",
+                              }}
+                              type="checkbox"
+                              checked={isChecked}
+                              id={item.grade}
+                              onInput={() => handleTutorGrade(item.grade)}
+                              className=" grades"
+                            />
+
+                            &nbsp;
+                            <label htmlFor={item.grade}>{item.grade}</label>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  fontWeight: "bold",
+                  margin: "auto",
+                  textAlign: "center",
+                  width: "60%",
+                }}
+              >
+                <label s htmlFor="headline">
+                  Headline
+                </label>
+                <br />
+                <input
+                  className="form-control"
+                  value={headline}
+                  maxLength={80}
+                  placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
+                  onInput={(e) =>
+                    counter(e.target.value, e.target, set_headline, 80)
+                  }
+                  type="text"
+                  style={{ width: "100%", height: "50px", margin: "0 0 10px 0" }}
+                />
+                <div className="inputValidator">
+                  Your have reached the max limit of 80 characters.
+                </div>
+              </div>
+
+              <div className="tutor-setup-bottom-field d-flex justify-content-between"
+                style={{ gap: "20px" }}>
+                <div
+                  className="profile-headline"
+                  style={{ textAlign: "center", float: "left" }}
+                >
+                  <label style={{ fontWeight: "bold" }} htmlFor="intro">
+                    Introduction
+                  </label>
+                  <br />
+                  <textarea
+                    class="form-control"
+                    value={intro}
+                    maxLength={500}
+                    placeholder="Write Your Introduction Here... e.g: (My name is Fabian and i am a graduate of Harvard University in Boston...)"
+                    onInput={(e) =>
+                      counter(e.target.value, e.target, set_intro, 500)
+                    }
+                    style={{ width: "100%", padding: "10px", height: "160px" }}
+                    name=""
+                    id=""
+                  ></textarea>
+                  <div className="inputValidator">
+                    Your have reached the max limit of 500 characters.
+                  </div>
+                </div>
+
+                <div
+                  className="profile-motivation"
+                  style={{ textAlign: "center", float: "right" }}
+                >
+                  <label style={{ fontWeight: "bold" }} htmlFor="intro">
+                    Motivate
+                  </label>
+                  <br />
+                  <textarea
+                    class="form-control"
+                    value={motivation}
+                    maxLength={500}
+                    placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
+                    onInput={(e) =>
+                      counter(e.target.value, e.target, set_motivation)
+                    }
+                    style={{ width: "100%", padding: "10px", height: "160px" }}
+                    name=""
+                    id=""
+                  ></textarea>
+                  <div className="inputValidator">
+                    Your have reached the max limit of 500 characters.
+                  </div>
+                </div>
               </div>
             </div>
           </div>

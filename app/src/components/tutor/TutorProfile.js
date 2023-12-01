@@ -3,17 +3,14 @@ import { COLUMNS } from '../../Tables/Me/columns';
 import { useEffect } from 'react';
 import { get_my_data, get_rates } from '../../axios/tutor';
 import moment from 'moment-timezone'
+import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 
-function calcTime() {
-    let utcDateTime = moment().utc()
-    const localTime = utcDateTime.local().format('dddd, MMMM D, HH:mm:ss');
-    return localTime;
-}
+
 
 const TutorProfile = () => {
 
     let [photo, setphoto] = useState('loading...')
-    let [GMT, setGMT] = useState('0')
+    let [GMT, setGMT] = useState(null)
     let [video, setvideo] = useState('loading...')
     let [intro, setIntro] = useState('loading...')
     let [headline, setHeadline] = useState('loading...')
@@ -32,7 +29,15 @@ const TutorProfile = () => {
     let [ConsentRecordingLesson, setConsentRecordingLesson] = useState('loading...')
 
     let [rates, setRates] = useState([])
-    const [currentTime, setCurrentTime] = useState(calcTime())
+    const [dateTime, setDateTime] = useState(null);
+
+
+    useEffect(() => {
+        if (GMT) {
+            const localTime = convertGMTOffsetToLocalString(GMT);
+            setDateTime(localTime);
+        }
+    }, [GMT]);
 
     useEffect(() => {
         get_my_data(window.localStorage.getItem('tutor_user_id'))
@@ -80,16 +85,6 @@ const TutorProfile = () => {
             .catch((err) => console.log(err))
     }, [])
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            setCurrentTime(calcTime())
-        }, 1000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, []);
-
     return (
         <>
             <div className="form-tutor-profile">
@@ -115,7 +110,7 @@ const TutorProfile = () => {
                     <div className="tutor-intel1">
 
                         <div style={{ height: '230px', width: '180px', margin: '0 0 0 40px', position: 'relative' }}>
-                            <div><b className='small'>{calcTime()}</b></div>
+                            <div> <p>{typeof dateTime === "object" ? "" : dateTime}</p></div>
                             <img src={photo} style={{ height: '180px', width: '180px' }} alt="" />
                         </div>
 

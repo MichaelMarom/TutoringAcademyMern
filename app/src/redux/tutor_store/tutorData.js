@@ -34,7 +34,6 @@ export function setTutor(data) {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading());
         let result;
-        console.log(localStorage.getItem('tutor_user_id'), typeof (localStorage.getItem('tutor_user_id')))
         if (localStorage.getItem('tutor_user_id') === "undefined") {
             const user = localStorage.getItem('user')
             result = await tutorApis.get_tutor_setup_by_userId(user[0].SID)

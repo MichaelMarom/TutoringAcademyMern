@@ -52,7 +52,7 @@ const login = async (req, res) => {
                 res.status(200).send({ ...result.recordset, token });
             }
         } catch (err) {
-            console.log(err);
+            console.log(err.message);
             res.status(400).send({ message: err.message });
         }
     })

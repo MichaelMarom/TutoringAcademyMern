@@ -10,14 +10,22 @@ import { useSelector } from 'react-redux';
 
 export const Schedules = () => {
     const studentId = localStorage.getItem("student_user_id");
-    const { student } = useSelector(state => state.student)
     const [reservedSlots, setReservedSlots] = useState([]);
     const [bookedSlots, setBookedSlots] = useState([]);
     const [timeZone, setTimeZone] = useState('America/New_York');
+    const { student } = useSelector(state => state.student)
 
     useEffect(() => {
         moment.tz.setDefault(timeZone);
     }, [timeZone]);
+
+    useEffect(() => {
+        if (student.GMT) {
+            const offset = parseInt(student.GMT, 10);
+            const timezone = moment.tz.names().filter(name => (moment.tz(name).utcOffset()) === offset * 60);
+            setTimeZone(timezone[0] || null);
+        }
+    }, [student])
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -29,15 +37,8 @@ export const Schedules = () => {
             setBookedSlots(bookedSlotsArray);
         }
         fetchEvents();
-    }, [])
+    }, [studentId])
 
-    useEffect(() => {
-        if (student.GMT) {
-            const offset = parseInt(student.GMT, 10);
-            const timezone = moment.tz.names().filter(name => (moment.tz(name).utcOffset()) === offset * 60);
-            setTimeZone(timezone[0] || null);
-        }
-    }, [student])
 
     const convertToGmt = (date) => {
         let updatedDate = moment(convertToDate(date)).tz(timeZone).toDate();

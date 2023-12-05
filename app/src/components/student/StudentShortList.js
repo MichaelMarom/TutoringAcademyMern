@@ -133,7 +133,7 @@ const StudentShortList = () => {
                                                         <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>Book Lesson</button>
                                                     </td>
                                                     <td >
-                                                        <button className='btn btn-outline-warning' onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>Feedbacks</button>
+                                                        <button className='btn btn-outline-success' onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>Feedbacks</button>
                                                     </td>
                                                     <td>
                                                         <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>View Profile</button>

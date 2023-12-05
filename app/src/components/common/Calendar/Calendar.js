@@ -24,25 +24,15 @@ const views = {
   MONTH: 'month'
 }
 
-const momentWeekDaysCode = {
-  Sunday: 0,
-  Monday: 1,
-  Tuesday: 2,
-  Wednesday: 3,
-  Thursday: 4,
-  Friday: 5,
-  Saturday: 6,
-}
-
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
 const ShowCalendar = ({
   setIsModalOpen = () => { }, //FOR STUDENT
   isModalOpen = false,  //FOR STUDENT
-  timeDifference = null,
-  setActiveTab = () => { },
-  setDisableColor = () => { },
-  disableColor = '',
+  timeDifference = null,  //FOR STUDENT
+  setActiveTab = () => { },   //FOR Tutor
+  setDisableColor = () => { },  //FOR Tutor
+  disableColor = '',  //FOR Tutor
   activeTab,
   disableWeekDays,
   disabledHours,
@@ -499,7 +489,14 @@ const ShowCalendar = ({
 
   const handleEventClick = (event) => {
     setClickedSlot(event)
-    isStudentLoggedIn ? setIsModalOpen(true) : setIsTutorSideSessionModalOpen(true);
+    const pastEvent = convertToDate(event.end).getTime() < (new Date()).getTime();
+    if (isStudentLoggedIn && !pastEvent) {
+      setIsModalOpen(true);
+      setIsTutorSideSessionModalOpen(false);
+    } else {
+      setIsModalOpen(false);
+      setIsTutorSideSessionModalOpen(true);
+    }
   };
 
   const slotPropGetter = useCallback((date) => {
@@ -818,7 +815,6 @@ const ShowCalendar = ({
         isOpen={isTutorSideSessionModalOpen}
         onClose={onTutorModalRequestClose}
         clickedSlot={clickedSlot}
-        timeZone={timeZone}
       />
 
     </div>

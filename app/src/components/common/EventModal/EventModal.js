@@ -24,7 +24,6 @@ function EventModal({
   const [canPostEvents, setCanPostEvents] = useState(true)
 
   const { selectedTutor } = useSelector(state => state.selectedTutor)
-  // const { user } = useSelector(state => state.user)
 
   const handleRemoveSlot = (startTime) => {
     setSelectedSlots(selectedSlots.filter((slot) => slot.start.getTime() !== startTime.getTime()))
@@ -45,7 +44,7 @@ function EventModal({
     }
     else if ((!existIntroSession && selectedType !== 'intro') && selectedSlots[0]?.start) {
       setCanPostEvents(false)
-      toast.warning('Can not reserve or book lesson before the intro Session')
+      toast.warning(`Your first Session must be Introduction session for ${selectedTutor.subject}!`)
     }
      else if (existIntroSession && selectedType === 'intro' && selectedSlots.length > 1) {
       setCanPostEvents(false)

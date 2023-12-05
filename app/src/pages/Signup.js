@@ -59,16 +59,18 @@ const Signup = () => {
     if (handleValidation()) {
       setLoading(true)
       const result = await signup(signupFormValues);
-      console.log(result)
       if (result.status === 200) {
         setSignupFormValues({ role: '', email: '', password: '' })
         toast.success("Registration SuccessFull")
         navigate(`/login`)
       }
+      else {
+        toast.error(result.response.data.message)
+      }
       setLoading(false)
     }
   };
-  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSignupFormValues({ ...signupFormValues, [name]: value });

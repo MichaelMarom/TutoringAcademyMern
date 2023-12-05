@@ -20,7 +20,10 @@ const signup = async (req, res) => {
             }
         } catch (err) {
             console.log(err);
-            res.status(400).send({ error: err.message });
+            if (err.message.includes('UNIQUE KEY constraint')) {
+                res.status(400).send({ message: "Email already exist" });
+            }
+            else res.status(400).send({ message: "Failed to Register User" });
         }
     })
 };

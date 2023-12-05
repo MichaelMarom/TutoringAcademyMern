@@ -26,9 +26,8 @@ const Header = () => {
     useEffect(() => {
         getBookedSlot(window.localStorage.getItem('student_user_id'))
         .then(({data}) => {
-            let book = []
             data.map(item => {
-                let result = JSON.parse(item.bookedSlots)[0].start;
+                let result = JSON.parse(item.bookedSlots)[0]?.start;
                 let setDate = new Date(result).getTime()/1000
                 let newDate = new Date().getTime()/1000
 

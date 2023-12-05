@@ -102,6 +102,11 @@ function CustomEvent({
                             {String(remainingTime.seconds).padStart(2, '0')}
                         </div>
                     }
+                    {
+                        <div >
+                            "{event.subject}"
+                        </div>
+                    }
                     {event.rating &&
                         <div >
                             <StarRating rating={event.rating} />

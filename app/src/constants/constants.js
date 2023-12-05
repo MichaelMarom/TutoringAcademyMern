@@ -227,6 +227,77 @@ export const GMT = [
   }
 ]
 
+export const GRADES = [
+  {
+    "id": 1,
+    "Grade": "Pre K"
+  },
+  {
+    "id": 2,
+    "Grade": "1St"
+  },
+  {
+    "id": 3,
+    "Grade": "2nd"
+  },
+  {
+    "id": 4,
+    "Grade": "3rd"
+  },
+  {
+    "id": 5,
+    "Grade": "4th"
+  },
+  {
+    "id": 6,
+    "Grade": "5th"
+  },
+  {
+    "id": 7,
+    "Grade": "6th"
+  },
+  {
+    "id": 8,
+    "Grade": "7th"
+  },
+  {
+    "id": 9,
+    "Grade": "8th"
+  },
+  {
+    "id": 10,
+    "Grade": "9th"
+  },
+  {
+    "id": 11,
+    "Grade": "10th"
+  },
+  {
+    "id": 12,
+    "Grade": "11th"
+  },
+  {
+    "id": 13,
+    "Grade": "12th"
+  },
+  {
+    "id": 14,
+    "Grade": "Freshman"
+  },
+  {
+    "id": 15,
+    "Grade": "Sophmore"
+  },
+  {
+    "id": 16,
+    "Grade": "Junior"
+  },
+  {
+    "id": 17,
+    "Grade": "Senior"
+  }
+]
+
 export const Countries = [
   {
     "Country": "USA"

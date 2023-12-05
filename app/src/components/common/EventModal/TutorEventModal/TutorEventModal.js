@@ -7,7 +7,7 @@ import LeftSideBar from '../../LeftSideBar'
 import { SessionActions } from './SessionActions'
 import { SessionFeedback } from './SessionFeedback'
 
-export const TutorEventModal = ({ isOpen, onClose, clickedSlot, timeZone }) => {
+export const TutorEventModal = ({ isOpen, onClose, clickedSlot }) => {
     const [questions, setQuestions] = useState([]);
     const [questionLoading, setQuestionLoading] = useState(false)
     useEffect(() => {

@@ -2,15 +2,13 @@ import containerVariants from '../constraint';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { get_countries, get_gmt, get_state } from '../../axios/tutor';
-import { socket } from '../../socket';
-import { get_my_data, get_student_grade, get_student_setup, get_student_setup_by_userId, get_student_short_list, upload_form_one } from '../../axios/student';
+import { get_my_data, upload_form_one } from '../../axios/student';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { useDispatch } from 'react-redux';
-import { setShortlist } from '../../redux/student_store/shortlist';
 import { setStudent } from '../../redux/student_store/studentData';
 import Tooltip from '../common/ToolTip';
 import { FaInfoCircle } from 'react-icons/fa';
+import { Countries, GMT, GRADES, STATES, US_STATES } from '../../constants/constants';
 
 const StudentSetup = () => {
     const dispatch = useDispatch()
@@ -38,8 +36,6 @@ const StudentSetup = () => {
     let [parent_email, set_parent_email] = useState('')
 
     let [photo, set_photo] = useState('')
-    let [email_isVerified, set_email_isVerified] = useState(false)
-    let { save } = useSelector(s => s.save)
 
 
     let [countryList, setCountryList] = useState('')
@@ -55,13 +51,18 @@ const StudentSetup = () => {
 
     let [data, set_data] = useState(false);
     const [dateTime, setDateTime] = useState('')
+    const [userId, setUserId] = useState('')
     const { user } = useSelector(state => state.user)
     const { student } = useSelector(state => state.student)
 
     let saver = async () => {
 
-        let response = await upload_form_one(fname, mname, sname, user[0].email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, user[0].SID)
+        let response = await upload_form_one(fname, mname, sname, user[0].role === 'student' ? user[0].email : email, lang, is_18,
+            pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone,
+            parent_fname, parent_lname, parent_email, photo, acadId, parentConsent,
+            user[0].role === 'student' ? user[0].SID : userId)
         const res = await get_my_data(localStorage.getItem('student_user_id'));
+        console.log(res[1][0][0])
         dispatch(setStudent(res[1][0][0]))
         return response;
     }
@@ -69,6 +70,7 @@ const StudentSetup = () => {
     useEffect(() => {
         const fetchStudentSetup = async () => {
             if (user[0].role === 'student' || user[0].role === 'admin') {
+                console.log(student, 'hehe')
                 if (Object.keys(student)) {
                     let data = student
                     set_fname(data.FirstName)
@@ -78,7 +80,7 @@ const StudentSetup = () => {
                     set_email(data.Email)
                     set_cell(data.Cell)
                     set_state(data.State)
-
+                    setUserId(data.userId)
                     set_parentConsent(data.ParentConsent)
                     set_city(data.City)
                     set_country(data.Country)
@@ -95,7 +97,6 @@ const StudentSetup = () => {
                             list[0].checked = true
                             list[1].checked = false
 
-                            console.log(list[0])
                         }
                         else {
                             list[0].checked = false
@@ -112,7 +113,6 @@ const StudentSetup = () => {
         fetchStudentSetup();
     }, [student])
 
-    console.log(parentConsent, typeof (parentConsent), 'consent');
 
     useEffect(() => {
         let id = window.localStorage.getItem('student_user_id') !== null ? window.localStorage.getItem('student_user_id') : null
@@ -144,55 +144,23 @@ const StudentSetup = () => {
                 item.style.pointerEvents = 'all';
             })
         } else {
-            field.map(item => {
-                item.style.opacity = .4;
-                item.style.pointerEvents = 'none';
-            })
+            // field.map(item => {
+            //     item.style.opacity = .4;
+            //     item.style.pointerEvents = 'none';
+            // })
         }
 
     }, []);
 
-    useEffect(() => {
-
-        let input = [...document.querySelectorAll('input')];
-        let select = [...document.querySelectorAll('select')];
-
-        let doc = [document.querySelector('.profile-photo-cnt')]
-
-        let field = [...input, ...select, ...doc];
-
-
-
-        // let name = window.localStorage.getItem('student_user_id');
-        // if (name === null || name === 'null') {
-        //     field.map(item => {
-        //         item.style.opacity = 1;
-        //         item.style.pointerEvents = 'all';
-        //     })
-        // } else {
-        //     field.map(item => {
-        //         item.style.opacity = .4;
-        //         item.style.pointerEvents = 'none';
-        //     })
-        // }
-
-    }, []);
-
-    // useEffect(() => {
     if (document.querySelector('#student-save')) {
         document.querySelector('#student-save').onclick = async () => {
 
-
             let all_inputs = [...document.querySelectorAll('input')].filter(item => item.getAttribute('id') !== 'add2' && item.getAttribute('id') !== 'mname')
-
-
 
             let all_values = all_inputs
 
-
             let bool_list = []
             let bools = all_values.map(item => {
-                console.log(item.dataset.type)
 
                 if (item.dataset.type === 'file') {
 
@@ -231,21 +199,15 @@ const StudentSetup = () => {
 
             })
 
-
-
             let result = bool_list.filter(item => {
-                console.log(item)
                 return item === false
             })
-            console.log(result, 'booooool')
 
             if (result.length === 0) {
                 document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
                 let response = await saver();
                 if (response.bool) {
 
-                    //document.querySelector('form').reset(); 
-                    console.log(response)
                     if (response.type === 'save') {
                         window.localStorage.setItem('student_user_id', response.user);
                         window.localStorage.setItem('student_screen_name', response.screen_name);
@@ -319,68 +281,47 @@ const StudentSetup = () => {
 
     useEffect(() => {
 
-        get_countries()
-            .then((data) => {
-                console.log(data)
-                let list = data.recordset.map((item) =>
-                    <option key={item.Country} className={item.Country} selected={item.Country === country ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Country}>{item.Country}</option>
-                );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Country</option>
 
-                list.unshift(head);
-                setCountryList(list)
+        let list = Countries.map((item) =>
+            <option key={item.Country} className={item.Country} selected={item.Country === country ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Country}>{item.Country}</option>
+        );
+        let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Country</option>
 
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        list.unshift(head);
+        setCountryList(list)
 
 
-        get_gmt()
-            .then((data) => {
-                let list = data.recordset.map((item) =>
-                    <option key={item.GMT} className={item.GMT} selected={item.GMT === timeZone ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.GMT}>{item.GMT}</option>
-                );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>GMT</option>
+        let gmt_list = GMT.map((item) =>
+            <option key={item.GMT} className={item.GMT} selected={item.GMT === timeZone ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.GMT}>{item.GMT}</option>
+        );
+        let gmt_head = <option key='null' style={{
+            height: '50px', width: '100%',
+            outline: 'none', padding: '0 10px 0 10px', borderRadius: '0'
+        }} value=''>GMT</option>
 
-                list.unshift(head);
-                setGMTList(list)
-
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-
-        get_student_grade()
-            .then((data) => {
-                let list = data.map((item) =>
-                    <option key={item.id} className={item.Grade} selected={item.Grade === grade ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Grade}>{item.Grade}</option>
-                );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Grade</option>
-
-                list.unshift(head);
-                setGradeList(list)
-
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        gmt_list.unshift(gmt_head);
+        setGMTList(gmt_list)
 
 
-        get_state()
-            .then((data) => {
-                let list = data.recordset.map((item) =>
-                    <option key={item.State} className={item.State} selected={item.State === state ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.State}>{item.State}</option>
-                );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>State</option>
 
-                list.unshift(head);
-                setStateList(list)
 
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        let grades_list = GRADES.map((item) =>
+            <option key={item.id} className={item.Grade} selected={item.Grade === grade ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Grade}>{item.Grade}</option>
+        );
+        let grades_head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Grade</option>
+
+        grades_list.unshift(grades_head);
+        setGradeList(grades_list)
+
+
+        let states_list = STATES.map((item) =>
+            <option key={item.State} className={item.State} selected={item.State === state ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.State}>{item.State}</option>
+        );
+        let state_head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>State</option>
+
+        states_list.unshift(state_head);
+        setStateList(states_list)
+
     }, [data])
 
     let handleImage = () => {
@@ -448,7 +389,7 @@ const StudentSetup = () => {
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
                                 <input
                                     placeholder='Email'
-                                    value={user[0].email}
+                                    value={user[0].role === 'student' ? user[0].email : email}
                                     type="text" id="email"
                                     style={{ float: 'right' }} readonly />
 
@@ -464,7 +405,8 @@ const StudentSetup = () => {
 
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <select onInput={e => set_lang(e.target.value)} id="state" value={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
+                                <select onInput={e => set_lang(e.target.value)} id="state" value={lang} 
+                                style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
                                     <option value="null">Select Language</option>
                                     {
                                         lang_list.map(item =>
@@ -485,7 +427,7 @@ const StudentSetup = () => {
                             </div>
 
                             <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                                <select onInput={e => set_grade(e.target.value)} id="state" value={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
+                                <select onInput={e => set_grade(e.target.value)} id="state" value={grade} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
                                     {
                                         GradeList
                                     }
@@ -509,7 +451,7 @@ const StudentSetup = () => {
                                             width: "30px",
                                             height: "15px"
                                         }}
-                                        onChange={() => { console.log('hit'); set_parentConsent(!parentConsent) }}
+                                        onChange={() => { set_parentConsent(!parentConsent) }}
                                         checked={parentConsent === "true" || parentConsent === true}
                                     />
                                     <label className="form-check-label mr-3" for="flexSwitchCheckChecked" >

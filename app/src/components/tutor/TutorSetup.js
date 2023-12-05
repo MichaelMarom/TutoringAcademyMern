@@ -74,7 +74,7 @@ const TutorSetup = () => {
   let [userExist, setUserExist] = useState(false);
   const [uploadPhotoClicked, setUploadPhotoClicked] = useState(false)
   const [uploadVideoClicked, setUploadVideoClicked] = useState(false)
-  const [userId, setUserId] = useState()
+  const [userId, setUserId] = useState(JSON.parse(localStorage.getItem("user"))[0].SID)
   const [picUploading, setPicUploading] = useState(false);
 
   const [dbCountry, setDBCountry] = useState(null)
@@ -88,6 +88,11 @@ const TutorSetup = () => {
     "Canada": CAN_STATES,
     "UnitedKingdom": UK_STATES
   }
+
+  // //userExist
+  // useEffect(() => {
+  //   const fetchTutor()
+  // }, [])
 
   useEffect(() => {
     if (country !== dbCountry) {
@@ -154,7 +159,7 @@ const TutorSetup = () => {
     const AcademyId = localStorage.getItem('tutor_user_id')
 
     const fetchTutorSetup = async () => {
-      console.log('rener', tutor)
+      console.log('render', tutor, JSON.parse(localStorage.getItem("user")))
       setDataFetching(true)
 
       let result;
@@ -165,6 +170,7 @@ const TutorSetup = () => {
       // else {
       //   result = await get_tutor_setup_by_userId(user[0].SID);
       // }
+      console.log(tutor.AcademyId);
       if (tutor.AcademyId) {
         console.log(tutor)
         let data = tutor;

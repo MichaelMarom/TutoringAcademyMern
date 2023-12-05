@@ -33,11 +33,14 @@ let upload_form_one = (req, res) => {
 
     let { fname, mname, sname, email, lang, is_18, pwd, cell, grade,
         add1, add2, city, state, zipCode, country,
-        timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId } = req.body;
+        timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent,
+        userId } = req.body;
 
-    let UserId = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] + shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
+    let UserId = mname?.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] +
+        shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
 
-    let screenName = mname.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] : fname + '.' + ' ' + sname[0];
+    let screenName = mname?.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] :
+        fname + '.' + ' ' + sname[0];
 
 
     let action = cb => {
@@ -45,7 +48,8 @@ let upload_form_one = (req, res) => {
             const sql = require('mssql');
             var poolConnection = await sql.connect(config);
 
-            let result = poolConnection ? await get_action(poolConnection) : 'connection error';
+            let result = poolConnection ? await get_action(poolConnection) :
+                'connection error';
             cb(result);
 
         })
@@ -55,12 +59,10 @@ let upload_form_one = (req, res) => {
 
         if (result) {
 
-            let db = marom_db(async (config) => {
+            marom_db(async (config) => {
 
                 const sql = require('mssql');
                 var poolConnection = await sql.connect(config);
-
-                //let result = poolConnection ? await insert_student_data(poolConnection) : 'connection error';
 
                 insert_student_data(poolConnection)
                     .then((result) => {
@@ -71,12 +73,11 @@ let upload_form_one = (req, res) => {
                         console.log(err)
 
                     })
-
             })
 
         } else {
 
-            let db = marom_db(async (config) => {
+            marom_db(async (config) => {
 
                 const sql = require('mssql');
                 var poolConnection = await sql.connect(config);
@@ -96,12 +97,6 @@ let upload_form_one = (req, res) => {
 
         }
     })
-
-
-
-
-
-
 
     let get_action = async (poolConnection) => {
         let records = await poolConnection.request().query(`SELECT * FROM "StudentSetup" 
@@ -131,8 +126,9 @@ let upload_form_one = (req, res) => {
     let update_student_data = async (poolConnection) => {
         let records = await poolConnection.request().query(`UPDATE "StudentSetup" 
         set Photo = '${photo}', Address1 = '${add1}', Address2 = '${add2}', City = '${city}',
-         State = '${state}', ZipCode = '${zipCode}', Country = '${country}',
-          Email = '${email}', Cell = '${cell}', 
+         State = '${state}', ZipCode = '${zipCode}', Country = '${country}', 
+          Email = '${email}', Cell = '${cell}', FirstName='${fname}',LastName='${sname}',
+          MiddleName='${mname}',
         GMT = '${timeZone}', Password = '${pwd}', Language='${lang}', AgeGrade='${is_18}',
          Grade='${grade}', ParentEmail='${parent_email}', ParentFirstName='${parent_fname}',
           ParentConsent='${parentConsent}', ParentLastName='${parent_lname}'  

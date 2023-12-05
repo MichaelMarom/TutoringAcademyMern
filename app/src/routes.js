@@ -54,8 +54,13 @@ const App = () => {
   useEffect(() => {
     dispatch(setShortlist())
     const getStudentDetails = async () => {
+
+      if (localStorage.getItem('student_user_id') === "undefined") {
+        dispatch(setStudent({}));
+        return
+      }
       const res = await get_my_data(localStorage.getItem('student_user_id'))
-      dispatch(setStudent(res[1][0][0]))
+      dispatch(setStudent(res[1][0][0]));
     }
     getStudentDetails()
   }, [localStorage.getItem('student_user_id')])

@@ -107,129 +107,64 @@ let set_student_status = (req, res) => {
 }
 
 let get_tutor_new_subject = async (req, res) => {
-    let book = []
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
 
-     function getTutorNewSubject(cb){
-        connecteToDB.then(
-            poolConnection =>
-            poolConnection.request().query(`SELECT * From NewTutorSubject `)
-            .then((result) => cb(result.recordset))
-            .catch(err => console.log(err)))
-        .catch(err => console.log(err))
-     }
-
-     getTutorNewSubject(async(result) => {
-
-         for(let i = 0; i < result.length; i++){
-             console.log([i])
-            let tutor = await tutorName(result[i].AcademyId);
-
-            book.push({ item: result[i], tutor: tutor[0].FirstName + ' ' + tutor[0].LastName })
-            console.log('length check :',result.length , book.length,i)
-
-            if (i === result.length - 1) {
-                console.log(book)
-                res.send(book)
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `SELECT * From NewTutorSubject as ts 
+                        join TutorSetup as t on t.AcademyId = CAST(ts.AcademyId as varchar(max)) `
+                );
+                res.status(200).send(result.recordset);
             }
-         }
-       
-     })
-
-     let  tutorName = async(id) => {
-        return connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT * FROM TutorSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
-                .then((result) => {
-                    return (result.recordset);
-                })
-                .catch(err => console.log(err))
-        )
-    }
-
-
-    /*let newSub = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From NewTutorSubject `)
-            .then((result) => {
-                return (result.recordset);
-            })
-            .catch(err => console.log(err))
-    )
-
-    let book = []
-
-    let tutorName = (id) => {
-        return connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT * FROM TutorSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
-                .then((result) => {
-                    return (result.recordset);
-                })
-                .catch(err => console.log(err))
-        )
-    }
-
-    async function setUpDoc() {
-        newSub.map(async (item) => {
-            let tutor = await tutorName(item.AcademyId);
-            //console.log(tutor, 'tuenc')
-            book.push({ item: item, tutor: tutor[0].FirstName + ' ' + tutor[0].LastName })
-
-            if (newSub.length/2 >= book.length) {
-                console.log(book)
-                res.send(book)
-            }
-        })
-    }
-    setUpDoc()*/
+        }
+        catch (err) {
+            res.status(400).send({ message: err.message })
+        }
+    })
 }
+
 
 
 let accept_new_subject = async (req, res) => {
     let { id, subject, AcademyId } = req.body;
-    console.log(id, subject, AcademyId)
-
-    let date = new Date().toDateString()
-
 
     let insert = await connecteToDB
         .then(async (poolConnection) => {
-            poolConnection.request().query(` INSERT INTO Subjects(FacultyId, SubjectName, CreatedOn) values('${id}','${subject}', '')`)
-                .then((result) => {
 
-                    return result.rowsAffected[0] === 1 ? true : false
-
-                })
-                .catch(err => console.log(err))
-
+            const query = `INSERT INTO Subjects (FacultyId, SubjectName, CreatedOn) 
+               VALUES ('${id}', '${subject}', GETUTCDATE())`;
+            console.log(query)
+            const result = await poolConnection.request().query(query)
+            return result.rowsAffected[0] === 1 ? true : false
         })
-        .catch(err =>
+        .catch(() => {
             res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-        )
+            return;
+        })
 
 
     if (insert) {
 
         connecteToDB
             .then(async (poolConnection) => {
-                poolConnection.request().query(` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+                poolConnection.request().query(` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' 
+                AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
                     .then((result) => {
-
                         result.rowsAffected[0] === 1 ? res.status(200).send({ bool: true, mssg: 'Data was uploaded successfully' }) : res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-
-
                     })
                     .catch(err => console.log(err))
-
             })
-            .catch(err =>
+            .catch(() =>
                 res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
             )
 
     } else {
         console.log('error inserting data to db')
         res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-
     }
-
-
 }
 
 
@@ -239,7 +174,8 @@ let decline_new_subject = (req, res) => {
 
     connecteToDB
         .then(async (poolConnection) => {
-            poolConnection.request().query(` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+            poolConnection.request().query(`Update NewTutorSubject set IsRejected = 1 
+            WHERE CONVERT(VARCHAR, subject) = '${subject}' AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
                 .then((result) => {
 
                     result.rowsAffected[0] === 1 ? res.status(200).send({ bool: true, mssg: 'Data was uploaded successfully' }) : res.status(200).send({ bool: false, mssg: 'Error uploading files, Please Try Again...' })

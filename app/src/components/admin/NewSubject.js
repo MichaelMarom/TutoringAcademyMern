@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import moment from 'moment'
-import Skeleton from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { delete_new_subject, get_tutor_new_subject, post_new_subject } from '../../axios/admin';
+import Loading from '../common/Loading';
+import { toast } from 'react-toastify';
+import { RxCrossCircled } from "react-icons/rx";
+
+
 
 
 const TutorTable = () => {
 
     let [data, setData] = useState([])
-    let [emptyData , set_emptyData] = useState([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]);
+    const [loading, setIsLoading] = useState(false);
+    const [actionTaken, setActionTaken] = useState()
 
 
     const COLUMNS = [
@@ -29,168 +32,106 @@ const TutorTable = () => {
             Header: 'Notes',
             accessor: 'Notes',
         },
-        
+        {
+            Header: 'Accepted',
+            accessor: 'Accepted',
+        },
         {
             Header: 'Check Box',
             accessor: 'Check Box'
         }
-        
+
     ];
 
-   
-    let navigate = useNavigate();
 
-   
     useEffect(() => {
+        setIsLoading(true)
         get_tutor_new_subject()
-        .then((result) => {
-            setData(result)
-            console.log(Object.values(result[0])[0])
+            .then((result) => {
+                setData(result)
+                setIsLoading(false)
 
-        })
-        .catch((err) => console.log(err))
-    }, [])
-    
+            })
+            .catch((err) => console.log(err))
+    }, [actionTaken])
 
-    let acceptNewSubject = ( id,subject,AcademyId) => {
-        document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
 
-        post_new_subject(id,subject,AcademyId)
-        .then((response) => {
-
-            if(response.bool){
-                setTimeout(() => {
-                    document.querySelector('.save-overlay')?.removeAttribute('id');
-                }, 1000);
-    
-                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                document.querySelector('.tutor-popin').style.background = '#000';
-                document.querySelector('.tutor-popin').innerHTML = response.mssg
-                setTimeout(() => {
-                    //document.querySelector('.tutor-next')?.setAttribute('id', 'next')
-                    document.querySelector('.tutor-popin')?.removeAttribute('id');
-                }, 5000);
-
-                
-
-            }else{
-                setTimeout(() => {
-                    document.querySelector('.save-overlay')?.removeAttribute('id');
-                }, 1000);
-                
-                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                document.querySelector('.tutor-popin').style.background = 'red';
-                document.querySelector('.tutor-popin').innerHTML = response.mssg
-                setTimeout(() => {
-                    document.querySelector('.tutor-popin')?.removeAttribute('id');
-                }, 5000);
-
-                
-
-            }
-            
-        })
-        .catch((err) => console.log(err))
-
+    let acceptNewSubject = async (id, subject, AcademyId) => {
+        const response = await post_new_subject(id, subject, AcademyId)
+        if (response.bool) {
+            setActionTaken(!actionTaken)
+            toast.success("Record Updated Successfully!")
+        } else {
+            toast.error("Failed to Update the Record")
+        }
     }
 
-    let declineNewSubject = (subject,AcademyId ) => {
+    let declineNewSubject = async (subject, AcademyId) => {
+        const response = await delete_new_subject(subject, AcademyId)
 
-        document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
+        if (response.bool) {
+            setActionTaken(!actionTaken)
 
-        delete_new_subject(subject,AcademyId)
-        .then((response) => {
-            if(response.bool){
-                setTimeout(() => {
-                    document.querySelector('.save-overlay')?.removeAttribute('id');
-                }, 1000);
-    
-                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                document.querySelector('.tutor-popin').style.background = '#000';
-                document.querySelector('.tutor-popin').innerHTML = response.mssg
-                setTimeout(() => {
-                    document.querySelector('.tutor-popin')?.removeAttribute('id');
-                }, 5000);
+            toast.success("Record Updated Successfully!")
 
-                
-            }else{
-                setTimeout(() => {
-                    document.querySelector('.save-overlay')?.removeAttribute('id');
-                }, 1000);
-                
-                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                document.querySelector('.tutor-popin').style.background = 'red';
-                document.querySelector('.tutor-popin').innerHTML = response.mssg
-                setTimeout(() => {
-                    document.querySelector('.tutor-popin')?.removeAttribute('id');
-                }, 5000);
-
-            }
-        })
-        .catch((err) => console.log(err))
-
+        } else {
+            toast.error("Failed to Update the Record")
+        }
     }
+    if (loading)
+        return <Loading loadingText='Fetching New Subjects...' />
+    return (
 
-    return (  
-        <> 
-            <div className="tutor-popin"></div>
-            <div className="save-overlay">
-                <span className="save_loader"></span>
-            </div>
-            <div className="tables" style={{height: '100%', width: '100%', overflow: 'auto', padding: '5px'}}>
+        <div className="tables" style={{ height: '100%', width: '100%', overflow: 'auto', padding: '5px' }}>
 
-            <table style={{position: 'relative'}}>
-                <thead >
-                    <tr>
-                        {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                    </tr>
-                </thead>
-                <tbody>
-                        
-                    {   
-                        data.length > 0 
-                        ? 
-
-                        data.map((item) => 
-                            
-                            <tr key={item.SID} >
-                               
-                                <td data-src={''}>{item.tutor}</td>
-                                <td data-src={''}>{Object.values(item)[0].subject}</td>
-                                <td data-src={''}>{Object.values(item)[0].faculty}</td>
-                                <td data-src={''}>{Object.values(item)[0].reason}</td>
-                                <td data-src=''>
-                                    <>
-                                    <button onClick={e => acceptNewSubject(item.item.facultyId,item.item.subject,item.item.AcademyId)} style={{background: 'green', color: '#fff', borderRadius: '2px', padding: '10px'}}>Accept</button>
-                                    <button onClick={e => declineNewSubject(item.item.subject,item.item.AcademyId)} style={{background: 'red', color: '#fff', borderRadius: '2px', padding: '10px'}}>Decline</button>
-                                    </>
-                                </td>
-                                
+            {
+                data.length ?
+                    <table style={{ position: 'relative' }}>
+                        <thead >
+                            <tr>
+                                {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
                             </tr>
-                        )
-                        :
-                        
-                        emptyData.map((item) => 
-                            <tr >
-                               
-                                <td ><Skeleton count={1} /></td>
-                                <td ><Skeleton count={1} /></td>
-                                <td ><Skeleton count={1} /></td>
-                                <td ><Skeleton count={1} /></td>
-                                <td ><Skeleton count={1} /></td>
-                               
-                            </tr>
-                        )
-                    }
+                        </thead>
+                        <tbody>
 
-                     
-                        
-                    </tbody>
-                </table>
+                            {
+                                data.length > 0
+                                    ?
 
-            </div>
-        </>
+                                    data.map((item) => {
+                                        console.log(item.IsRejected, typeof (item.IsRejected))
+                                        return <tr key={item.SID} >
+
+                                            <td data-src={''}>{item.FirstName}</td>
+                                            <td data-src={''}>{item.subject}</td>
+                                            <td data-src={''}>{item.faculty}</td>
+                                            <td data-src={''}>{item.reason}</td>
+                                            <td data-src={''}>{item.IsRejected ? <RxCrossCircled size={20} /> : '-'}</td>
+
+                                            <td data-src=''>
+                                                <>
+                                                    <button
+                                                        onClick={() => acceptNewSubject(item.facultyId, item.subject, item.AcademyId[0])}
+                                                        className='btn btn-success btn-sm'>Accept</button>
+                                                    <button
+                                                        onClick={() =>  declineNewSubject(item.subject, item.AcademyId[0])}
+                                                        className='btn btn-danger btn-sm' disabled={item.IsRejected}>Decline</button>
+                                                </>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                    ) : null
+                            }
+
+
+
+                        </tbody>
+                    </table> : <div className='text-danger m-3'>No record Found</div>}
+
+        </div>
     );
 }
- 
+
 export default TutorTable;

@@ -610,14 +610,14 @@ const post_student_bookings = async (req, res) => {
     }
 }
 
-const get_student_tutor_bookings = async (req, res) => {
+const get_student_or_tutor_bookings = async (req, res) => {
     const { tutorId, studentId } = req.params;
     connecteToDB.then(poolConnection =>
         poolConnection.request().query(
-            find('StudentBookings', { studentId, tutorId })
+            find('StudentBookings', { studentId, tutorId }, 'OR')
         )
             .then((result) => {
-                res.send(result.recordset[0]);
+                res.send(result.recordset);
             })
             .catch(err => console.log(err))
     )
@@ -904,9 +904,9 @@ module.exports = {
     get_student_short_list_data,
     get_student_market_data,
     get_my_data,
-    get_student_tutor_bookings,
     get_student_bookings,
     post_student_bookings,
+    get_student_or_tutor_bookings,
     get_tutor_bookings,
     get_student_bank_details,
     post_student_bank_details,

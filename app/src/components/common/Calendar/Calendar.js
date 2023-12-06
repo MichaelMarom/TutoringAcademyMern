@@ -17,6 +17,7 @@ import { useLocation } from 'react-router-dom';
 import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
+import { get_student_tutor_events } from "../../../axios/student";
 
 const views = {
   WEEK: 'week',
@@ -145,7 +146,7 @@ const ShowCalendar = ({
 
   const fetchBookings = async () => {
     if (isStudentLoggedIn) {
-      const response = await fetchStudentsBookings(selectedTutor.academyId);
+      const response = await get_student_tutor_events(student.AcademyId, selectedTutor.academyId);
       if (response.length) {
         const reservedSlots = response?.map(data => JSON.parse(data.reservedSlots)).flat()
         const bookedSlots = response?.map(data => JSON.parse(data.bookedSlots)).flat()
@@ -248,15 +249,16 @@ const ShowCalendar = ({
     return date;
   };
 
-  const filterOtherSudentSession = (givenReservedSlots = []) => {
-    let updatedReservedSlot = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot => slot.studentId === student.AcademyId);
-    let updatedBookedSlots = bookedSlots.filter(slot => slot.studentId === student.AcademyId);
+  const filterOtherStudentAndTutorSession = (givenReservedSlots = []) => {
+    let updatedReservedSlot = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot =>
+      (slot.studentId === student.AcademyId && slot.tutorId === selectedTutor.academyId));
+    let updatedBookedSlots = bookedSlots.filter(slot => slot.studentId === student.AcademyId && slot.tutorId === selectedTutor.academyId);
     return { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots };
   }
 
   const handleBulkEventCreate = (type) => {
     if (reservedSlots?.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
-      let { reservedSlots, bookedSlots } = filterOtherSudentSession()
+      let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...clickedSlot, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== clickedSlot.id) }));
       return
     }
@@ -286,30 +288,31 @@ const ShowCalendar = ({
         createdAt: new Date(),
         subject: selectedTutor.subject,
         tutorId: selectedTutor.academyId,
-        rate: (type === 'intro' && selectedTutor.introDiscountEnabled) ? `$${(parseInt(selectedTutor.rate.split('$')[1]) / 2)}.00` : selectedTutor.rate
+        rate: (type === 'intro' && selectedTutor.introDiscountEnabled) ?
+          `$${(parseInt(selectedTutor.rate.split('$')[1]) / 2)}.00` : selectedTutor.rate
       }
     })
 
     //handle delete type later todo
     if (type === 'reserved' || type === 'intro') {
 
-      let { reservedSlots, bookedSlots } = filterOtherSudentSession()
+      let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots: reservedSlots.concat(updatedSelectedSlots), bookedSlots, subjectName: selectedTutor.subject }));
     }
     else if (type === 'booked') {
 
-      let { reservedSlots, bookedSlots } = filterOtherSudentSession()
+      let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
   }
 
   const handleRemoveReservedSlot = (reservedSlots) => {
-    let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherSudentSession(reservedSlots)
+    let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherStudentAndTutorSession(reservedSlots)
     dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
   }
 
   const handleSetReservedSlots = (reservedSlots) => {
-    let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherSudentSession(reservedSlots)
+    let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherStudentAndTutorSession(reservedSlots)
     dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
   }
 
@@ -488,6 +491,11 @@ const ShowCalendar = ({
   };
 
   const handleEventClick = (event) => {
+    const ownSession = !isStudentLoggedIn || event.studentId === student?.AcademyId;
+    if (!ownSession) {
+      toast.warning('You cannot see details of another students session')
+      return
+    }
     setClickedSlot(event)
     const pastEvent = convertToDate(event.end).getTime() < (new Date()).getTime();
     if (isStudentLoggedIn && !pastEvent) {

@@ -30,7 +30,7 @@ import StudentClass from "../pages/student/StudentClass";
 import { Feedback } from "../pages/student/Feedback";
 import Chat from "../pages/Chat";
 import { Schedules } from "../pages/student/Schedules";
-import { SingleTutorFeedbacks } from "../pages/student/SingleStudentFeedbacks";
+import { SingleTutorFeedbacks } from "../pages/student/SingleTutorFeedbacks";
 
 const rolePermissions = {
   tutor: [

@@ -9,7 +9,8 @@ import { SessionFeedback } from './SessionFeedback'
 
 export const TutorEventModal = ({ isOpen, onClose, clickedSlot }) => {
     const [questions, setQuestions] = useState([]);
-    const [questionLoading, setQuestionLoading] = useState(false)
+    const [questionLoading, setQuestionLoading] = useState(false);
+
     useEffect(() => {
         if (clickedSlot.id) {
             setQuestionLoading(true)

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import {apiClient} from './config'
+import { apiClient } from './config'
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
@@ -196,22 +196,22 @@ export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, a
 
 
 export let upload_form_two = (level, university1, university2, university3, degree, degreeFile, certificate,
-     certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, 
-     graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id,countryForDeg,
-     countryForMast,
-     countryForCert,
-     countryForDoc,
-     countryForAssociate) => {
+    certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1,
+    graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
+    countryForMast,
+    countryForCert,
+    countryForDoc,
+    countryForAssociate) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/form-two', {
-            level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language, 
+            level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
             state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
-             doctorateGraduateYear, expiration, otherang, workExperience, user_id,countryForDeg,
-             countryForMast,
-             countryForCert,
-             countryForDoc,
-             countryForAssociate
+            doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
+            countryForMast,
+            countryForCert,
+            countryForDoc,
+            countryForAssociate
         })
             .then((result) => {
                 resolve(result.data)
@@ -516,6 +516,10 @@ export const fetchStudentsBookings = async (tutorId) => {
         console.error("Error:", error);
     }
 };
+
+const fetchStudenTAndTutorBookings = () => {
+
+}
 
 export let get_tutor_market_data = (id) => {
 

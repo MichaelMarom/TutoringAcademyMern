@@ -13,7 +13,6 @@ const Header = () => {
         { name: 'Faculties', url: 'faculties' },
         { name: 'Short List', url: 'short-list' },
         { name: 'Accounting', url: 'accounting' },
-        // { name: 'Book Session', url: 'booking' },
         { name: "Feedback", url: 'feedback' },
         { name: 'Calender', url: 'calender' },
         { name: 'Terms Of Use', url: 'term-of-use' },
@@ -25,34 +24,30 @@ const Header = () => {
 
     useEffect(() => {
         getBookedSlot(window.localStorage.getItem('student_user_id'))
-        .then(({data}) => {
-            data.map(item => {
-                let result = JSON.parse(item.bookedSlots)[0]?.start;
-                let setDate = new Date(result).getTime()/1000
-                let newDate = new Date().getTime()/1000
+            .then(({ data }) => {
+                data.map(item => {
+                    let result = JSON.parse(item.bookedSlots)[0]?.start;
+                    let setDate = new Date(result).getTime() / 1000
+                    let newDate = new Date().getTime() / 1000
 
-                let sec = (newDate - setDate)
-                let min = sec/60;
+                    let sec = (newDate - setDate)
+                    let min = sec / 60;
 
-                if(min <= 3 && min !== 0 ){
+                    if (min <= 3 && min !== 0) {
 
-                    if(location.pathname.split('/').splice(-1)[0] !== 'collaboration'){
-                        navigate('/student/collaboration')
-                        alert(`You are beeing redirected to your lesson which will begin soon`)
+                        if (location.pathname.split('/').splice(-1)[0] !== 'collaboration') {
+                            // navigate('/student/collaboration')
+                            // alert(`You are beeing redirected to your lesson which will begin soon`)
+                        }
                     }
-                    
 
-                }
-                
+                })
 
-               
             })
-
-        })
-        .catch(err => {
-            console.log(err)
-        })
-    },[])
+            .catch(err => {
+                console.log(err)
+            })
+    }, [])
 
     let nav = useNavigate()
     let [screen_name, set_screen_name] = useState('')
@@ -105,11 +100,13 @@ const Header = () => {
 
     return (
         <>
-            <div className="screen-name btn-primary rounded" 
-            
-            style={{ display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
-             top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px',
-              padding: '3px 5px 0 5px', height: '30px' }}>
+            <div className="screen-name btn-primary rounded"
+
+                style={{
+                    display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
+                    top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px',
+                    padding: '3px 5px 0 5px', height: '30px'
+                }}>
                 {localStorage.getItem('student_screen_name')}
             </div>
             <div className="student-tab-header shadow-sm">

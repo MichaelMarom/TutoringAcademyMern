@@ -7,7 +7,7 @@ import LeftSideBar from '../../LeftSideBar'
 import { SessionActions } from './SessionActions'
 import { SessionFeedback } from './SessionFeedback'
 
-export const TutorEventModal = ({ isOpen, onClose, clickedSlot }) => {
+export const TutorEventModal = ({ isOpen, onClose, clickedSlot, handlePostpone }) => {
     const [questions, setQuestions] = useState([]);
     const [questionLoading, setQuestionLoading] = useState(false);
 
@@ -33,16 +33,16 @@ export const TutorEventModal = ({ isOpen, onClose, clickedSlot }) => {
         >
             <div className="">
                 <div className="modal-header">
-                    <div style={{ width: '80%' }}>
-                        <p className="modal-title" style={{ fontSize: "14px" }}>{showDate(clickedSlot.start, wholeDateFormat)} - {clickedSlot.studentName}</p>
+                    <div className='text-center' style={{ width: '90%' }}>
+                        <p className="modal-title fs-5" style={{ fontSize: "14px", fontWeight: "700" }}>{showDate(clickedSlot.start, wholeDateFormat)} - {clickedSlot.studentName}</p>
                     </div>
                 </div>
                 {
                     (convertToDate(clickedSlot.end).getTime() <= (new Date()).getTime()) ?
-                        !clickedSlot.rating ? <div className='p-3'>
-                            No feedback given for this session</div> :
+                        !clickedSlot.rating ? <div className='p-3 text-danger text-center' style={{ fontWeight: "700" }}>
+                            No feedback given for this session!</div> :
                             <SessionFeedback clickedSlot={clickedSlot} questions={questions} questionLoading={questionLoading} /> :
-                        <SessionActions clickedSlot={clickedSlot} />
+                        <SessionActions clickedSlot={clickedSlot} handlePostpone={handlePostpone} />
                 }
 
             </div>

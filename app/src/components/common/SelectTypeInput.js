@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { IoMdArrowDropdownCircle } from 'react-icons/io';
 
 const TypeAndSelectInput = ({ options, setInputValue, inputValue }) => {
     console.log(inputValue)

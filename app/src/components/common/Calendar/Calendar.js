@@ -18,6 +18,8 @@ import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
 import { get_student_tutor_events } from "../../../axios/student";
+import BottomModal from "../BottomModal";
+import { PostponeModal } from "../EventModal/PostponeModal";
 
 const views = {
   WEEK: 'week',
@@ -61,6 +63,7 @@ const ShowCalendar = ({
   const [dataFetched, setDataFetched] = useState(false);
   const [disableDateRange, setDisableDateRange] = useState([]);
   const [isTutorSideSessionModalOpen, setIsTutorSideSessionModalOpen] = useState(false);
+  const [postponeModalOpen, setPostponeModalOpen] = useState(false);
 
   const tutorAcademyId = localStorage.getItem('tutor_user_id')
 
@@ -221,6 +224,15 @@ const ShowCalendar = ({
 
   const onTutorModalRequestClose = () => {
     setIsTutorSideSessionModalOpen(false)
+  }
+
+  const handlePostpone = () => {
+    setIsTutorSideSessionModalOpen(false)
+    setPostponeModalOpen(true)
+  }
+  
+  const handlePostponeModalClose = () => {
+    setPostponeModalOpen(false)
   }
 
   useEffect(() => {
@@ -818,11 +830,17 @@ const ShowCalendar = ({
         clickedSlot={clickedSlot}
         setClickedSlot={setClickedSlot}
         handleRemoveReservedSlot={handleRemoveReservedSlot}
+        timeZone={timeZone}
       />
       <TutorEventModal
         isOpen={isTutorSideSessionModalOpen}
         onClose={onTutorModalRequestClose}
         clickedSlot={clickedSlot}
+        handlePostpone={handlePostpone}
+      />
+      <PostponeModal
+        isOpen={postponeModalOpen}
+        onClose={handlePostponeModalClose}
       />
 
     </div>

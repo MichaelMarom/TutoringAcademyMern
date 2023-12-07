@@ -5,9 +5,6 @@ import Loading from '../common/Loading';
 import { toast } from 'react-toastify';
 import { RxCrossCircled } from "react-icons/rx";
 
-
-
-
 const TutorTable = () => {
 
     let [data, setData] = useState([])
@@ -114,7 +111,7 @@ const TutorTable = () => {
                                                         onClick={() => acceptNewSubject(item.facultyId, item.subject, item.AcademyId[0])}
                                                         className='btn btn-success btn-sm'>Accept</button>
                                                     <button
-                                                        onClick={() =>  declineNewSubject(item.subject, item.AcademyId[0])}
+                                                        onClick={() => declineNewSubject(item.subject, item.AcademyId[0])}
                                                         className='btn btn-danger btn-sm' disabled={item.IsRejected}>Decline</button>
                                                 </>
 
@@ -128,7 +125,8 @@ const TutorTable = () => {
 
 
                         </tbody>
-                    </table> : <div className='text-danger m-3'>No record Found</div>}
+                    </table> : <div className='text-danger m-3'>No record Found</div>
+            }
 
         </div>
     );

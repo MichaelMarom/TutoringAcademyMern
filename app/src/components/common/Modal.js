@@ -1,16 +1,29 @@
 import React from 'react';
-import { Modal as BootstrapModal } from 'react-bootstrap';
+import { AiOutlineClose } from 'react-icons/ai';
 
-function Modal({ show, onHide, title, children }) {
+const CenteredModal = ({ show, handleClose, title, children }) => {
+    const modalDisplay = show ? 'd-block' : 'd-none';
+
     return (
-        <BootstrapModal show={show} onHide={onHide}
-        >
-            <BootstrapModal.Header closeButton>
-                <BootstrapModal.Title>{title}</BootstrapModal.Title>
-            </BootstrapModal.Header>
-            <BootstrapModal.Body>{children}</BootstrapModal.Body>
-        </BootstrapModal>
+        <div className={`modal-overlay ${modalDisplay}`} onClick={handleClose}>
+            <div className={`modal ${modalDisplay}`} tabIndex="-1" role="dialog"
+                style={{ display: modalDisplay, background: '#00000059' }}>
+                <div className=" modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h5 className="modal-title">{title}</h5>
+                            <button type="button" className="close" onClick={handleClose} aria-label="Close">
+                                <AiOutlineClose />
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            {children}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
-}
+};
 
-export default Modal;
+export default CenteredModal;

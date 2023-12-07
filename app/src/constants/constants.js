@@ -99,6 +99,133 @@ export const loggedInTutor = {
   Grades: ["8th grade", "9th grade", "7th grade", "10th grade"]
 }
 
+export const FACULTIES = [
+  {
+    "Id": 1,
+    "Faculty": "Math"
+  },
+  {
+    "Id": 2,
+    "Faculty": "Computer"
+  },
+  {
+    "Id": 3,
+    "Faculty": "English"
+  },
+  {
+    "Id": 4,
+    "Faculty": "Languges"
+  },
+  {
+    "Id": 5,
+    "Faculty": "Elementary Education"
+  },
+  {
+    "Id": 6,
+    "Faculty": "Science"
+  },
+  {
+    "Id": 7,
+    "Faculty": "Business"
+  },
+  {
+    "Id": 8,
+    "Faculty": "Social Study"
+  },
+  {
+    "Id": 9,
+    "Faculty": "Programing"
+  },
+  {
+    "Id": 10,
+    "Faculty": "Test Preparation"
+  },
+  {
+    "Id": 13,
+    "Faculty": "Health"
+  },
+  {
+    "Id": 14,
+    "Faculty": "Life Skills"
+  },
+  {
+    "Id": 15,
+    "Faculty": "Art"
+  },
+  {
+    "Id": 16,
+    "Faculty": "Engineering"
+  },
+  {
+    "Id": 17,
+    "Faculty": "Aviation"
+  },
+  {
+    "Id": 18,
+    "Faculty": "Economics"
+  },
+  {
+    "Id": 20,
+    "Faculty": "History"
+  },
+  {
+    "Id": 21,
+    "Faculty": "Statistics"
+  },
+  {
+    "Id": 22,
+    "Faculty": "Chemistry"
+  },
+  {
+    "Id": 23,
+    "Faculty": "Biology"
+  },
+  {
+    "Id": 24,
+    "Faculty": "Physics"
+  },
+  {
+    "Id": 25,
+    "Faculty": "Music"
+  },
+  {
+    "Id": 26,
+    "Faculty": "Geography"
+  },
+  {
+    "Id": 27,
+    "Faculty": "Psychology"
+  },
+  {
+    "Id": 28,
+    "Faculty": "Photography"
+  },
+  {
+    "Id": 29,
+    "Faculty": "Graphic design"
+  },
+  {
+    "Id": 30,
+    "Faculty": "Geometry"
+  },
+  {
+    "Id": 31,
+    "Faculty": "Litrature"
+  },
+  {
+    "Id": 32,
+    "Faculty": "Business & Management"
+  },
+  {
+    "Id": 33,
+    "Faculty": "Artificial intelligence"
+  },
+  {
+    "Id": 34,
+    "Faculty": "Home Schooling"
+  }
+]
+
 export const GMT = [
   {
     "id": 1,

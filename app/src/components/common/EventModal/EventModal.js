@@ -18,7 +18,8 @@ function EventModal({
   reservedSlots,
   clickedSlot,
   handleRemoveReservedSlot,
-  setClickedSlot
+  setClickedSlot,
+  timeZone
 }) {
   const [selectedType, setSelectedType] = useState(null);
   const [canPostEvents, setCanPostEvents] = useState(true)
@@ -46,7 +47,7 @@ function EventModal({
       setCanPostEvents(false)
       toast.warning(`Your first Session must be Introduction session for ${selectedTutor.subject}!`)
     }
-     else if (existIntroSession && selectedType === 'intro' && selectedSlots.length > 1) {
+    else if (existIntroSession && selectedType === 'intro' && selectedSlots.length > 1) {
       setCanPostEvents(false)
       toast.warning('Cannot book more than 1 Intro session!')
     }
@@ -65,8 +66,7 @@ function EventModal({
     >
       <div className="">
         <div className="modal-header">
-          <h4 className="modal-title" style={{ width: '80%' }}>Selected Slots</h4>
-
+          <h4 className="modal-title text-center" style={{ width: '100%' }}>Selected Slots</h4>
         </div>
         <div className="">
           {clickedSlot.start ?
@@ -140,6 +140,7 @@ function EventModal({
           (selectedType === 'intro' || selectedType === 'booked') &&
           <div>
             <SlotsInvoice
+              timeZone={timeZone}
               selectedType={selectedType}
               studentName={formatName(student.FirstName, student.LastName)}
               tutorName={formatName(selectedTutor.firstName, selectedTutor.lastName)}

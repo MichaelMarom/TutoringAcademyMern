@@ -517,8 +517,14 @@ export const fetchStudentsBookings = async (tutorId) => {
     }
 };
 
-const fetchStudenTAndTutorBookings = () => {
-
+export const new_subj_request_exist = async (subject) => {
+    try {
+        const response = await apiClient.get(`/tutor/newsubject/${subject}`);
+        return response;
+    } catch (error) {
+        console.error("Error:", error);
+        return error
+    }
 }
 
 export let get_tutor_market_data = (id) => {

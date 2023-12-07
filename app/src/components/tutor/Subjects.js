@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import Skeleton from 'react-loading-skeleton'
 import { useEffect } from 'react';
-import { get_faculty, get_rates, get_subject, get_user_data, upload_new_subject, upload_tutor_rates } from '../../axios/tutor';
+import { get_faculty, get_rates, get_subject, get_user_data, new_subj_request_exist, upload_new_subject, upload_tutor_rates } from '../../axios/tutor';
 import { COLUMNS } from '../../Tables/Subject/columns';
 import { socket } from '../../socket';
+import CenteredModal from '../common/Modal';
+import Button from '../common/Button';
+import { toast } from 'react-toastify';
+import { toFormData } from 'axios';
+import { FACULTIES } from '../../constants/constants';
 
 
 const Subjects = () => {
@@ -13,11 +18,15 @@ const Subjects = () => {
     let [newSubjectFacultyData, setNewSubjectFacultyData] = useState('');
     let [newSubjectData, setNewSubjectData] = useState('');
     let [newSubjectReasonData, setNewSubjectReasonData] = useState('');
+    const [showAddNewSubjModal, setShowAddNewSubjModal] = useState(false)
+    const [newSubjRequestChecking, setNewSubjReqChecking] = useState(false)
 
-    let [emptyData, set_emptyData] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
-
-
-    let [newSubject, setNewSubject] = useState(false)
+    const handleModalClose = () => {
+        setShowAddNewSubjModal(false)
+        setNewSubjectData('')
+        setNewSubjectFacultyData('')
+        setNewSubjectReasonData('')
+    }
 
     let [faculty, set_faculty] = useState([])
 
@@ -35,8 +44,6 @@ const Subjects = () => {
         let user_id = window.localStorage.getItem('tutor_user_id');
         get_rates(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
-                console.log(result)
-
                 result.map(item => {
                     let c = item.subject
                     let t = document.querySelector('.tables')
@@ -61,9 +68,9 @@ const Subjects = () => {
                         .catch((err) => err)
 
                 })
-            }, [])
+            })
             .catch((err) => console.log(err))
-    })
+    }, [])
 
     let populate_col = e => {
         if (e.target.checked) {
@@ -71,12 +78,9 @@ const Subjects = () => {
 
             let user_id = window.localStorage.getItem('tutor_user_id');
 
-            console.log(user_id)
-
             get_user_data(user_id)
                 .then((result) => {
                     let data = result;
-                    //console.log([...e.target.parentElement.parentElement.children][2].innerHTML)
 
                     let elms = [...e.target.parentElement.parentElement.children];
 
@@ -87,7 +91,6 @@ const Subjects = () => {
                     elms[6].innerHTML = result[0].CertificateExpiration;
                     elms[7].innerHTML = "$ <input style='height: 25px; width: 40px; margin: 0;' type='text' placeholder='Dollars' value='00' maxlength='2' />.<input style='height: 25px; width: 40px; margin: 0;' type='text' placeholder='cents' value='00' maxlength='2' /> ";
 
-                    console.log(data)
                 })
                 .catch((err) => err)
         } else {
@@ -143,28 +146,23 @@ const Subjects = () => {
 
     }
 
-    useEffect(() => {
-        get_faculty()
-            .then((result) => {
-                let list = result.map(item => {
-                    return (
-                        <option data-id={item.id} value={`${item.Faculty}-${item.Id}`}>{item.Faculty}</option>
-                    )
-                })
-                set_faculty(result)
-                console.log(result)
-
-                setNewSubjectFaculty(list)
-            })
-            .catch(err => console.log(err))
-    }, [])
+    const getFacultiesOption = () => {
+        let list = FACULTIES.map(item => {
+            return (
+                <option data-id={item.Id} value={`${item.Faculty}-${item.Id}`}
+                    selected={newSubjectFacultyData === `${item.Faculty}-${item.Id}`} >{item.Faculty}</option>
+            )
+        })
+        set_faculty(FACULTIES)
+        setNewSubjectFaculty(list)
+    }
+    useEffect(() => { getFacultiesOption() }, [newSubjectFacultyData])
 
 
     let handle_scroll_right = () => {
 
         let div = document.querySelector('.tutor-tab-subject-data-tabs');
         let scroll_elem = div.children[1];
-        console.log(scroll_elem)
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = w;
 
@@ -193,8 +191,7 @@ const Subjects = () => {
             let rate_err = []
 
             let result = () => {
-                let file = values.map((item, index, array) => {
-                    // console.log(item[7].children, 'item')
+                let file = values.map((item) => {
                     if (`${item[7].children[0]?.value}.${item[7].children[1]?.value}` !== '00.00') {
                         //document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
                         let doc = { faculty: item[1].dataset.src, course: item[1].innerHTML, rate: "$" + item[7].children[0]?.value + "." + item[7].children[1]?.value }
@@ -256,84 +253,36 @@ const Subjects = () => {
             result()
         }
 
-    let newSubjectCheckBox = e => {
-
-        let user_id = window.localStorage.getItem('tutor_user_id');
-
-        console.log(user_id)
-        if (e.target.checked) {
-            setNewSubject(true)
-            get_user_data(user_id)
-                .then((result) => {
-                    let data = result;
-                    let elms = [...e.target.nextElementSibling.children];
-                })
-
-        } else {
-            setNewSubject(false)
+    const checkRequestExist = async (e) => {
+        e.preventDefault()
+        setNewSubjReqChecking(true)
+        const result = await new_subj_request_exist(newSubjectData);
+        if (result.status === 200 && !result.subjectExist) {
+            uploadNewSubject()
         }
+        else {
+            setNewSubjectData('')
+            toast.warning(result.response.data.message)
+        }
+        setNewSubjReqChecking(false)
     }
 
-    let uploadNewSubject = e => {
-
-        let saver = () => {
-            let user_id = window.localStorage.getItem('tutor_user_id');
-
-
-            upload_new_subject(newSubjectFacultyData.split('-')[0], newSubjectData, newSubjectReasonData, user_id, newSubjectFacultyData.split('-')[1])
-                .then((result) => {
-                    if (result) {
-                        setTimeout(() => {
-                            document.querySelector('.save-overlay')?.removeAttribute('id');
-                        }, 1000);
-
-                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                        document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
-                        setTimeout(() => {
-                            document.querySelector('.tutor-popin')?.removeAttribute('id');
-                        }, 2000);
-                        let list = [...document.querySelectorAll('#new-sub')]
-                        let validate = list.map(item => item.value = '');
-                        document.querySelector('#new_sub_check_box').checked = false
-                    } else {
-
-                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                        document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
-                        setTimeout(() => {
-                            document.querySelector('.tutor-popin')?.removeAttribute('id');
-                        }, 2000);
-
-                    }
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
-        }
-
-        let list = [...document.querySelectorAll('#new-sub')]
-        let validate = list.filter(item => item.value === '');
-        let ll = list.filter(item => item.value === '');
-
-        if (validate.length > 0) {
-
-            validate.map(item => item.style.border = '1px solid red');
-            alert('Please Ensure No Field Is Empty')
-
-        } else {
-            validate.forEach(item => console.log(item.style));
-            console.log()
-            let list = [...document.querySelectorAll('#new-sub')]
-            list.map(item => item.style.border = '1px solid black')
-            document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay');
-            saver()
-
-        }
-
-
-
-
-
-
+    let uploadNewSubject = () => {
+        let user_id = window.localStorage.getItem('tutor_user_id');
+        upload_new_subject(newSubjectFacultyData.split('-')[0], newSubjectData, newSubjectReasonData, user_id, newSubjectFacultyData.split('-')[1])
+            .then((result) => {
+                if (result) {
+                    setNewSubjectData('')
+                    setNewSubjectFacultyData('')
+                    setNewSubjectReasonData('')
+                    toast.success("Subject Added Succefullu. Please wait for Admin to approve your request")
+                } else {
+                    toast.error("Error While Sending Request of New Subject")
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     return (
@@ -342,55 +291,16 @@ const Subjects = () => {
             <div className="save-overlay">
                 <span className="save_loader"></span>
             </div>
-            <div className="tutor-tab-subjects">
-                <div className="tutor-tab-subject-alert">
-                    <p style={{ fontSize: 'medium', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center' }}>There are 400+ subjects across 29 faculties to select from for tutoring. Didn't find your subject? List your expertise below and upload (submit) for review. We may list your subject after examination.</p>
+            <div className="tutor-tab-subjects container">
+                <div className=" my-3 tutor-tab-subject-alert highlight d-flex justify-content-between align-items-center ">
+                    <p style={{ fontSize: 'medium', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'left' }}>
+                        There are 400+ subjects across 29 faculties to select for tutoring. Didn't find your subject, and like to add it?
+                        Submit your request that match your expertise. We may list your subject after review.
+                        <Button className='btn-primary btn-small' type="button"
+                            handleClick={() => setShowAddNewSubjModal(true)} > Add New Subject</Button> </p>
+
                 </div>
-                <div className="tutor-tab-subjects-info" style={{ display: 'flex', flexDirection: 'column', background: '#e7e7e7', position: 'relative', alignItems: 'center', justifyContent: 'center', height: '70px', width: '100%', margin: 'auto' }}>
-
-                <input onInput={newSubjectCheckBox} id='new_sub_check_box' type='checkbox' style={{ height: '30px', position: 'absolute', left: '45px', top: '8px', width: '30px', margin: '10px 0 0 0', cursor: 'pointer' }} />
-
-                    <div style={{ width: '70%', margin: 'auto', opacity: newSubject ? '1' : '.5', pointerEvents: newSubject ? 'all' : 'none' }}>
-                        <div style={{ width: '45%', padding: '5px', display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 'auto,', float: 'left', height: '100%' }}>
-
-                            
-                            <select id='new-sub' onInput={e => setNewSubjectFacultyData(e.target.value)} style={{ float: 'right', ontSize: 'small', background: '#fff', width: '180px', height: '60px', margin: '0 0 0 0' }} type='text' >
-                                <option value={''}>Select Faculty</option>
-                                {newSubjectFaculty}
-                            </select>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-
-                            <input id='new-sub' onInput={e => setNewSubjectData(e.target.value)} style={{ float: 'left', ontSize: 'small', background: '#fff', width: '180px', height: '60px', margin: '0 0 0 0' }} type='text' placeholder='Type your subject here' />
-
-                        </div>
-
-
-
-                        <div style={{ width: '50%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 'auto', padding: '5px', float: 'right' }}>
-                            <textarea id='new-sub' onInput={e => setNewSubjectReasonData(e.target.value)} style={{ width: '100%', height: '60px', background: '#fff', padding: '10px' }} placeholder='Summarize Your Reason In Not More Than 700 Characters For Adding This Subject '>
-
-                            </textarea>
-                        </div>
-
-
-
-
-                        {/* <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select level' />
-                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select experience' />
-                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select Certification' />
-                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Select state' />
-                        <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Country' />
-    <input style={{fontSize: 'small',width: 'calc(100% / 10)', margin: '0 5px 0 5px'}} type='text' placeholder='Day state' />*/}
-                    </div>
-
-
-
-                    <input onClick={uploadNewSubject} style={{ fontSize: 'small', background: 'green', border: 'none', color: '#fff', fontWeight: 'bold', cursor: 'pointer', width: '80px', margin: '0 5px 0 5px', position: 'absolute', right: '45px', top: '15px' }} type="submit" value="Upload" />
-                </div>
-
                 <br />
-
-
 
                 <div className="tutor-tab-subject-data-collection-table">
 
@@ -470,24 +380,7 @@ const Subjects = () => {
                                                 <td data-src={item.FacultyId}></td>
                                                 <td data-src={item.FacultyId}></td>
                                             </tr>
-                                        )
-
-                                        :
-
-                                        emptyData.map((item) =>
-                                            <tr >
-
-                                                <td ><Skeleton count={1} /></td>
-                                                <td ><Skeleton count={1} /></td>
-                                                <td ><Skeleton count={1} /></td>
-                                                <td ><Skeleton count={1} /></td>
-                                                <td ><Skeleton count={1} /></td>
-                                                <td ><Skeleton count={1} /></td>
-                                                <td ><Skeleton count={1} /></td>
-                                                <td ><Skeleton count={1} /></td>
-
-                                            </tr>
-                                        )
+                                        ) : null
                                 }
 
 
@@ -502,6 +395,41 @@ const Subjects = () => {
 
 
             </div>
+            <CenteredModal
+                show={showAddNewSubjModal}
+                handleClose={handleModalClose}
+                title={'Add New Subject'}
+            >
+                <form onSubmit={checkRequestExist}>
+
+                    <div className='d-flex flex-column' style={{ gap: "20px" }}>
+                        <select className='form-select'
+                            required onChange={e => setNewSubjectFacultyData(e.target.value)} type='text' >
+                            <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
+                            {newSubjectFaculty}
+                        </select>
+                        <input
+                            required className='form-control'
+                            value={newSubjectData}
+                            onChange={e => setNewSubjectData(e.target.value)} type='text'
+                            placeholder='Type your subject here' />
+                        <textarea
+                            value={newSubjectReasonData}
+                            required className='form-control'
+                            onChange={e => setNewSubjectReasonData(e.target.value)}
+                            placeholder='Summarize Your Reason In Not More Than 700 Characters For Adding This Subject ' />
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" onClick={handleModalClose}>
+                            {"Close"}
+                        </button>
+                        <Button type="submit" className="btn btn-primary" loading={newSubjRequestChecking}
+                            loadingText={' checking if request already sent...'}>
+                            {'Submit'}
+                        </Button>
+                    </div>
+                </form>
+            </CenteredModal>
         </>
     );
 }

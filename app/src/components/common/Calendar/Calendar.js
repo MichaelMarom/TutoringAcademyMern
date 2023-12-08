@@ -18,7 +18,6 @@ import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
 import { get_student_tutor_events } from "../../../axios/student";
-import BottomModal from "../BottomModal";
 import { PostponeModal } from "../EventModal/PostponeModal";
 
 const views = {

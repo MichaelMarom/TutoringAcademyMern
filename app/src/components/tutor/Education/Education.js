@@ -1,18 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
-import { FaTimesCircle } from 'react-icons/fa';
 
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../../axios/tutor';
 import career from '../../../images/career.png';
-import Select, { components } from 'react-select'
+import Select from 'react-select'
 import Actions from '../../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { upload_file } from '../../../axios/file';
-import PDFViewer from './PDFViewer';
 import Loading from '../../common/Loading';
-import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES } from '../../../constants/constants';
+import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES } from '../../../constants/constants'
 
 const languages = [
     'Afrikaans',
@@ -154,9 +151,7 @@ const Education = () => {
     let [workExperience, set_workExperience] = useState('');
 
     let [exp, set_exp] = useState();
-    let [stateList, setStateList] = useState([]);
     let [level_list, set_level_list] = useState('')
-    let [degree_list, set_degree_list] = useState('')
     let [certificate_list, set_certificate_list] = useState('')
     let [d_list, set_d_list] = useState([])
 
@@ -188,6 +183,7 @@ const Education = () => {
             setCertificateFile(null)
             setCertFileContent(null)
         }
+        // eslint-disable-next-line
     }, [level, certificate])
 
     const handleLanguageChange = (selectedOption) => {
@@ -322,9 +318,7 @@ const Education = () => {
 
         get_state()
             .then(({ recordset }) => {
-                let data = recordset.map(item => item.State);
-                setStateList(data);
-
+                recordset.map(item => item.State);
             })
             .catch((err) => {
                 console.log(err)
@@ -345,7 +339,6 @@ const Education = () => {
                 }} value=''>Degree</option>
 
                 list.unshift(head);
-                set_degree_list(list)
 
             })
             .catch((err) => {
@@ -375,7 +368,7 @@ const Education = () => {
             .catch((err) => {
                 console.log(err)
             })
-    }, [data])
+    }, [data, certificate, degree, experience, level])
 
     let edu_level = e => {
         set_level(e.target.value)

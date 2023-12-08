@@ -26,7 +26,7 @@ const Accounting = () => {
 
             <div className="tutor-acct-tab-menu" style={{height: '50px', padding: '10px', cursor: 'pointer', width: '100%', background: '#212F3D', display: 'flex', alignItems: 'center', justifyContent: 'left', marginTop: '5px'}}>  
 
-                <ul id="tutor-header-menus" class="header">
+                <ul id="tutor-header-menus" className="header">
                     <li id='tutor-acct-tab-menu-list-active' onClick={e => {
                         e.currentTarget.nextElementSibling?.removeAttribute('id')
                         e.currentTarget?.setAttribute('id', 'tutor-acct-tab-menu-list-active')

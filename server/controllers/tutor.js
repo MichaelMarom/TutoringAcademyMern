@@ -64,6 +64,35 @@ let subjects = (req, res) => {
 
 }
 
+const subject_already_exist = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    find('NewTutorSubject', req.params, 'And', { subject: 'varchar' })
+                );
+                if (result.recordset.length) {
+                    throw new Error('Subject Request Already Sent!')
+                } else {
+                    const result = await poolConnection.request().query(
+                        find('Subjects', { SubjectName: req.params.subject }, 'AND', { SubjectName: 'varchar' })
+                    );
+                    if (result.recordset.length) { throw new Error('Subject already exist in Faculty') }
+                    else {
+                        res.status(200).send({ subjectExist: false })
+                    }
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 let post_form_one = (req, res) => {
 
     let { fname, mname, sname, email, pwd, acadId, cell, add1, add2, city, state, zipCode,
@@ -1200,6 +1229,7 @@ let get_tutor_students = async (req, res) => {
 }
 
 module.exports = {
+    subject_already_exist,
     subjects,
     get_tutor_market_data,
     get_tutor_students,

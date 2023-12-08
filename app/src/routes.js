@@ -28,12 +28,14 @@ const App = () => {
 
   const { user } = useSelector((state) => state.user);
   const [activeRoutes, setActiveRoutes] = useState([]);
+  const storedUser = localStorage.getItem("user");
+  const studentUserId = localStorage.getItem('student_user_id')
+  const tutorUserId = localStorage.getItem('tutor_user_id')
 
   //ids
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
     dispatch(setUser(storedUser ? JSON.parse(storedUser) : {}));
-  }, []);
+  }, [dispatch, storedUser]);
 
   useEffect(() => {
     if (user[0]?.role === "tutor")
@@ -55,19 +57,19 @@ const App = () => {
     dispatch(setShortlist())
     const getStudentDetails = async () => {
 
-      if (localStorage.getItem('student_user_id') === "undefined") {
+      if (studentUserId === "undefined") {
         dispatch(setStudent({}));
         return
       }
-      const res = await get_my_data(localStorage.getItem('student_user_id'))
+      const res = await get_my_data(studentUserId)
       dispatch(setStudent(res[1][0][0]));
     }
     getStudentDetails()
-  }, [localStorage.getItem('student_user_id')])
+  }, [dispatch, studentUserId])
 
   useEffect(() => {
     dispatch(setTutor())
-  }, [localStorage.getItem('tutor_user_id')])
+  }, [dispatch, tutorUserId])
 
 
   //routes
@@ -100,7 +102,7 @@ const App = () => {
   useEffect(() => {
     if (location.pathname === '/')
       navigate('/login')
-  }, [])
+  }, [location, navigate])
 
   const routes = useRoutes([
     {

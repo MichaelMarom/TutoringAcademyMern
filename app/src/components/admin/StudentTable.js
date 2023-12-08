@@ -72,11 +72,11 @@ const StudentTable = () => {
                                                 {item.Status}
                                             </button>
                                             <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                <li style={{ width: '100%' }}><a data-status='pending'
+                                                <li style={{ width: '100%' }}><div data-status='pending'
                                                     onClick={e => set_status(e, item.AcademyId, e.target.innerHTML)}
-                                                    style={{ width: '100%' }} className="dropdown-item" href="#">Pending</a></li>
-                                                <li style={{ width: '100%' }}><a data-status='active' onClick={e => set_status(e, item.AcademyId, e.target.innerHTML)} style={{ width: '100%' }} className="dropdown-item" href="#">Active</a></li>
-                                                <li style={{ width: '100%' }}><a data-status='suspended' onClick={e => set_status(e, item.AcademyId, e.target.innerHTML)} style={{ width: '100%' }} className="dropdown-item" href="#">Suspended</a></li>
+                                                    style={{ width: '100%' }} className="dropdown-item" >Pending</div></li>
+                                                <li style={{ width: '100%' }}><div data-status='active' onClick={e => set_status(e, item.AcademyId, e.target.innerHTML)} style={{ width: '100%' }} className="dropdown-item">Active</div></li>
+                                                <li style={{ width: '100%' }}><div data-status='suspended' onClick={e => set_status(e, item.AcademyId, e.target.innerHTML)} style={{ width: '100%' }} className="dropdown-item">Suspended</div></li>
                                             </ul>
                                         </div>
                                     </td>

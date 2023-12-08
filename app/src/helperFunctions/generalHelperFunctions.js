@@ -36,10 +36,20 @@ export const convertTutorIdToName = (academyId) => {
   return academyId.split('.')[0] + " "+academyId.split('.')[1][1]
 }
 
+function isArrayStringEqual(array, strArray) {
+  try {
+    // Parse the string representation into an array
+    const parsedArray = JSON.parse(strArray);
+
+    // Check if the parsed array is equal to the original array
+    return JSON.stringify(array.sort()) === JSON.stringify(parsedArray.sort());
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    return false;
+  }
+}
 export const unsavedChangesHelper = (fieldValues,tutor) => {
-  // if(tutor.FirstName!==fieldValues.fname || tutor.LastName!==fieldValues.lname) {
-  //   return true;
-  // }
+  
   return (
     tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
     tutor.Address1 !== undefined && fieldValues.add1 !== undefined && tutor.Address1 !== fieldValues.add1 ||
@@ -50,7 +60,8 @@ export const unsavedChangesHelper = (fieldValues,tutor) => {
     tutor.Country !== undefined && fieldValues.country !== undefined && tutor.Country !== fieldValues.country ||
     tutor.FirstName !== undefined && fieldValues.fname !== undefined && tutor.FirstName !== fieldValues.fname ||
     tutor.GMT !== undefined && fieldValues.timeZone !== undefined && tutor.GMT !== fieldValues.timeZone ||
-    tutor.Grades !== undefined && fieldValues.grades !== undefined && tutor.Grades !== fieldValues.grades ||
+    tutor.Grades !== undefined && fieldValues.tutorGrades !== undefined && !isArrayStringEqual(fieldValues.tutorGrades, tutor.Grades)
+     ||
     tutor.HeadLine !== undefined && fieldValues.headline !== undefined && tutor.HeadLine !== fieldValues.headline ||
     tutor.Introduction !== undefined && fieldValues.intro !== undefined && tutor.Introduction !== fieldValues.intro ||
     tutor.LastName !== undefined && fieldValues.lname !== undefined && tutor.LastName !== fieldValues.lname ||

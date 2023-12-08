@@ -1,69 +1,72 @@
-import { useTable } from 'react-table';
 import { useEffect, useState } from 'react';
-
-import { COLUMNS,DATA } from '../../Tables/Students/columns';
-import { useMemo } from 'react';
-
+import { get_tutor_students } from '../../axios/tutor';
 
 const MyStudents = () => {
-
+    const [students, setStudents] = useState([]);
+  
     useEffect(() => {
-        let next = document.querySelector('.tutor-next')
-
-        if(next && next.hasAttribute('id')){
-            next?.removeAttribute('id');
+      const fetchStudents = async () => {
+        try {
+          const AcademyId = localStorage.getItem('tutor_user_id');
+          const response = await get_tutor_students(AcademyId);
+          setStudents(response.data);
+        } catch (error) {
+          console.error('Error fetching students:', error);
+          // Handle error, e.g., display an error message
         }
-    }, [])
+      };
+  
+      fetchStudents();
+    }, []);
 
-    const [data, useData] = useState([]);
-
-    const columns = useMemo(() => COLUMNS, []);
-
-
-    const tableInstance = useTable({columns, data})
-
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
-
-    return ( 
-        <>
-            <div className="form-my-students">
-                <table {...getTableProps()}>
-                        <thead>
-                            {
-                                headerGroups.map((headerGroup) => (
-                                    <tr {...headerGroup.getHeaderGroupProps()}>
-                                        {
-                                            headerGroup.headers.map((column) => (
-                                                <th {...column.getHeaderProps()}>
-                                                    {column.render('Header')}
-                                                </th>
-                                            ))
-                                        }
-                                    </tr>
-                                ))
-                            }
-                        </thead>
-
-                        <tbody {...getTableBodyProps()}>
-                            {rows.map((row) => {
-                                prepareRow(row);
-                                return (
-                                    <tr {...row.getRowProps()}>
-                                        {row.cells.map((cell) => {
-                                            return (
-                                                <td {...cell.getCellProps()}>
-                                                    {cell.render('Cell')}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                </table>
-            </div>
-        </>
-     );
-}
- 
-export default MyStudents;
+    console.log('Student', students);
+  
+    return (
+        <div className="mt-4">
+          <h2>My Students</h2>
+          <table className="">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Screen Name</th>
+                <th>Subject</th>
+                <th>Country</th>
+                <th>GMT</th>
+                <th>Grade</th>
+                <th>MultiRate Hours</th>
+                <th>MultiRate Paid</th>
+                <th>MultiRate Balance</th>
+                <th>Rate</th>
+                <th>Discount Hours</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {students.map((student) => (
+                <tr key={student.id}>
+                  <td>
+                    {/* Assuming your student object has a property for the photo URL */}
+                    {/* <img src={student.photo} alt="Student" style={{ width: '50px', height: '50px' }} /> */}
+                  </td>
+                  <td>{student.ScreenName}</td>
+                  <td>{student.Subject}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td>{student.Rate}</td>
+                  <td>{student.DiscountHours}</td>
+                  <td>{new Date(student.date).toLocaleString()}</td>
+                  {/* Add more cells as needed */}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    };
+  
+  
+  export default MyStudents;

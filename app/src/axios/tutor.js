@@ -597,3 +597,12 @@ export const post_tutor_setup = async (data) => {
         console.log(err)
     }
 }
+
+export const get_tutor_students = async (AcademyId) => {
+    try {
+        const response = await apiClient.get(`/tutor/get_students/${AcademyId}`);
+        return response;
+    } catch (error) {
+        console.log(error)
+    }
+}

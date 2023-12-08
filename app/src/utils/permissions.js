@@ -62,7 +62,8 @@ const rolePermissions = {
     { path: "/student/profile", component: <StudentProfile /> },
     { path: '/student/feedback', component: <Feedback /> },
     { path: "/student/tutor/feedback/:AcademyId", component: <SingleTutorFeedbacks /> },
-    { path: '/chat', component: <Chat /> }
+    { path: '/student/chat', component: <Chat /> },
+    { path: '/student/chat/:name', component: <Chat /> }
   ],
   admin: [
     { path: "/admin/tutor-data", component: <TutorTable /> },

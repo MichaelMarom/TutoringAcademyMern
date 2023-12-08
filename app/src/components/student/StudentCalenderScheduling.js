@@ -14,7 +14,7 @@ const StudentCalenderScheduling = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [disableWeekDays, setDisabledWeekDays] = useState([]);
-  const [activeTab, setActiveTab] = useState('month');
+  const activeTab = 'month'
   const [tutorTime, setTutorTime] = useState('');
   const [disabledHours, setDisabledHours] = useState([]);
   const [subscriptionHours, setActiveSubscriptionHours] = useState(null)
@@ -28,7 +28,7 @@ const StudentCalenderScheduling = () => {
       toast.warning("Please click 'Book Lesson' button to view tutor's schedule!")
       navigate('/student/short-list')
     };
-  }, [selectedTutor])
+  }, [selectedTutor, navigate])
 
   let subscription_cols = [
     { Header: "Hours" },
@@ -55,7 +55,7 @@ const StudentCalenderScheduling = () => {
       }
     }
     update()
-  }, [subscriptionHours, student])
+  }, [subscriptionHours, student, selectedTutor])
 
   useEffect(() => {
     const getStudentDetails = async () => {
@@ -63,7 +63,7 @@ const StudentCalenderScheduling = () => {
       dispatch(setStudent(res[1][0][0]))
     }
     getStudentDetails()
-  }, [])
+  }, [dispatch])
 
   const getTimeDifferenceClass = (difference) => {
     if (difference >= -3 && difference <= 3) {

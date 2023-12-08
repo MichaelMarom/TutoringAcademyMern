@@ -587,13 +587,12 @@ export const post_tutor_setup = async (data) => {
         if (data.intro !== undefined) dataObject.Introduction = data.intro;
         if (data.motivation !== undefined) dataObject.Motivate = data.motivation;
         if (data.userId !== undefined) dataObject.userId = data.userId;
-        console.log(data.userId)
         if (data.grades !== undefined) dataObject.Grades = data.grades;
-        dataObject.TutorScreenname = data.mname.length > 0 ?
-            data.fname + '.' + ' ' + data.mname[0] + '.' + ' ' + data.lname[0] :
-            data.fname + '.' + ' ' + data.lname[0];
-        dataObject.AcademyId = uuidv4()
-        return apiClient.post('/tutor/setup', dataObject)
+        dataObject.TutorScreenname = data.mname.length ?
+            `${data.fname}. ${data.mname[0]}. ${data.lname[0]}` :
+            `${data.fname}. ${data.lname[0]}`;
+        dataObject.AcademyId = uuidv4();
+        return apiClient.post('/tutor/setup', dataObject);
     } catch (err) {
         console.log(err)
     }

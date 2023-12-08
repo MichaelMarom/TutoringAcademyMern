@@ -35,7 +35,6 @@ const Rates = () => {
   const [discountCode, setDiscountCode] = useState(generateDiscountCode());
   const [loading, setLoading] = useState(false);
 
-  const [dataFetched, setDataFetched] = useState(false)
   const [changesMade, setChangesMade] = useState(false);
   const [selectedCancellationPolicy, setSelectedCancPolicy] = useState('')
   const [ConsentRecordingLesson, setConsentRecordingLesson] = useState(false)
@@ -72,6 +71,7 @@ const Rates = () => {
             ) {
               item.checked = true;
             }
+            return item;
           });
 
           let studentSubscription = [
@@ -85,6 +85,7 @@ const Rates = () => {
             ) {
               item.checked = true;
             }
+            return item;
           });
 
           if (result[0].FreeDemoLesson === "yes") {
@@ -108,10 +109,10 @@ const Rates = () => {
       .catch((err) => {
         console.log(err);
       });
-    setDataFetched(true)
   }
   useEffect(() => {
     fetchDataFromApi()
+       // eslint-disable-next-line
   }, []);
 
   const currentState = {
@@ -138,6 +139,7 @@ const Rates = () => {
 
   useEffect(() => {
     compareStates();
+       // eslint-disable-next-line
   }, [currentState, dbState]);
 
   let saver = async () => {

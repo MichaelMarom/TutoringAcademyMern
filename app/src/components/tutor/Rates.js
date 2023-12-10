@@ -381,7 +381,7 @@ const Rates = () => {
                   <label className="form-check-label" for="flexSwitchCheckChecked">
                     Consent Recording Session
                   </label>
-                  <Tooltip text=" By default you must consent for recording Session with the student.">
+                  <Tooltip text="For learning purpose (or complains), you consent to the recording of the lessonn with the student. The recording be saved for 30 days, then be deleted.">
                     <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
                   </Tooltip>
                 </div>

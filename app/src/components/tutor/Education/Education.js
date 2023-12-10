@@ -507,7 +507,7 @@ const Education = () => {
                         {level !== 'No Academic Education' && level.length ? (
                             <>
                                 <div className="row mt-3 p-3 shadow  border shadow">
-                                    <h6 className='border-bottom'>Bachlors Degree</h6>
+                                    <h6 className='border-bottom'>Bachelor Degree</h6>
                                     <div className='d-flex justify-content-between'>
                                         <div className="col-md-3">
                                             <label className="text-secondary" htmlFor="university1">{level === 'Associate Degree' ?
@@ -526,7 +526,7 @@ const Education = () => {
                                         <div className="col-md-3">
                                             <div>
                                                 <label className="text-secondary">Country for {`${level === 'Associate Degree' ?
-                                                    "Associate degree" : "Bachlors"}`}</label>
+                                                    "Associate degree" : "Bachelor"}`}</label>
                                                 <select className='form-select'
                                                     onClick={(e) => setCountryForAssoc(e.target.value)}>
                                                     <option value={''} disabled selected>Select Country</option>
@@ -966,7 +966,7 @@ const Education = () => {
                             <textarea
                                 value={workExperience}
                                 onChange={(e) => set_workExperience(e.target.value)}
-                                style={{ height: '400px' }}
+                                style={{ height: '500px' }}
                                 placeholder="Enter Your Work Experience"
                                 className="form-control border-0"
                                 required

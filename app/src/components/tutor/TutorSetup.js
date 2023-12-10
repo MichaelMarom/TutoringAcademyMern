@@ -1247,7 +1247,20 @@ const TutorSetup = () => {
                     value={intro}
                     maxLength={500}
                     required
-                    placeholder="Write Your Introduction Here... e.g: (My name is Fabian and i am a graduate of Harvard University in Boston...)"
+                    placeholder="The Academy mandates the tutor uploading a self introductionary video. 
+                    It's important for the student to check if the tutor accent is clear for him.
+                    A self-introduction video is a great way to showcase your personality and teaching style to potential students. 
+                    Here are some tips on how to create a self-introduction video of tutor to students.
+                    
+                    - Start with a friendly greeting and introduce yourself by name, location and subject you teach.
+                    - Explain why you are passionate about teaching and what you can offer to your students, such as your qualifications, experience, teaching methods and goals.
+                    - Give some examples of how you make your lessons engaging, interactive and fun, such as using multimedia, games, quizzes or real-life scenarios.
+                    - End with a call to action, such as inviting the students to book a trial lesson with you or to check out your profile for more information.
+                    - Keep your video short and concise, ideally between 45-90 seconds.
+                    - Use a clear and professional tone, avoid slang, jargon or filler words.
+                    - Record your video in a quiet and well-lit place, with a neutral background and good audio quality.
+                    - Review your video before uploading it and make sure it is error-free and reflects your best self.
+                    "
                     onInput={(e) =>
                       counter(e.target.value, e.target, set_intro, 500)
                     }
@@ -1258,7 +1271,7 @@ const TutorSetup = () => {
                     id=""
                   ></textarea>
                   <div className="inputValidator">
-                    Your have reached the max limit of 500 characters.
+                    Your have reached the max limit of 1500 characters.
                   </div>
                 </div>
 

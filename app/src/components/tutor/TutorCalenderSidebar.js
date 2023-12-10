@@ -138,7 +138,7 @@ function TutorCalenderSidebar({
                                 fontSize: "12px",
                                 fontFamily: "inherit"
                             }}>
-                                Tutor BlockOut Days/Slots
+                                Tutor's Blocked Out Days/Slots
                                 <div className="border" style={{ width: "40px", height: "20px", background: disableColor }}></div>
                             </li>
                             <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
@@ -161,7 +161,7 @@ function TutorCalenderSidebar({
                                 fontSize: "12px",
                                 fontFamily: "inherit"
                             }}>
-                                Students Reserved Session
+                                Students Reserved Session (60 minutes)
                                 <div className="border" style={{ width: "40px", height: "20px", background: "lightyellow" }}></div>
 
                             </li>
@@ -169,7 +169,7 @@ function TutorCalenderSidebar({
                                 fontSize: "12px",
                                 fontFamily: "inherit"
                             }}>
-                                Default disable slots
+                                Default disabled slots
                                 <div className="border" style={{ width: "40px", height: "20px", background: "lightgray" }}></div>
 
                             </li>

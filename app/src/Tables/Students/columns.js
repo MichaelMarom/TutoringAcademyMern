@@ -35,20 +35,24 @@ export const COLUMNS = [
         accessor: 'Grade',
     },
     {
-        Header: 'MultiRate',
-        accessor: 'MultiRate',
+        Header: 'Total Hours',
+        accessor: 'Total Hours',
     },
     {
-        Header: 'Hours',
-        accessor: 'Hours',
+        Header: 'Date Start',
+        accessor: 'Date Start',
     },
     {
-        Header: 'Paid',
-        accessor: 'Paid',
+        Header: 'Date Last',
+        accessor: 'Date Last',
     },
     {
-        Header: 'Balance',
-        accessor: 'Balance',
+        Header: 'Total $ Gross',
+        accessor: 'Total $ Gross',
+    },
+    {
+        Header: 'Total $ Net',
+        accessor: 'Total $ Net',
     },
 ];
 

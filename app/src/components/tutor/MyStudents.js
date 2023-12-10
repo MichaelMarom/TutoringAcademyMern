@@ -33,12 +33,11 @@ const MyStudents = () => {
                 <th>Country</th>
                 <th>GMT</th>
                 <th>Grade</th>
-                <th>MultiRate Hours</th>
-                <th>MultiRate Paid</th>
-                <th>MultiRate Balance</th>
-                <th>Rate</th>
-                <th>Discount Hours</th>
-                <th>Date</th>
+                <th>Total Hours</th>
+                <th>Date Start</th>
+                <th>Date last</th>
+                <th>Total $ Gros</th>
+                <th>Total $ Net</th>
               </tr>
             </thead>
             <tbody>

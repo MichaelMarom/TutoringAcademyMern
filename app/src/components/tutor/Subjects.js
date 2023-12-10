@@ -294,8 +294,7 @@ const Subjects = () => {
             <div className="tutor-tab-subjects container">
                 <div className=" my-3 tutor-tab-subject-alert highlight d-flex justify-content-between align-items-center ">
                     <p style={{ fontSize: 'medium', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'left' }}>
-                        There are 400+ subjects across 29 faculties to select for tutoring. Didn't find your subject, and like to add it?
-                        Submit your request that match your expertise. We may list your subject after review.
+
                         <Button className='btn-primary btn-small' type="button"
                             handleClick={() => setShowAddNewSubjModal(true)} > Add New Subject</Button> </p>
 
@@ -346,11 +345,8 @@ const Subjects = () => {
                     </div>
 
                     <div className="highlight">
-                        Checkbox any subject in any faculty where you are proficient enough to tutor, Ultimately you are being rated by the students feedback, if students feedback is only 2 stars then its free checkbox the subject then select the certificate, state expiration if available. Then click on the rate button which will pop up a table to select your rate
+                        Select your faculty above, and checkbox the subject(s) that you are proficient to tutor. Then add the rate for the subject, and save. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking
                     </div>
-
-
-
 
                     <div className="tables" style={{ height: '430px', width: '100%', overflow: 'auto', padding: '5px' }}>
 
@@ -417,7 +413,7 @@ const Subjects = () => {
                             value={newSubjectReasonData}
                             required className='form-control'
                             onChange={e => setNewSubjectReasonData(e.target.value)}
-                            placeholder='Summarize Your Reason In Not More Than 700 Characters For Adding This Subject ' />
+                            placeholder='Explain Your Reason For Adding This Subject (max 700 characters)' />
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={handleModalClose}>

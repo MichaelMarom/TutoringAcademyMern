@@ -17,8 +17,9 @@ export const login = async (data) => {
         return result;
     }
     catch (err) {
-        console.log(err)
-        return err;
+        const { response: { data } } = err
+        console.log(data)
+        return data;
     }
 }
 

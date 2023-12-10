@@ -197,7 +197,7 @@ const ShowCalendar = ({
   }, [timeZone, disableWeekDays]);
 
   useEffect(() => {
-    if (student.GMT && isStudentLoggedIn) {
+    if (student?.GMT && isStudentLoggedIn) {
       const offset = parseInt(student.GMT, 10);
       const timezone = moment.tz.names().filter(name => (moment.tz(name).utcOffset()) === offset * 60);
       setTimeZone(timezone[0] || null);

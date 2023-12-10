@@ -22,6 +22,7 @@ const LoginPage = () => {
         e.preventDefault();
         setLoading(true)
         const result = await login(loginForm);
+        console.log(result)
         if (result.status === 200) {
             toast.success("Login Successfull!");
             setLoginForm({});

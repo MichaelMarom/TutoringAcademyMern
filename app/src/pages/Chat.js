@@ -1,137 +1,123 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import Chats from '../components/Chat/Chats';
 import Messages from '../components/Chat/Messages';
 import '../styles/chat.css'
 import SendMessage from '../components/Chat/SendMessage';
 import { Header } from '../components/Chat/Header';
-import { useNavigate, useParams } from 'react-router-dom';
-import StudentLayout from '../layouts/StudentLayout';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import CommonLayout from '../layouts/CommonLayout';
 import { NoChatSelectedScreen } from '../components/Chat/NoChatSelectedScreen';
-import { isEqualTwoObjectsRoot } from '../helperFunctions/generalHelperFunctions';
 import { useSelector } from 'react-redux';
-const discussionData = [
-    {
-        name: 'Eric George',
-        datetime: 'just now',
-        message: "Why didn't he come and talk to me...",
-        avatarSrc: 'https://bootdey.com/img/Content/avatar/avatar2.png',
-        unread: true,
-    },
-    {
-        name: 'Naomi',
-        datetime: 'just now',
-        message: "Prepare dinner.",
-        avatarSrc: 'https://bootdey.com/img/Content/avatar/avatar2.png',
-        unread: true,
-    },
-    {
-        name: 'Farhan',
-        datetime: 'just now',
-        message: "lets go for shopping",
-        avatarSrc: 'https://bootdey.com/img/Content/avatar/avatar2.png',
-        unread: true,
-    },
-]
+import { get_chats, get_chat_message, post_message } from '../axios/chat';
+import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
+import { socket } from '../socket';
+
 
 function Chat() {
     const [selectedChat, setSelectedChat] = useState({});
     const navigate = useNavigate();
     const params = useParams();
+    const location = useLocation()
     const { shortlist } = useSelector(state => state.shortlist);
     const [chats, setChats] = useState([]);
     const { student } = useSelector(state => state.student);
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            sender: student.FirstName,
-            text: 'Hello, how are you?',
-            userId: student.AcademyId,
-            status: 'sent',
-            image: null,
-            video: null,
-            audio: null,
-            referenceMessageId: null,
-            date: '2023-10-27 15:30:00',
-        },
-        {
-            id: 2,
-            sender: selectedChat.name,
-            text: 'I am doing well, thanks!',
-            userId: selectedChat.id,
-            status: 'delivered',
-            image: 'https://example.com/image1.jpg',
-            video: null,
-            audio: null,
-            referenceMessageId: null,
-            date: '2023-10-27 15:35:00',
-        },
-        {
-            id: 3,
-            sender: student.FirstName,
-            text: 'That\'s great to hear.',
-            userId: student.AcademyId,
-            status: 'read',
-            image: null,
-            video: 'https://example.com/video1.mp4',
-            audio: null,
-            referenceMessageId: 1,
-            date: '2023-10-27 15:40:00',
-        },
-        {
-            id: 4,
-            sender: selectedChat.name,
-            text: 'Yes, it is. Here\'s a video of it.',
-            userId: selectedChat.id,
-            status: 'sent',
-            image: null,
-            video: null,
-            audio: 'https://example.com/audio1.mp3',
-            referenceMessageId: 3,
-            date: '2023-10-27 15:45:00',
-        },
-    ])
+    const { tutor } = useSelector(state => state.tutor);
+    const studentLoggedIn = location.pathname.split('/')[1] === 'student';
+    const loggedInUserDetail = studentLoggedIn ? student : tutor;
+    console.log(tutor, location, studentLoggedIn)
+    const [messages, setMessages] = useState([])
+    const [fetchingMessages, setFetchingMessages] = useState(false)
+
+    const sendMessage = async (text) => {
+        if (text.trim() !== '') {
+            socket.emit('chat message', {
+                name: `${capitalizeFirstLetter(loggedInUserDetail.FirstName)} ${capitalizeFirstLetter(loggedInUserDetail.LastName)}`,
+                senderId: loggedInUserDetail.AcademyId,
+                date: new Date(),
+                text,
+                photo: loggedInUserDetail.Photo
+            });
+            setMessages([...messages, {
+                name: `${capitalizeFirstLetter(loggedInUserDetail.FirstName)} ${capitalizeFirstLetter(loggedInUserDetail.LastName)}`,
+                senderId: loggedInUserDetail.AcademyId,
+                date: new Date(),
+                text,
+                photo: loggedInUserDetail.Photo
+            }]);
+            const body = {
+                Text: text,
+                Date: new Date(),
+                Sender: loggedInUserDetail.AcademyId,
+                ChatID: selectedChat.id
+            }
+            const data = await post_message(body)
+            console.log(data)
+        }
+    }
 
 
     useEffect(() => {
-        const extractedChats = shortlist.map(item => ({
-            id: item.tutorData.AcademyId,
-            name: `${item.tutorData.FirstName} ${item.tutorData.LastName}`,
-            avatarSrc: item.tutorData.Photo,
-            unread: false,
-        }));
-        setChats(extractedChats)
+        // Listen for incoming messages
+        socket.on('chat message', (message) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
+        });
+
+        // Clean up the socket connection when the component unmounts
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+    useEffect(() => {
+        const getAllChats = async () => {
+            if (loggedInUserDetail.AcademyId) {
+                const data = await get_chats(loggedInUserDetail.AcademyId, studentLoggedIn ? 'student' : 'tutor');
+                setChats(data)
+            }
+        }
+        getAllChats();
     }, [shortlist])
 
     useEffect(() => {
-        if (selectedChat.name) {
-            const currentPath = `/student/chat/${selectedChat.name}`;
-            navigate(currentPath);
+        const getMessages = async () => {
+            setFetchingMessages(true)
+            if (selectedChat.id) {
+                const currentPath = `/${studentLoggedIn ? 'student' : 'tutor'}/chat/${selectedChat.id}`;
+                const data = await get_chat_message(selectedChat.id)
+                console.log(data)
+                setMessages(data)
+                navigate(currentPath);
+            }
+            setFetchingMessages(false)
         }
-    }, [navigate, selectedChat.name]);
+
+        getMessages()
+    }, [navigate, selectedChat.id, studentLoggedIn]);
 
     useEffect(() => {
-        const foundChat = chats.find(chat => chat.name === params.name) || {};
+        const foundChat = chats.find(chat => chat.id == params.id) || {};
         setSelectedChat(foundChat);
-    }, [params.name, shortlist]);
+    }, [params.id, shortlist]);
 
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <CommonLayout role={studentLoggedIn ? 'student' : 'tutor'} showLegacyFooter={false}>
             <div className="container" style={{ height: "100vh" }}>
                 <div className="ks-page-content">
                     <div className="ks-page-content-body">
                         <div className="border ks-messenger shadow">
                             <Chats setSelectedChat={setSelectedChat} discussionData={chats} />
                             <div className="ks-messages  ks-messenger__messages">
-                                {!selectedChat.name && <NoChatSelectedScreen />}
-                                {selectedChat.name && <Header selectedChat={selectedChat} />}
-                                {selectedChat.name && <Messages selectedChat={selectedChat} messages={messages} />}
-                                {selectedChat.name && <SendMessage selectedChat={selectedChat} messages={messages} setMessages={setMessages} />}
+                                {!params.id && <NoChatSelectedScreen />}
+                                {params.id && <Header selectedChat={selectedChat} />}
+                                {params.id && <Messages selectedChat={selectedChat} messages={messages}
+                                    fetchingMessages={fetchingMessages} />}
+                                {params.id && <SendMessage selectedChat={selectedChat}
+                                    messages={messages} setMessages={setMessages} sendMessage={sendMessage} />}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </StudentLayout>
+        </CommonLayout>
     );
 }
 

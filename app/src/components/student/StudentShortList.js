@@ -47,7 +47,6 @@ const StudentShortList = () => {
 
     const calculateTimeDifference = (tutorGMT) => {
         try {
-            console.log(student)
             const studentOffset = parseInt(student.GMT, 10);
             const tutorOffset = parseInt(tutorGMT, 10);
 
@@ -67,7 +66,6 @@ const StudentShortList = () => {
             return 'text-bg-danger blinking-frame-red';
         }
     }
-    console.log(shortlistLoading, 'lol')
     if (shortlistLoading) return <Loading />
     return (
         <>

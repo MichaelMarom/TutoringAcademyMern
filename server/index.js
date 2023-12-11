@@ -6,7 +6,8 @@ const { TUTOR_ROUTES } = require('./routes/tutor');
 const AUTH_ROUTERS = require('./routes/auth');
 const COMMON_ROUTERS = require('./routes/common')
 const HOLIDAY_ROUTES = require('./routes/holiday')
-const FILE_ROUTER =require('./routes/file')
+const FILE_ROUTER = require('./routes/file')
+const CHAT_ROUTES = require('./routes/chat')
 
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(STUDENT_ROUTES);
 app.use(AUTH_ROUTERS)
 app.use(HOLIDAY_ROUTES)
 app.use(FILE_ROUTER)
+app.use(CHAT_ROUTES)
 app.use(COMMON_ROUTERS)
 
 
@@ -90,6 +92,11 @@ io(server, { cors: { origin: '*' } }).on('connection', socket => {
 
     });
 
+
+
+    socket.on('chat message', (message) => {
+        io.emit('chat message', message); // Broadcast the message to all connected clients
+    });
 
     socket.on('canvas-start', (pX, pY, color, thickness, fill) => {
         socket.broadcast.emit('canvas-start', pX, pY, color, thickness, fill)

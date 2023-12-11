@@ -46,6 +46,8 @@ const rolePermissions = {
     { path: "/tutor/market-place", component: <MarketPlace /> },
     { path: "/tutor/tutor-profile", component: <TutorProfile /> },
     { path: "/tutor/collaboration", component: <TutorClass /> },
+    { path: '/tutor/chat', component: <Chat /> },
+    { path: '/tutor/chat/:id', component: <Chat /> }
   ],
   student: [
     { path: "/student/collaboration", component: <StudentClass /> },
@@ -63,7 +65,7 @@ const rolePermissions = {
     { path: '/student/feedback', component: <Feedback /> },
     { path: "/student/tutor/feedback/:AcademyId", component: <SingleTutorFeedbacks /> },
     { path: '/student/chat', component: <Chat /> },
-    { path: '/student/chat/:name', component: <Chat /> }
+    { path: '/student/chat/:id', component: <Chat /> }
   ],
   admin: [
     { path: "/admin/tutor-data", component: <TutorTable /> },

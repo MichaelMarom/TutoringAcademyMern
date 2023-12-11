@@ -33,7 +33,7 @@ export const copyToClipboard = (text) => {
 };
 
 export const convertTutorIdToName = (academyId) => {
-  return academyId.split('.')[0] + " "+academyId.split('.')[1][1]
+  return academyId.split('.')[0] + " " + academyId.split('.')[1][1]
 }
 
 function isArrayStringEqual(array, strArray) {
@@ -48,8 +48,9 @@ function isArrayStringEqual(array, strArray) {
     return false;
   }
 }
-export const unsavedChangesHelper = (fieldValues,tutor) => {
-  
+
+export const unsavedChangesHelper = (fieldValues, tutor) => {
+
   return (
     tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
     tutor.Address1 !== undefined && fieldValues.add1 !== undefined && tutor.Address1 !== fieldValues.add1 ||
@@ -61,7 +62,7 @@ export const unsavedChangesHelper = (fieldValues,tutor) => {
     tutor.FirstName !== undefined && fieldValues.fname !== undefined && tutor.FirstName !== fieldValues.fname ||
     tutor.GMT !== undefined && fieldValues.timeZone !== undefined && tutor.GMT !== fieldValues.timeZone ||
     tutor.Grades !== undefined && fieldValues.tutorGrades !== undefined && !isArrayStringEqual(fieldValues.tutorGrades, tutor.Grades)
-     ||
+    ||
     tutor.HeadLine !== undefined && fieldValues.headline !== undefined && tutor.HeadLine !== fieldValues.headline ||
     tutor.Introduction !== undefined && fieldValues.intro !== undefined && tutor.Introduction !== fieldValues.intro ||
     tutor.LastName !== undefined && fieldValues.lname !== undefined && tutor.LastName !== fieldValues.lname ||
@@ -76,7 +77,7 @@ export const unsavedChangesHelper = (fieldValues,tutor) => {
   );
 }
 
-export const unsavedEducationChangesHelper =(fieldValues, tutor) =>{
+export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
   return (
     tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
     (tutor.EducationalLevel !== undefined && fieldValues.level !== undefined && tutor.EducationalLevel !== fieldValues.level) ||
@@ -104,4 +105,8 @@ export const unsavedEducationChangesHelper =(fieldValues, tutor) =>{
     (tutor.WorkExperience !== undefined && fieldValues.workExperience !== undefined && tutor.WorkExperience !== fieldValues.workExperience)
     // Add more comparisons for other fields
   );
+}
+
+export const capitalizeFirstLetter = (name) => {
+  return name.charAt(0).toUpperCase() + name.slice(1);
 }

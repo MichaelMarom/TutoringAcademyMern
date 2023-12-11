@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { capitalizeFirstLetter } from '../../helperFunctions/generalHelperFunctions';
 
-function SendMessage({ selectedChat, setMessages, messages }) {
+function SendMessage({ selectedChat, setMessages, messages, sendMessage }) {
   const [text, setText] = useState('');
-  const { student } = useSelector(state => state.student)
 
   const handleSendMessage = () => {
-    if (text.trim() !== '') {
-      setMessages([...messages, { sender: student.FirstName, userId: student.AcademyId, date: '12-03-23 12:00:03', text }])
-      setText('');
-    }
+    setText('');
+    sendMessage(text)
   }
 
   return (

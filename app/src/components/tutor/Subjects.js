@@ -291,15 +291,7 @@ const Subjects = () => {
             <div className="save-overlay">
                 <span className="save_loader"></span>
             </div>
-            <div className="tutor-tab-subjects container">
-                <div className=" my-3 tutor-tab-subject-alert highlight d-flex justify-content-between align-items-center ">
-                    <p style={{ fontSize: 'medium', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'left' }}>
-
-                        <Button className='btn-primary btn-small' type="button"
-                            handleClick={() => setShowAddNewSubjModal(true)} > Add New Subject</Button> </p>
-
-                </div>
-                <br />
+            <div className="tutor-tab-subjects container mt-3">
 
                 <div className="tutor-tab-subject-data-collection-table">
 
@@ -345,7 +337,9 @@ const Subjects = () => {
                     </div>
 
                     <div className="highlight">
-                        Select your faculty above, and checkbox the subject(s) that you are proficient to tutor. Then add the rate for the subject, and save. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking
+                        Select your faculty above, and checkbox the subject(s) that you are proficient to tutor. Then add the rate for the subject, and save. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking. <Button className='btn-primary btn-small' type="button"
+                            handleClick={() => setShowAddNewSubjModal(true)} > Add New Subject</Button>
+
                     </div>
 
                     <div className="tables" style={{ height: '430px', width: '100%', overflow: 'auto', padding: '5px' }}>

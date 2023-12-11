@@ -1,9 +1,9 @@
 import React from 'react';
 
-function DiscussionItem({ setSelectedChat, name, datetime, message, avatarSrc, unread, groupAmount }) {
+function DiscussionItem({ setSelectedChat, name, datetime, message, avatarSrc, unread, groupAmount, id }) {
     return (
         <li className={`ks-item w-100 ${unread ? 'ks-unread' : ''}`}
-            onClick={() => setSelectedChat({ name, datetime, message, avatarSrc, unread, groupAmount })}
+            onClick={() => setSelectedChat({ id, name, datetime, message, avatarSrc, unread, groupAmount })}
         >
             <div className="ks-body w-100">
                 <div className="ks-name d-flex justify-content-between align-items-center">
@@ -36,6 +36,7 @@ function DiscussionList({ discussions, setSelectedChat }) {
                                 avatarSrc={discussion.avatarSrc}
                                 unread={discussion.unread}
                                 groupAmount={discussion.groupAmount}
+                                id={discussion.id}
                             />
                         ))}
                     </ul>
@@ -53,8 +54,8 @@ function SearchBar() {
     );
 }
 
-export default function Chats({ setSelectedChat,discussionData }) {
-   
+export default function Chats({ setSelectedChat, discussionData }) {
+
 
     return (
         <div className="ks-discussions">

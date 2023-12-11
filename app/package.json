@@ -37,6 +37,7 @@
     "react-loading-skeleton": "^3.3.1",
     "react-pdf": "^6.2.2",
     "react-peer": "^0.2.6",
+    "react-quill": "^2.0.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",

@@ -2,89 +2,19 @@ import { useEffect, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../../axios/tutor';
-import career from '../../../images/career.png';
+import career from '../../../images/Experience-photo50.jpg';
+
 import Select from 'react-select'
 import Actions from '../../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
-import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES } from '../../../constants/constants'
+import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES,languages } from '../../../constants/constants'
+import { unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
+import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
 
-const languages = [
-    'Afrikaans',
-    'Albanian',
-    'Arabic',
-    'Armenian',
-    'Basque',
-    'Bengali',
-    'Bulgarian',
-    'Catalan',
-    'Cambodian',
-    'Chinese (Mandarin)',
-    'Croatian',
-    'Czech',
-    'Danish',
-    'Dutch',
-    'English',
-    'Estonian',
-    'Fiji',
-    'Finnish',
-    'French',
-    'Georgian',
-    'German',
-    'Greek',
-    'Gujarati',
-    'Hebrew',
-    'Hindi',
-    'Hungarian',
-    'Icelandic',
-    'Indonesian',
-    'Irish',
-    'Italian',
-    'Japanese',
-    'Javanese',
-    'Korean',
-    'Latin',
-    'Latvian',
-    'Lithuanian',
-    'Macedonian',
-    'Malay',
-    'Malayalam',
-    'Maltese',
-    'Maori',
-    'Marathi',
-    'Mongolian',
-    'Nepali',
-    'Norwegian',
-    'Persian',
-    'Polish',
-    'Portuguese',
-    'Punjabi',
-    'Quechua',
-    'Romanian',
-    'Russian',
-    'Samoan',
-    'Serbian',
-    'Slovak',
-    'Slovenian',
-    'Spanish',
-    'Swahili',
-    'Swedish',
-    'Tamil',
-    'Tatar',
-    'Telugu',
-    'Thai',
-    'Tibetan',
-    'Tonga',
-    'Turkish',
-    'Ukrainian',
-    'Urdu',
-    'Uzbek',
-    'Vietnamese',
-    'Welsh',
-    'Xhosa',
-];
+
 
 const languageOptions = languages.map((language) => ({
     value: language,
@@ -116,6 +46,8 @@ const Education = () => {
         }
     }, [])
 
+    const [editMode, setEditMode] = useState(false);
+    const [unSavedChanges,setUnsavedChanges]=useState(false);
 
     let [level, set_level] = useState([]);
 
@@ -236,12 +168,100 @@ const Education = () => {
         )
         return response;
     }
+    const handleEditClick = () => {
+        setEditMode(!editMode);
+    };
+    const handleEditorChange = (value) => {
+        set_workExperience(value);
+      };
+    useEffect(()=>{
+        if (files.AcademyId !== undefined) {
+            let fieldValues ={
+                level,
+                university1,
+                university2,
+                university3,
+                degree,
+                certificate,
+                language,
+                countryForAssociate,
+                countryForCert,
+                countryForMast,
+                countryForDoc,
+                countryForDeg,
+                state2,
+                state3,
+                state4,
+                state5,
+                doctorateState,
+                experience,
+                graduateYr1,
+                graduateYr2,
+                graduagteYr3,
+                doctorateGraduateYear,
+                expiration,
+                othelang,
+                workExperience,
+                exp,
+                level_list,
+                certificate_list,
+                d_list,
+                data,
+                degreeFile,
+                degreeFileContent,
+                certificateFile,
+                certFileContent,
+                dataFetched,
+                db_edu_level,
+                db_edu_cert,
+                fetchingEdu,
+            }
+            setUnsavedChanges(unsavedEducationChangesHelper(fieldValues,files))
+        }
+    },[
+        level,
+        university1,
+        university2,
+        university3,
+        degree,
+        certificate,
+        language,
+        countryForAssociate,
+        countryForCert,
+        countryForMast,
+        countryForDoc,
+        countryForDeg,
+        state2,
+        state3,
+        state4,
+        state5,
+        doctorateState,
+        experience,
+        graduateYr1,
+        graduateYr2,
+        graduagteYr3,
+        doctorateGraduateYear,
+        expiration,
+        othelang,
+        workExperience,
+        degreeFile,
+        degreeFileContent,
+        certificateFile,
+        certFileContent,
+        dataFetched,
+        db_edu_level,
+        db_edu_cert,
+        fetchingEdu,
+        files
+    ])
 
     useEffect(() => {
-        setFetchingEdu(true)
+        // setFetchingEdu(true)
+        !editMode && setFetchingEdu(true)
+
         get_my_edu(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
-
+                
                 if (result.length > 0) {
                     let data = result[0];
                     set_files(data)
@@ -297,7 +317,7 @@ const Education = () => {
                 setFetchingEdu(false)
                 set_data(true)
             })
-    }, [])
+    }, [editMode])
 
     useEffect(() => {
 
@@ -447,7 +467,8 @@ const Education = () => {
         if (res) {
             handleUploadDegreeToServer()
             handleUploadCertificateToServer()
-            toast.success('Education record saved Successfully')
+            setEditMode(false);
+            toast.success('Education record saved Successfully');
         }
         else {
             toast.error('Failed to save Record')
@@ -483,6 +504,7 @@ const Education = () => {
                                         onChange={edu_level}
                                         value={level}
                                         required
+                                        disabled={!editMode}
                                     >
                                         <option value="" disabled>Select Education</option>
                                         {level_list}
@@ -497,6 +519,7 @@ const Education = () => {
                                         onChange={(e) => set_experience(e.target.value)}
                                         value={experience}
                                         required
+                                        disabled={!editMode}
                                     >
                                         {exp}
                                     </select>
@@ -520,6 +543,7 @@ const Education = () => {
                                                 onChange={(e) => set_university1(e.target.value)}
                                                 placeholder="College/University 1"
                                                 required
+                                                disabled={!editMode}
                                             />
                                         </div>
 
@@ -528,7 +552,10 @@ const Education = () => {
                                                 <label className="text-secondary">Country for {`${level === 'Associate Degree' ?
                                                     "Associate degree" : "Bachelor"}`}</label>
                                                 <select className='form-select'
-                                                    onClick={(e) => setCountryForAssoc(e.target.value)}>
+                                                    onClick={(e) => setCountryForAssoc(e.target.value)
+                                                    }
+                                                    disabled={!editMode}
+                                                    >
                                                     <option value={''} disabled selected>Select Country</option>
                                                     {Countries.map((option) =>
                                                         <option value={option.Country}
@@ -543,10 +570,11 @@ const Education = () => {
                                                     <label className="text-secondary" htmlFor="state1">State/Province:</label>
                                                     <select
                                                         id="state1"
-                                                        className="form-control m-0 w-100"
+                                                        className="form-select m-0 w-100"
                                                         onChange={(e) => set_state2(e.target.value)}
                                                         value={state2}
                                                         required
+                                                        disabled={!editMode}
                                                     >
                                                         <option value="">Select State</option>
                                                         {options[countryForAssociate].map((item) => (
@@ -568,6 +596,7 @@ const Education = () => {
                                                 onChange={(e) => set_graduateYr1(e.target.value)}
                                                 value={graduateYr1}
                                                 required
+                                                disabled={!editMode}
                                             >
                                                 <option value="">Select Year</option>
                                                 {d_list.map((item) => (
@@ -594,6 +623,8 @@ const Education = () => {
                                                         onChange={(e) => set_university2(e.target.value)}
                                                         placeholder="College/University 2"
                                                         required
+                                                        disabled={!editMode}
+
                                                     />
                                                 </div>
 
@@ -601,7 +632,9 @@ const Education = () => {
                                                     <div>
                                                         <label className="text-secondary">Country for Masters</label>
                                                         <select className='form-select'
-                                                            onClick={(e) => setCountryForMast(e.target.value)}>
+                                                            onClick={(e) => setCountryForMast(e.target.value)}
+                                                            disabled={!editMode}
+                                                            >
                                                             <option value={''} disabled selected>Select Country</option>
                                                             {Countries.map((option) =>
                                                                 <option value={option.Country}
@@ -616,10 +649,12 @@ const Education = () => {
                                                             <label className="text-secondary" htmlFor="state1">State/Province:</label>
                                                             <select
                                                                 id="state1"
-                                                                className="form-control m-0 w-100"
+                                                                className="form-select m-0 w-100"
                                                                 onChange={(e) => set_state3(e.target.value)}
                                                                 value={state3}
                                                                 required
+                                                                disabled={!editMode}
+
                                                             >
                                                                 <option value="">Select State</option>
                                                                 {options[countryForMast].map((item) => (
@@ -640,6 +675,7 @@ const Education = () => {
                                                         onChange={(e) => set_graduateYr2(e.target.value)}
                                                         value={graduateYr2}
                                                         required
+                                                        disabled={!editMode}
                                                     >
                                                         <option value="">Select Year</option>
                                                         {d_list.map((item) => (
@@ -669,6 +705,7 @@ const Education = () => {
                                                         onChange={(e) => set_university3(e.target.value)}
                                                         placeholder="College/University 3"
                                                         required
+                                                        disabled={!editMode}
                                                     />
                                                 </div>
 
@@ -676,7 +713,9 @@ const Education = () => {
                                                     <div>
                                                         <label className="text-secondary">Country For Doctorate</label>
                                                         <select className='form-select'
-                                                            onClick={(e) => setCountryForDoc(e.target.value)}>
+                                                            onClick={(e) => setCountryForDoc(e.target.value)}
+                                                            disabled={!editMode}
+                                                            >
                                                             <option value={''} disabled selected>Select Country</option>
                                                             {Countries.map((option) =>
                                                                 <option value={option.Country}
@@ -695,6 +734,7 @@ const Education = () => {
                                                                 onChange={(e) => set_doctorateState(e.target.value)}
                                                                 value={doctorateState}
                                                                 required
+                                                                disabled={!editMode}
                                                             >
                                                                 <option value="">Select State</option>
                                                                 {options[countryForDoc].map((item) => (
@@ -715,6 +755,7 @@ const Education = () => {
                                                         onChange={(e) => setDoctorateGraduateYear(e.target.value)}
                                                         value={doctorateGraduateYear}
                                                         required
+                                                        disabled={!editMode}
                                                     >
                                                         <option value="">Select Year</option>
                                                         {d_list.map((item) => (
@@ -748,6 +789,7 @@ const Education = () => {
                                                             accept=".pdf, .jpeg, .png, .jpg"
                                                             id="degreeFile"
                                                             name="degreeFile"
+                                                            disabled={!editMode}
                                                             className="form-control m-0"
                                                             onChange={handleFileUpload}
                                                             required
@@ -764,6 +806,7 @@ const Education = () => {
                                             <div>
                                                 <label className="text-secondary">Country For Degree</label>
                                                 <select className='form-select'
+                                                    disabled={!editMode}
                                                     onClick={(e) => setCountryForDeg(e.target.value)}>
                                                     <option value={''} disabled selected>Select Country</option>
                                                     {Countries.map((option) =>
@@ -783,6 +826,8 @@ const Education = () => {
                                                         onChange={(e) => set_state4(e.target.value)}
                                                         value={state4}
                                                         required
+                                                        disabled={!editMode}
+
                                                     >
                                                         <option value="">Select State</option>
                                                         {options[countryForDeg].map((item) => (
@@ -803,6 +848,7 @@ const Education = () => {
                                                 onChange={(e) => set_graduagteYr3(e.target.value)}
                                                 value={graduagteYr3}
                                                 required
+                                                disabled={!editMode}
                                             >
                                                 <option value="">Select Year</option>
                                                 {d_list.map((item) => (
@@ -834,6 +880,7 @@ const Education = () => {
                                         onChange={certified}
                                         placeholder='Select Certificate'
                                         required
+                                        disabled={!editMode}
                                     >
                                         <option value="" disabled>Select Certificate</option>
                                         {certificate_list}
@@ -856,6 +903,8 @@ const Education = () => {
                                                             className="form-control m-0 mr-2"
                                                             onChange={handleCertUpload}
                                                             required
+                                                            disabled={!editMode}
+
                                                         />
                                                     </div>
                                                     <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
@@ -870,6 +919,7 @@ const Education = () => {
                                             <div>
                                                 <label className="text-secondary">Country For Certification</label>
                                                 <select className='form-select'
+                                                    disabled={!editMode}
                                                     onClick={(e) => setCountryForCert(e.target.value)}>
                                                     <option value={''} disabled selected>Select Country</option>
                                                     {Countries.map((option) =>
@@ -888,6 +938,7 @@ const Education = () => {
                                                         onChange={(e) => set_state5(e.target.value)}
                                                         value={state5}
                                                         required
+                                                        disabled={!editMode}
                                                     >
                                                         <option value="">Select State</option>
                                                         {options[countryForCert].map((item) => (
@@ -911,6 +962,7 @@ const Education = () => {
                                                 onBlur={handleBlur}
                                                 onChange={handleDateChange}
                                                 placeholder="Expiration"
+                                                disabled={!editMode}
                                             />
                                         </div>
                                     </>
@@ -933,6 +985,7 @@ const Education = () => {
                                         value={language}
                                         options={languageOptions}
                                         required
+                                        isDisabled={!editMode}
                                     />
                                 </div>
 
@@ -946,7 +999,7 @@ const Education = () => {
                                         value={othelang}
                                         onChange={handleLanguageChange}
                                         options={languageOptions}
-                                    />
+                                        isDisabled={!editMode}                                    />
                                 </div></div>
 
                         </div>
@@ -960,21 +1013,23 @@ const Education = () => {
                             />
 
                         </div>
-                        <div className='border p-3'>
+                        <div className=''>
 
                             <h6 className='border-bottom'>Work Experience</h6>
-                            <textarea
+                            <RichTextEditor 
                                 value={workExperience}
-                                onChange={(e) => set_workExperience(e.target.value)}
-                                style={{ height: '500px' }}
+                                onChange={handleEditorChange}
+                                readOnly={!editMode} 
                                 placeholder="Enter Your Work Experience"
-                                className="form-control border-0"
                                 required
-                            ></textarea>
+                            />
                         </div>
                     </div>
 
-                    <Actions />
+                    <Actions 
+                    editDisabled={editMode} 
+                    onEdit={handleEditClick} 
+                    unSavedChanges={unSavedChanges}  />
                 </form>
             </div >
         </div>

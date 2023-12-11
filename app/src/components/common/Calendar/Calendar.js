@@ -77,8 +77,8 @@ const ShowCalendar = ({
   const [clickedSlot, setClickedSlot] = useState({})
   const { student } = useSelector(state => state.student)
   const tutorId = selectedTutor.academyId;
-  const studentId = student.AcademyId
-  const subjectName = selectedTutor.subject;
+  const studentId = student?.AcademyId
+  const subjectName = selectedTutor?.subject;
   const [weekDaysTimeSlots, setWeekDaysTimeSlots] = useState([])
 
   let { reservedSlots, bookedSlots } = useSelector(state => state.bookings);

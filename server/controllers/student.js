@@ -640,6 +640,19 @@ const get_student_bookings = async (req, res) => {
     )
 }
 
+const get_tutor_bookings = async (req, res) => {
+    const { tutorId } = req.params;
+    connecteToDB.then(poolConnection =>
+        poolConnection.request().query(
+            find('StudentBookings', { tutorId })
+        )
+            .then((result) => {
+                res.send(result.recordset);
+            })
+            .catch(err => console.log(err))
+    )
+}
+
 const get_student_bank_details = async (req, res) => {
     marom_db(async (config) => {
         try {
@@ -869,7 +882,6 @@ function getBookedSlot(req, res) {
                     SELECT bookedSlots From StudentBookings WHERE CONVERT(VARCHAR, studentId) = '${AcademyId}'
                 `
                 )
-                console.log(result)
                 res.status(200).send(result.recordset)
             }
         }
@@ -899,6 +911,7 @@ module.exports = {
     get_student_tutor_bookings,
     get_student_bookings,
     post_student_bookings,
+    get_tutor_bookings,
     get_student_bank_details,
     post_student_bank_details,
     get_student_feedback,

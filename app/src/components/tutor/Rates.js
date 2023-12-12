@@ -22,7 +22,6 @@ const generateDiscountCode = () => {
 };
 
 const Rates = () => {
-
   let [MultiStudentHourlyRate, setMultiStudentHourlyRate] = useState("");
   let [FreeDemoLesson, setFreeDemoLesson] = useState("");
   let [ActivateSubscriptionOption, setActivateSubscriptionOption] =
@@ -46,7 +45,6 @@ const Rates = () => {
   const fetchDataFromApi = () => {
     get_tutor_rates(window.localStorage.getItem("tutor_user_id"))
       .then((result) => {
-        console.log(result[0]);
         if (Object.keys(result[0]).length) {
           setDbState(result[0]);
           setMultiStudentHourlyRate(result[0].MutiStudentHourlyRate);
@@ -130,7 +128,6 @@ const Rates = () => {
 
   const compareStates = () => {
     for (const key in currentState) {
-      console.log(key, currentState, dbState, currentState[key] !== dbState?.[key], 'comparison')
       if (currentState[key] !== dbState?.[key]) {
         setChangesMade(true);
         return;
@@ -185,6 +182,10 @@ const Rates = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!selectedCancellationPolicy.length) {
+      toast.warning('Please select Tutor Cancellation Policy')
+      return
+    }
     setLoading(true)
     let res = await saver()
     if (res.bool) {
@@ -197,6 +198,7 @@ const Rates = () => {
     }
     setLoading(false)
   }
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -304,14 +306,14 @@ const Rates = () => {
                 <div className="dropdown">
                   <label>Tutor Cancellation Policy</label>
                   <button
-                    className="btn btn-secondary dropdown-toggle mr-3"
+                    className="btn btn-success dropdown-toggle my-0 mx-3"
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
                   >
                     {selectedCancellationPolicy.length ? `${selectedCancellationPolicy}hr   ` : " Select"}
                   </button>
                   {isOpen && (
-                    <div className="dropdown-menu show">
+                    <div className="dropdown-menu show" style={{ left: "90px" }}>
                       <div className="dropdown-item" onClick={() => {
                         setSelectedCancPolicy('4')
                         setIsOpen(false)

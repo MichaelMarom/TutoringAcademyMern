@@ -11,6 +11,8 @@ import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { upload_file } from '../../../axios/file';
 import PDFViewer from './PDFViewer';
+import Loading from '../../common/Loading';
+import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES } from '../../../constants/constants';
 
 const languages = [
     'Afrikaans',
@@ -128,6 +130,13 @@ const Education = () => {
     let [certificate, set_certificate] = useState([]);
     let [language, set_language] = useState([]);
 
+    const [countryForAssociate, setCountryForAssoc] = useState('');
+    const [countryForCert, setCountryForCert] = useState('');
+    const [countryForMast, setCountryForMast] = useState('');
+    const [countryForDoc, setCountryForDoc] = useState('');
+    const [countryForDeg, setCountryForDeg] = useState('')
+
+
     let [state2, set_state2] = useState([]);
     let [state3, set_state3] = useState([]);
     let [state4, set_state4] = useState([]);
@@ -161,6 +170,14 @@ const Education = () => {
     const [dataFetched, setDataFetched] = useState(false)
     let [db_edu_level, set_db_edu_level] = useState('');
     let [db_edu_cert, set_db_edu_cert] = useState('');
+    const [fetchingEdu, setFetchingEdu] = useState(false);
+    const options = {
+        "Australia": AUST_STATES,
+        "USA": US_STATES,
+        "Canada": CAN_STATES,
+        "UnitedKingdom": UK_STATES
+    }
+
     useEffect(() => {
 
         if (dataFetched && db_edu_level !== level) {
@@ -214,11 +231,18 @@ const Education = () => {
             expiration,
             JSON.stringify(othelang),
             workExperience,
-            user_id)
+            user_id,
+            countryForDeg,
+            countryForMast,
+            countryForCert,
+            countryForDoc,
+            countryForAssociate
+        )
         return response;
     }
 
     useEffect(() => {
+        setFetchingEdu(true)
         get_my_edu(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
 
@@ -237,6 +261,11 @@ const Education = () => {
                     set_graduateYr2(data.College2StateYear)
                     set_graduagteYr3(data.DegreeYear)
 
+                    setCountryForAssoc(data.BachCountry)
+                    setCountryForCert(data.CertCountry)
+                    setCountryForDeg(data.DegCountry)
+                    setCountryForDoc(data.DocCountry)
+                    setCountryForMast(data.MastCountry)
                     set_state2(data.College1State)
                     set_state3(data.College2State)
                     set_state4(data.DegreeState)
@@ -266,10 +295,10 @@ const Education = () => {
 
             })
             .catch((err) => {
-
+                console.log(err)
             })
             .finally(() => {
-
+                setFetchingEdu(false)
                 set_data(true)
             })
     }, [])
@@ -428,15 +457,19 @@ const Education = () => {
             toast.success('Education record saved Successfully')
         }
         else {
-            toast.success('Failed to save Record Successfully')
+            toast.error('Failed to save Record')
         }
     }
+
+    if (fetchingEdu)
+        return <Loading loadingText='Fetching Tutor Eduction...' />
     return (
-        <>
+        <div style={{ height: "80vh", overflowY: "auto" }}>
             <div className='tutor-popin'></div>
             <div className='save-overlay'>
                 <span className='save-loader'></span>
             </div>
+
             <div className="container tutor-tab-education">
                 <form action="" onSubmit={handleSave}>
                     <div className="tutor-tab-education-info pt-4">
@@ -445,381 +478,484 @@ const Education = () => {
                             Tutor does not have to be an academy graduate in order to lecture his knowledge. However, when you select your academic background, you must upload your diploma and/or Certificate(s). You have 7 days to do that. Until your credentials are uploaded, "X" icon is being shown near the appropriate field. When your documents are uploaded, the "X" icon is changed to a green "Verified" logo. The student or parents can see your status when making their decision of selecting you.
                         </h6>
 
-                        <div className="d-flex justify-content-between row">
-                            <div className="col-md-4">
-                                <label htmlFor="level">Education Level:</label>
-                                <select
-                                    id="level"
-                                    className="form-control m-0"
-                                    onChange={edu_level}
-                                    value={level}
-                                    required
-                                >
-                                    <option value="" disabled>Select Education</option>
-                                    {level_list}
-                                </select>
-                            </div>
+                        <div className="d-flex  row border p-3 shadow ">
+                            <h6 className='border-bottom'>Experience</h6>
+                            <div className='d-flex justify-content-between'>
 
-                            <div className="col-md-4">
-                                <label htmlFor="experience">Experience:</label>
-                                <select
-                                    id="experience"
-                                    className="form-control m-0"
-                                    onChange={(e) => set_experience(e.target.value)}
-                                    value={experience}
-                                    required
-                                >
-                                    {exp}
-                                </select>
+                                <div className="col-md-3">
+                                    <label className="text-secondary" htmlFor="level">Education Level:</label>
+                                    <select
+                                        id="level"
+                                        className="form-control m-0"
+                                        onChange={edu_level}
+                                        value={level}
+                                        required
+                                    >
+                                        <option value="" disabled>Select Education</option>
+                                        {level_list}
+                                    </select>
+                                </div>
+
+                                <div className="col-md-3">
+                                    <label className="text-secondary" htmlFor="experience">Experience:</label>
+                                    <select
+                                        id="experience"
+                                        className="form-control m-0"
+                                        onChange={(e) => set_experience(e.target.value)}
+                                        value={experience}
+                                        required
+                                    >
+                                        {exp}
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
                         {level !== 'No Academic Education' && level.length ? (
                             <>
-                                <div className="row mt-3">
-                                    <div className="col-md-4">
-                                        <label htmlFor="university1">{level === 'Associate Degree' ?
-                                            'College Name' : 'Bachelor Degree College or university:'}</label>
-                                        <input
-                                            type="text"
-                                            id="university1"
-                                            className="form-control m-0"
-                                            value={university1}
-                                            onChange={(e) => set_university1(e.target.value)}
-                                            placeholder="College/University 1"
-                                            required
-                                        />
-                                    </div>
+                                <div className="row mt-3 p-3 shadow  border shadow">
+                                    <h6 className='border-bottom'>Bachlors Degree</h6>
+                                    <div className='d-flex justify-content-between'>
+                                        <div className="col-md-3">
+                                            <label className="text-secondary" htmlFor="university1">{level === 'Associate Degree' ?
+                                                'College Name' : 'Bachelor Degree Institute:'}</label>
+                                            <input
+                                                type="text"
+                                                id="university1"
+                                                className="form-control m-0"
+                                                value={university1}
+                                                onChange={(e) => set_university1(e.target.value)}
+                                                placeholder="College/University 1"
+                                                required
+                                            />
+                                        </div>
 
-                                    <div className="col-md-4">
-                                        <label htmlFor="state1">Select University State/Province:</label>
-                                        <select
-                                            id="state1"
-                                            className="form-control m-0 w-100"
-                                            onChange={(e) => set_state2(e.target.value)}
-                                            value={state2}
-                                            required
-                                        >
-                                            <option value="">Select State</option>
-                                            {stateList.map((item) => (
-                                                <option key={item} value={item}>
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                        <div className="col-md-3">
+                                            <div>
+                                                <label className="text-secondary">Country for {`${level === 'Associate Degree' ?
+                                                    "Associate degree" : "Bachlors"}`}</label>
+                                                <select className='form-select'
+                                                    onClick={(e) => setCountryForAssoc(e.target.value)}>
+                                                    <option value={''} disabled selected>Select Country</option>
+                                                    {Countries.map((option) =>
+                                                        <option value={option.Country}
 
-                                    <div className="col-md-4">
-                                        <label htmlFor="yr1">Graduation Year:</label>
-                                        <select
-                                            id="yr1"
-                                            className="form-control m-0 w-100"
-                                            onChange={(e) => set_graduateYr1(e.target.value)}
-                                            value={graduateYr1}
-                                            required
-                                        >
-                                            <option value="">Select Year</option>
-                                            {d_list.map((item) => (
-                                                <option key={item} value={item}>
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                                            selected={option.Country === countryForAssociate ? "selected" : ""}
+                                                        >{option.Country}</option>
+                                                    )}
+                                                </select>
+                                            </div>
+                                            {options[countryForAssociate] &&
+                                                <div>
+                                                    <label className="text-secondary" htmlFor="state1">State/Province:</label>
+                                                    <select
+                                                        id="state1"
+                                                        className="form-control m-0 w-100"
+                                                        onChange={(e) => set_state2(e.target.value)}
+                                                        value={state2}
+                                                        required
+                                                    >
+                                                        <option value="">Select State</option>
+                                                        {options[countryForAssociate].map((item) => (
+                                                            <option key={item} value={item}>
+                                                                {item}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                        <div className="col-md-3">
+                                            <label className="text-secondary" htmlFor="yr1">Graduation Year:</label>
+                                            <select
+                                                id="yr1"
+                                                className="form-control m-0 w-100"
+                                                onChange={(e) => set_graduateYr1(e.target.value)}
+                                                value={graduateYr1}
+                                                required
+                                            >
+                                                <option value="">Select Year</option>
+                                                {d_list.map((item) => (
+                                                    <option key={item} value={item}>
+                                                        {item}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div></div>
+
                                 </div>
                                 {
                                     level !== 'Bachelor Degree' && level !== 'Undergraduate Student' && level !== 'Associate Degree' ? (
-                                        < div className="row mt-3">
-                                            <div className="col-md-4">
-                                                <label htmlFor="university2">Master Degree University:</label>
-                                                <input
-                                                    type="text"
-                                                    id="university2"
-                                                    className="form-control m-0"
-                                                    value={university2}
-                                                    onChange={(e) => set_university2(e.target.value)}
-                                                    placeholder="College/University 2"
-                                                    required
-                                                />
-                                            </div>
+                                        <div className="row mt-3 border p-3 shadow ">
+                                            <h6 className='border-bottom'>Master Degree</h6>
+                                            <div className='d-flex justify-content-between'>
+                                                <div className="col-md-3">
+                                                    <label className="text-secondary" htmlFor="university2">Master Degree University:</label>
+                                                    <input
+                                                        type="text"
+                                                        id="university2"
+                                                        className="form-control m-0"
+                                                        value={university2}
+                                                        onChange={(e) => set_university2(e.target.value)}
+                                                        placeholder="College/University 2"
+                                                        required
+                                                    />
+                                                </div>
 
-                                            <div className="col-md-4">
-                                                <label htmlFor="state3">Select University State:</label>
-                                                <select
-                                                    id="state3"
-                                                    className="form-control m-0 w-100"
-                                                    onChange={(e) => set_state3(e.target.value)}
-                                                    value={state3}
-                                                    required
-                                                >
-                                                    <option value="">Select State</option>
-                                                    {stateList.map((item) => (
-                                                        <option key={item} value={item}>
-                                                            {item}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                                <div className="col-md-3">
+                                                    <div>
+                                                        <label className="text-secondary">Country for Masters</label>
+                                                        <select className='form-select'
+                                                            onClick={(e) => setCountryForMast(e.target.value)}>
+                                                            <option value={''} disabled selected>Select Country</option>
+                                                            {Countries.map((option) =>
+                                                                <option value={option.Country}
 
-                                            <div className="col-md-4">
-                                                <label htmlFor="yr2">Graduation Year:</label>
-                                                <select
-                                                    id="yr2"
-                                                    className="form-control m-0 w-100"
-                                                    onChange={(e) => set_graduateYr2(e.target.value)}
-                                                    value={graduateYr2}
-                                                    required
-                                                >
-                                                    <option value="">Select Year</option>
-                                                    {d_list.map((item) => (
-                                                        <option key={item} value={item}>
-                                                            {item}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                                                    selected={option.Country === countryForMast ? "selected" : ""}
+                                                                >{option.Country}</option>
+                                                            )}
+                                                        </select>
+                                                    </div>
+                                                    {options[countryForMast] &&
+                                                        <div>
+                                                            <label className="text-secondary" htmlFor="state1">State/Province:</label>
+                                                            <select
+                                                                id="state1"
+                                                                className="form-control m-0 w-100"
+                                                                onChange={(e) => set_state3(e.target.value)}
+                                                                value={state3}
+                                                                required
+                                                            >
+                                                                <option value="">Select State</option>
+                                                                {options[countryForMast].map((item) => (
+                                                                    <option key={item} value={item}>
+                                                                        {item}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <div className="col-md-3">
+                                                    <label className="text-secondary" htmlFor="yr2">Graduation Year:</label>
+                                                    <select
+                                                        id="yr2"
+                                                        className="form-control m-0 w-100"
+                                                        onChange={(e) => set_graduateYr2(e.target.value)}
+                                                        value={graduateYr2}
+                                                        required
+                                                    >
+                                                        <option value="">Select Year</option>
+                                                        {d_list.map((item) => (
+                                                            <option key={item} value={item}>
+                                                                {item}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div></div>
+
                                         </div>
                                     ) : null
                                 }
                                 {
                                     level !== 'Undergraduate Student' && level !== 'Bachelor Degree' &&
                                         level !== 'Master Degree' && level !== 'Associate Degree' ? (
-                                        <div className="row mt-3">
-                                            <div className="col-md-4">
-                                                <label htmlFor="university2"> Doctorate Degree University:</label>
-                                                <input
-                                                    type="text"
-                                                    id="university2"
-                                                    className="form-control m-0"
-                                                    value={university3}
-                                                    onChange={(e) => set_university3(e.target.value)}
-                                                    placeholder="College/University 3"
-                                                    required
-                                                />
-                                            </div>
+                                        <div className="row mt-3 border p-3 shadow ">
+                                            <h6 className='border-bottom'>Doctorate Degree</h6>
+                                            <div className='d-flex justify-content-between'>
+                                                <div className="col-md-3">
+                                                    <label className="text-secondary" htmlFor="university2"> Doctorate Degree University:</label>
+                                                    <input
+                                                        type="text"
+                                                        id="university2"
+                                                        className="form-control m-0"
+                                                        value={university3}
+                                                        onChange={(e) => set_university3(e.target.value)}
+                                                        placeholder="College/University 3"
+                                                        required
+                                                    />
+                                                </div>
 
-                                            <div className="col-md-4">
-                                                <label htmlFor="state3">Select University State/Province:</label>
-                                                <select
-                                                    id="state3"
-                                                    className="form-control m-0 w-100"
-                                                    onChange={(e) => set_doctorateState(e.target.value)}
-                                                    value={doctorateState}
-                                                    required
-                                                >
-                                                    <option value="">Select State</option>
-                                                    {stateList.map((item) => (
-                                                        <option key={item} value={item}>
-                                                            {item}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                                <div className="col-md-3">
+                                                    <div>
+                                                        <label className="text-secondary">Country For Doctorate</label>
+                                                        <select className='form-select'
+                                                            onClick={(e) => setCountryForDoc(e.target.value)}>
+                                                            <option value={''} disabled selected>Select Country</option>
+                                                            {Countries.map((option) =>
+                                                                <option value={option.Country}
 
-                                            <div className="col-md-4">
-                                                <label htmlFor="yr2">Graduation Year:</label>
-                                                <select
-                                                    id="yr2"
-                                                    className="form-control m-0 w-100"
-                                                    onChange={(e) => setDoctorateGraduateYear(e.target.value)}
-                                                    value={doctorateGraduateYear}
-                                                    required
-                                                >
-                                                    <option value="">Select Year</option>
-                                                    {d_list.map((item) => (
-                                                        <option key={item} value={item}>
-                                                            {item}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                                                    selected={option.Country === countryForDoc ? "selected" : ""}
+                                                                >{option.Country}</option>
+                                                            )}
+                                                        </select>
+                                                    </div>
+                                                    {options[countryForDoc] &&
+                                                        <div>
+                                                            <label className="text-secondary" htmlFor="state1">State/Province:</label>
+                                                            <select
+                                                                id="state1"
+                                                                className="form-control m-0 w-100"
+                                                                onChange={(e) => set_doctorateState(e.target.value)}
+                                                                value={doctorateState}
+                                                                required
+                                                            >
+                                                                <option value="">Select State</option>
+                                                                {options[countryForDoc].map((item) => (
+                                                                    <option key={item} value={item}>
+                                                                        {item}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    }
+                                                </div>
+
+                                                <div className="col-md-3">
+                                                    <label className="text-secondary" htmlFor="yr2">Graduation Year:</label>
+                                                    <select
+                                                        id="yr2"
+                                                        className="form-control m-0 w-100"
+                                                        onChange={(e) => setDoctorateGraduateYear(e.target.value)}
+                                                        value={doctorateGraduateYear}
+                                                        required
+                                                    >
+                                                        <option value="">Select Year</option>
+                                                        {d_list.map((item) => (
+                                                            <option key={item} value={item}>
+                                                                {item}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div></div>
+
                                         </div>
                                     ) : null
                                 }
 
-                                <div className="row mt-3">
-                                    <div className="col-md-4">
-                                        <label htmlFor="degree">Upload Highest Degree Diploma:</label>
-                                        <div className='d-flex align-items-center'>
+                                <div className="row mt-3 border p-3 shadow ">
+                                    <h6 className='border-bottom'>Degree Document</h6>
+                                    <div className='d-flex justify-content-between'>
+                                        <div className="col-md-3">
+                                            <label className="text-secondary" htmlFor="degree">Upload Highest Degree Diploma:</label>
+                                            <div className='d-flex align-items-center'>
 
-                                            {(degreeFileContent && degreeFileContent.length) ? (
-                                                <div className='d-flex w-100 justify-content-between border rounded p-2'>
-                                                    <div>Degree uploaded</div>
-                                                    <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
-                                                </div>
-                                            ) : (
-                                                <>  <div className="form-outline">
-                                                    <input
-                                                        type="file"
-                                                        accept=".pdf, .jpeg, .png, .jpg"
-                                                        id="degreeFile"
-                                                        name="degreeFile"
-                                                        className="form-control m-0"
-                                                        onChange={handleFileUpload}
+                                                {(degreeFileContent && degreeFileContent.length) ? (
+                                                    <div className='d-flex w-100 justify-content-between border rounded p-2'>
+                                                        <div>Degree uploaded</div>
+                                                        <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
+                                                    </div>
+                                                ) : (
+                                                    <>  <div className="form-outline">
+                                                        <input
+                                                            type="file"
+                                                            accept=".pdf, .jpeg, .png, .jpg"
+                                                            id="degreeFile"
+                                                            name="degreeFile"
+                                                            className="form-control m-0"
+                                                            onChange={handleFileUpload}
+                                                            required
+                                                        />
+                                                    </div>
+                                                        <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="col-md-3">
+                                            <div>
+                                                <label className="text-secondary">Country For Degree</label>
+                                                <select className='form-select'
+                                                    onClick={(e) => setCountryForDeg(e.target.value)}>
+                                                    <option value={''} disabled selected>Select Country</option>
+                                                    {Countries.map((option) =>
+                                                        <option value={option.Country}
+
+                                                            selected={option.Country === countryForDeg ? "selected" : ""}
+                                                        >{option.Country}</option>
+                                                    )}
+                                                </select>
+                                            </div>
+                                            {options[countryForDeg] &&
+                                                <div>
+                                                    <label className="text-secondary" htmlFor="state1">State/Province:</label>
+                                                    <select
+                                                        id="state1"
+                                                        className="form-control m-0 w-100"
+                                                        onChange={(e) => set_state4(e.target.value)}
+                                                        value={state4}
                                                         required
-                                                    />
+                                                    >
+                                                        <option value="">Select State</option>
+                                                        {options[countryForDeg].map((item) => (
+                                                            <option key={item} value={item}>
+                                                                {item}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
-                                                    <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+                                            }
+                                        </div>
 
-                                                </>
-                                            )}
+                                        <div className="col-md-3">
+                                            <label className="text-secondary" htmlFor="yr3">Diploma earned Year:</label>
+                                            <select
+                                                id="yr3"
+                                                className="form-control m-0 w-100"
+                                                onChange={(e) => set_graduagteYr3(e.target.value)}
+                                                value={graduagteYr3}
+                                                required
+                                            >
+                                                <option value="">Select Year</option>
+                                                {d_list.map((item) => (
+                                                    <option
+                                                        key={item}
+                                                        value={item}
+                                                        selected={item === files?.DegreeYear}
+                                                    >
+                                                        {item}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
                                     </div>
 
-                                    <div className="col-md-4">
-                                        <label htmlFor="state4">Select University State/Province:</label>
-                                        <select
-                                            id="state4"
-                                            className="form-control m-0 w-100"
-                                            onChange={(e) => set_state4(e.target.value)}
-                                            value={state4}
-                                            required
-                                        >
-                                            <option value="">Select State/Province</option>
-                                            {stateList.map((item) => (
-                                                <option
-                                                    key={item}
-                                                    value={item}
-                                                    selected={item === files?.DegreeState}
-                                                >
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    <div className="col-md-4">
-                                        <label htmlFor="yr3">Diploma earned Year:</label>
-                                        <select
-                                            id="yr3"
-                                            className="form-control m-0 w-100"
-                                            onChange={(e) => set_graduagteYr3(e.target.value)}
-                                            value={graduagteYr3}
-                                            required
-                                        >
-                                            <option value="">Select Year</option>
-                                            {d_list.map((item) => (
-                                                <option
-                                                    key={item}
-                                                    value={item}
-                                                    selected={item === files?.DegreeYear}
-                                                >
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
                                 </div>
                             </>
                         ) : null}
 
-                        <div className="row mt-3 align-items-end">
-                            <div className="col-md-4">
-                                <label htmlFor="certificate">Upload Certificate:</label>
-                                <select
-                                    id="certificate"
-                                    name="certificate"
-                                    className="form-control m-0"
-                                    onChange={certified}
-                                    placeholder='Select Certificate'
-                                    required
-                                >
-                                    <option value="" disabled>Select Certificate</option>
-                                    {certificate_list}
-                                </select>
-                                {(certificate.length && certificate !== 'Not Certified') ? (
-                                    <div className='d-flex justify-content-center align-items-center'>
+                        <div className="row mt-3 align-items-start border p-3 shadow ">
+                            <h6 className='border-bottom'>Certification</h6>
+                            <div className='d-flex justify-content-between'>
+                                <div className="col-md-3">
+                                    <label className="text-secondary" htmlFor="certificate">Upload Certificate:</label>
+                                    <select
+                                        id="certificate"
+                                        name="certificate"
+                                        className="form-control m-0"
+                                        onChange={certified}
+                                        placeholder='Select Certificate'
+                                        required
+                                    >
+                                        <option value="" disabled>Select Certificate</option>
+                                        {certificate_list}
+                                    </select>
+                                    {(certificate.length && certificate !== 'Not Certified') ? (
+                                        <div className='d-flex justify-content-center align-items-center'>
 
-                                        {(certFileContent?.length) ? (
-                                            <div className='d-flex w-100 justify-content-between border rounded p-2'>
-                                                <div>Certificate uploaded</div>
-                                                <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
-                                            </div>) : (
-                                            <>
-                                                <div className="form-outline">
-                                                    <input
-                                                        type="file"
-                                                        accept=".pdf, .jpeg, .png, .jpg, .doc"
-                                                        id="certificateFile"
-                                                        name="certificateFile"
-                                                        className="form-control m-0 mr-2"
-                                                        onChange={handleCertUpload}
+                                            {(certFileContent?.length) ? (
+                                                <div className='d-flex w-100 justify-content-between border rounded p-2'>
+                                                    <div>Certificate uploaded</div>
+                                                    <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
+                                                </div>) : (
+                                                <>
+                                                    <div className="form-outline">
+                                                        <input
+                                                            type="file"
+                                                            accept=".pdf, .jpeg, .png, .jpg, .doc"
+                                                            id="certificateFile"
+                                                            name="certificateFile"
+                                                            className="form-control m-0 mr-2"
+                                                            onChange={handleCertUpload}
+                                                            required
+                                                        />
+                                                    </div>
+                                                    <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
+                                                </>
+                                            )}
+                                        </div>
+                                    ) : null}
+                                </div>
+                                {(certificate.length && certificate !== 'Not Certified') ? (
+                                    <>
+                                        <div className="col-md-3">
+                                            <div>
+                                                <label className="text-secondary">Country For Certification</label>
+                                                <select className='form-select'
+                                                    onClick={(e) => setCountryForCert(e.target.value)}>
+                                                    <option value={''} disabled selected>Select Country</option>
+                                                    {Countries.map((option) =>
+                                                        <option value={option.Country}
+
+                                                            selected={option.Country === countryForCert ? "selected" : ""}
+                                                        >{option.Country}</option>
+                                                    )}
+                                                </select>
+                                            </div>
+                                            {options[countryForCert] &&
+                                                <div>
+                                                    <label className="text-secondary" htmlFor="state1">State/Province:</label>
+                                                    <select
+                                                        className="form-control m-0 w-100"
+                                                        onChange={(e) => set_state5(e.target.value)}
+                                                        value={state5}
                                                         required
-                                                    />
+                                                    >
+                                                        <option value="">Select State</option>
+                                                        {options[countryForCert].map((item) => (
+                                                            <option key={item} value={item}>
+                                                                {item}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
-                                                <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
-                                            </>
-                                        )}
-                                    </div>
+                                            }
+
+                                        </div>
+                                        <div className="col-md-3">
+                                            <label className="text-secondary" htmlFor="expiration">Certificate Expiration:</label>
+                                            <input
+                                                type="date"
+                                                min={new Date().toISOString().split('T')[0]}
+                                                id="expiration"
+                                                className="form-control m-0"
+                                                value={expiration}
+                                                onBlur={handleBlur}
+                                                onChange={handleDateChange}
+                                                placeholder="Expiration"
+                                            />
+                                        </div>
+                                    </>
                                 ) : null}
                             </div>
-                            {(certificate.length && certificate !== 'Not Certified') ? (
-                                <>
-                                    <div className="col-md-4">
-                                        <label htmlFor="state5">Select University State/Province:</label>
-                                        <select
-                                            id="state5"
-                                            className="form-control m-0 w-100"
-                                            onChange={(e) => set_state5(e.target.value)}
-                                            required
-                                        >
-                                            <option value="">Select State/Province</option>
-                                            {stateList.map((item) => (
-                                                <option
-                                                    key={item}
-                                                    value={item}
-                                                    selected={item === files?.CertificateState}
-                                                >
-                                                    {item}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="col-md-4">
-                                        <label htmlFor="expiration">Certificate Expiration:</label>
-                                        <input
-                                            type="date"
-                                            min={new Date().toISOString().split('T')[0]}
-                                            id="expiration"
-                                            className="form-control m-0"
-                                            value={expiration}
-                                            onBlur={handleBlur}
-                                            onChange={handleDateChange}
-                                            placeholder="Expiration"
-                                        />
-                                    </div>
-                                </>
-                            ) : null}
                         </div>
 
-                        <div className="row mt-3 justify-content-between">
-                            <div className="col-md-4">
-                                <label htmlFor="language">Select Native (Primary) Language:</label>
-                                <Select
-                                    isMulti={false}
-                                    placeholder="Select Native Languages"
-                                    className="language-selector w-100"
-                                    id="native-language"
-                                    onChange={(selectedOption) => set_language(selectedOption)}
-                                    defaultValue={language}
-                                    value={language}
-                                    options={languageOptions}
-                                    required
-                                />
-                            </div>
+                        <div className="row mt-3 justify-content-between border p-3 shadow ">
+                            <h6 className='border-bottom'>Languages</h6>
+                            <div className='d-flex justify-content-between'>
+                                <div className="col-md-5">
+                                    <label className="text-secondary" htmlFor="language">Select Native (Primary) Language:</label>
+                                    <Select
+                                        isMulti={false}
+                                        placeholder="Select Native Languages"
+                                        className="language-selector w-100"
+                                        id="native-language"
+                                        onChange={(selectedOption) => set_language(selectedOption)}
+                                        defaultValue={language}
+                                        value={language}
+                                        options={languageOptions}
+                                        required
+                                    />
+                                </div>
 
-                            <div className="col-md-4">
-                                <label htmlFor="other-languages">Select Secondary language(s):</label>
-                                <Select
-                                    isMulti
-                                    placeholder="Select other language(s)"
-                                    className="language-selector w-100"
-                                    id="other-languages"
-                                    value={othelang}
-                                    onChange={handleLanguageChange}
-                                    options={languageOptions}
-                                />
-                            </div>
+                                <div className="col-md-5">
+                                    <label className="text-secondary" htmlFor="other-languages">Select Secondary language(s):</label>
+                                    <Select
+                                        isMulti
+                                        placeholder="Select other language(s)"
+                                        className="language-selector w-100"
+                                        id="other-languages"
+                                        value={othelang}
+                                        onChange={handleLanguageChange}
+                                        options={languageOptions}
+                                    />
+                                </div></div>
+
                         </div>
                     </div>
                     <div className="tutor-tab-education-experience">
@@ -829,23 +965,26 @@ const Education = () => {
                                 style={{ height: '85%', width: '200px', display: 'block', margin: 'auto', padding: '30px' }}
                                 alt=""
                             />
-                            <label htmlFor=""><h6 style={{ textAlign: 'center' }}>Work Experience</h6></label>
-                        </div>
 
-                        <textarea
-                            value={workExperience}
-                            onChange={(e) => set_workExperience(e.target.value)}
-                            style={{ height: '400px' }}
-                            placeholder="Enter Your Work Experience"
-                            className="tutor-tab-education-experience-details"
-                            required
-                        ></textarea>
+                        </div>
+                        <div className='border p-3'>
+
+                            <h6 className='border-bottom'>Work Experience</h6>
+                            <textarea
+                                value={workExperience}
+                                onChange={(e) => set_workExperience(e.target.value)}
+                                style={{ height: '400px' }}
+                                placeholder="Enter Your Work Experience"
+                                className="form-control border-0"
+                                required
+                            ></textarea>
+                        </div>
                     </div>
 
                     <Actions />
                 </form>
             </div >
-        </>
+        </div>
 
     );
 }

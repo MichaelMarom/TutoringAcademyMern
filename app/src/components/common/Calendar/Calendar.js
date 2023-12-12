@@ -37,6 +37,8 @@ const momentWeekDaysCode = {
 export const convertToDate = (date) => (date instanceof Date) ? date : new Date(date)
 
 const ShowCalendar = ({
+  setIsModalOpen = () => { }, //FOR STUDENT
+  isModalOpen = false,  //FOR STUDENT
   timeDifference = null,
   setActiveTab = () => { },
   setDisableColor = () => { },
@@ -73,7 +75,7 @@ const ShowCalendar = ({
 
   //student states
   const [selectedSlots, setSelectedSlots] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [clickedSlot, setClickedSlot] = useState({})
   const { student } = useSelector(state => state.student)
   const tutorId = selectedTutor.academyId;
@@ -275,7 +277,7 @@ const ShowCalendar = ({
         && (slot.end.getTime() > (new Date()).getTime() ||
           (!slot.rating))
     })) {
-      toast.warning("We are sorry, your intro session must be conducted and rated first")
+      toast.warning(`We are sorry, your intro session must be conducted and rated first for the "${selectedTutor.subject}" LESSON`)
       return;
     }
     if ((selectedSlots.length && selectedSlots[0].type === 'reserved') && reservedSlots.length > 6) {
@@ -598,45 +600,43 @@ const ShowCalendar = ({
 
     }
     return {};
-  }, [disabledHours, enableHourSlots, disableHourSlots, reservedSlots, selectedSlots, weekDaysTimeSlots]);
+  }, [disabledHours, enableHourSlots, disableHourSlots, reservedSlots, selectedSlots, weekDaysTimeSlots, disableColor]);
 
-  const dayPropGetter = useCallback(
-    (date) => {
-      const dayName = moment(date).format("dddd");
-      const isFutureDate = date.getTime() >= (new Date()).getTime();
+  const dayPropGetter = useCallback((date) => {
+    const dayName = moment(date).format("dddd");
+    const isFutureDate = date.getTime() >= (new Date()).getTime();
 
 
-      const existsinEnabledInMonth = enabledDays?.some((arrayDate) => convertToDate(arrayDate).getTime() === date.getTime());
-      const existsinEnabledInWeek = enabledDays?.some((arrayDate) => {
-        const slotDateMoment = moment(date);
-        const arrayMomentDate = moment(arrayDate);
-        return arrayMomentDate.isSame(slotDateMoment, 'day')
-      });
+    const existsinEnabledInMonth = enabledDays?.some((arrayDate) => convertToDate(arrayDate).getTime() === date.getTime());
+    const existsinEnabledInWeek = enabledDays?.some((arrayDate) => {
+      const slotDateMoment = moment(date);
+      const arrayMomentDate = moment(arrayDate);
+      return arrayMomentDate.isSame(slotDateMoment, 'day')
+    });
 
-      const isDisableDate = disableDates?.some(storeDate => {
-        const slotDateMoment = moment(date);
-        const storedMomentDate = moment(storeDate);
-        return storedMomentDate.isSame(slotDateMoment, 'day')
-      })
+    const isDisableDate = disableDates?.some(storeDate => {
+      const slotDateMoment = moment(date);
+      const storedMomentDate = moment(storeDate);
+      return storedMomentDate.isSame(slotDateMoment, 'day')
+    })
 
-      
-      if (isFutureDate &&
-        (!isStudentLoggedIn && disableWeekDays && disableWeekDays?.includes(dayName))
-        && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
-        return {
-          style: {
-            backgroundColor: disableColor
-          },
-          className: "disabled-date",
-          onClick: (e) => {
-            e.preventDefault();
-          },
-        };
-      }
-      return {};
-    },
-    [disableWeekDays, enabledDays, disableDates]
-  );
+
+    if (isFutureDate &&
+      (!isStudentLoggedIn && disableWeekDays && disableWeekDays?.includes(dayName))
+      && !existsinEnabledInMonth && !existsinEnabledInWeek || isDisableDate) {
+      return {
+        style: {
+          backgroundColor: disableColor
+        },
+        className: "disabled-date",
+        onClick: (e) => {
+          e.preventDefault();
+        },
+      };
+    }
+    return {};
+  },
+    [disableWeekDays, enabledDays, disableDates, disableColor]);
 
   const eventPropGetter = (event) => {
     const secSubject = reservedSlots?.some(slot => slot.type === 'intro'

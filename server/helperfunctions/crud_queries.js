@@ -107,7 +107,7 @@ const find = (tableName, where, opr = 'AND', casting = {}) => {
 
     const whereClause = conditions.join(` ${opr} `);
     const sql = `SELECT * FROM ${tableName} WHERE ${whereClause}`;
-    // console.log(sql);
+    console.log(sql);
     return sql;
 };
 

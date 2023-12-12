@@ -699,7 +699,7 @@ export const Countries = [
   {
     "Country": "Czech Republic"
   }
-]
+].sort((a, b) => a.Country.localeCompare(b.Country));
 
 export const STATES = [
   {

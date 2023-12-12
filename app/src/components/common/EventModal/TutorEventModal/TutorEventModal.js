@@ -37,8 +37,10 @@ export const TutorEventModal = ({ isOpen, onClose, clickedSlot, timeZone }) => {
                     </div>
                 </div>
                 {
-                    convertToDate(clickedSlot.end).getTime() <= (new Date()).getTime() ?
-                        <SessionFeedback clickedSlot={clickedSlot} questions={questions} questionLoading={questionLoading} /> :
+                    (convertToDate(clickedSlot.end).getTime() <= (new Date()).getTime()) ?
+                        !clickedSlot.rating ? <div className='p-3'>
+                            No feedback given for this session</div> :
+                            <SessionFeedback clickedSlot={clickedSlot} questions={questions} questionLoading={questionLoading} /> :
                         <SessionActions clickedSlot={clickedSlot} />
                 }
 

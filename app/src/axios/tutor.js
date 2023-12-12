@@ -195,12 +195,23 @@ export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, a
 }
 
 
-export let upload_form_two = (level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id) => {
+export let upload_form_two = (level, university1, university2, university3, degree, degreeFile, certificate,
+     certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, 
+     graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id,countryForDeg,
+     countryForMast,
+     countryForCert,
+     countryForDoc,
+     countryForAssociate) => {
     return new Promise((resolve, reject) => {
-        console.log(university3, doctorateGraduateYear, doctorateState)
 
         apiClient.post('/tutor/form-two', {
-            level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id
+            level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language, 
+            state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
+             doctorateGraduateYear, expiration, otherang, workExperience, user_id,countryForDeg,
+             countryForMast,
+             countryForCert,
+             countryForDoc,
+             countryForAssociate
         })
             .then((result) => {
                 resolve(result.data)

@@ -18,7 +18,8 @@ const StudentCalenderScheduling = () => {
   const [tutorTime, setTutorTime] = useState('');
   const [disabledHours, setDisabledHours] = useState([]);
   const [subscriptionHours, setActiveSubscriptionHours] = useState(null)
-  const { selectedTutor } = useSelector(state => state.selectedTutor)
+  const { selectedTutor } = useSelector(state => state.selectedTutor);
+  const [studentModalOpen, setStudentModalOpen] = useState(false);
 
   const { student } = useSelector(state => state.student);
 
@@ -92,7 +93,7 @@ const StudentCalenderScheduling = () => {
       Please select tutor to Book lessons
     </div>
   return (
-    <div className="px-5">
+    <div className={`${studentModalOpen ? "w-75 float-end" : "w-100"} px-5`}>
       <div className={`d-flex ${selectedTutor.activateSubscriptionOption ? "justify-content-end" : ""}`}>
         <div className={`${selectedTutor.activateSubscriptionOption ? "w-75 " : "w-100"} align-items-center justify-content-between mt-3 d-flex row flex-row m-2`}
         >
@@ -174,6 +175,8 @@ const StudentCalenderScheduling = () => {
         <div className={` ${selectedTutor.activateSubscriptionOption ? "col-9" : "col-12"} `}>
 
           <ShowCalendar
+            setIsModalOpen={setStudentModalOpen}
+            isModalOpen={studentModalOpen}
             timeDifference={calculateTimeDifference()}
             disableColor={selectedTutor.disableColor}
             activeTab={activeTab}

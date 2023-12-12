@@ -503,12 +503,7 @@ html,body{
         position: relative;
     }
 
-    .tutor-tab-education {
-        height: calc(100vh - 100px);
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-    }
+   
 
     .tutor-tab-education-info {
         height: calc(100% - 40px);
@@ -549,16 +544,6 @@ html,body{
         position: relative;
         border: 1px solid #000;
     }
-
-    .tutor-tab-education-experience-details {
-        height: calc(100vh - 300px);
-        width: 100%;
-        padding: 20px;
-        margin-top: 10px;
-        border: 1px solid #000;
-    }
-
-
 
     .tutor-footer {
         height: 50px;

@@ -30,6 +30,7 @@ import StudentClass from "../pages/student/StudentClass";
 import { Feedback } from "../pages/student/Feedback";
 import Chat from "../pages/Chat";
 import { Schedules } from "../pages/student/Schedules";
+import { SingleTutorFeedback } from "../pages/student/SingleTutorFeedback";
 
 const rolePermissions = {
   tutor: [
@@ -60,6 +61,7 @@ const rolePermissions = {
     { path: "/student/term-of-use", component: <StudentTermOfUse /> },
     { path: "/student/profile", component: <StudentProfile /> },
     { path: '/student/feedback', component: <Feedback /> },
+    { path: "/student/tutor/feedback/:AcademyId", component: <SingleTutorFeedback /> },
     { path: '/chat', component: <Chat /> }
   ],
   admin: [

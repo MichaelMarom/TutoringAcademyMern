@@ -181,6 +181,16 @@ export const get_student_events = async (studentId) => {
     }
 }
 
+export const get_tutor_bookings = async (tutorId) => {
+    try {
+        const { data } = await apiClient.get(`/student/tutor/bookings/${tutorId}`);
+        return data;
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
 export const post_bank_details = async (payload) => {
     try {
         const { data } = await apiClient.post('/student/bank', payload);

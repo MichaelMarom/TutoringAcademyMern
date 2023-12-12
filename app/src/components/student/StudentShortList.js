@@ -31,7 +31,8 @@ const StudentShortList = () => {
         }))
         navigate('/student/booking')
     }
-    console.log('render')
+    const handleNavigateToFeedback = (id) => navigate(`/student/tutor/feedback/${id}`)
+
     function convertGMTToLocalTime(gmtOffset) {
         const utcTime = new Date();
         const localTime = new Date(utcTime.getTime() + gmtOffset * 60 * 60 * 1000);
@@ -130,6 +131,9 @@ const StudentShortList = () => {
                                                     </td>
                                                     <td >
                                                         <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>Book Lesson</button>
+                                                    </td>
+                                                    <td >
+                                                        <button className='btn btn-outline-warning' onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>Feedbacks</button>
                                                     </td>
                                                     <td>
                                                         <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>View Profile</button>

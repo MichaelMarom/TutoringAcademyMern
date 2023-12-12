@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload, BsTrash } from "react-icons/bs";
 import moment from "moment";
-import 'react-phone-number-input/style.css'
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { PhoneNumberUtil } from 'google-libphonenumber';
@@ -28,6 +27,7 @@ import { uploadVideo } from "../../redux/tutor_store/video";
 import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, STATES, UK_STATES, US_STATES } from "../../constants/constants";
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import SelectOrTypeInput from "../common/SelectTypeInput";
+import { unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
 
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -103,11 +103,6 @@ const TutorSetup = () => {
     "UnitedKingdom": UK_STATES
   }
 
-  // //userExist
-  // useEffect(() => {
-  //   const fetchTutor()
-  // }, [])
-
   useEffect(() => {
     if (country !== dbCountry) {
       set_state('')
@@ -121,8 +116,7 @@ const TutorSetup = () => {
     setUploadVideoClicked(true);
     setSelectedVideoOption(option);
   }
-  // const isAtLeastOneChecked = tutorGrades.length > 0;
-  // console.log(isAtLeastOneChecked,"is at least checked",tutorGrades);
+
  let handleTutorGrade = (grade) => {
     
     if (tutorGrades.some(item => item === grade)) {
@@ -229,6 +223,37 @@ const TutorSetup = () => {
     };
     fetchTutorSetup();
   }, [tutor]);
+  
+  useEffect(()=>{
+    if (tutor.AcademyId !== undefined) {
+      let formValues = {
+        fname,
+        mname,
+        lname,
+        cell,
+        add1,
+        add2,
+        city,
+        state,
+        zipCode,
+        country,
+        timeZone,
+        dateTime,
+        response_zone,
+        intro,
+        motivation,
+        headline,
+        photo,
+        video,
+    
+      }
+      console.log(formValues.fname,"saved",fname);
+      setUnsavedChanges(unsavedChangesHelper(formValues,tutor))
+
+      // setUnsavedChanges(tutor.FirstName !== fname);
+    }
+    
+  },[fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime, response_zone, intro, motivation, headline, photo, video,tutor])
 
   const saveTutorSetup = async (e) => {
     e.preventDefault();
@@ -604,6 +629,8 @@ const TutorSetup = () => {
                     onChange={(e) => set_fname(e.target.value)}
                     placeholder="First Name"
                     value={fname}
+                    readonly
+                    disabled  
                     type="text"
                     id="fname"
                     className="form-control"
@@ -632,11 +659,13 @@ const TutorSetup = () => {
                       float: "right",
                       position: "relative",
                     }}
-                    onInput={(e) => set_mname(e.target.value)}
+                    // onInput={(e) => set_mname(e.target.value)}
                     placeholder="Middle Name"
                     value={mname}
                     className="form-control"
                     type="text"
+                    readonly
+                    disabled  
                     id="mname"
                   />
                 </div>
@@ -664,11 +693,13 @@ const TutorSetup = () => {
                       position: "relative",
                     }}
                     required
-                    onInput={(e) => set_sname(e.target.value)}
+                    // onInput={(e) => set_sname(e.target.value)}
                     placeholder="Last Name"
                     value={lname}
                     type="text"
                     id="lname"
+                    readonly
+                    disabled  
                     className="form-control"
                   />
                 </div>
@@ -703,6 +734,7 @@ const TutorSetup = () => {
                     type="text"
                     id="email"
                     readonly
+                    disabled  
                   />
                 </div>
                 <div className="err-mssg">
@@ -907,9 +939,11 @@ const TutorSetup = () => {
                     {countryList}
                   </select>
                 </div>
+                {(options[country] ?? []).length ?
+
                 <div
                   style={{
-                    display: "flex",
+                    display: (options[country] ?? []).length ? 'flex' : 'none',
                     width: "100%",
                     justifyContent: "center",
                     alignItems: "center",
@@ -941,7 +975,7 @@ const TutorSetup = () => {
                     </select> :
                     <input className="form-control" disabled type="text" value={state} onChange={(e) => set_state(e.target.value)} />
                   }
-                </div>
+                </div> :''}
 
                 <div
                   style={{
@@ -1110,7 +1144,6 @@ const TutorSetup = () => {
                 <label s htmlFor="headline">
                   Grades I teach
                 </label>
-                {unSavedChanges &&<p>save changes please</p>}
                 <br />
                 {!isAtLeastOneChecked && (<p className="text-danger text-normal">
                       please select atleast one grade</p>)}

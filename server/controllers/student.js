@@ -366,7 +366,7 @@ const get_student_short_list = async (req, res) => {
                 studentBook.push(bookName);
             }
         });
-        res.status(200).send((studentBook));
+        res.status(200).send(studentBook);
     } catch (err) {
         console.log(err);
     }

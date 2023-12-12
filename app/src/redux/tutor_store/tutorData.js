@@ -1,4 +1,3 @@
-// slice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { get_user_detail } from "../../axios/auth";
 import * as tutorApis from "../../axios/tutor"
@@ -54,4 +53,3 @@ export function setTutor(data) {
         return null;
     };
 }
-

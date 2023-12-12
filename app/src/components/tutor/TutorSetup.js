@@ -1,8 +1,13 @@
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload, BsTrash } from "react-icons/bs";
 import moment from "moment";
+import 'react-phone-number-input/style.css'
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
+import { PhoneNumberUtil } from 'google-libphonenumber';
+
 import { toast } from 'react-toastify'
 
 import {
@@ -24,6 +29,15 @@ import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, STATES, UK_STATES, U
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import SelectOrTypeInput from "../common/SelectTypeInput";
 
+
+const phoneUtil = PhoneNumberUtil.getInstance();
+const isPhoneValid = (phone) => {
+  try {
+    return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phone));
+  } catch (error) {
+    return false;
+  }
+};
 const TutorSetup = () => {
   let [fname, set_fname] = useState("");
   let [mname, set_mname] = useState("");
@@ -63,10 +77,10 @@ const TutorSetup = () => {
     { grade: "Academic" },
   ]
   let [tutorGrades, setTutorGrades] = useState([]);
-
+  const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
-
-  const [email, set_email] = useState(user[0].email)
+  const [email, set_email] = useState(user[0].email);
+  const [unSavedChanges,setUnsavedChanges]=useState(false);
   let [countryList, setCountryList] = useState("");
   let [GMTList, setGMTList] = useState("");
   let [response_list, set_response_list] = useState("");
@@ -81,7 +95,7 @@ const TutorSetup = () => {
 
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
-
+  console.log(tutor,"yutor");
   const options = {
     "Australia": AUST_STATES,
     "USA": US_STATES,
@@ -107,15 +121,21 @@ const TutorSetup = () => {
     setUploadVideoClicked(true);
     setSelectedVideoOption(option);
   }
-
-  let handleTutorGrade = (grade) => {
+  // const isAtLeastOneChecked = tutorGrades.length > 0;
+  // console.log(isAtLeastOneChecked,"is at least checked",tutorGrades);
+ let handleTutorGrade = (grade) => {
+    
     if (tutorGrades.some(item => item === grade)) {
       const removedGrades = tutorGrades.filter(item => item !== grade)
       setTutorGrades(removedGrades);
     }
     else
       setTutorGrades([...tutorGrades, grade]);
-  };
+
+  };  
+  const [isAtLeastOneChecked, setIsAtLeastOneChecked] = useState(true); // Assuming initial state is true
+
+  
   //upload photo
   useEffect(() => {
     const postImage = async () => {
@@ -172,7 +192,7 @@ const TutorSetup = () => {
       // }
       console.log(tutor.AcademyId);
       if (tutor.AcademyId) {
-        console.log(tutor)
+        console.log(tutor,"don")
         let data = tutor;
         // const selectedUserId = await get_user_detail(data.userId);
 
@@ -212,10 +232,19 @@ const TutorSetup = () => {
 
   const saveTutorSetup = async (e) => {
     e.preventDefault();
-
+    if(!isValid) {
+      toast.warning("please enter the correct phone number");
+      return;
+    }
+    if(!tutorGrades.length > 0) {
+      toast.warning("Please select at least one grade");
+      return;
+    }
+    
     document
       .querySelector(".save-overlay")
       ?.setAttribute("id", "save-overlay");
+      
     let response = await saver();
     if (response.status === 200) {
       dispatch(setTutor())
@@ -225,7 +254,6 @@ const TutorSetup = () => {
       );
       dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
       console.log(response.data)
-      alert(`Your New Screen Name Is ${response.data[0]?.TutorScreenname}`);
       setTimeout(() => {
         document.querySelector(".save-overlay")?.removeAttribute("id");
       }, 1000);
@@ -379,7 +407,7 @@ const TutorSetup = () => {
         }}
         value=""
       >
-        GMT
+        Select
       </option>
     );
 
@@ -415,7 +443,7 @@ const TutorSetup = () => {
         }}
         value=""
       >
-        Response
+        Select
       </option>
     );
 
@@ -696,6 +724,7 @@ const TutorSetup = () => {
                     Cell Phone
                   </label>{" "}
                   &nbsp;&nbsp;
+                  {/*
                   <input
                     className="form-control"
                     required
@@ -710,7 +739,23 @@ const TutorSetup = () => {
                     value={cell}
                     type="text"
                     id="cellphn"
+                  /> */}
+                  <PhoneInput
+                    defaultCountry="us"
+                    value={cell}
+                    onChange={(cell) => set_cell(cell)}
+                  
+                    style={{
+                      margin: "2.5px 0 0 0",
+                      width: "70%",
+                      float: "right",
+                      position: "relative",
+                    }}
+                    required
                   />
+                  
+
+                  
                 </div>
                 <div
                   style={{
@@ -740,6 +785,7 @@ const TutorSetup = () => {
                       padding: "5px 5px 5px 5px",
                       margin: "0 0 10px 0",
                     }}
+                    required
                   >
                     {response_list}
                   </select>
@@ -801,7 +847,7 @@ const TutorSetup = () => {
                   <input
                     className="form-control"
                     onInput={(e) => set_add2(e.target.value)}
-                    placeholder="Address 2"
+                    placeholder="Optional"
                     value={add2}
                     type="text"
                     id="add2"
@@ -893,7 +939,7 @@ const TutorSetup = () => {
                       <option value='' selected disabled>Select State</option>
                       {(options[country] ?? []).map((item) => <option value={item}>{item}</option>)}
                     </select> :
-                    <input className="form-control" type="text" value={state} onChange={(e) => set_state(e.target.value)} />
+                    <input className="form-control" disabled type="text" value={state} onChange={(e) => set_state(e.target.value)} />
                   }
                 </div>
 
@@ -957,6 +1003,7 @@ const TutorSetup = () => {
                       padding: "5px 5px 5px 5px",
                       margin: "0 0 10px 0",
                     }}
+                    required
                   >
                     {GMTList}
                   </select>
@@ -1063,12 +1110,16 @@ const TutorSetup = () => {
                 <label s htmlFor="headline">
                   Grades I teach
                 </label>
+                {unSavedChanges &&<p>save changes please</p>}
                 <br />
+                {!isAtLeastOneChecked && (<p className="text-danger text-normal">
+                      please select atleast one grade</p>)}
                 <div className="tutor-grades">
                   <ul>
                     {grades.map((item) => {
                       const isChecked = tutorGrades.includes(item.grade);
                       return (
+            
                         <li>
                           <div
                             className="input-cnt"
@@ -1098,9 +1149,11 @@ const TutorSetup = () => {
                           </div>
                         </li>
                       );
+                      
                     })}
                   </ul>
                 </div>
+                
               </div>
 
               <div
@@ -1119,6 +1172,7 @@ const TutorSetup = () => {
                   className="form-control"
                   value={headline}
                   maxLength={80}
+                  required
                   placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
                   onInput={(e) =>
                     counter(e.target.value, e.target, set_headline, 80)
@@ -1145,6 +1199,7 @@ const TutorSetup = () => {
                     class="form-control"
                     value={intro}
                     maxLength={500}
+                    required
                     placeholder="Write Your Introduction Here... e.g: (My name is Fabian and i am a graduate of Harvard University in Boston...)"
                     onInput={(e) =>
                       counter(e.target.value, e.target, set_intro, 500)
@@ -1170,9 +1225,10 @@ const TutorSetup = () => {
                     class="form-control"
                     value={motivation}
                     maxLength={500}
+                    required
                     placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
                     onInput={(e) =>
-                      counter(e.target.value, e.target, set_motivation)
+                      counter(e.target.value, e.target, set_motivation,500)
                     }
                     style={{ width: "100%", padding: "10px", height: "160px" }}
                     name=""
@@ -1185,7 +1241,7 @@ const TutorSetup = () => {
               </div>
             </div>
           </div>
-          <Actions />
+          <Actions unSavedChanges={unSavedChanges} />
         </form>
       </motion.div>
     </>

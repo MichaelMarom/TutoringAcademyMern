@@ -342,7 +342,7 @@ const Subjects = () => {
 
                     </div>
 
-                    <div className="tables" style={{ height: '430px', width: '100%', overflow: 'auto', padding: '5px' }}>
+                    <div className="tables" style={{ height: '60vh', width: '100%', overflow: 'auto', padding: '5px' }}>
 
                         <table style={{ position: 'relative' }}>
                             <thead >

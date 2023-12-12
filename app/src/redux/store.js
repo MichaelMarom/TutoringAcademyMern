@@ -19,6 +19,7 @@ import shortlistReducer from './student_store/shortlist'
 
 import tutorReducer from './tutor_store/tutorData'
 import videoReducer from './tutor_store/video'
+import chatReducer from './chat/chat';
 
 let store = configureStore({
   reducer: {
@@ -28,6 +29,7 @@ let store = configureStore({
     student: studentReducer,
     shortlist: shortlistReducer,
     bookings: studentBookingsReducer,
+    chat: chatReducer,
 
     tutor: tutorReducer,
     video: videoReducer,

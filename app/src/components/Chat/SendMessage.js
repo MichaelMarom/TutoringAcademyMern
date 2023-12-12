@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { capitalizeFirstLetter } from '../../helperFunctions/generalHelperFunctions';
 
-function SendMessage({ selectedChat, setMessages, messages, sendMessage }) {
+function SendMessage({ sendMessage }) {
   const [text, setText] = useState('');
 
   const handleSendMessage = () => {

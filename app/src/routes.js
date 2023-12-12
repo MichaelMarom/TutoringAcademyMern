@@ -20,6 +20,7 @@ import { get_my_data } from "./axios/student";
 
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
+import { setChats } from "./redux/chat/chat";
 
 const App = () => {
   let location = useLocation();
@@ -27,10 +28,16 @@ const App = () => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.user);
+  const { student } = useSelector((state => state.student))
+  const { tutor } = useSelector((state => state.tutor))
+
   const [activeRoutes, setActiveRoutes] = useState([]);
   const storedUser = localStorage.getItem("user");
   const studentUserId = localStorage.getItem('student_user_id')
   const tutorUserId = localStorage.getItem('tutor_user_id')
+  const studentLoggedIn = location.pathname.split('/')[1] === 'student';
+  const loggedInUserDetail = studentLoggedIn ? student : tutor;
+  const role = studentLoggedIn ? 'student' : 'tutor'
 
   //ids
   useEffect(() => {
@@ -71,6 +78,16 @@ const App = () => {
     dispatch(setTutor())
   }, [dispatch, tutorUserId])
 
+  useEffect(() => {
+    const fetchData = () => {
+      if (loggedInUserDetail.AcademyId) {
+        dispatch(setChats(loggedInUserDetail.AcademyId, role));
+      }
+    };
+
+    fetchData();
+
+  }, [dispatch, loggedInUserDetail.AcademyId, role])
 
   //routes
   const generateRoutes = (role) => {

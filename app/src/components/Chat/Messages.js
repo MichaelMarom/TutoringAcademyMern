@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 import Loading from '../common/Loading';
 import MessageBox from './MessageBox';
 
-function Messages({ selectedChat, messages, fetchingMessages }) {
+function Messages({ messages, fetchingMessages }) {
   const messagesContainer = useRef(null);
 
   useEffect(() => {

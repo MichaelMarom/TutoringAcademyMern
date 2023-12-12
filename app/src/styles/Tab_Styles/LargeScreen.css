@@ -239,6 +239,7 @@ html,body{
         align-items: center;
         justify-content: left;
         overflow-x: auto;
+        overflow-y: hidden;
         padding: 0 8px 0 8px;
         scroll-behavior: smooth;
         transition: cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -415,16 +416,6 @@ html,body{
         height: 250px;
         width: 250px;
         border: 1px dashed #000000;
-    }
-
-    #btn {
-        /* padding: 10px 40px 10px 40px;
-        border-radius: 2.5px;
-        background-color: #000000;
-        color: #fff;
-        cursor: pointer;
-        border-radius: 2.5px;
-        margin: 10px 0 10px 0; */
     }
 
     .profile-photo-cnt {

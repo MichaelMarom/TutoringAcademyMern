@@ -1,17 +1,22 @@
 import React from 'react';
 
-function DiscussionItem({ setSelectedChat, name, datetime, message, avatarSrc, unread, groupAmount, id }) {
+function DiscussionItem({ fetchingMessages, setSelectedChat, selectedChat, name, datetime, message, avatarSrc, unread, groupAmount, id }) {
     return (
         <li className={`ks-item w-100 ${unread ? 'ks-unread' : ''}`}
-            onClick={() => setSelectedChat({ id, name, datetime, message, avatarSrc, unread, groupAmount })}
+            style={{
+                borderLeft: id === selectedChat.id ? '5px solid lightGreen' : "none",
+
+            }}
+            onClick={() => !fetchingMessages && setSelectedChat({ id, name, datetime, message, avatarSrc, unread, groupAmount })}
         >
-            <div className="ks-body w-100">
-                <div className="ks-name d-flex justify-content-between align-items-center">
+            <div className="ks-body w-100 ">
+                <div className="ks-name d-flex justify-content-start align-items-center"
+                >
+                    <img src={avatarSrc} width="30" height="30" style={{ marginRight: "10px" }} className="rounded-circle" alt="User Avatar" />
                     <h6 className='text-start'>  {name}</h6>
                     <span className="ks-datetime">{datetime}</span>
                 </div>
                 <div className="ks-message d-flex ">
-                    <img src={avatarSrc} width="18" height="18" className="rounded-circle" alt="User Avatar" />
                     <p> {message}</p>
                 </div>
             </div>
@@ -19,7 +24,7 @@ function DiscussionItem({ setSelectedChat, name, datetime, message, avatarSrc, u
     );
 }
 
-function DiscussionList({ discussions, setSelectedChat }) {
+function DiscussionList({ selectedChat, fetchingMessages, discussions, setSelectedChat }) {
     return (
         <div className="ks-body jspScrollable" data-auto-height=""
             style={{ overflowY: 'auto', overflowX: "hidden", padding: '0px', width: '339px' }} tabIndex="0">
@@ -28,6 +33,7 @@ function DiscussionList({ discussions, setSelectedChat }) {
                     <ul className="ks-items d-flex flex-column">
                         {discussions.map((discussion, index) => (
                             <DiscussionItem
+                                fetchingMessages={fetchingMessages}
                                 setSelectedChat={setSelectedChat}
                                 key={index}
                                 name={discussion.name}
@@ -37,6 +43,7 @@ function DiscussionList({ discussions, setSelectedChat }) {
                                 unread={discussion.unread}
                                 groupAmount={discussion.groupAmount}
                                 id={discussion.id}
+                                selectedChat={selectedChat}
                             />
                         ))}
                     </ul>
@@ -54,15 +61,16 @@ function SearchBar() {
     );
 }
 
-export default function Chats({ setSelectedChat, discussionData }) {
-
-
+export default function Chats({ socket, fetchingMessages, setSelectedChat, selectedChat, discussionData }) {
     return (
         <div className="ks-discussions">
             <SearchBar />
             <DiscussionList
                 setSelectedChat={setSelectedChat}
-                discussions={discussionData} />
+                discussions={discussionData}
+                fetchingMessages={fetchingMessages}
+                selectedChat={selectedChat}
+            />
         </div>
     );
 }

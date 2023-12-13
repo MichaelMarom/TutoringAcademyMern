@@ -8,11 +8,12 @@ import Select from 'react-select'
 import Actions from '../../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { upload_file } from '../../../axios/file';
+import { deleteFileOnServer, getPreviousFilePathFromDB, upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
 import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES, languages } from '../../../constants/constants'
 import { unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
+import FileUpload from '../../common/FileUpload/FileUpload';
 
 
 
@@ -91,6 +92,8 @@ const Education = () => {
     let [files, set_files] = useState('');
 
     const [degreeFile, setDegreeFile] = useState(null);
+    const [resumeFile, setResumeFile] = useState(null);
+    const [resumePath,set_resumePath] = useState(null);
     const [degreeFileContent, setDegreeFileContent] = useState('')
     const [certificateFile, setCertificateFile] = useState(null);
     const [certFileContent, setCertFileContent] = useState('')
@@ -164,7 +167,8 @@ const Education = () => {
             countryForMast,
             countryForCert,
             countryForDoc,
-            countryForAssociate
+            countryForAssociate,
+            resumePath
         )
         return response;
     }
@@ -264,6 +268,7 @@ const Education = () => {
 
                 if (result.length > 0) {
                     let data = result[0];
+                    console.log(data);
                     set_files(data)
                     set_workExperience(data.WorkExperience)
                     set_university1(data.College1)
@@ -304,6 +309,7 @@ const Education = () => {
 
                     set_expiration(data.CertificateExpiration)
                     set_experience(data.EducationalLevelExperience)
+                    set_resumePath(data.Resume);
                     setDataFetched(true)
                 } else {
                     set_files(null)
@@ -411,6 +417,14 @@ const Education = () => {
             setDegreeFile(file);
         }
     }
+    const handleResumeFileUpload = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            setResumeFile(file);
+            set_resumePath(`${user_id}-resume-${file.name}`);
+        }
+    }
 
     const handleUploadDegreeToServer = async () => {
         if (degreeFile) {
@@ -419,6 +433,30 @@ const Education = () => {
 
             try {
                 const filePrefix = `${user_id}-degree-${degree}`
+                const response = await upload_file(formData, filePrefix)
+
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        } else {
+            console.warn('Please select a file before uploading.');
+        }
+    };
+    const handleUploadResumeToServer = async () => {
+        if (resumeFile) {
+            const previousFilePath = await getPreviousFilePathFromDB(user_id);
+            console.log(previousFilePath,"previous");
+            if (previousFilePath) {
+                await deleteFileOnServer(previousFilePath);
+                console.log('Previous file deleted successfully:', previousFilePath);
+            }
+
+            const formData = new FormData();
+            formData.append('file', resumeFile);
+
+            try {
+                const filePrefix = `${user_id}-resume-${resumeFile.name}`
                 const response = await upload_file(formData, filePrefix)
 
                 console.log(response.data);
@@ -467,6 +505,7 @@ const Education = () => {
         if (res) {
             handleUploadDegreeToServer()
             handleUploadCertificateToServer()
+            handleUploadResumeToServer();
             setEditMode(false);
             toast.success('Education record saved Successfully');
         }
@@ -1023,6 +1062,18 @@ const Education = () => {
                                 placeholder="Enter Your Work Experience"
                                 required
                             />
+                            <div className="form-outline mt-3">
+                            <h6 className='border-bottom'>Upload your Resume</h6>
+                                <input
+                                    type="file"
+                                    accept=".pdf, .jpeg, .png, .jpg"
+                                    id="degreeFile"
+                                    name="degreeFile"
+                                    disabled={!editMode}
+                                    className="form-control m-0"
+                                    onChange={handleResumeFileUpload}
+                                />
+                                </div>
                         </div>
                     </div>
 

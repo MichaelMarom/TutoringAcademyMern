@@ -1,4 +1,5 @@
-const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response,subject_already_exist, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details, storeEvents, fetchStudentsBookings, storeCalenderTutorRecord, get_tutor_status, faculties, post_new_subject, post_tutor_setup, get_tutor_market_data, get_tutor_students} = require('../controllers/tutor');
+const multer = require('multer');
+const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response,subject_already_exist, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details, storeEvents, fetchStudentsBookings, storeCalenderTutorRecord, get_tutor_status, faculties, post_new_subject, post_tutor_setup, get_tutor_market_data, get_tutor_students, uploadResume, storage} = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan,  cors, shortId, jwt } = require('../modules');
 

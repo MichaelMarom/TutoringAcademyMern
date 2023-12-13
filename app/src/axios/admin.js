@@ -17,6 +17,25 @@ export let delete_new_subject = (subject, AcademyId) => {
 
 }
 
+export const post_termsOfUse = async (data) => {
+    try {
+        const response = await apiClient.post(`/admin/store-terms`,data);
+        return response;
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+};
+export const get_adminConstants = async (data) => {
+    try {
+        const response = await apiClient.get(`/admin/get-constants`);
+        return response;
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+};
+
 export let post_new_subject = (id, subject, AcademyId) => {
 
     return new Promise((resolve, reject) => {

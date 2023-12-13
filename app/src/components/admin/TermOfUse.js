@@ -1,4 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import RichTextEditor from "../common/RichTextEditor/RichTextEditor";
+import Actions from "../common/Actions";
+import { get_adminConstants, post_termsOfUse } from "../../axios/admin";
 
 const TermOfUse = () => {
     useEffect(() => {
@@ -8,11 +11,72 @@ const TermOfUse = () => {
             next?.removeAttribute('id');
         }
     }, [])
+    const [unSavedChanges, setUnsavedChanges] = useState(false);
+
+    const [terms, set_terms] = useState('');
+    const [db_terms, set_db_terms] = useState('');
+    const [userRole, setUserRole] = useState('');
+    const [editMode, setEditMode] = useState(false);
+    const tutorId = localStorage.getItem('tutor_user_id');
+    const [agreed, set_agreed] = useState(false);
+    useEffect( () => {
+        const fetchData =async()=>{
+            try {
+                
+                const storedUserRole = localStorage.getItem('user_role');
+                // const storedUserRole = 'notadmin';
+                const result = await get_adminConstants();
+                set_terms(result.data[0].TermContent);
+                set_db_terms(result.data[0].TermContent);
+                setUserRole(storedUserRole);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                
+            }
+        }
+        fetchData();
+    }, []);
+    useEffect(() => {
+        if (terms !== db_terms) {
+            setUnsavedChanges(true);
+        } else setUnsavedChanges(false)
+        
+    }, [terms])
+    const handleEditorChange = (value) => {
+        set_terms(value);
+    };
+    const handleEditClick = () => {
+        setEditMode(true);
+    };
+    const handleSave = async (e) => {
+        e.preventDefault();
+
+        const response = await post_termsOfUse({ TermContent: terms });
+        console.log(response.data);
+        setEditMode(false);
+    };
     return (
 
         <>
             <div className="form-term-of-use">
-
+                <form action='' onSubmit={handleSave}>
+                    <div className='px-4'>
+                        <RichTextEditor
+                            value={terms}
+                            onChange={handleEditorChange}
+                            readOnly={!editMode}
+                            placeholder="Enter Your Work Experience"
+                        // required
+                        />
+                    </div>
+                    <Actions
+                        saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
+                        editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
+                        onEdit={handleEditClick}
+                        unSavedChanges={unSavedChanges}
+                    />
+                </form>
+<div className="d-none">
                 <div className="term-of-use-cnt">
                     TUTORING ACADEMY TERMS OF USE.
                     CHECKING THE BOX BELOW, CONSTITUTES YOUR ACCEPTANCE OF THIS TERMS OF USE;
@@ -56,6 +120,7 @@ const TermOfUse = () => {
 
                 </div>
 
+            </div>
             </div>
         </>
     );

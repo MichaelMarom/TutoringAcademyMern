@@ -18,6 +18,9 @@ const Header = () => {
         { id: 'new-subject', label: 'New Subject' },
         { id: 'accounting', label: 'Accounting' },
         { id: 'communications', label: 'Communications' },
+        { id: 'tos', label: 'TOS' },
+        { id: 'intro', label: 'Plateform Intro' },
+
     ];
 
 

@@ -230,7 +230,7 @@ let post_form_two = async (req, res) => {
 
                 return result.recordset
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     });
 
     if (!duplicate.length) {
@@ -582,7 +582,7 @@ let get_user_data = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -784,7 +784,7 @@ let get_my_data = async (req, res) => {
             .then(() => {
                 response_2(cb)
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     }
 
     sender(() => {
@@ -844,7 +844,7 @@ let get_tutor_rates = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -865,7 +865,7 @@ let faculties = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -887,7 +887,7 @@ let get_bank_details = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -993,7 +993,7 @@ let storeCalenderTutorRecord = (req, res) => {
                     .then((result) => {
                         res.status(200).send(result.recordset);
                     })
-                    // .catch(err => console.log(err))
+                // .catch(err => console.log(err))
             }
         })
     } catch (error) {
@@ -1017,7 +1017,7 @@ let get_tutor_status = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -1102,7 +1102,7 @@ let get_tutor_market_data = async (req, res) => {
             .then((result) => {
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let Education = await connecteToDB.then(poolConnection =>
@@ -1111,7 +1111,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
 
     )
 
@@ -1121,7 +1121,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
 
     )
 
@@ -1131,7 +1131,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let CertificateTypes = await connecteToDB.then(poolConnection =>
@@ -1140,7 +1140,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
 
     )
 
@@ -1150,7 +1150,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let Faculty = await connecteToDB.then(poolConnection =>
@@ -1159,8 +1159,8 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let GMT = await connecteToDB.then(poolConnection =>
@@ -1169,8 +1169,8 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     new Promise((resolve, reject) => {

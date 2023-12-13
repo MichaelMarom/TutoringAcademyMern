@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Loading from '../common/Loading';
 import MessageBox from './MessageBox';
 
@@ -19,8 +19,8 @@ function Messages({ messages, fetchingMessages }) {
       <div className="jspContainer" style={{ width: '100%', height: '481px' }}>
         <div className="jspPane" style={{ padding: '0px', top: '0px', width: '100%' }}>
           <ul className="ks-items d-flex flex-column">
-            {messages.map((message) => (
-              <MessageBox message={message} />
+            {(messages).map((message) => (
+              <MessageBox message={message} key={message.id} />
             ))}
           </ul>
         </div>

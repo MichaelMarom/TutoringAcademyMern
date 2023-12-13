@@ -7,8 +7,9 @@ import { get_student_short_list, get_student_short_list_data, get_tutor_subject,
 import { socket } from '../../socket';
 import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setShortlist } from '../../redux/student_store/shortlist';
+import { create_chat } from '../../axios/chat';
 
 const StudentFaculties = () => {
     const dispatch = useDispatch()
@@ -16,6 +17,7 @@ const StudentFaculties = () => {
     const [data, setData] = useState([]);
     const columns = useMemo(() => COLUMNS, []);
     const [checkBoxClicked, setCheckBoxClicked] = useState("")
+    const { student } = useSelector(state => state.student)
 
     useEffect(() => {
         const fetchTutorSubject = async () => {
@@ -106,6 +108,12 @@ const StudentFaculties = () => {
                 let res = upload_student_short_list(data);
 
                 if (res) {
+                    const tutorSelectedId = data[0].split('-')[0]
+                    console.log(data[0], student.AcademyId);
+                    create_chat({ User1ID: student.AcademyId, User2ID: tutorSelectedId })
+                        .then(() => { toast.success('You can also chat with selected tutor in MessageBoard Tab!') })
+                        .catch((err => console.log(err)))
+                        
                     setTimeout(() => {
                         document.querySelector('.save-overlay')?.removeAttribute('id');
                     }, 1000);
@@ -243,7 +251,7 @@ const StudentFaculties = () => {
 
                     <div className="form-subject-search-bar">
                         <div>
-                          <label style={{ float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px' }} htmlFor="search"><h6>                                                               </h6></label>
+                            <label style={{ float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px' }} htmlFor="search"><h6>                                                               </h6></label>
                         </div>
                     </div>
 

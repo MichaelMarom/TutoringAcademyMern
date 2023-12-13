@@ -8,20 +8,16 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import CommonLayout from '../layouts/CommonLayout';
 import { NoChatSelectedScreen } from '../components/Chat/NoChatSelectedScreen';
 import { useSelector } from 'react-redux';
-import { get_chats, get_chat_message, post_message } from '../axios/chat';
+import { get_chat_message, post_message } from '../axios/chat';
 import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
-import { socket } from '../socket';
-import Loading from '../components/common/Loading';
-
+import { socket } from '../socket'
 
 function Chat() {
     const [selectedChat, setSelectedChat] = useState({});
     const navigate = useNavigate();
     const params = useParams();
-    const socketRef = useRef();
     const location = useLocation()
     const { shortlist } = useSelector(state => state.shortlist);
-    // const [chats, setChats] = useState([]);
     const { student } = useSelector(state => state.student);
     const { tutor } = useSelector(state => state.tutor);
     const studentLoggedIn = location.pathname.split('/')[1] === 'student';
@@ -30,17 +26,16 @@ function Chat() {
     const [messages, setMessages] = useState([])
     const [arrivalMsg, setArrivalMsg] = useState(null);
     const [fetchingMessages, setFetchingMessages] = useState(false)
-    const [renderComponent, setRenderComponent] = useState(true);
+    // const [renderComponent, setRenderComponent] = useState(true);
     const [dbMessages, setDbMessages] = useState([])
 
-
     useEffect(() => {
-        socketRef.current = socket;
-        if (loggedInUserDetail) {
-            console.log(loggedInUserDetail.AcademyId, socketRef.current, '37')
-            socketRef.current.emit("add-user", loggedInUserDetail.AcademyId);
+
+        if (loggedInUserDetail.AcademyId && selectedChat.id) {
+            socket.emit("add-user", selectedChat.id);
         }
-    }, [loggedInUserDetail]);
+
+    }, [loggedInUserDetail, selectedChat.id]);
 
     const sendMessage = async (text) => {
         if (text.trim() !== '') {
@@ -50,69 +45,50 @@ function Chat() {
                 date: new Date(),
                 text,
                 photo: loggedInUserDetail.Photo,
-                to: selectedChat.AcademyId
+                to: selectedChat.AcademyId,
+                room: selectedChat.id
             }
-            socketRef.current.emit("send-msg", newMessage);
             setMessages([...messages, newMessage]);
             const body = {
                 Text: text,
                 Date: new Date(),
                 Sender: loggedInUserDetail.AcademyId,
                 ChatID: selectedChat.id
-            }
+            };
+
             await post_message(body)
+            delete newMessage.photo;
+            socket.emit("send-msg", newMessage);
         }
     }
-    console.log(selectedChat)
+
+    //// console.log(selectedChat)
     useEffect(() => {
         arrivalMsg && setMessages((prev) => [...prev, arrivalMsg]);
     }, [arrivalMsg]);
 
     useEffect(() => {
-        if (socketRef.current) {
-            console.log('msg-rec')
-            socketRef.current.on("msg-recieve", (msgObj) => {
-                console.log('msg-rec2')
+        if (socket) {
+            socket.on("msg-recieve", (msgObj) => {
+                // console.log('msg-rec2')
                 setArrivalMsg(msgObj);
             });
         }
     }, []);
 
-    const compareTwoMessagesArray = (array1, array2) => {
-        const idsArray1 = array1.map(item => item.id);
-        const idsArray2 = array2.map(item => item.id);
-        const areIdsEqual = idsArray1.length === idsArray2.length && idsArray1.every(id => idsArray2.includes(id));
-        return areIdsEqual
-    }
-    useEffect(() => {
-        const getMessages = async () => {
-            if (params.id) {
-                const data = await get_chat_message(params.id);
-                setDbMessages(data)
-                setMessages(data)
-            }
-        }
-        getMessages();
-    }, [selectedChat.id])
+
 
     useEffect(() => {
+        setFetchingMessages(true);
         const getMessages = async () => {
             if (params.id) {
                 const data = await get_chat_message(params.id);
-                if (!compareTwoMessagesArray(dbMessages, data)) {
-                    console.log('hehe not matched', dbMessages, data)
-                    setFetchingMessages(true);
-                    setMessages(data);
-                }
+                setMessages(data);
             }
             setFetchingMessages(false);
         };
 
         getMessages();
-
-        // const intervalId = setInterval(getMessages, 4000);
-
-        // return () => clearInterval(intervalId);
     }, [navigate, params.id, studentLoggedIn, dbMessages]);
 
     useEffect(() => {
@@ -120,14 +96,14 @@ function Chat() {
             const currentPath = `/${studentLoggedIn ? 'student' : 'tutor'}/chat/${selectedChat.id}`;
             navigate(currentPath);
         }
-    }, [selectedChat.id])
+    }, [selectedChat.id, navigate, studentLoggedIn])
 
     useEffect(() => {
+        // eslint-disable-next-line
         const foundChat = chats.find(chat => chat.id == params.id) || {};
         setSelectedChat(foundChat);
 
     }, [params.id, shortlist, chats]);
-
 
     return (
         <CommonLayout role={studentLoggedIn ? 'student' : 'tutor'} showLegacyFooter={false}>
@@ -135,7 +111,7 @@ function Chat() {
                 <div className="ks-page-content">
                     <div className="ks-page-content-body">
                         <div className="border ks-messenger shadow">
-                            <Chats socket={socket}
+                            <Chats
                                 setSelectedChat={setSelectedChat}
                                 fetchingMessages={fetchingMessages}
                                 discussionData={chats}

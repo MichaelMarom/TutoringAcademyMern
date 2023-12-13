@@ -94,6 +94,14 @@ const findByAnyIdColumn = (tableName, condition, casting = null) => {
     return query;
 }
 
+/**
+ * 
+ * @param {String} tableName 
+ * @param {{}} where 
+ * @param {String} opr 
+ * @param {{}} casting 
+ * @returns  query
+ */
 const find = (tableName, where, opr = 'AND', casting = {}) => {
     const conditions = [];
 

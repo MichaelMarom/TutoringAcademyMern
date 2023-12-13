@@ -1,5 +1,5 @@
-const { express, path, Pusher, fs, parser, cookieParser, mocha, mongodb, morgan, socket, cors, shortId, jwt } = require('./modules');
-const { ConnectToMongoDb, marom_db, sql, connecteToDB } = require('./db')
+const { express, path, morgan, socket, cors } = require('./modules');
+const { ConnectToMongoDb, marom_db, connecteToDB } = require('./db')
 const { STUDENT_ROUTES } = require('./routes/student');
 const { ADMIN_ROUTES } = require('./routes/admin');
 const { TUTOR_ROUTES } = require('./routes/tutor');
@@ -30,7 +30,6 @@ app.use(COMMON_ROUTERS)
 var server = app.listen(process.env.PORT, () =>
     console.log('app is live @', process.env.PORT));
 
-global.onlineUsers = new Map();
 const io = socket(server, {
     cors: {
         origin: process.env.Remote_Base,
@@ -62,7 +61,6 @@ io.on('connection', socket => {
         deleteData(AcademyId, subject);
     })
 
-
     socket.on('studentIllShorList', ({ id }) => {
 
         let deleteData = (subject, AcademyId, Student) => {
@@ -88,8 +86,6 @@ io.on('connection', socket => {
         deleteData(list[1], list[0], list[4]);
     })
 
-
-
     socket.on('join-room', (room_id, user_id) => {
 
         socket.join(room_id);
@@ -103,17 +99,15 @@ io.on('connection', socket => {
 
 
 
-    socket.on("add-user", (userId) => {
-        onlineUsers.set(userId, socket.id);
-        console.log(userId, onlineUsers, '106 line')
+    socket.on("add-user", (roomId) => {
+        socket.join(roomId)
+        console.log('User', socket.id, ' joined room ', roomId)
     });
 
     socket.on("send-msg", (data) => {
-        const sendUserSocket = onlineUsers.get(data.to);
-        console.log(data, onlineUsers, '112 line')
-        if (sendUserSocket) {
-            socket.to(sendUserSocket).emit("msg-recieve", data);
-        }
+        const { to, text, room } = data
+        console.log(`Message:${text} sent from room:${room} to ${to}`);
+        socket.to(room).emit("msg-recieve", data);
     });
 
     socket.on('canvas-start', (pX, pY, color, thickness, fill) => {
@@ -315,27 +309,13 @@ io.on('connection', socket => {
             }
         })
     })
+
+    socket.on('disconnect', (error) => {
+        console.log('disonnecting', socket.id, ' due to', error, socket.id)
+    })
+
 });
 
-
-/*
-marom_db(async(config) => {
-    const sql = require('mssql');
-
-    var poolConnection = await sql.connect(config);
-    console.log(poolConnection._connected)
-    if(poolConnection){
-        var resultSet = await poolConnection.request().query(
-            `
-                SELECT Id,FacultyId,SubjectName FROM Subjects
-            `
-        )
-
-       
-    }
-
-})
-*/
 
 var { PeerServer } = require("peer");
 var myPeerServer = PeerServer({ port: 8080 });
@@ -351,7 +331,7 @@ myPeerServer.on("disconnect", function ({ id }) {
 
 
 process.on('unhandledRejection', (reason, promise) => {
-    //console.log('Unhandled Rejection at:', reason.stack || reason)
+    console.log('Unhandled Rejection at:', reason.stack || reason)
     // Recommended: send the information to sentry.io
     // or whatever crash reporting service you use
 })

@@ -87,8 +87,6 @@ const StudentAside = () => {
 
         peer.on('open', id => {
             socket.emit('join-room', room_id, id);
-
-            
         })
 
         const peers = {}

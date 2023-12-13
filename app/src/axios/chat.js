@@ -31,3 +31,14 @@ export const post_message = async (body) => {
         return err
     }
 }
+
+export const create_chat = async (body) => {
+    try {
+        const { data } = await apiClient.post('/chat', body);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}

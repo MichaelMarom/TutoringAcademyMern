@@ -61,7 +61,7 @@ function SearchBar() {
     );
 }
 
-export default function Chats({ socket, fetchingMessages, setSelectedChat, selectedChat, discussionData }) {
+export default function Chats({  fetchingMessages, setSelectedChat, selectedChat, discussionData }) {
     return (
         <div className="ks-discussions">
             <SearchBar />

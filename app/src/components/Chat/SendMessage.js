@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 function SendMessage({ sendMessage }) {
   const [text, setText] = useState('');
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (e) => {
+    e.preventDefault();
     setText('');
     sendMessage(text)
   }

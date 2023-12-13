@@ -15,10 +15,11 @@ const fetch_chats = async (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     req.params.role === 'student' ?
-                        `Select ch.ChatID, ch.LastSeen, ch.User1ID,ch.UnRead, ch.User2ID, ts.Photo, ts.FirstName, ts.LastName,
+                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId, ch.User1ID,ch.UnRead, ch.User2ID, 
+                        ts.Photo, ts.FirstName, ts.LastName,
                     ch.State from Chat as ch join TutorSetup as ts on ts.AcademyId = ch.User2ID
                      WHERE User1ID = '${req.params.userId}' OR User2ID = '${req.params.userId}'` :
-                        `Select ch.ChatID, ch.LastSeen, ch.User1ID,ch.UnRead, ch.User2ID, ts.Photo, ts.FirstName, 
+                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId,ch.User1ID,ch.UnRead, ch.User2ID, ts.Photo, ts.FirstName, 
                         ts.LastName, ch.State from Chat as ch join StudentSetup as ts on cast(ts.AcademyId as varchar)= ch.User1ID
                       WHERE User1ID = '${req.params.userId}' OR User2ID = '${req.params.userId}'`
                 );
@@ -29,7 +30,8 @@ const fetch_chats = async (req, res) => {
                     name: `${capitalizeFirstLetter(record.FirstName)} ${capitalizeFirstLetter(record.LastName)}`,
                     avatarSrc: record.Photo,
                     unread: record.UnRead,
-                    state: record.State
+                    state: record.State,
+                    AcademyId: record.AcademyId
                 }))
 
                 res.status(200).send(formatedResult);
@@ -40,6 +42,7 @@ const fetch_chats = async (req, res) => {
         }
     })
 };
+
 const fetch_chat_messages = async (req, res) => {
 
     marom_db(async (config) => {
@@ -50,7 +53,7 @@ const fetch_chat_messages = async (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `
-                    SELECT * FROM Message AS ms JOIN (
+                    SELECT TOP 10 * FROM Message AS ms JOIN (
                       SELECT CAST(AcademyId AS VARCHAR(MAX)) AS AcademyId, CAST(Photo AS VARCHAR(MAX))
                     AS Photo, CAST(FirstName AS VARCHAR(MAX)) AS FirstName, 
                     CAST(LastName AS VARCHAR(MAX)) AS LastName FROM StudentSetup
@@ -59,7 +62,9 @@ const fetch_chat_messages = async (req, res) => {
                         AS Photo, CAST(FirstName AS VARCHAR(MAX)) AS FirstName,
                         CAST(LastName AS VARCHAR(MAX)) AS LastName FROM TutorSetup
                         ) AS combinedSetup ON ms.Sender = combinedSetup.AcademyId
-                     WHERE ms.ChatID = ${req.params.chatId}`
+                     WHERE ms.ChatID = ${req.params.chatId}
+                     ORDER BY Date DESC
+                     `
                 );
                 const formatedResult = result.recordset.map(record =>
                 ({

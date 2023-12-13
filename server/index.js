@@ -1,4 +1,4 @@
-const { express, path, Pusher, fs, parser, cookieParser, mocha, mongodb, morgan, io, cors, shortId, jwt } = require('./modules');
+const { express, path, Pusher, fs, parser, cookieParser, mocha, mongodb, morgan, socket, cors, shortId, jwt } = require('./modules');
 const { ConnectToMongoDb, marom_db, sql, connecteToDB } = require('./db')
 const { STUDENT_ROUTES } = require('./routes/student');
 const { ADMIN_ROUTES } = require('./routes/admin');
@@ -27,10 +27,19 @@ app.use(CHAT_ROUTES)
 app.use(COMMON_ROUTERS)
 
 
-var server = app.listen(process.env.PORT, _ => console.log('app is live @', process.env.PORT));
+var server = app.listen(process.env.PORT, () =>
+    console.log('app is live @', process.env.PORT));
 
+global.onlineUsers = new Map();
+const io = socket(server, {
+    cors: {
+        origin: process.env.Remote_Base,
+        credentials: true,
+    },
+});
 
-io(server, { cors: { origin: '*' } }).on('connection', socket => {
+io.on('connection', socket => {
+    global.chatSocket = socket;
 
     socket.on('DeleteSubjectRate', ({ AcademyId, subject }) => {
         console.log(AcademyId, subject)
@@ -94,8 +103,17 @@ io(server, { cors: { origin: '*' } }).on('connection', socket => {
 
 
 
-    socket.on('chat message', (message) => {
-        io.emit('chat message', message); // Broadcast the message to all connected clients
+    socket.on("add-user", (userId) => {
+        onlineUsers.set(userId, socket.id);
+        console.log(userId, onlineUsers, '106 line')
+    });
+
+    socket.on("send-msg", (data) => {
+        const sendUserSocket = onlineUsers.get(data.to);
+        console.log(data, onlineUsers, '112 line')
+        if (sendUserSocket) {
+            socket.to(sendUserSocket).emit("msg-recieve", data);
+        }
     });
 
     socket.on('canvas-start', (pX, pY, color, thickness, fill) => {

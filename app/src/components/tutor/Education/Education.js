@@ -10,7 +10,7 @@ import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
-import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES,languages } from '../../../constants/constants'
+import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES, languages } from '../../../constants/constants'
 import { unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
 
@@ -47,7 +47,7 @@ const Education = () => {
     }, [])
 
     const [editMode, setEditMode] = useState(false);
-    const [unSavedChanges,setUnsavedChanges]=useState(false);
+    const [unSavedChanges, setUnsavedChanges] = useState(false);
 
     let [level, set_level] = useState([]);
 
@@ -173,10 +173,10 @@ const Education = () => {
     };
     const handleEditorChange = (value) => {
         set_workExperience(value);
-      };
-    useEffect(()=>{
+    };
+    useEffect(() => {
         if (files.AcademyId !== undefined) {
-            let fieldValues ={
+            let fieldValues = {
                 level,
                 university1,
                 university2,
@@ -216,9 +216,9 @@ const Education = () => {
                 db_edu_cert,
                 fetchingEdu,
             }
-            setUnsavedChanges(unsavedEducationChangesHelper(fieldValues,files))
+            setUnsavedChanges(unsavedEducationChangesHelper(fieldValues, files))
         }
-    },[
+    }, [
         level,
         university1,
         university2,
@@ -261,7 +261,7 @@ const Education = () => {
 
         get_my_edu(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
-                
+
                 if (result.length > 0) {
                     let data = result[0];
                     set_files(data)
@@ -555,7 +555,7 @@ const Education = () => {
                                                     onClick={(e) => setCountryForAssoc(e.target.value)
                                                     }
                                                     disabled={!editMode}
-                                                    >
+                                                >
                                                     <option value={''} disabled selected>Select Country</option>
                                                     {Countries.map((option) =>
                                                         <option value={option.Country}
@@ -630,11 +630,11 @@ const Education = () => {
 
                                                 <div className="col-md-3">
                                                     <div>
-                                                        <label className="text-secondary">Country for Masters</label>
+                                                        <label className="text-secondary">Country for Master.</label>
                                                         <select className='form-select'
                                                             onClick={(e) => setCountryForMast(e.target.value)}
                                                             disabled={!editMode}
-                                                            >
+                                                        >
                                                             <option value={''} disabled selected>Select Country</option>
                                                             {Countries.map((option) =>
                                                                 <option value={option.Country}
@@ -696,7 +696,7 @@ const Education = () => {
                                             <h6 className='border-bottom'>Doctorate Degree</h6>
                                             <div className='d-flex justify-content-between'>
                                                 <div className="col-md-3">
-                                                    <label className="text-secondary" htmlFor="university2"> Doctorate Degree University:</label>
+                                                    <label className="text-secondary" htmlFor="university2"> Doctorate Degree university </label>
                                                     <input
                                                         type="text"
                                                         id="university2"
@@ -715,7 +715,7 @@ const Education = () => {
                                                         <select className='form-select'
                                                             onClick={(e) => setCountryForDoc(e.target.value)}
                                                             disabled={!editMode}
-                                                            >
+                                                        >
                                                             <option value={''} disabled selected>Select Country</option>
                                                             {Countries.map((option) =>
                                                                 <option value={option.Country}
@@ -999,7 +999,7 @@ const Education = () => {
                                         value={othelang}
                                         onChange={handleLanguageChange}
                                         options={languageOptions}
-                                        isDisabled={!editMode}                                    />
+                                        isDisabled={!editMode} />
                                 </div></div>
 
                         </div>
@@ -1016,20 +1016,20 @@ const Education = () => {
                         <div className=''>
 
                             <h6 className='border-bottom'>Work Experience</h6>
-                            <RichTextEditor 
+                            <RichTextEditor
                                 value={workExperience}
                                 onChange={handleEditorChange}
-                                readOnly={!editMode} 
+                                readOnly={!editMode}
                                 placeholder="Enter Your Work Experience"
                                 required
                             />
                         </div>
                     </div>
 
-                    <Actions 
-                    editDisabled={editMode} 
-                    onEdit={handleEditClick} 
-                    unSavedChanges={unSavedChanges}  />
+                    <Actions
+                        editDisabled={editMode}
+                        onEdit={handleEditClick}
+                        unSavedChanges={unSavedChanges} />
                 </form>
             </div >
         </div>

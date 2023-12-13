@@ -1,5 +1,5 @@
 const { get_tutor_data, set_tutor_status, get_student_data, set_student_status, get_tutor_new_subject, accept_new_subject, decline_new_subject } = require('../controllers/admin');
-const {express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt} = require('../modules');
+const {express, path, fs, parser, cookieParser, mocha, morgan,  cors, shortId, jwt} = require('../modules');
 
 
 const ADMIN_ROUTES = express.Router();

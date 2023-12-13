@@ -15,7 +15,7 @@ const { upload_form_one, get_student_setup, get_student_grade, get_tutor_subject
     update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings } = require('../controllers/student');
 const { express,
     path,
-    fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt } = require('../modules');
+    fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
 const STUDENT_ROUTES = express.Router();
 

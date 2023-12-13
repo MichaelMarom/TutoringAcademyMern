@@ -78,15 +78,6 @@ function Chat() {
         }
     }, []);
 
-    // useEffect(() => {
-    //     const getAllChats = async () => {
-    //         if (loggedInUserDetail.AcademyId) {
-    //             const data = await get_chats(loggedInUserDetail.AcademyId, studentLoggedIn ? 'student' : 'tutor');
-    //             setChats(data)
-    //         }
-    //     }
-    //     getAllChats();
-    // }, [shortlist])
     const compareTwoMessagesArray = (array1, array2) => {
         const idsArray1 = array1.map(item => item.id);
         const idsArray2 = array2.map(item => item.id);

@@ -1,6 +1,6 @@
 const { marom_db, connecteToDB } = require('../db');
 const { insert, getAll, findById, findByAnyIdColumn, update, find } = require('../helperfunctions/crud_queries');
-const { express, path, fs, parser, cookieParser, mocha, morgan, io, cors, shortId, jwt } = require('../modules');
+const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
 
 const executeQuery = async (query, res) => {

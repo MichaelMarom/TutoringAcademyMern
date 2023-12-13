@@ -26,7 +26,7 @@ const Actions = ({
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="col-1">
-                        <button type='button' onClick={onBack} className="btn btn-secondary">Back</button>
+                        <button type='button' onClick={onBack} className="btn btn-secondary" disabled={unSavedChanges}>Back</button>
                     </div>
                     <div className="col-1">
                         <button onClick={onEdit} type='button' className="btn btn-warning" disabled={editDisabled}>Edit</button>
@@ -37,7 +37,7 @@ const Actions = ({
                         </Button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onNext} type='button' className="btn btn-success">Next</button>
+                        <button onClick={onNext} disabled={unSavedChanges} type='button' className="btn btn-success">Next</button>
                     </div>
                 </div>
             </div>

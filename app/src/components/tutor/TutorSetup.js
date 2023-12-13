@@ -39,6 +39,7 @@ const isPhoneValid = (phone) => {
   }
 };
 const TutorSetup = () => {
+  const [editMode, setEditMode] = useState(false);
   let [fname, set_fname] = useState("");
   let [mname, set_mname] = useState("");
   let [lname, set_sname] = useState("");
@@ -95,7 +96,6 @@ const TutorSetup = () => {
 
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
-  console.log(tutor,"yutor");
   const options = {
     "Australia": AUST_STATES,
     "USA": US_STATES,
@@ -151,7 +151,9 @@ const TutorSetup = () => {
 
   }, [photo, userExist])
 
-  console.log(state)
+  const handleEditClick = () => {
+    setEditMode(!editMode);
+  };
   //upload video
   useEffect(() => {
     const upload_video = async () => {
@@ -173,22 +175,13 @@ const TutorSetup = () => {
     const AcademyId = localStorage.getItem('tutor_user_id')
 
     const fetchTutorSetup = async () => {
-      console.log('render', tutor, JSON.parse(localStorage.getItem("user")))
+      
       setDataFetching(true)
 
       let result;
-      // if (user[0].role === 'admin') {
 
-      //   result = await get_tutor_setup_by_acaId(AcademyId);
-      // }
-      // else {
-      //   result = await get_tutor_setup_by_userId(user[0].SID);
-      // }
-      console.log(tutor.AcademyId);
       if (tutor.AcademyId) {
-        console.log(tutor,"don")
         let data = tutor;
-        // const selectedUserId = await get_user_detail(data.userId);
 
         setUserId(tutor.userId)
         setUserExist(true)
@@ -247,7 +240,6 @@ const TutorSetup = () => {
         video,
     
       }
-      console.log(formValues.fname,"saved",fname);
       setUnsavedChanges(unsavedChangesHelper(formValues,tutor))
 
       // setUnsavedChanges(tutor.FirstName !== fname);
@@ -259,6 +251,14 @@ const TutorSetup = () => {
     e.preventDefault();
     if(!isValid) {
       toast.warning("please enter the correct phone number");
+      return;
+    }
+    if(!photo) {
+      toast.warning("please upload a photo");
+      return;
+    }
+    if(!video) {
+      toast.warning("please upload your intro video");
       return;
     }
     if(!tutorGrades.length > 0) {
@@ -278,12 +278,11 @@ const TutorSetup = () => {
         response.data[0]?.TutorScreenname
       );
       dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
-      console.log(response.data)
       setTimeout(() => {
         document.querySelector(".save-overlay")?.removeAttribute("id");
       }, 1000);
-
-      toast.success("Data saved successfully")
+      setEditMode(false);
+      toast.success("Data saved successfully");
     }
     else {
       setTimeout(() => {
@@ -583,6 +582,7 @@ const TutorSetup = () => {
                 <input
                   type="file"
                   data-type="file"
+                  name="photo"
                   onChange={handleImage}
                   style={{ display: "none" }}
                   id="photo"
@@ -593,9 +593,9 @@ const TutorSetup = () => {
                 <div className="tutor-tab-photo-frame">
                   <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' />
                 </div>
-                <label id="btn" htmlFor="photo" className="btn btn-success mt-2">
+                <button id="btn" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
                   Upload
-                </label>
+                </button>
               </div>
 
 
@@ -629,7 +629,6 @@ const TutorSetup = () => {
                     onChange={(e) => set_fname(e.target.value)}
                     placeholder="First Name"
                     value={fname}
-                    readonly
                     disabled  
                     type="text"
                     id="fname"
@@ -664,8 +663,7 @@ const TutorSetup = () => {
                     value={mname}
                     className="form-control"
                     type="text"
-                    readonly
-                    disabled  
+                    disabled 
                     id="mname"
                   />
                 </div>
@@ -698,7 +696,6 @@ const TutorSetup = () => {
                     value={lname}
                     type="text"
                     id="lname"
-                    readonly
                     disabled  
                     className="form-control"
                   />
@@ -784,6 +781,7 @@ const TutorSetup = () => {
                       position: "relative",
                     }}
                     required
+                    disabled={!editMode}
                   />
                   
 
@@ -806,7 +804,7 @@ const TutorSetup = () => {
                   </label>{" "}
                   &nbsp;&nbsp;
                   <select
-                    class="form-select"
+                    className="form-select"
                     onInput={(e) => set_response_zone(e.target.value)}
                     value={response_zone}
                     id="resZone"
@@ -817,6 +815,7 @@ const TutorSetup = () => {
                       padding: "5px 5px 5px 5px",
                       margin: "0 0 10px 0",
                     }}
+                    disabled={!editMode}
                     required
                   >
                     {response_list}
@@ -858,6 +857,7 @@ const TutorSetup = () => {
                     value={add1}
                     type="text"
                     id="add1"
+                    disabled={!editMode}
                   />
                 </div>
                 <div
@@ -881,6 +881,7 @@ const TutorSetup = () => {
                     onInput={(e) => set_add2(e.target.value)}
                     placeholder="Optional"
                     value={add2}
+                    disabled={!editMode}
                     type="text"
                     id="add2"
                     style={{
@@ -915,6 +916,7 @@ const TutorSetup = () => {
                     type="text"
                     value={city}
                     id="city"
+                    disabled={!editMode}
                     style={{
                       float: "right",
                       width: "70%",
@@ -929,11 +931,12 @@ const TutorSetup = () => {
                   </label>{" "}
                   &nbsp;&nbsp;
                   <select
-                    class="form-select"
+                    className="form-select"
                     onInput={(e) => set_country(e.target.value)}
                     id="country"
                     value={country}
                     style={{ float: "right", width: "70%", margin: "2.5px 0 0 0", padding: "5px", margin: "0 0 10px 0" }}
+                    disabled={!editMode}
                     required
                   >
                     {countryList}
@@ -959,8 +962,10 @@ const TutorSetup = () => {
 
                   {(options[country] ?? []).length ?
                     <select
+                      required
                       onInput={(e) => set_state(e.target.value)}
                       id="state"
+                      disabled={!editMode}
                       value={state}
                       style={{
                         float: "right",
@@ -998,6 +1003,7 @@ const TutorSetup = () => {
                     required
                     onInput={(e) => set_zipCode(e.target.value)}
                     value={zipCode}
+                    disabled={!editMode}
                     placeholder="Zip-Code"
                     type="text"
                     id="zip"
@@ -1026,9 +1032,10 @@ const TutorSetup = () => {
                   </label>{" "}
                   &nbsp;&nbsp;
                   <select
-                    class="form-select"
+                    className="form-select"
                     onInput={(e) => set_timeZone(e.target.value)}
                     id="timeZone"
+                    disabled={!editMode}
                     value={timeZone}
                     style={{
                       float: "right",
@@ -1057,7 +1064,7 @@ const TutorSetup = () => {
                 ) : selectedVideoOption === "upload" && video?.length ? (
                   <div className="tutor-tab-video-frame p-3 card">
                     <video src={video} className="w-100 h-100"
-                      controls autoplay
+                      controls autoplay 
                     />
                   </div>
                 ) :
@@ -1073,6 +1080,7 @@ const TutorSetup = () => {
                           type="button"
                           className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
                             }`}
+                            disabled={!editMode}
                           style={{ fontSize: "10px" }}
                           onClick={() => {
                             set_video("");
@@ -1097,9 +1105,10 @@ const TutorSetup = () => {
                           id="video"
                         />
                         {/* : null} */}
-                        <label
+                        <button
                           id="btn"
                           htmlFor="video"
+                          disabled={!editMode}
                           style={{ fontSize: "10px" }}
                           className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
                             }`}
@@ -1107,7 +1116,7 @@ const TutorSetup = () => {
                         >
                           <BsCloudUpload size={15} /> <br />
                           Upload Video
-                        </label>
+                        </button>
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -1117,6 +1126,7 @@ const TutorSetup = () => {
                           style={{ fontSize: "10px" }}
                           className={`btn btn-danger `}
                           onClick={() => set_video("")}
+                          disabled={!editMode}
                         >
                           <BsTrash size={15} />
                           <br />
@@ -1172,6 +1182,7 @@ const TutorSetup = () => {
                               }}
                               type="checkbox"
                               checked={isChecked}
+                              disabled={!editMode}
                               id={item.grade}
                               onInput={() => handleTutorGrade(item.grade)}
                               className=" grades"
@@ -1206,6 +1217,8 @@ const TutorSetup = () => {
                   value={headline}
                   maxLength={80}
                   required
+                  spellcheck="true"
+                  disabled={!editMode}
                   placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
                   onInput={(e) =>
                     counter(e.target.value, e.target, set_headline, 80)
@@ -1229,7 +1242,7 @@ const TutorSetup = () => {
                   </label>
                   <br />
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     value={intro}
                     maxLength={500}
                     required
@@ -1239,6 +1252,8 @@ const TutorSetup = () => {
                     }
                     style={{ width: "100%", padding: "10px", height: "160px" }}
                     name=""
+                    spellcheck="true"
+                    disabled={!editMode}
                     id=""
                   ></textarea>
                   <div className="inputValidator">
@@ -1255,14 +1270,16 @@ const TutorSetup = () => {
                   </label>
                   <br />
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     value={motivation}
+                    disabled={!editMode}
                     maxLength={500}
                     required
                     placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
                     onInput={(e) =>
                       counter(e.target.value, e.target, set_motivation,500)
                     }
+                    spellcheck="true"
                     style={{ width: "100%", padding: "10px", height: "160px" }}
                     name=""
                     id=""
@@ -1274,7 +1291,10 @@ const TutorSetup = () => {
               </div>
             </div>
           </div>
-          <Actions unSavedChanges={unSavedChanges} />
+          <Actions 
+          onEdit={handleEditClick} 
+          editDisabled={editMode} 
+          unSavedChanges={unSavedChanges} />
         </form>
       </motion.div>
     </>

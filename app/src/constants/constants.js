@@ -306,9 +306,6 @@ export const Countries = [
     "Country": "Canada"
   },
   {
-    "Country": "India"
-  },
-  {
     "Country": "Greece"
   },
   {
@@ -604,9 +601,6 @@ export const Countries = [
   },
   {
     "Country": "S. Korea"
-  },
-  {
-    "Country": "Columbia"
   },
   {
     "Country": "Spain"

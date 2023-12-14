@@ -51,7 +51,8 @@ const Intro = () => {
             // Cleanup logic, if needed
         };
     }, []);
-    useEffect(() => setUnsavedChanges(intro !== db_intro), [intro, db_intro]);
+    useEffect(() => {
+        setUnsavedChanges(intro !==undefined && db_intro!==undefined && intro !== db_intro)}, [intro, db_intro]);
 
     const handleEditorChange = (value) => {
         set_intro(value);
@@ -59,11 +60,12 @@ const Intro = () => {
     const handleEditClick = () => {
         setEditMode(true);
     };
-    const handleSave = async(e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
-
+        console.log("here is ");
         const response = await post_termsOfUse({ IntroContent:intro});
         console.log(response.data);
+        set_db_intro(response.data.IntroContent);
         // Add your save logic here
 
         // After saving, set editing mode back to false
@@ -83,7 +85,7 @@ const Intro = () => {
                     <div className="note-two shadow-sm"></div>
                     <div className="note-three shadow-sm"></div>
                 </div> */}
-                <form action='' onSubmit={handleSave}>
+                <form  onSubmit={handleSave}>
                     <div className='px-4'>
                         <RichTextEditor
                             value={intro}

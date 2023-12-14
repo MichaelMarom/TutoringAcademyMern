@@ -37,11 +37,14 @@ const TermOfUse = () => {
         fetchData();
     }, []);
     useEffect(() => {
-        if (terms !== db_terms) {
+        if (terms !== undefined && db_terms !== undefined && terms !== db_terms) {
+            console.log(terms, "terms", db_terms, "db_terms");
             setUnsavedChanges(true);
-        } else setUnsavedChanges(false)
-        
-    }, [terms])
+        } else {
+            setUnsavedChanges(false);
+        }
+
+    }, [terms, db_terms])
     const handleEditorChange = (value) => {
         set_terms(value);
     };
@@ -53,6 +56,8 @@ const TermOfUse = () => {
 
         const response = await post_termsOfUse({ TermContent: terms });
         console.log(response.data);
+        set_db_terms(response.data.TermContent);
+
         setEditMode(false);
     };
     return (

@@ -1,3 +1,4 @@
+import Intro from "../pages/tutor/Intro";
 import TutorSetup from "../pages/tutor/TutorSetup";
 import Education from "../pages/tutor/Education";
 import Rates from "../pages/tutor/Rates";
@@ -5,6 +6,7 @@ import Accounting from "../pages/tutor/Accounting";
 import Subjects from "../pages/tutor/Subjects";
 import MyStudents from "../pages/tutor/MyStudents";
 import Scheduling from "../pages/tutor/Scheduling";
+import TermOfUse from "../pages/tutor/TermOfUse";
 import MarketPlace from "../pages/tutor/MarketPlace";
 import TutorProfile from "../pages/tutor/TutorProfile";
 
@@ -34,6 +36,7 @@ import PlatformIntro from "../pages/Admin/PlatformIntro";
 
 const rolePermissions = {
   tutor: [
+    { path: "/tutor/intro", component: <Intro /> },
     { path: "/tutor/setup", component: <TutorSetup /> },
     { path: "/tutor/education", component: <Education /> },
     { path: "/tutor/rates", component: <Rates /> },
@@ -41,6 +44,7 @@ const rolePermissions = {
     { path: "/tutor/subjects", component: <Subjects /> },
     { path: "/tutor/my-students", component: <MyStudents /> },
     { path: "/tutor/scheduling", component: <Scheduling /> },
+    { path: "/tutor/term-of-use", component: <TermOfUse /> },
     { path: "/tutor/market-place", component: <MarketPlace /> },
     { path: "/tutor/tutor-profile", component: <TutorProfile /> },
     { path: "/tutor/collaboration", component: <TutorClass /> },

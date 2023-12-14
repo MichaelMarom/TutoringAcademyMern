@@ -210,7 +210,7 @@ const postTerms = async (req, res) => {
                         const result = await poolConnection.request().query(update('Constants', req.body,{ID:1}));
 
                         if (result.rowsAffected[0] === 1) {
-                            res.status(200).json({ success: true, message: 'Terms updated successfully.' });
+                            res.status(200).json(result.recordset[0]);
                         } else {
                             res.status(500).json({ success: false, message: 'Failed to update terms.' });
                         }

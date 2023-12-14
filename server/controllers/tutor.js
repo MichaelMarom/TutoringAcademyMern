@@ -1183,10 +1183,26 @@ let get_tutor_market_data = async (req, res) => {
 
 }
 
+let get_tutor_students = async (req, res) => {
+    try {
+      const { academyId } = req.params;
+  
+      // Fetch Students from studentShortlist table based on AcademyId
+      const students = await connecteToDB.then(poolConnection =>
+        poolConnection.request().query(`SELECT * FROM StudentShortList WHERE CONVERT(VARCHAR, AcademyId) = '${academyId}'`)
+          .then((result) => result.recordset)
+      );
+      res.json(students);
+    } catch (error) {
+      console.error('Error fetching tutor students:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 module.exports = {
     subjects,
     get_tutor_market_data,
+    get_tutor_students,
     post_tutor_setup,
     faculties,
     post_form_one,

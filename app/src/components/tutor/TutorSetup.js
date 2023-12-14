@@ -238,14 +238,15 @@ const TutorSetup = () => {
         headline,
         photo,
         video,
+        tutorGrades
     
       }
       setUnsavedChanges(unsavedChangesHelper(formValues,tutor))
-
+      
       // setUnsavedChanges(tutor.FirstName !== fname);
     }
     
-  },[fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime, response_zone, intro, motivation, headline, photo, video,tutor])
+  },[fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime, response_zone, intro, motivation, headline, photo, video,tutorGrades,tutor])
 
   const saveTutorSetup = async (e) => {
     e.preventDefault();

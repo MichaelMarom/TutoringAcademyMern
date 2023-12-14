@@ -1,6 +1,7 @@
 import React from 'react';
+import Avatar from '../common/Avatar';
 
-function DiscussionItem({ fetchingMessages, setSelectedChat, selectedChat, name, datetime, message, avatarSrc, unread, groupAmount, id }) {
+function DiscussionItem({ fetchingMessages, online, setSelectedChat, selectedChat, name, datetime, message, avatarSrc, unread, groupAmount, id }) {
     return (
         <li className={`ks-item w-100 ${unread ? 'ks-unread' : ''}`}
             style={{
@@ -12,13 +13,15 @@ function DiscussionItem({ fetchingMessages, setSelectedChat, selectedChat, name,
             <div className="ks-body w-100 ">
                 <div className="ks-name d-flex justify-content-start align-items-center"
                 >
-                    <img src={avatarSrc} width="30" height="30" style={{ marginRight: "10px" }} className="rounded-circle" alt="User Avatar" />
+                    <Avatar avatarSrc={avatarSrc}
+                        online={online}
+                    />
                     <h6 className='text-start'>  {name}</h6>
                     <span className="ks-datetime">{datetime}</span>
                 </div>
-                <div className="ks-message d-flex ">
+                {/* <div className="ks-message d-flex ">
                     <p> {message}</p>
-                </div>
+                </div> */}
             </div>
         </li>
     );
@@ -42,6 +45,7 @@ function DiscussionList({ selectedChat, fetchingMessages, discussions, setSelect
                                 avatarSrc={discussion.avatarSrc}
                                 unread={discussion.unread}
                                 groupAmount={discussion.groupAmount}
+                                online={discussion.online}
                                 id={discussion.id}
                                 selectedChat={selectedChat}
                             />
@@ -61,7 +65,7 @@ function SearchBar() {
     );
 }
 
-export default function Chats({  fetchingMessages, setSelectedChat, selectedChat, discussionData }) {
+export default function Chats({ fetchingMessages, setSelectedChat, selectedChat, discussionData }) {
     return (
         <div className="ks-discussions">
             <SearchBar />

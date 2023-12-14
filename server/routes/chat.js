@@ -1,4 +1,4 @@
-const { fetch_chats, fetch_chat_messages, post_message, create_chat } = require("../controllers/chat");
+const { fetch_chats, fetch_chat_messages, post_message, create_chat, set_status } = require("../controllers/chat");
 const {
     express,
     parser,
@@ -9,5 +9,6 @@ CHAT_ROUTES.get('/chats/:role/:userId', fetch_chats);
 CHAT_ROUTES.get('/messages/:chatId', fetch_chat_messages);
 CHAT_ROUTES.post('/message', parser, post_message);
 CHAT_ROUTES.post('/chat', parser, create_chat);
+CHAT_ROUTES.post('/chat/online/:AcademyId/:role', parser, set_status);
 
 module.exports = CHAT_ROUTES

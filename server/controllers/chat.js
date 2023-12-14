@@ -1,5 +1,5 @@
 const { marom_db } = require('../db');
-const { getAll, insert, find } = require('../helperfunctions/crud_queries');
+const { getAll, insert, find, update } = require('../helperfunctions/crud_queries');
 
 function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -17,20 +17,20 @@ const fetch_chats = async (req, res) => {
                     req.params.role === 'student' ?
                         `Select ch.ChatID, ch.LastSeen, ts.AcademyId, ch.User1ID,ch.UnRead, ch.User2ID, 
                         ts.Photo, ts.FirstName, ts.LastName,
-                    ch.State from Chat as ch join TutorSetup as ts on ts.AcademyId = ch.User2ID
+                    ts.Online from Chat as ch join TutorSetup as ts on ts.AcademyId = ch.User2ID
                      WHERE User1ID = '${req.params.userId}' OR User2ID = '${req.params.userId}'` :
-                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId,ch.User1ID,ch.UnRead, ch.User2ID, ts.Photo, ts.FirstName, 
-                        ts.LastName, ch.State from Chat as ch join StudentSetup as ts on cast(ts.AcademyId as varchar)= ch.User1ID
+                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId,ch.User1ID,ch.UnRead, ch.User2ID, ts.Photo, 
+                        ts.FirstName, ts.LastName,ts.Online from Chat as ch join StudentSetup as ts on 
+                        cast(ts.AcademyId as varchar)= ch.User1ID
                       WHERE User1ID = '${req.params.userId}' OR User2ID = '${req.params.userId}'`
                 );
 
-                const formatedResult = result.recordset.map(record =>
-                ({
+                const formatedResult = result.recordset.map(record => ({
                     id: record.ChatID,
                     name: `${capitalizeFirstLetter(record.FirstName)} ${capitalizeFirstLetter(record.LastName)}`,
                     avatarSrc: record.Photo,
                     unread: record.UnRead,
-                    state: record.State,
+                    online: record.Online,
                     AcademyId: record.AcademyId
                 }))
 
@@ -132,9 +132,31 @@ const create_chat = async (req, res) => {
     })
 }
 
+
+const set_status = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+            const tableName = req.params.role === 'tutor' ? "TutorSetup" : 'StudentSetup'
+
+            if (poolConnection) {
+                const data = await poolConnection.request().query(
+                    update(tableName, req.body, { AcademyId: req.params.AcademyId }, { AcademyId: 'varchar' })
+                );
+                res.status(200).send(data)
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 module.exports = {
     fetch_chats,
     fetch_chat_messages,
     post_message,
-    create_chat
+    create_chat,
+    set_status
 }

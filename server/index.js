@@ -36,7 +36,7 @@ const io = socket(server, {
         credentials: true,
     },
 });
-
+const socketToUserMap = {};
 io.on('connection', socket => {
     global.chatSocket = socket;
 
@@ -97,8 +97,6 @@ io.on('connection', socket => {
 
     });
 
-
-
     socket.on("add-user", (roomId) => {
         socket.join(roomId)
         console.log('User', socket.id, ' joined room ', roomId)
@@ -109,6 +107,16 @@ io.on('connection', socket => {
         console.log(`Message:${text} sent from room:${room} to ${to}`);
         socket.to(room).emit("msg-recieve", data);
     });
+
+    socket.on('online', (id, role) => {
+        socketToUserMap[socket.id] = { userId: id, role };
+        io.emit("online", id);
+    })
+
+    socket.on('offline', (id) => {
+        io.emit("offline", id);
+    })
+
 
     socket.on('canvas-start', (pX, pY, color, thickness, fill) => {
         socket.broadcast.emit('canvas-start', pX, pY, color, thickness, fill)
@@ -311,13 +319,17 @@ io.on('connection', socket => {
     })
 
     socket.on('disconnect', (error) => {
-        console.log('disonnecting', socket.id, ' due to', error, socket.id)
+        const { userId = null, role = null } = socketToUserMap?.[socket.id] || {};
+        io.emit("offline", userId, role, 'disconn')
+        console.log('disonnecting ', userId, role, ' due to', error, socket.id)
     })
 
 });
 
 
 var { PeerServer } = require("peer");
+const axios = require('axios');
+const { use } = require('./routes/chat');
 var myPeerServer = PeerServer({ port: 8080 });
 
 myPeerServer.on("connection", function ({ id }) {

@@ -7,10 +7,11 @@ import { Header } from '../components/Chat/Header';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import CommonLayout from '../layouts/CommonLayout';
 import { NoChatSelectedScreen } from '../components/Chat/NoChatSelectedScreen';
-import { useSelector } from 'react-redux';
-import { get_chat_message, post_message } from '../axios/chat';
+import { useDispatch, useSelector } from 'react-redux';
+import { get_chat_message, post_message, set_online_status } from '../axios/chat';
 import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
 import { socket } from '../socket'
+import { setChats } from '../redux/chat/chat';
 
 function Chat() {
     const [selectedChat, setSelectedChat] = useState({});
@@ -26,8 +27,28 @@ function Chat() {
     const [messages, setMessages] = useState([])
     const [arrivalMsg, setArrivalMsg] = useState(null);
     const [fetchingMessages, setFetchingMessages] = useState(false)
-    // const [renderComponent, setRenderComponent] = useState(true);
-    const [dbMessages, setDbMessages] = useState([])
+    const loggedInRole = studentLoggedIn ? 'student' : 'tutor';
+    const dispatch = useDispatch()
+
+
+    useEffect(() => {
+        const setStatus = async () => {
+            if (loggedInUserDetail.AcademyId) {
+                await set_online_status(1, loggedInUserDetail.AcademyId, studentLoggedIn ? "student" : 'tutor');
+                socket.emit('online', loggedInUserDetail.AcademyId, loggedInRole)
+            }
+        }
+        setStatus();
+        return () => {
+            const setStatus = async () => {
+                if (loggedInUserDetail.AcademyId) {
+                    await set_online_status(0, loggedInUserDetail.AcademyId, studentLoggedIn ? "student" : 'tutor');
+                    socket.emit('offline', loggedInUserDetail.AcademyId)
+                }
+            }
+            setStatus();
+        }
+    }, [loggedInUserDetail])
 
     useEffect(() => {
 
@@ -62,21 +83,30 @@ function Chat() {
         }
     }
 
-    //// console.log(selectedChat)
     useEffect(() => {
-        arrivalMsg && setMessages((prev) => [...prev, arrivalMsg]);
+        arrivalMsg && arrivalMsg.senderId === selectedChat.AcademyId && setMessages((prev) => [...prev, { ...arrivalMsg, photo: selectedChat.avatarSrc }]);
     }, [arrivalMsg]);
 
     useEffect(() => {
         if (socket) {
             socket.on("msg-recieve", (msgObj) => {
-                // console.log('msg-rec2')
                 setArrivalMsg(msgObj);
             });
+            socket.on("online", (id) => {
+                const updatedChats = chats.map(chat => chat.AcademyId === id ? { ...chat, online: true } : chat)
+                console.log(updatedChats, chats)
+                loggedInUserDetail.AcademyId && dispatch(setChats(loggedInUserDetail.AcademyId, loggedInRole))
+            })
+            socket.on("offline", (id, role, action) => {
+                const updatedChats = chats.map(chat => chat.AcademyId === id ? { ...chat, online: false } : chat)
+                console.log(updatedChats, chats, id, action)
+                id && action === 'disconn' && set_online_status(0, id, role)
+                loggedInUserDetail.AcademyId && dispatch(setChats(loggedInUserDetail.AcademyId, loggedInRole))
+            })
         }
     }, []);
 
-
+    console.log(chats)
 
     useEffect(() => {
         setFetchingMessages(true);
@@ -89,11 +119,11 @@ function Chat() {
         };
 
         getMessages();
-    }, [navigate, params.id, studentLoggedIn, dbMessages]);
+    }, [navigate, params.id, studentLoggedIn]);
 
     useEffect(() => {
         if (selectedChat.id) {
-            const currentPath = `/${studentLoggedIn ? 'student' : 'tutor'}/chat/${selectedChat.id}`;
+            const currentPath = `/${loggedInRole}/chat/${selectedChat.id}`;
             navigate(currentPath);
         }
     }, [selectedChat.id, navigate, studentLoggedIn])
@@ -106,7 +136,8 @@ function Chat() {
     }, [params.id, shortlist, chats]);
 
     return (
-        <CommonLayout role={studentLoggedIn ? 'student' : 'tutor'} showLegacyFooter={false}>
+        <CommonLayout role={loggedInRole}
+            showLegacyFooter={false}>
             <div className="container" style={{ height: "100vh" }}>
                 <div className="ks-page-content">
                     <div className="ks-page-content-body">

@@ -7,6 +7,7 @@ import Loading from '../common/Loading';
 import { convertTutorIdToName } from '../../helperFunctions/generalHelperFunctions';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
+import Avatar from '../common/Avatar';
 
 const StudentShortList = () => {
 
@@ -101,9 +102,14 @@ const StudentShortList = () => {
                                                 <tr
                                                     onDoubleClick={() =>
                                                         redirect_to_tutor_profile(tutorSetup?.AcademyId)} key={index}>
-                                                    <td className='col-1'>{
-                                                        <img src={tutorSetup?.Photo}
-                                                            style={{ height: '100px', width: '120px' }} />}</td>
+                                                    <td className='col-1'>
+                                                        <Avatar
+                                                            size='100'
+                                                            indicSize='20px'
+                                                            avatarSrc={tutorSetup?.Photo}
+                                                            online={tutorSetup.Online}
+                                                        />
+                                                    </td>
                                                     <td>
                                                         <input type='checkbox'
                                                             style={{ height: '20px', width: '20px' }}

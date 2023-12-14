@@ -19,6 +19,7 @@ const slice = createSlice({
             state.shortlist = action.payload;
         },
         setShortlist: (state, action) => {
+            console.log('ffe, ',action.payload)
             state.isLoading = false;
             state.shortlist = action.payload
         }
@@ -26,7 +27,7 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
-
+export const setShortlistAction = slice.actions.setShortlist
 // ACTIONS
 
 export function setShortlist() {

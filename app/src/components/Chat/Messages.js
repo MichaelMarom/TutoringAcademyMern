@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Loading from '../common/Loading';
 import MessageBox from './MessageBox';
+import NoMessage from './NoMessage';
 
 function Messages({ messages, fetchingMessages }) {
   const messagesContainer = useRef(null);
@@ -19,9 +20,11 @@ function Messages({ messages, fetchingMessages }) {
       <div className="jspContainer" style={{ width: '100%', height: '481px' }}>
         <div className="jspPane" style={{ padding: '0px', top: '0px', width: '100%' }}>
           <ul className="ks-items d-flex flex-column">
-            {(messages).map((message) => (
-              <MessageBox message={message} key={message.id} />
-            ))}
+            {
+              !messages.length ? <NoMessage /> :
+                messages.map((message) => (
+                  <MessageBox message={message} key={message.id} />
+                ))}
           </ul>
         </div>
       </div>

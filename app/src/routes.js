@@ -15,12 +15,13 @@ import Signup from "./pages/Signup";
 import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
-import { setShortlist } from "./redux/student_store/shortlist";
+import { setShortlist, setShortlistAction } from "./redux/student_store/shortlist";
 import { get_my_data } from "./axios/student";
 
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
 import { setChats } from "./redux/chat/chat";
+import { socket } from "./socket";
 
 const App = () => {
   let location = useLocation();
@@ -37,7 +38,8 @@ const App = () => {
   const tutorUserId = localStorage.getItem('tutor_user_id')
   const studentLoggedIn = location.pathname.split('/')[1] === 'student';
   const loggedInUserDetail = studentLoggedIn ? student : tutor;
-  const role = studentLoggedIn ? 'student' : 'tutor'
+  const role = studentLoggedIn ? 'student' : 'tutor';
+  const { shortlist, isLoading } = useSelector(state => state.shortlist)
 
   //ids
   useEffect(() => {
@@ -88,6 +90,37 @@ const App = () => {
     fetchData();
 
   }, [dispatch, loggedInUserDetail.AcademyId, role])
+
+  //chat
+  useEffect(() => {
+    if (socket) {
+      socket.on("online", (id) => {
+        // dispatch(setShortlist())
+        // console.log(shortlist)
+        // const updatedArray = shortlist.map((item) => {
+        //   if (item?.tutorData?.AcademyId === id) {
+        //     // If the condition is met, update the online property to true
+        //     return { ...item, tutorData: { ...item.tutorData, Online: true } };
+        //   }
+        //   return item;
+        // });
+        // !isLoading && dispatch(setShortlistAction(updatedArray))
+        console.log('id is online', id)
+      })
+      socket.on("offline", (id) => {
+        // console.log(shortlist)
+        // const updatedArray = shortlist.map((item) => {
+        //   if (item?.tutorData?.AcademyId === id) {
+        //     // If the condition is met, update the online property to true
+        //     return { ...item, tutorData: { ...item.tutorData, Online: false } };
+        //   }
+        //   return item;
+        // });
+        // !isLoading && dispatch(setShortlistAction(updatedArray))
+        console.log('id is offline', id)
+      })
+    }
+  }, [dispatch, isLoading]);
 
   //routes
   const generateRoutes = (role) => {

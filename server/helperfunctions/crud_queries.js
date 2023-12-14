@@ -51,7 +51,7 @@ const update = (tableName, values, where, casting = {}, returnUpdated = true) =>
     const query = `UPDATE ${tableName} SET ${setClause} WHERE ${whereClause};
     ${returnUpdated ? `SELECT * FROM  ${tableName}  WHERE  ${whereClause};` : ``}
     `;
-    // console.log(query)
+    console.log(query)
     return query;
 };
 

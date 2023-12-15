@@ -30,6 +30,7 @@
     "react-big-calendar": "^1.8.4",
     "react-bootstrap": "^2.7.2",
     "react-countdown": "^2.3.5",
+    "react-datepicker": "^4.24.0",
     "react-dom": "^18.2.0",
     "react-framer": "^0.0.2",
     "react-icons": "^4.11.0",

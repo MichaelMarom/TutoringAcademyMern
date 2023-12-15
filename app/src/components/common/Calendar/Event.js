@@ -83,7 +83,7 @@ function CustomEvent({
 
     return (
         <div
-            className={`text-center h-100 `}
+            className={`text-center h-100 ${event.request === 'postpone' ? 'blinking-button' : ''} `}
             style={{ fontSize: "12px" }}
             onClick={() => handleEventClick(event)}
         >
@@ -105,6 +105,11 @@ function CustomEvent({
                     {
                         <div >
                             "{event.subject}"
+                        </div>
+                    }
+                    {event.request === 'postpone' &&
+                        <div >
+                            Postpone Request
                         </div>
                     }
                     {event.rating &&

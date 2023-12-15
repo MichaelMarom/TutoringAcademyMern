@@ -176,10 +176,10 @@ const Rates = () => {
   ];
   let subscription_discount = [
     { discount: "0%", hours: '1-5' },
-    { discount: "6.0%", hours: '6' },
-    { discount: "12.0%", hours: '12' },
-    { discount: "18.0%", hours: '18' },
-    { discount: "24.0%", hours: '24' }
+    { discount: "6.0%", hours: '6-11' },
+    { discount: "12.0%", hours: '12-17' },
+    { discount: "18.0%", hours: '18-23' },
+    { discount: "24.0%", hours: '24+' }
   ];
 
   const handleSubmit = async (e) => {
@@ -381,7 +381,7 @@ const Rates = () => {
                   <label className="form-check-label" for="flexSwitchCheckChecked">
                     Consent Recording Session
                   </label>
-                  <Tooltip text="For learning purpose (or complains), you consent to the recording of the lessonn with the student. The recording be saved for 30 days, then be deleted.">
+                  <Tooltip text="For learning purpose (or complains), you consent to the recording of the lesson with the student. The recording be saved for 30 days, then be deleted.">
                     <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
                   </Tooltip>
                 </div>

@@ -225,13 +225,44 @@ const ShowCalendar = ({
     setIsTutorSideSessionModalOpen(false)
   }
 
+  //tutor request
   const handlePostpone = () => {
-    setIsTutorSideSessionModalOpen(false)
-    setPostponeModalOpen(true)
+    setIsTutorSideSessionModalOpen(false);
+    let { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots } = filterOtherStudentAndTutorSession(reservedSlots, bookedSlots, tutor.AcademyId);
+    handleDisableSlot(clickedSlot.start, clickedSlot.end)
+    if (clickedSlot.type === 'booked') {
+      dispatch(postStudentBookings({
+        studentId, tutorId: tutor.AcademyId, subjectName,
+        bookedSlots: updatedBookedSlots.map(slot => slot.id === clickedSlot.id ?
+          { ...slot, request: 'postpone' } :
+          slot),
+        reservedSlots: updatedReservedSlot
+      }));
+      return;
+    }
+    if (clickedSlot.type === 'intro' || clickedSlot.type === 'reserved') {
+      dispatch(postStudentBookings({
+        studentId, tutorId: tutor.AcademyId, subjectName,
+        bookedSlots,
+        reservedSlots: updatedReservedSlot.map(slot => slot.id === clickedSlot.id ?
+          { ...slot, request: 'postpone' } :
+          slot)
+      }));
+    }
   }
-  
-  const handlePostponeModalClose = () => {
-    setPostponeModalOpen(false)
+
+  const handleDisableSlot = (start, end) => {
+    if (disableHourSlots?.some(date => convertToDate(date).getTime() === convertToDate(start).getTime() ||
+      convertToDate(end).getTime() === convertToDate(date).getTime())) {
+      const removeDisableHourSlots = disableHourSlots.filter(date =>
+        convertToDate(date).getTime() !== convertToDate(start).getTime() &&
+        convertToDate(end).getTime() !== convertToDate(date).getTime()
+      )
+      setDisableHourSlots(removeDisableHourSlots)
+    }
+    else {
+      setDisableHourSlots([...(disableHourSlots ?? []), convertToDate(start), convertToDate(end)])
+    }
   }
 
   useEffect(() => {
@@ -260,10 +291,10 @@ const ShowCalendar = ({
     return date;
   };
 
-  const filterOtherStudentAndTutorSession = (givenReservedSlots = []) => {
+  const filterOtherStudentAndTutorSession = (givenReservedSlots = [], givenBookedSlots, tutorId = selectedTutor.academyId) => {
     let updatedReservedSlot = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot =>
-      (slot.studentId === student.AcademyId && slot.tutorId === selectedTutor.academyId));
-    let updatedBookedSlots = bookedSlots.filter(slot => slot.studentId === student.AcademyId && slot.tutorId === selectedTutor.academyId);
+      (slot.studentId === student.AcademyId && slot.tutorId === tutorId));
+    let updatedBookedSlots = givenBookedSlots ? givenBookedSlots : bookedSlots.filter(slot => slot.studentId === student.AcademyId && slot.tutorId === tutorId);
     return { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots };
   }
 
@@ -320,6 +351,11 @@ const ShowCalendar = ({
   const handleRemoveReservedSlot = (reservedSlots) => {
     let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherStudentAndTutorSession(reservedSlots)
     dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
+  }
+
+  const handleRescheduleSession = (reservedSlots, bookedSlots) => {
+    let { reservedSlots: updatedReservedSlots, bookedSlots: updatedBookedSlots } = filterOtherStudentAndTutorSession(reservedSlots, bookedSlots, tutor.AcademyId)
+    dispatch(postStudentBookings({ studentId, tutorId: tutor.AcademyId, subjectName, bookedSlots: updatedBookedSlots, reservedSlots: updatedReservedSlots }));
   }
 
   const handleSetReservedSlots = (reservedSlots) => {
@@ -826,10 +862,12 @@ const ShowCalendar = ({
         handleBulkEventCreate={handleBulkEventCreate}
         reservedSlots={reservedSlots}
         bookedSlots={bookedSlots}
+        bookedSlots={bookedSlots}
         clickedSlot={clickedSlot}
         setClickedSlot={setClickedSlot}
         handleRemoveReservedSlot={handleRemoveReservedSlot}
         timeZone={timeZone}
+        handleRescheduleSession={handleRescheduleSession}
       />
       <TutorEventModal
         isOpen={isTutorSideSessionModalOpen}
@@ -837,11 +875,6 @@ const ShowCalendar = ({
         clickedSlot={clickedSlot}
         handlePostpone={handlePostpone}
       />
-      <PostponeModal
-        isOpen={postponeModalOpen}
-        onClose={handlePostponeModalClose}
-      />
-
     </div>
   );
 };

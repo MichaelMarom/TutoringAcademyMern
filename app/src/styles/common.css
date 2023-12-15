@@ -61,3 +61,17 @@
 .blinking-frame-red{
   animation: blinking_red 1s infinite;
 }
+
+/* react-datepicker*/
+.react-datepicker__time-container {
+  width: 75px !important;
+}
+.react-datepicker__time-list{
+  display: flex;
+  flex-direction: column;
+}
+
+.react-datepicker__input-container input{
+  width: 100%  !important;
+  margin: 5px;
+}

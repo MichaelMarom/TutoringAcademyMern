@@ -337,8 +337,8 @@ const Subjects = () => {
                     </div>
 
                     <div className="highlight">
-                        Select your faculty above, and checkbox the subject(s) that you are proficient to tutor. Then add the rate for the subject, and save. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking. <Button className='btn-primary btn-small' type="button"
-                            handleClick={() => setShowAddNewSubjModal(true)} > Add New Subject</Button>
+                        Select your faculty above, and checkbox the subject(s) from the list below that you are proficient to tutor. Then add the rate for the subject, and save. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking this lable; <Button className='btn-primary btn-small' type="button"
+                            handleClick={() => setShowAddNewSubjModal(true)} > Search or Add New Subject</Button>
 
                     </div>
 

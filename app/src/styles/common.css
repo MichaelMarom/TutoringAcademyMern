@@ -75,3 +75,8 @@
   width: 100%  !important;
   margin: 5px;
 }
+/*
+pdfviwer*/
+.react-pdf__Page__textContent{
+  display: none;
+}

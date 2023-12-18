@@ -8,11 +8,14 @@ import Select from 'react-select'
 import Actions from '../../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { upload_file } from '../../../axios/file';
+import { deleteFileOnServer, getPreviousFilePathFromDB, upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
 import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES, languages } from '../../../constants/constants'
-import { unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
+import { getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
+import FileUpload from '../../common/FileUpload/FileUpload';
+import PDFViewer from './PDFViewer'
+import Button from '../../common/Button';
 
 
 
@@ -91,6 +94,8 @@ const Education = () => {
     let [files, set_files] = useState('');
 
     const [degreeFile, setDegreeFile] = useState(null);
+    const [resumeFile, setResumeFile] = useState(null);
+    const [resumePath, set_resumePath] = useState(null);
     const [degreeFileContent, setDegreeFileContent] = useState('')
     const [certificateFile, setCertificateFile] = useState(null);
     const [certFileContent, setCertFileContent] = useState('')
@@ -133,7 +138,7 @@ const Education = () => {
     }, [])
 
 
-    let user_id = window.localStorage.getItem('tutor_user_id');
+    let AcademyId = window.localStorage.getItem('tutor_user_id');
 
     let saver = () => {
         let response = upload_form_two(level,
@@ -159,12 +164,13 @@ const Education = () => {
             expiration,
             JSON.stringify(othelang),
             workExperience,
-            user_id,
+            AcademyId,
             countryForDeg,
             countryForMast,
             countryForCert,
             countryForDoc,
-            countryForAssociate
+            countryForAssociate,
+            resumePath
         )
         return response;
     }
@@ -255,15 +261,15 @@ const Education = () => {
         files
     ])
 
+    //fetching DB
     useEffect(() => {
-        // setFetchingEdu(true)
         !editMode && setFetchingEdu(true)
 
         get_my_edu(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
-
                 if (result.length > 0) {
                     let data = result[0];
+                    console.log(data);
                     set_files(data)
                     set_workExperience(data.WorkExperience)
                     set_university1(data.College1)
@@ -304,6 +310,7 @@ const Education = () => {
 
                     set_expiration(data.CertificateExpiration)
                     set_experience(data.EducationalLevelExperience)
+                    set_resumePath(data.Resume);
                     setDataFetched(true)
                 } else {
                     set_files(null)
@@ -411,6 +418,14 @@ const Education = () => {
             setDegreeFile(file);
         }
     }
+    const handleResumeFileUpload = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            setResumeFile(file);
+            set_resumePath(`${AcademyId}-resume-${(new Date()).getTime()}-${file.name}`);
+        }
+    }
 
     const handleUploadDegreeToServer = async () => {
         if (degreeFile) {
@@ -418,8 +433,29 @@ const Education = () => {
             formData.append('file', degreeFile);
 
             try {
-                const filePrefix = `${user_id}-degree-${degree}`
+                const filePrefix = `${AcademyId}-degree-${degree}`
                 const response = await upload_file(formData, filePrefix)
+
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error uploading file:', error);
+            }
+        } else {
+            console.warn('Please select a file before uploading.');
+        }
+    };
+    const handleUploadResumeToServer = async () => {
+        if (resumeFile) {
+            const previousFilePath = await getPreviousFilePathFromDB(AcademyId);
+            if (previousFilePath) {
+                await deleteFileOnServer(AcademyId);
+            }
+            const formData = new FormData();
+            formData.append('file', resumeFile);
+
+            try {
+                const fileName = resumePath
+                const response = await upload_file(formData, fileName)
 
                 console.log(response.data);
             } catch (error) {
@@ -435,7 +471,7 @@ const Education = () => {
             formData.append('file', certificateFile);
 
             try {
-                const filePrefix = `${user_id}-certificate-${certificate}`
+                const filePrefix = `${AcademyId}-certificate-${certificate}`
                 const response = await upload_file(formData, filePrefix)
 
                 console.log(response.data.filePath);
@@ -467,6 +503,7 @@ const Education = () => {
         if (res) {
             handleUploadDegreeToServer()
             handleUploadCertificateToServer()
+            handleUploadResumeToServer();
             setEditMode(false);
             toast.success('Education record saved Successfully');
         }
@@ -1023,6 +1060,31 @@ const Education = () => {
                                 placeholder="Enter Your Work Experience"
                                 required
                             />
+                            {
+                                resumePath ?
+                                    <div className='d-flex justify-content-between align-items-center my-3'>
+                                        <div>
+                                            {getFileExtension(resumePath) === 'pdf' ?
+                                                <PDFViewer pdfUrl={`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`} />
+                                                : <img height={80} width={80} src={`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`} alt="resume" />}
+                                            <h6>Resume Uploaded <IoIosCheckmarkCircle color='green' size='20' /> </h6>
+                                            <p className='text-primary text-decoration-underline cursor-pointer'
+                                                onClick={() => window.open(`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`, '_blank')}>See uploaded Resume</p>
+                                        </div>
+                                        <Button className='btn-sm btn-primary' handleClick={() => set_resumePath(null)}>Upload new resume</Button>
+                                    </div> :
+                                    <div className="form-outline my-3">
+                                        <h6 className='border-bottom'>Upload your Resume</h6>
+                                        <input
+                                            type="file"
+                                            accept=".pdf, .jpeg, .png, .jpg"
+                                            id="degreeFile"
+                                            name="degreeFile"
+                                            disabled={!editMode}
+                                            className="form-control m-0"
+                                            onChange={handleResumeFileUpload}
+                                        />
+                                    </div>}
                         </div>
                     </div>
 
@@ -1032,7 +1094,7 @@ const Education = () => {
                         unSavedChanges={unSavedChanges} />
                 </form>
             </div >
-        </div>
+        </div >
 
     );
 }

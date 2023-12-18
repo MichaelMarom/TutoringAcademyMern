@@ -110,3 +110,8 @@ export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
 export const capitalizeFirstLetter = (name) => {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
+
+
+export function getFileExtension(filename) {
+  return filename.split('.').pop();
+}

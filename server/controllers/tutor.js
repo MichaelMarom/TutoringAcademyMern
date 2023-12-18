@@ -3,6 +3,8 @@ const { marom_db, knex, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
 const { insert, updateById, getAll, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 
+const multer = require('multer');
+const path = require('path');
 
 
 let post_new_subject = (req, res) => {
@@ -215,7 +217,7 @@ let post_form_two = async (req, res) => {
         countryForMast,
         countryForCert,
         countryForDoc,
-        countryForAssociate } = req.body;
+        countryForAssociate, resume } = req.body;
 
 
     let duplicate = await connecteToDB.then(async (poolConnection) => {
@@ -241,14 +243,14 @@ let post_form_two = async (req, res) => {
                             DoctorateCollege, DoctorateState, DoctorateGradYr, Degree,DegreeFile, DegreeState, 
                             DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, 
                             NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId,DegCountry,
-                            MastCountry,CertCountry, DocCountry, BachCountry)
+                            MastCountry,CertCountry, DocCountry, BachCountry,Resume)
                         VALUES ('${level}', '${experience}', '${university1}',
                         '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
                         '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}','${state4}',
                         '${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}',
                         '${language}','${state6}','${otherang}','${workExperience}', '${user_id}',
                         '${countryForDeg}','${countryForMast}',
-                        '${countryForCert}','${countryForDoc}','${countryForAssociate}') `
+                        '${countryForCert}','${countryForDoc}','${countryForAssociate}','${resume}') `
                 )
 
                 resultSet.then((result) => {
@@ -289,7 +291,8 @@ let post_form_two = async (req, res) => {
                          MastCountry= '${countryForMast}',
                          CertCountry= '${countryForCert}',
                           DocCountry='${countryForDoc}',
-                          BachCountry='${countryForAssociate}'
+                          BachCountry='${countryForAssociate}',
+                          Resume='${resume}'
                           WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
                         `
                 )
@@ -935,7 +938,6 @@ let get_tutor_setup = (req, res) => {
 }
 
 let get_my_edu = (req, res) => {
-    let { AcademyId } = req.query;
     marom_db(async (config) => {
         const sql = require('mssql');
 
@@ -1050,7 +1052,7 @@ let fetchStudentsBookings = (req, res) => {
         })
     } catch (error) {
         console.error("Error storing Events:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(400).json({ message: error.message });
     }
 };
 
@@ -1214,21 +1216,93 @@ let get_tutor_market_data = async (req, res) => {
 
 let get_tutor_students = async (req, res) => {
     try {
-      const { academyId } = req.params;
-  
-      // Fetch Students from studentShortlist table based on AcademyId
-      const students = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM StudentShortList WHERE CONVERT(VARCHAR, AcademyId) = '${academyId}'`)
-          .then((result) => result.recordset)
-      );
-      res.json(students);
+        const { academyId } = req.params;
+
+        const students = await connecteToDB.then(poolConnection =>
+            poolConnection.request().query(`
+            SELECT * FROM StudentShortList as ss join StudentSetup as st on
+            cast(st.AcademyId as varchar(max)) = cast(ss.Student as varchar(max)) join StudentBookings as sb
+            on cast(sb.studentId as varchar)= cast(ss.Student  as varchar) and 
+            sb.tutorId = cast( ss.AcademyId  as varchar) and 
+            sb.subjectName=cast(ss.Subject as varchar)
+            WHERE  CONVERT(VARCHAR, ss.AcademyId) = '${academyId}'
+           `)
+                .then((result) => result.recordset)
+        );
+        const formattedResult = students.map(student => {
+            const reservedSlots = JSON.parse(student.reservedSlots || '[]');
+            const bookedSlots = JSON.parse(student.bookedSlots || '[]');
+            // const 
+            const allPastSession = reservedSlots.concat(bookedSlots).filter((session) =>
+                new Date(session.end) < new Date());
+            allPastSession.sort((a, b) => a.date - b.date);
+            const oldestSession = allPastSession.length > 0 ? allPastSession[0] : null;
+            const latestSession = allPastSession.length > 0 ? allPastSession[allPastSession.length - 1] : null;
+            const sumOfRates = allPastSession.reduce((total, session) => {
+                const rateValue = parseFloat(session.rate.replace('$', ''));
+                return total + rateValue;
+            }, 0);
+
+            return {
+                id: student.AcademyId[1],
+                online: student.Online,
+                photo: student.Photo === 'undefined' ? null : student.Photo,
+                screenName: student.ScreenName[1],
+                subject: student.Subject,
+                country: student.Country,
+                gmt: student.GMT,
+                grade: student.Grade,
+                totalHours: allPastSession.length,
+                dateStart: allPastSession.length ? oldestSession.start : null,
+                dateLast: allPastSession.length ? latestSession.start : null,
+                totalGross: '',
+                totalNet: sumOfRates
+            }
+        })
+        res.status(200).json(formattedResult);
     } catch (error) {
-      console.error('Error fetching tutor students:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error fetching tutor students:', error);
+        res.status(400).json({ error: error.message });
     }
 }
 
+
+//upload resume
+// Set up storage for file uploads
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'tutor-resumes');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    },
+});
+const upload = multer({ storage: storage });
+let uploadResume = (req, res) => {
+    try {
+        console.log("upload");
+        // Assuming the file is sent with the name 'resume'
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({ success: false, message: 'No file uploaded' });
+        }
+
+        // The file path is accessible as file.path
+        const filePath = file.path;
+
+        // You can save filePath in your database or perform other actions
+
+        res.status(200).json({ success: true, message: 'File uploaded successfully' });
+    } catch (error) {
+        console.error('Error uploading file:', error.message);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
 module.exports = {
+    uploadResume,
+    storage,
     subject_already_exist,
     subjects,
     get_tutor_market_data,

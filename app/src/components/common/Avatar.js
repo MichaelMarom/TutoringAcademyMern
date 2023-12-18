@@ -1,4 +1,5 @@
 import React from 'react';
+import generalAvatar from '../../images/avatar.png'
 
 const Avatar = ({ avatarSrc, online, size = "50", indicSize="12px" }) => {
     const containerStyle = {
@@ -20,9 +21,9 @@ const Avatar = ({ avatarSrc, online, size = "50", indicSize="12px" }) => {
     return (
         <div className="avatar-container m-2" style={containerStyle}>
             <img
-                src={avatarSrc}
+                src={avatarSrc || generalAvatar}
                 alt="Avatar"
-                className=" rounded-circle "
+                className=" rounded-circle border "
                 width={size}
                 height={size}
             />

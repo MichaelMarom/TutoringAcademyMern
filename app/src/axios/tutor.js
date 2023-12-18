@@ -18,24 +18,24 @@ export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId)
 }
 export const uploadFile = (file) => {
     return new Promise((resolve, reject) => {
-      try {
-        const formData = new FormData();
-        formData.append('file', file);
-  
-        apiClient.post('/tutor/upload-resume', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-          .then((result) => {
-            resolve(result.data);
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      } catch (error) {
-        reject(error);
-      }
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            apiClient.post('/tutor/upload-resume', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+                .then((result) => {
+                    resolve(result.data);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        } catch (error) {
+            reject(error);
+        }
     });
 };
 
@@ -223,7 +223,7 @@ export let upload_form_two = (level, university1, university2, university3, degr
     countryForMast,
     countryForCert,
     countryForDoc,
-    countryForAssociate,resume) => {
+    countryForAssociate, resume) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/form-two', {
@@ -233,7 +233,7 @@ export let upload_form_two = (level, university1, university2, university3, degr
             countryForMast,
             countryForCert,
             countryForDoc,
-            countryForAssociate,resume
+            countryForAssociate, resume
         })
             .then((result) => {
                 resolve(result.data)
@@ -622,8 +622,8 @@ export const post_tutor_setup = async (data) => {
 
 export const get_tutor_students = async (AcademyId) => {
     try {
-        const response = await apiClient.get(`/tutor/get_students/${AcademyId}`);
-        return response;
+        const { data } = await apiClient.get(`/tutor/get_students/${AcademyId}`);
+        return data;
     } catch (error) {
         console.log(error)
     }

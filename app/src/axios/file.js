@@ -25,9 +25,9 @@ export const getPreviousFilePathFromDB = async (userId) => {
     }
 };
 
-export const deleteFileOnServer = async (filename) => {
+export const deleteFileOnServer = async (userId) => {
     try {
-      const response = await fileUploadClient.delete(`/delete-file/${filename}`);
+      const response = await fileUploadClient.delete(`/delete-file/${userId}`);
       return response.data;
     } catch (err) {
       console.error('Error deleting file on server:', err);

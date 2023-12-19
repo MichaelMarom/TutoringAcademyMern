@@ -56,8 +56,8 @@ const MyStudents = () => {
               <td>{student.totalHours}</td>
               <td className='col-2'>{showDate(student.dateStart, wholeDateFormat)}</td>
               <td className='col-2'>{showDate(student.dateLast, wholeDateFormat)}</td>
-              <td></td>
               <td>${student.totalNet}</td>
+              <td></td>
             </tr>
           ))}
         </tbody>

@@ -18,6 +18,10 @@
   }
   
   /* calender */
+  .rbc-calendar {
+    min-height: 600px;
+  }
+  
   .rbc-btn-group button:nth-child(1) {
     background-color: yellow !important;
     color: #000 !important;

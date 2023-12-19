@@ -291,7 +291,7 @@ const ShowCalendar = ({
     return date;
   };
 
-  const filterOtherStudentAndTutorSession = (givenReservedSlots = [], givenBookedSlots, tutorId = selectedTutor.academyId) => {
+  const filterOtherStudentAndTutorSession = (givenReservedSlots = [], givenBookedSlots, tutorId = isStudentLoggedIn ? selectedTutor.academyId : tutor.AcademyId) => {
     let updatedReservedSlot = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot =>
       (slot.studentId === student.AcademyId && slot.tutorId === tutorId));
     let updatedBookedSlots = givenBookedSlots ? givenBookedSlots : bookedSlots.filter(slot => slot.studentId === student.AcademyId && slot.tutorId === tutorId);
@@ -360,7 +360,7 @@ const ShowCalendar = ({
 
   const handleSetReservedSlots = (reservedSlots) => {
     let { reservedSlots: updatedReservedSlots, bookedSlots } = filterOtherStudentAndTutorSession(reservedSlots)
-    dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
+    dispatch(postStudentBookings({ studentId, tutorId: isStudentLoggedIn ? tutorId : tutor.AcademyId, subjectName, bookedSlots, reservedSlots: updatedReservedSlots }));
   }
 
   const handleDateClick = (slotInfo) => {
@@ -811,6 +811,22 @@ const ShowCalendar = ({
     if (isStudentRoute) setActiveView('week')
   }, [location])
 
+  //update day end slot to 11:59PM --> 12:PM end time does not show events
+  function updateDayEndSlotEndTime() {
+    const updatedEvents = (bookedSlots.concat(reservedSlots)).map(event => {
+
+      if (moment(event.start).hours() === 23 && moment(event.start).minutes() === 0) {
+        return {
+          ...event,
+          end: moment(event.start).set({ hours: 23, minutes: 59 })
+        };
+      }
+      return event;
+    });
+
+    return updatedEvents;
+  }
+
   const localizer = momentLocalizer(moment);
   if (!dataFetched)
     return <Loading height="60vh" />
@@ -821,7 +837,7 @@ const ShowCalendar = ({
         localizer={localizer}
         selectable={true}
         defaultView={activeView}
-        events={reservedSlots.concat(bookedSlots)?.map((event) => ({
+        events={(updateDayEndSlotEndTime())?.map((event) => ({
           ...event,
           start: convertToGmt(event.start),
           end: convertToGmt(event.end),
@@ -836,10 +852,7 @@ const ShowCalendar = ({
               handleEventClick={handleEventClick}
               isStudentLoggedIn={isStudentLoggedIn}
             />
-          ),
-          agenda: {
-            agenda: CustomAgenda,
-          },
+          )
         }}
         view={activeView}
         startAccessor="start"

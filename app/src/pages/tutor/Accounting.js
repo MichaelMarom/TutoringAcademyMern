@@ -1,9 +1,9 @@
-import AccountingComp from "../../components/tutor/Accounting";
+import AccountingComp from "../../components/tutor/Accounting/Accounting";
 import TutorLayout from "../../layouts/TutorLayout";
 
 const Accounting = () => {
   return (
-    <TutorLayout>
+    <TutorLayout showLegacyFooter={false}>
       <AccountingComp />
     </TutorLayout>
   );

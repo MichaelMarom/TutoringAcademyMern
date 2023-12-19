@@ -1266,43 +1266,43 @@ let get_tutor_students = async (req, res) => {
     }
 }
 
+let getSessionsDetails = async (req, res) => {
+    const { tutorId } = req.params;
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
 
-//upload resume
-// Set up storage for file uploads
-let storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'tutor-resumes');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
-    },
-});
-const upload = multer({ storage: storage });
-let uploadResume = (req, res) => {
-    try {
-        console.log("upload");
-        // Assuming the file is sent with the name 'resume'
-        const file = req.file;
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `SELECT 
+                      b.reservedSlots, b.bookedSlots, b.tutorId, b.studentId, b.subjectName, ss.Rate
+                        FROM StudentBookings AS b
+                        JOIN StudentShortList AS ss ON
+                        b.studentId  = CAST(ss.Student as varchar(max)) AND 
+                        b.tutorId =  CAST(ss.AcademyId as varchar(max))
+                        inner JOIN TutorSetup AS ts On
+                        b.tutorId = CAST(ts.AcademyId as varchar(max))
+                        WHERE b.tutorId = CAST('${tutorId}' as varchar(max)); `
+                );
+                console.log(result.recordset, 'heheheheheheheh');
+                const formattedResult = result.recordset.map(record => {
+                    const reservedSession = JSON.parse(record.reservedSlots);
+                    const bookedSession = JSON.parse(record.bookedSlots);
+                    return reservedSession.concat(bookedSession)
 
-        if (!file) {
-            return res.status(400).json({ success: false, message: 'No file uploaded' });
+                }).flat()
+                res.status(200).send(formattedResult);
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
         }
+    })
+}
 
-        // The file path is accessible as file.path
-        const filePath = file.path;
-
-        // You can save filePath in your database or perform other actions
-
-        res.status(200).json({ success: true, message: 'File uploaded successfully' });
-    } catch (error) {
-        console.error('Error uploading file:', error.message);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-    }
-};
 module.exports = {
-    uploadResume,
-    storage,
+    getSessionsDetails,
     subject_already_exist,
     subjects,
     get_tutor_market_data,

@@ -115,13 +115,6 @@ const StudentAccounting = () => {
         fetchPaymentReport();
     }, []);
 
-    const totalAmount = paymentReportData
-        .filter((row) => {
-            if (!startDate || !endDate) return true;
-            console.log(row)
-            return convertToDate(row.start) >= new Date(startDate) && convertToDate(row.start) <= new Date(endDate);
-        })
-        .reduce((total, row) => total + parseFloat(row.rate.split('$')[1]), 0);
 
     if (loading)
         return <Loading />
@@ -155,7 +148,9 @@ const StudentAccounting = () => {
                 <div className="row">
                     <AccountingTable tableData={paymentReportData} />
                     <AmountCalc
-                        totalAmount={totalAmount}
+                        paymentReportData={paymentReportData}
+                        startDate={startDate}
+                        endDate={endDate}
                         setStartDate={setStartDate}
                         setEndDate={setEndDate}
                     />

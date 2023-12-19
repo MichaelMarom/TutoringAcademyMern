@@ -628,3 +628,14 @@ export const get_tutor_students = async (AcademyId) => {
         console.log(error)
     }
 }
+
+export const get_sessions_details = async (AcademyId) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/session/${AcademyId}`);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}

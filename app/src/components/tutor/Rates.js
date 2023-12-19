@@ -465,6 +465,7 @@ const Rates = () => {
                 />
                 <label className="form-check-label" for="flexSwitchCheckChecked">
                   My hourly Charge for teaching a public or private school class (up to 30 students).
+                  Only tutors that fill up this field are being shown to schools. 
                 </label>
 
 

@@ -12,7 +12,6 @@ const Accounting = () => {
     useEffect(() => {
         const fetchSessionDetails = async () => {
             const data = await get_sessions_details(AcademyId);
-            console.log(data);
             setSessions(data)
         }
         fetchSessionDetails()

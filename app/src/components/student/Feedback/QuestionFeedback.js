@@ -3,6 +3,7 @@ import { FaGrinStars, FaSmile, FaMeh, FaFrown, FaAngry } from 'react-icons/fa';
 import Loading from '../../common/Loading';
 
 const Questions = ({ loading, questions, handleEmojiClick }) => {
+
   if (loading)
     return <Loading height="40vh" />
   return (

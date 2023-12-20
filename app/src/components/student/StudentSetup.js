@@ -457,7 +457,7 @@ const StudentSetup = () => {
                                     <label className="form-check-label mr-3" for="flexSwitchCheckChecked" >
                                         Parent(s) consent to record lesson.
                                     </label>
-                                    <Tooltip text="Enable this switch to consent video recording.The video clip stored for 30 days, then be deleted from The academy servers." width="200px">
+                                    <Tooltip text="Enable this switch to consent video recording for ensuring quality of service. The video clip stored for 30 days, then be deleted from The academy servers." width="200px">
                                         <FaInfoCircle size={18} color="#0096ff" />
                                     </Tooltip>
                                 </div>

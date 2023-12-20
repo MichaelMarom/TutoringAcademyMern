@@ -10,7 +10,7 @@ import { NoChatSelectedScreen } from '../components/Chat/NoChatSelectedScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_chat_message, post_message, set_online_status } from '../axios/chat';
 import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
-import { socket } from '../socket'
+import { socket } from '../config/socket'
 import { setChats } from '../redux/chat/chat';
 
 function Chat() {

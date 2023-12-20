@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { get_bank_details, upload_form_four } from '../../../axios/tutor';
-import Acad_Commission from '../Acad_Commission._Table';
+import Acad_Commission from './Acad_Commission._Table';
 
 const TutorAccSetup = () => {
 
@@ -257,7 +257,7 @@ const TutorAccSetup = () => {
                     <br />
 
                     <div className="highlight">
-                        Social security needs to be provided only from US residents for accounts over $50 and for 1099 form over $600 annually.
+                        Social security needs to be provided only from US residents for annual EARNING over $600. Form 1099 to be issued by the academy.
                     </div>
                     <br />
                     <br />

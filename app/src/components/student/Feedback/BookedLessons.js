@@ -6,6 +6,7 @@ import StarRating from './StarRating';
 import { convertToDate } from '../../common/Calendar/Calendar';
 import { useSelector } from 'react-redux';
 import Tooltip from '../../common/ToolTip';
+import { moment } from '../../../config/moment'
 
 function BookedLessons({
   events,
@@ -13,6 +14,7 @@ function BookedLessons({
   selectedEvent,
   setEvents
 }) {
+  console.log(moment.tz(events[0].start, moment.tz.guess()).format('z'), 'timeZOne')
 
   const { shortlist } = useSelector(state => state.shortlist)
   const [eventsWithPhoto, setEventsWithPhoto] = useState([])

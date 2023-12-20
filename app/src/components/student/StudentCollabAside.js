@@ -3,7 +3,7 @@ import screenLarge from '../../images/screen-full-svgrepo-com.svg';
 import screenNormal from '../../images/screen-normal-svgrepo-com.svg'
 import DiableVideoImage from '../../images/video-recorder-off-svgrepo-com.svg'; 
 import muteSvg from '../../images/mute-svgrepo-com.svg'
-import { socket } from '../../socket';
+import { socket } from '../../config/socket';
 import {Peer} from 'peerjs';
 import { useLocation } from 'react-router-dom';
 

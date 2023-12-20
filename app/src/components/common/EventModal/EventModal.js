@@ -32,6 +32,7 @@ function EventModal({
   const sessionInFuture = convertToDate(clickedSlot.end).getTime() > (new Date()).getTime()
   const { selectedTutor } = useSelector(state => state.selectedTutor);
   const [rescheduleTime, setRescheduleTime] = useState(timeZone ? (moment().add(1, 'hours').set({ minute: 0 }).tz(timeZone)).toDate() : moment().toDate())
+  const [invoiceNum, setInvoiceNum] = useState(null)
 
   const formatUTC = (dateInt, addOffset = false) => {
     let date = (!dateInt || dateInt.length < 1) ? new Date : new Date(dateInt);
@@ -58,22 +59,39 @@ function EventModal({
     const updatedReservedSlot = (reservedSlots.concat(bookedSlots)).map((slot) => slot.id === clickedSlot.id ?
       { ...slot, request: null, start: rescheduleTime, end: rescheduleEndTime.toDate() } : slot)
     handleRescheduleSession(updatedReservedSlot.filter(slot => slot.type === 'intro' || slot.type === 'reserved'),
-     [])
+      [])
     onRequestClose()
     setSelectedType(null)
   }
 
   const handleRemoveSlot = (startTime) => {
-    setSelectedSlots(selectedSlots.filter((slot) => slot.start.getTime() !== startTime.getTime()))
+    setSelectedSlots(selectedSlots.filter((slot) =>
+      slot.start.getTime() !== startTime.getTime()))
   }
 
   const handleAccept = () => {
-    if (canPostEvents) {
-      handleBulkEventCreate(selectedType);
+    if (canPostEvents ) {
+      handleBulkEventCreate(selectedType, invoiceNum);
       onRequestClose();
       setSelectedType(null)
     }
   }
+
+  const generateNumberWithDate = () => {
+    const today = moment();
+    const datePart = today.format('DDMMYY');
+    const randomTwoDigitNumber = Math.floor(Math.random() * 90) + 10;
+    const generatedNumber = `${datePart}${randomTwoDigitNumber}`;
+    return generatedNumber;
+  };
+
+  useEffect(() => {
+    if (selectedType === 'intro' || selectedType === 'booked')
+      setInvoiceNum(generateNumberWithDate())
+    else {
+      setInvoiceNum(null)
+    }
+  }, [selectedType])
 
   useEffect(() => {
     const existIntroSession = reservedSlots?.some(slot => slot.type === 'intro' && selectedTutor.subject === slot.subject && (!isStudentLoggedIn || slot.studentId === student.AcademyId))
@@ -201,7 +219,7 @@ function EventModal({
               selectedType={selectedType}
               studentName={formatName(student.FirstName, student.LastName)}
               tutorName={formatName(selectedTutor.firstName, selectedTutor.lastName)}
-              invoiceNumber={123}
+              invoiceNum={invoiceNum}
               selectedSlots={clickedSlot.start ? [clickedSlot] : selectedSlots}
               subject={selectedTutor.subject}
               rate={selectedTutor.rate}

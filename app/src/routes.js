@@ -21,7 +21,8 @@ import { get_my_data } from "./axios/student";
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
 import { setChats } from "./redux/chat/chat";
-import { socket } from "./socket";
+import { socket } from "./config/socket";
+import { moment } from './config/moment';
 
 const App = () => {
   let location = useLocation();
@@ -62,6 +63,16 @@ const App = () => {
   }, [user]);
 
   //dispatch
+
+  useEffect(() => {
+    if (studentLoggedIn) {
+      moment.tz.setDefault(student.timeZone);
+    }
+    else {
+      moment.tz.setDefault(tutor.timeZone);
+    }
+  }, [tutor, student])
+
   useEffect(() => {
     dispatch(setShortlist())
     const getStudentDetails = async () => {

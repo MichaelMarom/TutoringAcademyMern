@@ -4,7 +4,7 @@ import screenNormal from '../../images/screen-normal-svgrepo-com.svg'
 import muteSvg from '../../images/mute-svgrepo-com.svg'
 import DiableVideoImage from '../../images/video-recorder-off-svgrepo-com.svg';
 import { useLocation } from 'react-router-dom';
-import { socket } from '../../socket';
+import { socket } from '../../config/socket';
 import { Peer } from 'peerjs';
 
 const TutorAside = () => {

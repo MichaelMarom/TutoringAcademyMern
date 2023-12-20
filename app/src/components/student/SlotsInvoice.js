@@ -12,7 +12,7 @@ const SlotsInvoice = ({
   selectedType,
   studentName,
   tutorName,
-  invoiceNumber,
+  invoiceNum,
   selectedSlots,
   subject,
   rate,
@@ -31,13 +31,7 @@ const SlotsInvoice = ({
     return currentDate
   }
 
-  const generateNumberWithDate = () => {
-    const today = moment();
-    const datePart = today.format('DDMMYY');
-    const randomTwoDigitNumber = Math.floor(Math.random() * 90) + 10;
-    const generatedNumber = `${datePart}${randomTwoDigitNumber}`;
-    return generatedNumber;
-  };
+
 
   return (
     <div className="container mt-4">
@@ -54,7 +48,8 @@ const SlotsInvoice = ({
               <div className="mb-4">
                 <div className='d-flex justify-content-between align-items-center mb-3'>
                   <div className='text-center ' style={{ fontSize: '16px' }}>
-                    <span className='fs-5 font-weight-bold'>  Invoice</span>  # {generateNumberWithDate()}
+                    <span className='fs-5 font-weight-bold'>  Invoice</span>  #
+                    {invoiceNum}
                   </div>
                   <div>Date: {showDate(currentTime())}</div>
                 </div>

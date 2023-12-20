@@ -11,8 +11,8 @@ export const COLUMNS = [
         accessor: 'Photo',
     },
     {
-        Header: 'Tutor Id',
-        accessor: 'Tutor Id',
+        Header: 'Screen Id',
+        accessor: 'Screen Id',
     },
     {
         Header: 'Tutor Name',
@@ -31,16 +31,16 @@ export const COLUMNS = [
         accessor: 'GMT',
     },
     {
-        Header: 'Hour',
-        accessor: 'Hour',
+        Header: 'Tot. Hours',
+        accessor: 'Tot. Hours',
     },
     {
         Header: 'Earned',
         accessor: 'Earned',
     },
     {
-        Header: 'Stars',
-        accessor: 'Stars',
+        Header: 'Last Active',
+        accessor: 'Last Active',
     },
     {
         Header: 'ID Verified',

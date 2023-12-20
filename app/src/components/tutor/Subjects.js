@@ -3,7 +3,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useEffect } from 'react';
 import { get_faculty, get_rates, get_subject, get_user_data, new_subj_request_exist, upload_new_subject, upload_tutor_rates } from '../../axios/tutor';
 import { COLUMNS } from '../../Tables/Subject/columns';
-import { socket } from '../../socket';
+import { socket } from '../../config/socket';
 import CenteredModal from '../common/Modal';
 import Button from '../common/Button';
 import { toast } from 'react-toastify';

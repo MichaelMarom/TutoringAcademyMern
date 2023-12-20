@@ -1,58 +1,24 @@
 import { useTable } from 'react-table';
-import { CommisionCols as CommCol } from '../../Tables/Commission/columns'
+import { CommisionCols as CommCol } from '../../../Tables/Commission/columns'
 import { useMemo } from 'react';
-import { useState } from 'react';
 import { useEffect } from 'react';
-import axios from 'axios';
-import { useCallback } from 'react';
+import { COMMISSION_DATA } from '../../../constants/constants';
 
 const Acad_Commission = () => {
 
     useEffect(() => {
         let next = document.querySelector('.tutor-next')
 
-        if(next && next.hasAttribute('id')){
+        if (next && next.hasAttribute('id')) {
             next?.removeAttribute('id');
         }
     }, [])
 
-    const data = 
-    [
-    
-        {
-            time: '00 - 60 Hr',
-            percent: '20%',
-        },
-        {
-            time: '61 - 120 Hr',
-            percent: '18%',
-        },
-        {
-            time: '121 - 180 Hr',
-            percent: '16%',
-        },
-        {
-            time: '181 - 240 Hr',
-            percent: '14%',
-        },
-        {
-            time: '241 - 300 Hr',
-            percent: '12%',
-        },
-        {
-            time: '301 > Hr',
-            percent: '10%',
-        },
-        {
-            time: 'Demo Lesson',
-            percent: '50%',
-        }
-        
-    ]
+    const data = COMMISSION_DATA
 
     const columns = useMemo(() => CommCol, []);
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data});
-    return ( 
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
+    return (
         <>
             <div className="rate-table">
                 <table {...getTableProps()}>
@@ -88,11 +54,11 @@ const Acad_Commission = () => {
                             );
                         })}
                     </tbody>
-                    </table>
+                </table>
             </div>
 
         </>
-     );
+    );
 }
- 
+
 export default Acad_Commission;

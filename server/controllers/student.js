@@ -2,7 +2,7 @@ const { marom_db, connecteToDB } = require('../db');
 const { insert, getAll, findById, findByAnyIdColumn, update, find } = require('../helperfunctions/crud_queries');
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
-
+const moment = require('moment-timezone')
 const executeQuery = async (query, res) => {
     try {
         const db = await marom_db(() => { })
@@ -433,8 +433,13 @@ let get_my_data = async (req, res) => {
     }
 
     sender(() => {
-        console.log(books)
-        res.send(books)
+        const offset = parseInt(books[1][0][0].GMT, 10);
+        let timezones = moment.tz.names().filter(name =>
+            (moment.tz(name).utcOffset()) === offset * 60);
+        const timeZone = timezones[0] || null
+
+        const formattedResult = [books[0], [[{ ...books[1][0][0], timeZone }]]];
+        res.send(formattedResult)
     })
 
 }

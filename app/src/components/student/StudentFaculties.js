@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import { COLUMNS, DATA } from '../../Tables/Faculty/columns';
 import { useMemo } from 'react';
 import { get_student_short_list, get_student_short_list_data, get_tutor_subject, upload_student_short_list } from '../../axios/student';
-import { socket } from '../../socket';
+import { socket } from '../../config/socket';
 import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';

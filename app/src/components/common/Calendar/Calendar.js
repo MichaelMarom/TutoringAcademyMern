@@ -42,7 +42,7 @@ const ShowCalendar = ({
   setDisabledHours
 }) => {
 
-  const [activeView, setActiveView] = useState(views.MONTH)
+  const [activeView, setActiveView] = useState(views.MONTH);
   const dispatch = useDispatch();
 
   const { user } = useSelector(state => state.user);
@@ -168,6 +168,7 @@ const ShowCalendar = ({
       }
     }
   }
+
   //getting array of disableqweekdays timeslot per week
   useEffect(() => {
     if (timeZone) {
@@ -298,7 +299,7 @@ const ShowCalendar = ({
     return { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots };
   }
 
-  const handleBulkEventCreate = (type) => {
+  const handleBulkEventCreate = (type, invoiceNum) => {
     if (reservedSlots?.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
       let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...clickedSlot, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== clickedSlot.id) }));
@@ -329,6 +330,7 @@ const ShowCalendar = ({
         studentId: student.AcademyId,
         createdAt: new Date(),
         subject: selectedTutor.subject,
+        invoiceNum: invoiceNum,
         tutorId: selectedTutor.academyId,
         rate: (type === 'intro' && selectedTutor.introDiscountEnabled) ?
           `$${(parseInt(selectedTutor.rate.split('$')[1]) / 2)}.00` : selectedTutor.rate

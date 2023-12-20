@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { socket } from "../../socket";
+import { socket } from "../../config/socket";
 import { useDispatch } from "react-redux";
 import { setToolReqTo } from "../../redux/student_store/toolReq";
 

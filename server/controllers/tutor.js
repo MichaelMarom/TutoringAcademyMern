@@ -1,6 +1,7 @@
 const { resolve } = require('path/posix');
 const { marom_db, knex, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
+const moment = require('moment-timezone');
 const { insert, updateById, getAll, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 
 const multer = require('multer');
@@ -571,7 +572,9 @@ let get_user_data = (req, res) => {
         if (poolConnection) {
             poolConnection.request().query(
                 `
-                    SELECT EducationalLevel, EducationalLevelExperience, Certificate, CertificateState, CertificateExpiration, AcademyId  From Education  WHERE CONVERT(VARCHAR(max), AcademyId) = '${user_id}'
+                    SELECT EducationalLevel, EducationalLevelExperience, Certificate, CertificateState, 
+                    CertificateExpiration, AcademyId  From Education  WHERE CONVERT(VARCHAR(max), AcademyId) = 
+                    '${user_id}'
                 `
             )
                 .then((result) => {
@@ -920,18 +923,28 @@ let get_bank_details = (req, res) => {
 
 let get_tutor_setup = (req, res) => {
     marom_db(async (config) => {
-        const sql = require('mssql');
+        try {
+            const sql = require('mssql');
 
-        var poolConnection = await sql.connect(config);
-        if (poolConnection) {
-            poolConnection.request().query(
-                findByAnyIdColumn('TutorSetup', req.query, 'varchar(max)')
-            )
-                .then((result) => {
-                    res.status(200).send(result.recordset)
-                })
-                .catch(err => console.log(err))
+            var poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    findByAnyIdColumn('TutorSetup', req.query, 'varchar(max)')
+                )
 
+                const offset = parseInt(result.recordset[0].GMT, 10);
+                let timezones = moment.tz.names().filter(name =>
+                    (moment.tz(name).utcOffset()) === offset * 60);
+                const timeZone = timezones[0] || null
+
+                const formattedResult = [{ ...result.recordset[0], timeZone }]
+
+                res.status(200).send(formattedResult)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.messageF })
         }
 
     })
@@ -1276,7 +1289,7 @@ let getSessionsDetails = async (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `SELECT 
-                      b.reservedSlots, b.bookedSlots, b.tutorId, b.studentId, b.subjectName, ss.Rate
+                      b.reservedSlots, ts.GMT, b.bookedSlots, b.tutorId, b.studentId, b.subjectName, ss.Rate
                         FROM StudentBookings AS b
                         JOIN StudentShortList AS ss ON
                         b.studentId  = CAST(ss.Student as varchar(max)) AND 
@@ -1285,14 +1298,39 @@ let getSessionsDetails = async (req, res) => {
                         b.tutorId = CAST(ts.AcademyId as varchar(max))
                         WHERE b.tutorId = CAST('${tutorId}' as varchar(max)); `
                 );
-                console.log(result.recordset, 'heheheheheheheh');
-                const formattedResult = result.recordset.map(record => {
+                const allStudentsSessions = result.recordset.map(record => {
                     const reservedSession = JSON.parse(record.reservedSlots);
                     const bookedSession = JSON.parse(record.bookedSlots);
-                    return reservedSession.concat(bookedSession)
+                    const combinedSessions = reservedSession.concat(bookedSession)
+                    return combinedSessions
 
-                }).flat()
-                res.status(200).send(formattedResult);
+                }).flat();
+
+                const uniqueIds = new Set();
+                const uniqueIdsSessions = allStudentsSessions.filter((obj) => {
+                    if (!uniqueIds.has(obj.id)) {
+                        uniqueIds.add(obj.id);
+                        return true;
+                    }
+                    return false;
+                });
+                uniqueIdsSessions.sort((a, b) => new Date(b.start) - new Date(a.start))
+                const arrayWithSerialNumber = uniqueIdsSessions.map((obj, index) => ({
+                    ...obj,
+                    sr: uniqueIdsSessions.length - index,
+                }));
+
+                const today = moment();
+                const lastFriday = today.day(-2);
+                const olderThanLastFridaySession = arrayWithSerialNumber.filter((session) => {
+                    const sessionDate = moment(session.start);
+                    if (sessionDate.isSameOrBefore(lastFriday, 'day')) {
+                        return true;
+                    }
+                    return false
+                })
+
+                res.status(200).send(olderThanLastFridaySession);
             }
         } catch (err) {
             console.log(err);

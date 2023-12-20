@@ -1262,6 +1262,51 @@ export const CAN_STATES = [
 
 ]
 
+export const COMMISSION_DATA = [
+  {
+    lower: 0,
+    highest: 60,
+    time: "00-60 Hr",
+    percent: 20,
+  },
+  {
+    lower: 61,
+    highest: 120,
+    time: "61-120 Hr",
+
+    percent: 18,
+  },
+  {
+    lower: 121,
+    highest: 180,
+    time: "121-180 Hr",
+
+    percent: 16,
+  },
+  {
+    lower: 181,
+    highest: 240,
+    time: "181-240 Hr",
+
+    percent: 14,
+  },
+  {
+    lower: 241,
+    highest: 300,
+    time: "241-300 Hr",
+    percent: 12,
+  },
+  {
+    lower: 301,
+    time: '301 > Hr',
+    percent: 10,
+  },
+  {
+    time: 'Demo Lesson',
+    percent: '50%',
+  }
+]
+
 const setDefaultHours = `
 update  TutorSetup set disableHoursRange = '[["1:00 am","2:00 am"],["2:00 am","3:00 am"],["3:00 am","4:00 am"],["4:00 am","5:00 am"],["5:00 am","6:00 am"],["7:00 am","8:00 am"],["9:00 pm","10:00 pm"],["10:00 pm","11:00 pm"],["11:00 pm","12:00 am (midnight)"],["6:00 am","7:00 am"],["12:00 am","1:00 am","midnight"]]'
 ALTER TABLE TutorSetup

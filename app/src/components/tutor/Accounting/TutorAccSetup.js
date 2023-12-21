@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react';
 import { get_bank_details, upload_form_four } from '../../../axios/tutor';
+import { showDate } from '../../../helperFunctions/timeHelperFunctions';
 import Acad_Commission from './Acad_Commission._Table';
+import Actions from '../../common/Actions'
+import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux'
+import { COMMISSION_DATA } from '../../../constants/constants';
 
-const TutorAccSetup = () => {
-
-    useEffect(() => {
-        let next = document.querySelector('.tutor-next')
-
-        if (next && next.hasAttribute('id')) {
-            next?.removeAttribute('id');
-        }
-    }, [])
-
+const TutorAccSetup = ({ sessions }) => {
+    const { tutor } = useSelector(state => state.tutor)
     let date = new Date().toDateString();
+    const [email, set_email] = useState(tutor.Email);
     let [start_day, set_start_day] = useState(date)
     let [acct_name, set_acct_name] = useState(null)
     let [acct_type, set_acct_type] = useState(null)
@@ -25,265 +23,234 @@ const TutorAccSetup = () => {
     let [total_earning, set_total_earning] = useState(null)
     let [payment_option, set_payment_option] = useState(null)
 
-    let handle_bank = (e) => {
-        let bank_elem = document.querySelector('.tutor-bank-info')
-        set_payment_option(e.target.value);
+    useEffect(() => {
+        set_email(tutor.Email)
+    }, [tutor])
 
-        let value = e.target.value;
-        if (value === 'Bank') {
-            bank_elem?.setAttribute('id', 'tutor-bank-info')
-        } else {
-            bank_elem?.removeAttribute('id')
-        }
+    const commissionAccordingtoNumOfSession = (sr) => {
+        const commissionEntry = COMMISSION_DATA.find(entry => {
+            if (!entry.higher) {
+                return sr >= entry.lower && sr <= entry.higher;
+            } else {
+                return sr >= entry.lower;
+            }
+        });
+        return commissionEntry ? commissionEntry.percent : null
     }
 
+    const totalNet = sessions.reduce((sum, session) => sum + session.net, 0)
 
 
-    if (document.querySelector('#tutor-save')) {
+    const validate = () => {
+        const fields = { SSH: { value: ssh, pattern: /^\d{3}-\d{2}-\d{4}$/ } };
 
-        document.querySelector('#tutor-save').onclick = () => saver();
-
+        if (fields.SSH.value.length && !fields.SSH.pattern.test(fields.SSH.value)) {
+            toast.warning('Please follow XXX-XX-XXXX pattern for SSH');
+            return false
+        }
+        return true
     }
 
-    let user_id = window.localStorage.getItem('tutor_user_id');
+    let saver = async (e) => {
+        e.preventDefault()
 
-    let saver = async () => {
+        let user_id = window.localStorage.getItem('tutor_user_id');
+        if (validate())
+            if (payment_option === 'Bank') {
 
-        let inputs_datas = [...document.querySelectorAll('input')];
-        let inputs = inputs_datas.splice(1, inputs_datas.length);
-        let select = [...document.querySelectorAll('select')];
-
-        let list = [...inputs, ...select]
-        console.log(list)
-        let data = validtor(list)
-        let negative_agent = data.filter(item => item === false);
-        let positive_agent = data.filter(item => item === true);
-
-        if (payment_option === 'Bank') {
-            if (negative_agent.length === 0) {
-                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
-                let response = await upload_form_four(start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
+                let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
                 if (response) {
-                    setTimeout(() => {
-                        document.querySelector('.save-overlay')?.removeAttribute('id');
-                    }, 1000);
-
-                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
-                    setTimeout(() => {
-                        document.querySelector('.tutor-popin')?.removeAttribute('id');
-                    }, 2000);
+                    toast.success("Succesfully Saved The Bank Info.")
                 } else {
-                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
-                    setTimeout(() => {
-                        document.querySelector('.tutor-popin')?.removeAttribute('id');
-                    }, 2000);
+                    toast.error("Error while Saving the Bank Info.")
+                }
 
+            } else {
+                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
+                let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
+                if (response) {
+                    toast.success("Succesfully Saved The Bank Info.")
+                } else {
+                    toast.error("Error while Saving the Bank Info.")
                 }
             }
-
-        } else {
-            console.log(negative_agent.length, positive_agent.length)
-            if (negative_agent.length === 0 && positive_agent.length === 7) {
-                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
-                let response = await upload_form_four(start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
-                if (response) {
-                    setTimeout(() => {
-                        document.querySelector('.save-overlay')?.removeAttribute('id');
-                    }, 1000);
-
-                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
-                    setTimeout(() => {
-
-                        document.querySelector('.tutor-popin')?.removeAttribute('id');
-                    }, 2000);
-                } else {
-                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
-                    setTimeout(() => {
-                        document.querySelector('.tutor-popin')?.removeAttribute('id');
-                    }, 2000);
-
-                }
-            }
-        }
-
     }
 
     useEffect(() => {
         get_bank_details(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
-                console.log(result[0])
-                set_payment_option(result[0].PaymentOption);
-                set_routing(result[0].Routing)
-                set_ssh(result[0].SSH)
-                set_total_earning(result[0].TotalEarning)
-                set_accumulated_hrs(result[0].AccumulatedHrs)
-                set_commission(result[0].Commission)
-                set_acct_name(result[0].AccountName)
-                set_acct_type(result[0].AccountType)
-                set_bank_name(result[0].BankName)
-                set_acct(result[0].Account)
+                if (result[0]) {
+                    const data = result[0]
+                    set_payment_option(data.PaymentOption);
+                    set_routing(data.Routing === "null" ? null : data.Routing)
+                    set_ssh(data.SSH === "null" ? null : data.SSH)
+                    set_acct_name(data.AccountName === "null" ? null : data.AccountName)
+                    set_acct_type(data.AccountType === "null" ? null : data.AccountType)
+                    set_bank_name(data.BankName === "null" ? null : data.BankName)
+                    set_acct(data.Account === "null" ? null : data.Account)
+                }
             })
             .catch((err) => {
                 console.log(err)
             })
     }, [])
 
-    let validtor = list => {
-        let bool_list = [];
-
-        let elm_check = document.querySelector('.tutor-bank-info');
-
-        list.map(item => {
-            if (payment_option === 'Bank') {
-                if (item.value === '' || item.value === null) {
-                    item.style.border = '1px solid red'
-                    bool_list.push(false)
-                } else {
-                    item.style.border = '1px solid black'
-                    bool_list.push(true)
-                }
-            } else {
-                if (item.parentElement.parentElement !== elm_check) {
-                    if (item.value === '' || item.value === null) {
-                        item.style.border = '1px solid red'
-                        bool_list.push(false)
-                    } else {
-                        item.style.border = '1px solid black'
-                        bool_list.push(true)
-                    }
-                }
-            }
-        });
-        return bool_list;
-
-    }
     return (
-        <>
-            <div className="tutor-tab-accounting">
 
-                <div className="tutor-tab-acct-start-day">
-                    <h6>Tutor's Start Day (First tutoring lesson)</h6>
-                    <input style={{ pointerEvents: 'none' }} value={date} placeHolder='Tuesday' />
+        <div className="tutor-tab-accounting">
 
-                    <div className="tutor-tab-rates-btm-options" style={{ height: '400px', display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', margin: 'auto', marginTop: '80px' }}>
+            <div className="tutor-tab-acct-start-day">
+                <h6>Tutor's Start Day (First tutoring lesson)</h6>
+                <p className="border px-4  py-2 rounded m-2">{showDate(sessions?.[sessions.length - 1]?.start)}</p>
 
-                        <div className="highlight">
-                            Hours are accumulated on annual bases that will start counting from your enrollment.
-                        </div>
+                <div className="tutor-tab-rates-btm-options"
+                    style={{ height: '400px', display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'center', margin: 'auto', marginTop: '80px' }}>
 
-                        <Acad_Commission />
-
+                    <div className="highlight">
+                        Hours are accumulated on annual bases which will start counting from Tutor's start day.
                     </div>
-                </div>
 
+                    <Acad_Commission />
+
+                </div>
+            </div>
+            <form onSubmit={saver}>
                 <div className="tutor-tab-acct-pay-option">
                     <h6>How do you want to be paid?</h6>
                     <div className="highlight">
                         Tutor academy pays every second Friday for the lessons performed up to the previous Friday midnight (GMT-5), Please select below the payment Payment you prefer. Keep in mind that it can take 1-3 days until you see the funds in your account
                     </div>
 
-                    <div style={{ display: 'inline-block', width: '100%', padding: '0' }}>
+                    <div className='d-flex align-items-center justify-content-between '>
 
-                        <div style={{ float: 'left', margin: '0 0 20px 0', width: '50%' }}>
-                            <input defaultChecked={payment_option === 'Paypal' ? 'defaultChecked' : ''}
-                                style={{ float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small' }}
-                                type="radio" onInput={handle_bank}
+                        <div style={{ float: 'left' }}>
+                            <input required
+                                checked={payment_option === 'Paypal'}
+                                style={{
+                                    float: 'left', width: '30px', cursor: 'pointer', height: '20px',
+                                    fontSize: 'x-small'
+                                }}
+                                type="radio"
+                                onChange={(e) => set_payment_option(e.target.value)}
+                                className='m-0'
                                 value='Paypal' name='p-method' id="" />
-                            <span>Paypal</span>
+                            <span className='m-0'>Paypal</span>
                         </div>
-
-                        <div style={{ float: 'left', margin: '0 0 20px 0', width: '50%' }}>
-                            <input defaultChecked={payment_option === 'Zale' ? 'defaultChecked' : ''} style={{ float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small' }} type="radio" onInput={handle_bank} value='Zale' name='p-method' id="" />
-                            <span>Zelle</span>
+                        <div style={{ float: 'left' }}>
+                            <input className='m-0'
+                                checked={payment_option === 'Zale'}
+                                style={{
+                                    float: 'left', width: '30px', cursor: 'pointer', height: '20px',
+                                    fontSize: 'x-small'
+                                }} type="radio"
+                                onChange={(e) => set_payment_option(e.target.value)} value='Zale' name='p-method' id="" />
+                            <span className='m-0'>Zelle</span>
                         </div>
-
-                        <div style={{ float: 'left', margin: '0 0 20px 0', width: '50%' }}>
-                            <input defaultChecked={payment_option === 'Bank' ? 'defaultChecked' : ''} style={{ float: 'left', width: '30px', cursor: 'pointer', height: '20px', fontSize: 'x-small' }} type="radio" value='Bank' onInput={handle_bank} name='p-method' id="" />
-                            <span>Bank account (PCH)</span>
+                        <div className='m-0' style={{ float: 'left' }}>
+                            <input className='m-0'
+                                checked={payment_option === 'Bank'}
+                                style={{
+                                    float: 'left', width: '30px', cursor: 'pointer', height: '20px',
+                                    fontSize: 'x-small'
+                                }} type="radio" value='Bank'
+                                onChange={(e) => set_payment_option(e.target.value)} name='p-method' id="" />
+                            <span className='m-0'>Bank account (PCH)</span>
                         </div>
 
                     </div>
 
-                    <br />
-                    <br />
 
-                    <div className='tutor-bank-info'>
+                    {payment_option === "Bank" &&
+                        <div className=' mt-4'>
 
-                        <div style={{ display: 'inline-block', width: '350px', whiteSpace: 'nowrap' }}>
-                            <label style={{ margin: ' 0 10px 0 0', width: '30%', float: 'left' }} htmlFor="acct-name">Account Name</label>
-                            <input type="text" onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
+                            <div className='d-flex align-items-center justify-content-between'>
+                                <label htmlFor="acct-name">Account Name</label>
+                                <input required type="text" className='form-control' onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
+                            </div>
+
+
+                            <div className='d-flex align-items-center justify-content-between'>
+                                <label htmlFor="acct-type">Account Type</label>
+
+                                <select className='form-select' dname="" id="" onInput={e => set_acct_type(e.target.value)} style={{ float: 'right', width: '60%', margin: '0  0 10px 0', padding: '0 8px 0 8px', cursor: 'pointer' }}>
+                                    <option selected={acct_type === '' ? 'selected' : ''} value="null">Select Account Type</option>
+                                    <option selected={acct_type === 'savings' ? 'selected' : ''} value="savings">Savings</option>
+                                    <option selected={acct_type === 'checking' ? 'selected' : ''} value="checking">Checking</option>
+                                </select>
+                            </div>
+
+                            <div className='d-flex align-items-center justify-content-between'>
+                                <label htmlFor="bank-name">Bank Name</label>
+                                <input className='form-control' required type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
+                            </div>
+
+                            <div className='d-flex align-items-center justify-content-between'>
+                                <label htmlFor="acct">Account #</label>
+                                <input className='form-control' required type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
+                            </div>
+
+                            <div className='d-flex align-items-center justify-content-between'>
+                                <label htmlFor="routing">Routing #</label>
+                                <input className='form-control' required type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
+                            </div>
                         </div>
+                    }
+                    {payment_option === "Paypal" &&
 
+                        <div className=' mt-4'>
+                            <div className='d-flex align-items-center justify-content-between'>
+                                <label htmlFor="acct-name">Email</label>
+                                <input required type="email" className='form-control'
+                                    onInput={e => { set_email(e.target.value) }}
+                                    id="acct-name" value={email}
+                                    style={{ float: 'right', width: '60%' }} />
+                            </div>
 
-                        <div style={{ display: 'inline-block', width: '350px', whiteSpace: 'nowrap' }}>
-                            <label style={{ margin: ' 0 10px 0 0', width: '30%', float: 'left' }} htmlFor="acct-type">Account Type</label>
-
-                            <select dname="" id="" onInput={e => set_acct_type(e.target.value)} style={{ float: 'right', width: '60%', margin: '0  0 10px 0', padding: '0 8px 0 8px', cursor: 'pointer' }}>
-                                <option selected={acct_type === '' ? 'selected' : ''} value="null">Select Account Type</option>
-                                <option selected={acct_type === 'savings' ? 'selected' : ''} value="savings">Savings</option>
-                                <option selected={acct_type === 'checking' ? 'selected' : ''} value="checking">Checking</option>
-                            </select>
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '350px', whiteSpace: 'nowrap' }}>
-                            <label style={{ margin: ' 0 10px 0 0', width: '30%', float: 'left' }} htmlFor="bank-name">Bank Name</label>
-                            <input type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '350px', whiteSpace: 'nowrap' }}>
-                            <label style={{ margin: ' 0 10px 0 0', width: '30%', float: 'left' }} htmlFor="acct">Account #</label>
-                            <input type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '350px', whiteSpace: 'nowrap' }}>
-                            <label style={{ margin: ' 0 10px 0 0', width: '30%', float: 'left' }} htmlFor="routing">Routing #</label>
-                            <input type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
-                        </div>
-                    </div>
+                        </div>}
 
                 </div>
 
                 <div className="tutor-tab-acct-time-range">
                     <label htmlFor="">SSH &nbsp;</label>
-                    <input onInput={e => set_ssh(e.target.value)} defaultValue={ssh} type="text" />
-
-                    <br />
-                    <br />
-                    <br />
-                    <br />
+                    <input className='form-control'
+                        required={totalNet > 600}
+                        onInput={e => set_ssh(e.target.value)}
+                        defaultValue={ssh} type="text"
+                        placeholder='XXX-XX-XXXX'
+                    />
 
                     <div className="highlight">
                         Social security needs to be provided only from US residents for annual EARNING over $600. Form 1099 to be issued by the academy.
                     </div>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
 
-                    <div style={{ display: 'inline-block', width: '380px', whiteSpace: 'nowrap' }}>
-                        <label style={{ margin: ' 0 10px 0 0', float: 'left', width: '20%' }} htmlFor="accumulated-hrs">Accumulated Hours</label>
-                        <input type="text" defaultValue={accumulated_hrs} onInput={e => set_accumulated_hrs(e.target.value)} id="accumulated-hrs" style={{ float: 'right', width: '60%' }} />
+                    <div className='d-flex align-items-center mb-2 justify-content-between'>
+                        <label htmlFor="accumulated-hrs">Accumulated Hours</label>
+                        <input className='form-control m-0' type="text"
+                            value={`${sessions.length}:00`}
+                            style={{ float: 'right', width: '50%' }} disabled />
                     </div>
 
-                    <div style={{ display: 'inline-block', width: '380px', whiteSpace: 'nowrap' }}>
-                        <label style={{ margin: ' 0 10px 0 0', float: 'left', width: '20%' }} htmlFor="commission">Commission %</label>
-                        <input type="text" defaultValue={commission} onInput={e => set_commission(e.target.value)} id="commission" style={{ float: 'right', width: '60%' }} />
+                    <div className='d-flex align-items-center mb-2 justify-content-between'>
+                        <label htmlFor="commission">Service charge %</label>
+                        <input className='form-control m-0' type="text"
+                            value={`${commissionAccordingtoNumOfSession(sessions.length)} %`}
+                            id="commission"
+                            style={{ float: 'right', width: '50%' }} disabled
+                        />
                     </div>
 
-                    <div style={{ display: 'inline-block', width: '380px', whiteSpace: 'nowrap' }}>
-                        <label style={{ margin: ' 0 10px 0 0', float: 'left', width: '20%' }} htmlFor="total-earning">Total Earning This year.</label>
-                        <input type="text" defaultValue={total_earning} onInput={e => set_total_earning(e.target.value)} id="total-earning" style={{ float: 'right', width: '60%' }} />
+                    <div className='d-flex align-items-center mb-2 justify-content-between'>
+                        <label htmlFor="total-earning">Total Earning This year.</label>
+                        <input className='form-control m-0' type="text"
+                            value={totalNet.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            id="total-earning"
+                            style={{ float: 'right', width: '50%' }} disabled />
                     </div>
-
-
                 </div>
+                <Actions />
+            </form>
+        </div>
 
-            </div>
-        </>
     );
 }
 

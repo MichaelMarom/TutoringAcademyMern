@@ -1,36 +1,51 @@
 import { useEffect, useState } from "react";
 import { IoChevronBackCircle, IoChevronForwardCircle } from "react-icons/io5";
-import { wholeDateFormat } from "../../../constants/constants";
+import { COMMISSION_DATA, wholeDateFormat } from "../../../constants/constants";
 import { showDate } from "../../../helperFunctions/timeHelperFunctions";
 import Button from "../../common/Button";
 import { moment } from '../../../config/moment'
 import { convertToDate } from "../../common/Calendar/Calendar";
 import ReactDatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
+import { useSelector } from 'react-redux'
+import { get_last_pay_day } from "../../../axios/tutor";
 
 const AccDetails = ({ sessions }) => {
     const today = moment();
     const lastFriday = today.day(-2)
+    console.log(lastFriday)
+    const { tutor } = useSelector((state) => state.tutor)
     const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(lastFriday.toDate());
     const [selectedWeekSession, setSelectedWeekSession] = useState([]);
-    const [start, setStart] = useState(moment(endDate).toDate())
 
+    const [lastpayDay, setLastPayDay] = useState(lastFriday);
+    const [endDate, setEndDate] = useState(moment(lastpayDay));
+    const [start, setStart] = useState(moment(endDate).toDate())
     const [end, setEnd] = useState(moment(endDate).toDate())
 
     useEffect(() => {
-        const initialStartDate = lastFriday.toDate()
+        console.log(lastpayDay, 'debkjnk')
+        const initialStartDate = moment(lastpayDay).toDate()
         initialStartDate.setDate(initialStartDate.getDate() - 14);
         setStartDate(initialStartDate);
-    }, []);
+    }, [lastpayDay]);
 
-    console.log(moment.tz(sessions[0]?.start, moment.tz.guess()).format('z'), 'timeZOne')
+    useEffect(() => { setEndDate(moment(lastpayDay)) }, [lastpayDay])
+    useEffect(() => {
+        const fetchPayDay = async () => {
+            const data = await get_last_pay_day();
+            console.log(data)
+            setLastPayDay(new Date(data.PayDay))
+        }
+        fetchPayDay()
+    }, [])
+
     console.log(selectedWeekSession)
 
     useEffect(() => {
         const filteredSession = sessions.filter(session => {
             const sessionDate = moment(session.end);
-            const sessionDateWithoutTime = sessionDate.startOf('day'); // Keep only the date part
+            const sessionDateWithoutTime = sessionDate.startOf('day');
 
             const startDateWithoutTime = moment(startDate).startOf('day');
             const endDateWithoutTime = moment(endDate).startOf('day');
@@ -40,7 +55,6 @@ const AccDetails = ({ sessions }) => {
                 sessionDateWithoutTime.isSameOrBefore(endDateWithoutTime)
             );
         });
-        console.log(start, startDate);
         setStart(startDate ? moment(startDate).toDate() : moment().toDate());
         setSelectedWeekSession(filteredSession);
 
@@ -65,30 +79,35 @@ const AccDetails = ({ sessions }) => {
         setEndDate(newEndDate);
     };
 
-    const totalAmount = selectedWeekSession
+    const totalAmount = sessions
         .filter((row) => {
             if (!start || !end) return true;
-            return convertToDate(row.start) >= new Date(start) &&
-                convertToDate(row.start) <= new Date(end);
+            const originalEndDate = moment(end);
+            const nextDayEndDate = originalEndDate.clone().add(1, 'days');
+            const startOfNextDate = nextDayEndDate.startOf('day').toDate();
+
+            const startDate = new Date(start);
+
+            return convertToDate(row.start) >= startDate &&
+                convertToDate(row.start) <= startOfNextDate;
         })
-        .reduce((total, row) => total + parseFloat(row.rate.split('$')[1]), 0)
+        .reduce((total, row) => total + row.net, 0)
         .toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    const isNextDisabled = endDate.getDate() >= (moment().day(-2).toDate()).getDate() &&
-        endDate.getMonth() >= (moment().day(-2).toDate()).getMonth() &&
-        endDate.getFullYear() >= (moment().day(-2).toDate()).getFullYear();
+    const isNextDisabled = (moment(endDate).toDate()).getDate() >= (moment().day(-2).toDate()).getDate() &&
+        (moment(endDate).toDate()) >= (moment().day(-2).toDate()).getMonth() &&
+        (moment(endDate).toDate()) >= (moment().day(-2).toDate()).getFullYear();
 
     const formatUTC = (dateInt, addOffset = false) => {
-        let date = (!dateInt || dateInt.length < 1) ? new Date : new Date(dateInt);
-        if (typeof dateInt === "string") {
-            return date;
-        } else {
-            const offset = addOffset ? date.getTimezoneOffset() : -(date.getTimezoneOffset());
-            const offsetDate = new Date();
-            offsetDate.setTime(date.getTime() + offset * 60000)
-            return offsetDate;
+        let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
+
+        if (tutor.timeZone) {
+            date = date.tz(tutor.timeZone).toDate();
         }
+
+        return date;
     }
+
 
     return (
         <div className="d-flex flex-column w-100 mt-4 container">
@@ -141,8 +160,8 @@ const AccDetails = ({ sessions }) => {
                                 <td>{session.rate}</td>
                                 <td>-</td>
                                 <td>-</td>
-                                <td>{session.sr <= 20 ? '20%' : '15%'}</td>
-                                <td>$ Net</td>
+                                <td>{session.comm}%</td>
+                                <td>{session.net.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                 <td>{session.invoiceNum}</td>
                                 <td><Button className="btn-sm btn-primary"> View Video</Button></td>
                                 <td><Button className="btn-sm btn-success"> Chat with Student</Button></td>

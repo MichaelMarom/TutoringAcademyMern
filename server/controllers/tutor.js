@@ -6,6 +6,7 @@ const { insert, updateById, getAll, find, findByAnyIdColumn, update } = require(
 
 const multer = require('multer');
 const path = require('path');
+const COMMISSION_DATA = require('../constants/tutor');
 
 
 let post_new_subject = (req, res) => {
@@ -45,6 +46,7 @@ let post_new_subject = (req, res) => {
 
     })
 }
+
 let subjects = (req, res) => {
 
     let { id } = req.query;
@@ -686,14 +688,15 @@ let upload_tutor_rates = (req, res) => {
 let upload_form_four = (req, res) => {
 
     let { start_day, acct_name, acct_type, bank_name, acct, routing, ssh,
-        accumulated_hrs, commission, total_earning, payment_option, AcademyId } = req.body;
+        accumulated_hrs, commission, total_earning, payment_option, AcademyId, email } = req.body;
 
     let checker = (cb) => {
 
         marom_db(async (config) => {
             const sql = require('mssql');
             var poolConnection = await sql.connect(config);
-            let response = poolConnection ? await poolConnection.request().query(`SELECT * FROM "TutorBank" WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}'`) : 'err conneecting to db'
+            let response = poolConnection ?
+                await poolConnection.request().query(`SELECT * FROM "TutorBank" WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}'`) : 'err conneecting to db'
 
             cb(response.rowsAffected[0])
         })
@@ -703,11 +706,12 @@ let upload_form_four = (req, res) => {
     checker((data) => {
         if (data < 1) {
 
-            let db = marom_db(async (config) => {
+            marom_db(async (config) => {
                 const sql = require('mssql');
                 var poolConnection = await sql.connect(config);
 
-                let result = poolConnection ? await insert_bank_details(poolConnection) : 'connection error';
+                let result = poolConnection ?
+                    await insert_bank_details(poolConnection) : 'connection error';
 
 
                 if (result) {
@@ -737,10 +741,10 @@ let upload_form_four = (req, res) => {
     let insert_bank_details = async (poolConnection) => {
         let records = await poolConnection.request().query(`INSERT INTO "TutorBank"
         (AccountName,AccountType,BankName,Account,Routing,SSH,AccumulatedHrs,Commission,
-            TotalEarning,PaymentOption,TutorStartDay,AcademyId)
+            TotalEarning,PaymentOption,TutorStartDay,AcademyId, Email)
         VALUES ('${acct_name}', '${acct_type}','${bank_name}','${acct}','${routing}',
         '${ssh}','${accumulated_hrs}','${commission}', '${total_earning}','${payment_option}',
-         '${start_day}', '${AcademyId}')`)
+         '${start_day}', '${AcademyId}', '${email}')`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);
@@ -749,7 +753,11 @@ let upload_form_four = (req, res) => {
     let update_bank_details = async (poolConnection) => {
         let records = await poolConnection.request().query(
             `
-                UPDATE "TutorBank" set AccountName = '${acct_name}', AccountType = '${acct_type}', BankName = '${bank_name}', Account = '${acct}', Routing = '${routing}', SSH = '${ssh}', AccumulatedHrs = '${accumulated_hrs}', Commission = '${commission}', TotalEarning = '${total_earning}', PaymentOption = '${payment_option}'  WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}'
+                UPDATE "TutorBank" set AccountName = '${acct_name}', AccountType = '${acct_type}',
+                 BankName = '${bank_name}', Account = '${acct}', Routing = '${routing}', SSH = '${ssh}',
+                  AccumulatedHrs = '${accumulated_hrs}', Commission = '${commission}',
+                   TotalEarning = '${total_earning}', PaymentOption = '${payment_option}'  , Email='${email}'
+                    WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}'
             `
         )
 
@@ -931,13 +939,20 @@ let get_tutor_setup = (req, res) => {
                 const result = await poolConnection.request().query(
                     findByAnyIdColumn('TutorSetup', req.query, 'varchar(max)')
                 )
-
-                const offset = parseInt(result.recordset[0].GMT, 10);
+                let record = result.recordset?.[0] || {}
+                if (record.userId) {
+                    const { recordset } = await poolConnection.request().query(
+                        findByAnyIdColumn('Users', { SID: record.userId })
+                    )
+                    record = { ...record, Email: recordset[0].email }
+                    console.log(record)
+                }
+                const offset = parseInt(record.GMT, 10);
                 let timezones = moment.tz.names().filter(name =>
                     (moment.tz(name).utcOffset()) === offset * 60);
                 const timeZone = timezones[0] || null
 
-                const formattedResult = [{ ...result.recordset[0], timeZone }]
+                const formattedResult = [{ ...record, timeZone }]
 
                 res.status(200).send(formattedResult)
             }
@@ -1330,7 +1345,33 @@ let getSessionsDetails = async (req, res) => {
                     return false
                 })
 
-                res.status(200).send(olderThanLastFridaySession);
+                const commissionAccordingtoNumOfSession = (sr) => {
+                    const commissionEntry = COMMISSION_DATA.find(entry => {
+                        if (!entry.higher) {
+                            return sr >= entry.lower && sr <= entry.higher;
+                        } else {
+                            return sr >= entry.lower;
+                        }
+                    });
+                    return commissionEntry ? commissionEntry.percent : null
+                }
+
+                const calcNet = (rate, comm) => {
+                    const numericRate = parseFloat(rate.replace("$", ""));
+                    const commissionAmount = (numericRate * comm) / 100;
+
+                    const netAmount = numericRate - commissionAmount;
+                    return netAmount
+                }
+
+                const sessionWithCommision = olderThanLastFridaySession.map((session) => ({
+                    ...session,
+                    comm: commissionAccordingtoNumOfSession(session.sr),
+                    net: calcNet(session.rate, commissionAccordingtoNumOfSession(session.sr))
+                }))
+
+
+                res.status(200).send(sessionWithCommision);
             }
         } catch (err) {
             console.log(err);
@@ -1339,9 +1380,32 @@ let getSessionsDetails = async (req, res) => {
     })
 }
 
+let last_pay_day = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `SELECT Top 1 *
+                  FROM Plateform_Payments
+                  ORDER BY payday DESC`
+                );
+                res.status(200).send(result.recordset[0])
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
     getSessionsDetails,
     subject_already_exist,
+    last_pay_day,
     subjects,
     get_tutor_market_data,
     get_tutor_students,

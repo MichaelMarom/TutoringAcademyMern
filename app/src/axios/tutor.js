@@ -447,11 +447,11 @@ export let get_tutor_rates = (AcademyId) => {
     })
 }
 
-export let upload_form_four = (start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId) => {
+export let upload_form_four = (email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/payment', {
-            start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId
+            email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId
         })
             .then((result) => {
                 resolve(result.data)
@@ -639,3 +639,17 @@ export const get_sessions_details = async (AcademyId) => {
         return err
     }
 }
+
+
+
+export const get_last_pay_day = async () => {
+    try {
+        const { data } = await apiClient.get(`/p-payment/last_payday`);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}
+

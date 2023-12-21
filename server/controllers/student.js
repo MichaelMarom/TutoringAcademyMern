@@ -395,12 +395,18 @@ let get_my_data = async (req, res) => {
             const sql = require('mssql');
             var poolConnection = await sql.connect(config);
 
-            poolConnection.request().query(`SELECT * from StudentSetup WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
-                .then((result) => {
-                    books.push(result.recordsets);
-                    resolve()
-                })
-                .catch((err) => err);
+            const result = await poolConnection.request().query(`SELECT * from StudentSetup 
+            WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+            let record = result.recordset[0] || {}
+            if (record.userId) {
+                const { recordset } = await poolConnection.request().query(
+                    findByAnyIdColumn('Users', { SID: record.userId })
+                )
+                record = { ...record, Email: recordset[0].email }
+            }
+            const recordsets = [record]
+            books.push(recordsets);
+            resolve()
         })
     }
 
@@ -432,13 +438,15 @@ let get_my_data = async (req, res) => {
             .catch(err => console.log(err))
     }
 
-    sender(() => {
-        const offset = parseInt(books[1][0][0].GMT, 10);
+    sender(async () => {
+        let record = books[1][0][0] || {}
+
+        const offset = parseInt(record.GMT, 10);
         let timezones = moment.tz.names().filter(name =>
             (moment.tz(name).utcOffset()) === offset * 60);
         const timeZone = timezones[0] || null
 
-        const formattedResult = [books[0], [[{ ...books[1][0][0], timeZone }]]];
+        const formattedResult = [books[0], [[{ ...record, timeZone }]]];
         res.send(formattedResult)
     })
 

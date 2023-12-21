@@ -6,8 +6,10 @@ import { get_sessions_details } from '../../../axios/tutor';
 
 const Accounting = () => {
     const [sessions, setSessions] = useState([])
-    let [activeTab, setActiveTab] = useState(<TutorAccSetup />);
+    let [activeTab, setActiveTab] = useState(<TutorAccSetup sessions={sessions} />);
     const AcademyId = localStorage.getItem('tutor_user_id')
+
+    useEffect(() => { setActiveTab(<TutorAccSetup sessions={sessions} />) }, [sessions])
 
     useEffect(() => {
         const fetchSessionDetails = async () => {
@@ -17,11 +19,11 @@ const Accounting = () => {
         fetchSessionDetails()
     }, [])
 
-
     const tabs = [
-        { label: 'Account Settings', component: <TutorAccSetup /> },
+        { label: 'Account Settings', component: <TutorAccSetup sessions={sessions} /> },
         { label: 'Tutor Account Details', component: <AccDetails sessions={sessions} /> },
     ];
+
     return (
         <>
             <Tabs links={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />

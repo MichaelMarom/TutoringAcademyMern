@@ -1265,34 +1265,34 @@ export const CAN_STATES = [
 export const COMMISSION_DATA = [
   {
     lower: 0,
-    highest: 60,
+    higher: 60,
     time: "00-60 Hr",
     percent: 20,
   },
   {
     lower: 61,
-    highest: 120,
+    higher: 120,
     time: "61-120 Hr",
 
     percent: 18,
   },
   {
     lower: 121,
-    highest: 180,
+    higher: 180,
     time: "121-180 Hr",
 
     percent: 16,
   },
   {
     lower: 181,
-    highest: 240,
+    higher: 240,
     time: "181-240 Hr",
 
     percent: 14,
   },
   {
     lower: 241,
-    highest: 300,
+    higher: 300,
     time: "241-300 Hr",
     percent: 12,
   },

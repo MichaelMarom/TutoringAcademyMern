@@ -112,6 +112,11 @@ function CustomEvent({
                             Postpone Request
                         </div>
                     }
+                    {event.request === 'delete' &&
+                        <div >
+                            Deleted
+                        </div>
+                    }
                     {event.rating &&
                         <div >
                             <StarRating rating={event.rating} />

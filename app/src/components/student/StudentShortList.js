@@ -40,7 +40,18 @@ const StudentShortList = () => {
         return localTime;
     }
 
-    let multi_student_cols = [{ Header: 'Photo' }, { Header: 'Demo Lesson @50%' }, { Header: 'Subject' }, { Header: 'Tutor Name' }, { Header: 'Country' }, { Header: 'Tutor Time' }, { Header: "Time Zone Diff" }, { Header: 'Tutor Schedule' }, { Header: 'Tutor Profile' }, { Header: 'Rate' }, { Header: 'Hire' }]
+    let multi_student_cols = [
+        { Header: 'Photo' },
+        { Header: 'Demo Lesson @50%' },
+        { Header: 'Subject' },
+        { Header: 'Tutor Name' },
+        { Header: 'Country' },
+        { Header: 'Tutor Time' },
+        { Header: "Time Zone Diff" },
+        { Header: 'Tutor Schedule' },
+        { Header: 'FeedBack' },
+        { Header: 'Tutor Profile' },
+        { Header: 'Rate' }]
 
     let redirect_to_tutor_profile = () => {
         navigate('/tutor/tutor-profile')
@@ -52,7 +63,7 @@ const StudentShortList = () => {
             const tutorOffset = parseInt(tutorGMT, 10);
 
             const difference = studentOffset - tutorOffset;
-
+            console.log(difference, studentOffset,student.GMT,student, tutorOffset)
             return difference
         } catch (error) {
             console.log('Invalid GMT offset format');

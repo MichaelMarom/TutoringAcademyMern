@@ -9,11 +9,16 @@ import ReactDatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector } from 'react-redux'
 import { get_last_pay_day } from "../../../axios/tutor";
+import { Navigate } from "react-big-calendar";
+import { useNavigate } from "react-router-dom";
+import { create_chat } from "../../../axios/chat";
+import { toast } from "react-toastify";
+import Loading from "../../common/Loading";
 
 const AccDetails = ({ sessions }) => {
     const today = moment();
     const lastFriday = today.day(-2)
-    console.log(lastFriday)
+    const navigate = useNavigate()
     const { tutor } = useSelector((state) => state.tutor)
     const [startDate, setStartDate] = useState(null);
     const [selectedWeekSession, setSelectedWeekSession] = useState([]);
@@ -22,41 +27,48 @@ const AccDetails = ({ sessions }) => {
     const [endDate, setEndDate] = useState(moment(lastpayDay));
     const [start, setStart] = useState(moment(endDate).toDate())
     const [end, setEnd] = useState(moment(endDate).toDate())
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-        console.log(lastpayDay, 'debkjnk')
-        const initialStartDate = moment(lastpayDay).toDate()
-        initialStartDate.setDate(initialStartDate.getDate() - 14);
-        setStartDate(initialStartDate);
+        if (lastpayDay) {
+            console.log(lastpayDay)
+            const initialStartDate = moment(lastpayDay).toDate()
+            initialStartDate.setDate(initialStartDate.getDate() - 14);
+            setStartDate(initialStartDate);
+        }
     }, [lastpayDay]);
 
-    useEffect(() => { setEndDate(moment(lastpayDay)) }, [lastpayDay])
     useEffect(() => {
+        if (lastpayDay) { setEndDate(moment(lastpayDay)) }
+    }, [lastpayDay])
+
+    useEffect(() => {
+        setLoading(true)
         const fetchPayDay = async () => {
             const data = await get_last_pay_day();
-            console.log(data)
-            setLastPayDay(new Date(data.PayDay))
+            setLastPayDay(data.Payday)
+            setLoading(false)
         }
         fetchPayDay()
     }, [])
 
-    console.log(selectedWeekSession)
-
     useEffect(() => {
-        const filteredSession = sessions.filter(session => {
-            const sessionDate = moment(session.end);
-            const sessionDateWithoutTime = sessionDate.startOf('day');
+        if (startDate) {
+            const filteredSession = sessions.filter(session => {
+                const sessionDate = moment(session.end);
+                const sessionDateWithoutTime = sessionDate.startOf('day');
 
-            const startDateWithoutTime = moment(startDate).startOf('day');
-            const endDateWithoutTime = moment(endDate).startOf('day');
+                const startDateWithoutTime = moment(startDate).startOf('day');
+                const endDateWithoutTime = moment(endDate).startOf('day');
 
-            return (
-                sessionDateWithoutTime.isSameOrAfter(startDateWithoutTime) &&
-                sessionDateWithoutTime.isSameOrBefore(endDateWithoutTime)
-            );
-        });
-        setStart(startDate ? moment(startDate).toDate() : moment().toDate());
-        setSelectedWeekSession(filteredSession);
+                return (
+                    sessionDateWithoutTime.isSameOrAfter(startDateWithoutTime) &&
+                    sessionDateWithoutTime.isSameOrBefore(endDateWithoutTime)
+                );
+            });
+            setStart(startDate ? moment(startDate).toDate() : moment().toDate());
+            setSelectedWeekSession(filteredSession);
+        }
 
     }, [endDate, startDate])
 
@@ -79,6 +91,13 @@ const AccDetails = ({ sessions }) => {
         setEndDate(newEndDate);
     };
 
+    const handleNavigateChat = async (chatId, tutorId, studentId) => {
+        if (chatId) return navigate(`/tutor/chat/${chatId}`)
+        const data = await create_chat({ User1ID: studentId, User2ID: tutorId })
+        if (data[0]?.ChatID) return navigate(`/tutor/chat/${data[0].ChatID}`)
+        toast.warning('Student does not exist!')
+    }
+
     const totalAmount = sessions
         .filter((row) => {
             if (!start || !end) return true;
@@ -94,9 +113,9 @@ const AccDetails = ({ sessions }) => {
         .reduce((total, row) => total + row.net, 0)
         .toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-    const isNextDisabled = (moment(endDate).toDate()).getDate() >= (moment().day(-2).toDate()).getDate() &&
-        (moment(endDate).toDate()) >= (moment().day(-2).toDate()).getMonth() &&
-        (moment(endDate).toDate()) >= (moment().day(-2).toDate()).getFullYear();
+    const isNextDisabled = (moment(endDate).toDate()).getDate() >= (moment(lastpayDay).toDate()).getDate() &&
+        (moment(endDate).toDate()).getMonth() >= (moment(lastpayDay).toDate()).getMonth() &&
+        (moment(endDate).toDate()).getFullYear() >= (moment(lastpayDay).toDate()).getFullYear();
 
     const formatUTC = (dateInt, addOffset = false) => {
         let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
@@ -107,8 +126,8 @@ const AccDetails = ({ sessions }) => {
 
         return date;
     }
-
-
+    if (loading)
+        return <Loading />
     return (
         <div className="d-flex flex-column w-100 mt-4 container">
             <div className="d-flex justify-content-end">
@@ -130,7 +149,6 @@ const AccDetails = ({ sessions }) => {
                         onClick={() => !isNextDisabled && handleNext()}
                         style={{ cursoe: "pointer" }}
                     />
-
                 </div>
             </div>
             <div className="mt-4" style={{ height: "70vh", overflowY: "auto" }}>
@@ -164,7 +182,7 @@ const AccDetails = ({ sessions }) => {
                                 <td>{session.net.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                 <td>{session.invoiceNum}</td>
                                 <td><Button className="btn-sm btn-primary"> View Video</Button></td>
-                                <td><Button className="btn-sm btn-success"> Chat with Student</Button></td>
+                                <td><Button className="btn-sm btn-success" onClick={() => handleNavigateChat(session.chatId, session.tutorId, session.studentId)}> Chat with Student</Button></td>
                             </tr>
                         )}
                     </tbody>

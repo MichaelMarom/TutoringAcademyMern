@@ -51,15 +51,35 @@ function EventModal({
   }
 
   const handleReschedule = () => {
-    if (convertToDate(clickedSlot.start).getTime() === convertToDate(rescheduleTime).getTime()) { toast.warning('Session is already on same time!'); return }
+    const sessionOnSameTime = convertToDate(clickedSlot.start).getTime() === convertToDate(rescheduleTime).getTime()
     const sessionExistOnSelectedTime = reservedSlots.filter((slot) =>
       moment.utc(convertToDate(slot.start)).isSame(moment.utc(convertToDate(rescheduleTime))));
-    if (sessionExistOnSelectedTime.length) { toast.warning('Session is already exist on that time!'); return }
+
+    if (sessionOnSameTime)
+      return toast.warning('Session is already on same time!')
+    if (sessionExistOnSelectedTime.length)
+      return toast.warning('Session is already exist on that time!')
+
     const rescheduleEndTime = moment(convertToDate(rescheduleTime)).add(1, 'hours');
-    const updatedReservedSlot = (reservedSlots.concat(bookedSlots)).map((slot) => slot.id === clickedSlot.id ?
-      { ...slot, request: null, start: rescheduleTime, end: rescheduleEndTime.toDate() } : slot)
-    handleRescheduleSession(updatedReservedSlot.filter(slot => slot.type === 'intro' || slot.type === 'reserved'),
-      [])
+
+    console.log((reservedSlots.concat(bookedSlots)).filter(slot => slot.type === 'intro' || slot.type === 'reserved').length,
+      (reservedSlots.concat(bookedSlots)).filter(slot => slot.type === 'booked').length)
+
+    const updatedReservedSlot = (reservedSlots.concat(bookedSlots)).map(slot => {
+      if (slot.id === clickedSlot.id && slot.request)
+        return { ...slot, request: null, start: rescheduleTime, end: rescheduleEndTime.toDate() }
+      else
+        return slot
+    })
+
+    console.log(updatedReservedSlot.filter(slot => slot.type === 'intro' || slot.type === 'reserved').length,
+      updatedReservedSlot.filter(slot => slot.type === 'booked').length)
+
+    const extractedReservedSlots = updatedReservedSlot.filter(slot => slot.type === 'intro' || slot.type === 'reserved');
+    const extractedBookedSlots = updatedReservedSlot.filter(slot => slot.type === 'booked')
+    handleRescheduleSession(extractedReservedSlots, extractedBookedSlots)
+
+    //close modal
     onRequestClose()
     setSelectedType(null)
   }
@@ -70,7 +90,7 @@ function EventModal({
   }
 
   const handleAccept = () => {
-    if (canPostEvents ) {
+    if (canPostEvents) {
       handleBulkEventCreate(selectedType, invoiceNum);
       onRequestClose();
       setSelectedType(null)
@@ -126,7 +146,9 @@ function EventModal({
         </div>
         <div className="">
           {clickedSlot.request === 'postpone' &&
-            <h5 className="text-danger font-weight-bold text-center m-2">{convertTutorIdToName(clickedSlot.tutorId)} is requesting Reschedule</h5>
+            <h5 className="text-danger font-weight-bold text-center m-2">
+              {convertTutorIdToName(clickedSlot.tutorId)} is requesting Reschedule
+            </h5>
           }
           {clickedSlot.start ?
             <div>
@@ -159,7 +181,6 @@ function EventModal({
                   dateFormat="MMM d, yyyy hh:mm aa"
                   className="form-control m-2 w-80"
                   timeIntervals={60}
-
                 />
                 <Button className='btn-success btn-sm' onClick={() => handleReschedule()}>Postpone</Button>
               </div>

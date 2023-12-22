@@ -11,14 +11,12 @@ import CustomEvent from "./Event";
 import Loading from '../Loading'
 import { postStudentBookings, setBookedSlots, setReservedSlots } from "../../../redux/student_store/studentBookings";
 import { isEqualTwoObjectsRoot } from "../../../helperFunctions/generalHelperFunctions";
-import CustomAgenda from "./CustomAgenda";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
 import { get_student_tutor_events } from "../../../axios/student";
-import { PostponeModal } from "../EventModal/PostponeModal";
 
 const views = {
   WEEK: 'week',
@@ -41,7 +39,7 @@ const ShowCalendar = ({
   setDisabledWeekDays,
   setDisabledHours
 }) => {
-
+  const navigate = useNavigate()
   const [activeView, setActiveView] = useState(views.MONTH);
   const dispatch = useDispatch();
 
@@ -62,7 +60,6 @@ const ShowCalendar = ({
   const [dataFetched, setDataFetched] = useState(false);
   const [disableDateRange, setDisableDateRange] = useState([]);
   const [isTutorSideSessionModalOpen, setIsTutorSideSessionModalOpen] = useState(false);
-  const [postponeModalOpen, setPostponeModalOpen] = useState(false);
 
   const tutorAcademyId = localStorage.getItem('tutor_user_id')
 
@@ -77,7 +74,7 @@ const ShowCalendar = ({
   const [weekDaysTimeSlots, setWeekDaysTimeSlots] = useState([])
 
   let { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
-
+  console.log(disableHourSlots)
   //apis functions
   const updateTutorDisableRecord = async () => {
     await updateTutorDisableslots(tutorAcademyId, {
@@ -229,11 +226,14 @@ const ShowCalendar = ({
   //tutor request
   const handlePostpone = () => {
     setIsTutorSideSessionModalOpen(false);
-    let { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots } = filterOtherStudentAndTutorSession(reservedSlots, bookedSlots, tutor.AcademyId);
-    handleDisableSlot(clickedSlot.start, clickedSlot.end)
+    let { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots } =
+      filterOtherStudentAndTutorSession(reservedSlots, bookedSlots, tutor.AcademyId, clickedSlot.studentId);
+    handleDisableSlot(clickedSlot.start)
     if (clickedSlot.type === 'booked') {
       dispatch(postStudentBookings({
-        studentId, tutorId: tutor.AcademyId, subjectName,
+        studentId: clickedSlot.studentId,
+        tutorId: tutor.AcademyId,
+        subjectName: clickedSlot.subjectName,
         bookedSlots: updatedBookedSlots.map(slot => slot.id === clickedSlot.id ?
           { ...slot, request: 'postpone' } :
           slot),
@@ -243,26 +243,55 @@ const ShowCalendar = ({
     }
     if (clickedSlot.type === 'intro' || clickedSlot.type === 'reserved') {
       dispatch(postStudentBookings({
-        studentId, tutorId: tutor.AcademyId, subjectName,
-        bookedSlots,
+        studentId: clickedSlot.studentId,
+        tutorId: tutor.AcademyId,
+        subjectName: clickedSlot.subjectName,
+        bookedSlots: updatedBookedSlots,
         reservedSlots: updatedReservedSlot.map(slot => slot.id === clickedSlot.id ?
           { ...slot, request: 'postpone' } :
           slot)
       }));
     }
+    navigate(`/tutor/chat`)
   }
 
-  const handleDisableSlot = (start, end) => {
-    if (disableHourSlots?.some(date => convertToDate(date).getTime() === convertToDate(start).getTime() ||
-      convertToDate(end).getTime() === convertToDate(date).getTime())) {
-      const removeDisableHourSlots = disableHourSlots.filter(date =>
-        convertToDate(date).getTime() !== convertToDate(start).getTime() &&
-        convertToDate(end).getTime() !== convertToDate(date).getTime()
-      )
-      setDisableHourSlots(removeDisableHourSlots)
+  const handleDeleteSessionByTutor = () => {
+    setIsTutorSideSessionModalOpen(false);
+    let { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots } =
+      filterOtherStudentAndTutorSession(reservedSlots, bookedSlots, tutor.AcademyId, clickedSlot.studentId);
+    if (clickedSlot.type === 'booked') {
+      dispatch(postStudentBookings({
+        studentId: clickedSlot.studentId,
+        tutorId: tutor.AcademyId,
+        subjectName: clickedSlot.subjectName,
+        bookedSlots: updatedBookedSlots.map(slot => slot.id === clickedSlot.id ?
+          { ...slot, request: 'delete' } :
+          slot),
+        reservedSlots: updatedReservedSlot
+      }));
+      return;
     }
-    else {
-      setDisableHourSlots([...(disableHourSlots ?? []), convertToDate(start), convertToDate(end)])
+    if (clickedSlot.type === 'intro' || clickedSlot.type === 'reserved') {
+      dispatch(postStudentBookings({
+        studentId: clickedSlot.studentId,
+        tutorId: tutor.AcademyId,
+        subjectName: clickedSlot.subjectName,
+        bookedSlots: updatedBookedSlots,
+        reservedSlots: updatedReservedSlot.map(slot => slot.id === clickedSlot.id ?
+          { ...slot, request: 'delete' } :
+          slot)
+      }));
+    }
+    navigate(`/tutor/chat`)
+  }
+
+  const handleDisableSlot = (start) => {
+    const end = moment(start).add(30, 'minutes').toDate();
+
+    const disableHourSlotExist = disableHourSlots?.some(date => convertToDate(date).getTime() === convertToDate(start).getTime() ||
+      convertToDate(end).getTime() === convertToDate(date).getTime())
+    if (!disableHourSlotExist) {
+      return setDisableHourSlots([...(disableHourSlots ?? []), convertToDate(start), convertToDate(end)])
     }
   }
 
@@ -287,16 +316,21 @@ const ShowCalendar = ({
 
   }, 2000, [disableDates, disableHourSlots, enableHourSlots, disableWeekDays, dataFetched, disableColor, disabledHours]);
 
-
   const convertToGmt = (date) => {
     return date;
   };
 
-  const filterOtherStudentAndTutorSession = (givenReservedSlots = [], givenBookedSlots, tutorId = isStudentLoggedIn ? selectedTutor.academyId : tutor.AcademyId) => {
-    let updatedReservedSlot = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot =>
-      (slot.studentId === student.AcademyId && slot.tutorId === tutorId));
-    let updatedBookedSlots = givenBookedSlots ? givenBookedSlots : bookedSlots.filter(slot => slot.studentId === student.AcademyId && slot.tutorId === tutorId);
-    return { reservedSlots: updatedReservedSlot, bookedSlots: updatedBookedSlots };
+  const filterOtherStudentAndTutorSession = (
+    givenReservedSlots = [],
+    givenBookedSlots,
+    tutorId = isStudentLoggedIn ? selectedTutor.academyId : tutor.AcademyId,
+    studentId) => {
+    let updatedReservedSlots = (givenReservedSlots.length ? givenReservedSlots : reservedSlots).filter(slot =>
+      (slot.studentId === (studentId ? studentId : student.AcademyId) && slot.tutorId === tutorId));
+    let updatedBookedSlots = (givenBookedSlots ? givenBookedSlots :
+      bookedSlots).filter(slot => slot.studentId === (studentId ? studentId : student.AcademyId) && slot.tutorId === tutorId);
+    console.log(updatedReservedSlots.length, updatedBookedSlots.length, tutorId, (studentId ? studentId : student.AcademyId))
+    return { reservedSlots: updatedReservedSlots, bookedSlots: updatedBookedSlots };
   }
 
   const handleBulkEventCreate = (type, invoiceNum) => {
@@ -356,8 +390,14 @@ const ShowCalendar = ({
   }
 
   const handleRescheduleSession = (reservedSlots, bookedSlots) => {
-    let { reservedSlots: updatedReservedSlots, bookedSlots: updatedBookedSlots } = filterOtherStudentAndTutorSession(reservedSlots, bookedSlots, tutor.AcademyId)
-    dispatch(postStudentBookings({ studentId, tutorId: tutor.AcademyId, subjectName, bookedSlots: updatedBookedSlots, reservedSlots: updatedReservedSlots }));
+    let { reservedSlots: updatedReservedSlots, bookedSlots: updatedBookedSlots } =
+      filterOtherStudentAndTutorSession(reservedSlots, bookedSlots, tutor.AcademyId);
+
+    console.log(updatedBookedSlots, updatedReservedSlots, tutor.AcademyId, selectedTutor.academyId)
+    dispatch(postStudentBookings({
+      studentId, tutorId: tutor.AcademyId, subjectName,
+      bookedSlots: updatedBookedSlots, reservedSlots: updatedReservedSlots
+    }));
   }
 
   const handleSetReservedSlots = (reservedSlots) => {
@@ -698,6 +738,17 @@ const ShowCalendar = ({
     const otherStudentSession = isStudentLoggedIn ? (reservedSlots.concat(bookedSlots))?.some(slot =>
       slot.studentName !== student.FirstName && event.id === slot.id
     ) : false
+    const deletedSession = (reservedSlots.concat(bookedSlots))?.some(slot => slot.request === 'delete' && slot.start === event.start)
+
+
+    if (deletedSession) return {
+      style: {
+        border: "none",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+        backgroundColor: 'red',
+        color: "white"
+      },
+    };
     if (otherStudentSession && (event.type === "intro" || event.type === "booked")) {
       return {
         style: {
@@ -887,6 +938,7 @@ const ShowCalendar = ({
       <TutorEventModal
         isOpen={isTutorSideSessionModalOpen}
         onClose={onTutorModalRequestClose}
+        handleDeleteSessionByTutor={handleDeleteSessionByTutor}
         clickedSlot={clickedSlot}
         handlePostpone={handlePostpone}
       />

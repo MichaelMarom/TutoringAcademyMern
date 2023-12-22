@@ -116,7 +116,13 @@ const create_chat = async (req, res) => {
                 const data = await poolConnection.request().query(
                     find("Chat", req.body)
                 );
-                if (!data.recordset.length) {
+                const tutor = await poolConnection.request().query(
+                    find("TutorSetup", { AcademyId: req.body.User2ID })
+                );
+                const student = await poolConnection.request().query(
+                    find("StudentSetup", { AcademyId: req.body.User1ID }, 'AND', { AcademyId: 'varchar' })
+                );
+                if (!data.recordset.length && student.recordset.length && tutor.recordset.length) {
                     const result = await poolConnection.request().query(
                         insert("Chat", req.body)
                     );

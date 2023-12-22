@@ -1304,19 +1304,26 @@ let getSessionsDetails = async (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `SELECT 
-                      b.reservedSlots, ts.GMT, b.bookedSlots, b.tutorId, b.studentId, b.subjectName, ss.Rate
+                      b.reservedSlots, ts.GMT, b.bookedSlots, b.tutorId, b.studentId, 
+                      b.subjectName, ss.Rate, ch.ChatID
                         FROM StudentBookings AS b
                         JOIN StudentShortList AS ss ON
-                        b.studentId  = CAST(ss.Student as varchar(max)) AND 
-                        b.tutorId =  CAST(ss.AcademyId as varchar(max))
+                        b.studentId  = CAST(ss.Student AS varchar(max)) AND 
+                        b.tutorId =  CAST(ss.AcademyId AS varchar(max))
                         inner JOIN TutorSetup AS ts On
-                        b.tutorId = CAST(ts.AcademyId as varchar(max))
-                        WHERE b.tutorId = CAST('${tutorId}' as varchar(max)); `
+                        b.tutorId = CAST(ts.AcademyId AS varchar(max))
+                        left JOIN Chat AS ch ON 
+                        ch.User1ID =cast( ss.Student AS varchar) AND
+                        ch.User2ID =cast( ts.AcademyId AS varchar)
+                        WHERE b.tutorId = CAST('${tutorId}' AS varchar(max)); `
                 );
                 const allStudentsSessions = result.recordset.map(record => {
                     const reservedSession = JSON.parse(record.reservedSlots);
                     const bookedSession = JSON.parse(record.bookedSlots);
-                    const combinedSessions = reservedSession.concat(bookedSession)
+                    const bookedSessionWithChatId = bookedSession.map(session => ({ ...session, chatId: record.ChatID }))
+
+                    const reservedSlotWithChatId = reservedSession.map(session => ({ ...session, chatId: record.ChatID }))
+                    const combinedSessions = reservedSlotWithChatId.concat(bookedSessionWithChatId)
                     return combinedSessions
 
                 }).flat();

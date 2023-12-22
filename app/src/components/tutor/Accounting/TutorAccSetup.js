@@ -118,7 +118,7 @@ const TutorAccSetup = ({ sessions }) => {
                 <div className="tutor-tab-acct-pay-option">
                     <h6>How do you want to be paid?</h6>
                     <div className="highlight">
-                        Tutor academy pays every second Friday for the lessons performed up to the previous Friday midnight (GMT-5), Please select below the payment Payment you prefer. Keep in mind that it can take 1-3 days until you see the funds in your account
+                        Tutor academy pays every second Friday for the lessons performed up to the previous Friday midnight (GMT-5), Please select below the form of payment you prefer. Keep in mind that it can takes 1-3 days until the funds in your account
                     </div>
 
                     <div className='d-flex align-items-center justify-content-between '>
@@ -211,7 +211,7 @@ const TutorAccSetup = ({ sessions }) => {
                 </div>
 
                 <div className="tutor-tab-acct-time-range">
-                    <label htmlFor="">SSH &nbsp;</label>
+                    <label htmlFor="">SS# (Social Security Number) &nbsp;</label>
                     <input className='form-control'
                         required={totalNet > 600}
                         onInput={e => set_ssh(e.target.value)}

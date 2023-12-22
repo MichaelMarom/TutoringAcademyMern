@@ -34,6 +34,7 @@ export const post_message = async (body) => {
 
 export const create_chat = async (body) => {
     try {
+        console.log(body)
         const { data } = await apiClient.post('/chat', body);
         return data
     }

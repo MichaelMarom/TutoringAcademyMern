@@ -7,9 +7,11 @@ import LeftSideBar from '../../LeftSideBar'
 import { SessionActions } from './SessionActions'
 import { SessionFeedback } from './SessionFeedback'
 
-export const TutorEventModal = ({ isOpen, onClose, clickedSlot, handlePostpone }) => {
+export const TutorEventModal = ({ isOpen, onClose, clickedSlot, handlePostpone, handleDeleteSessionByTutor }) => {
     const [questions, setQuestions] = useState([]);
     const [questionLoading, setQuestionLoading] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false)
+
 
     useEffect(() => {
         if (clickedSlot.id) {
@@ -24,12 +26,16 @@ export const TutorEventModal = ({ isOpen, onClose, clickedSlot, handlePostpone }
         }
     }, [clickedSlot])
 
+    const handleClose = () => {
+        setConfirmDelete(false)
+        onClose()
+    }
 
     return (
         <LeftSideBar
             top={"165px"}
             isOpen={isOpen}
-            onClose={onClose}
+            onClose={handleClose}
         >
             <div className="">
                 <div className="modal-header">
@@ -42,7 +48,14 @@ export const TutorEventModal = ({ isOpen, onClose, clickedSlot, handlePostpone }
                         !clickedSlot.rating ? <div className='p-3 text-danger text-center' style={{ fontWeight: "700" }}>
                             No feedback given for this session!</div> :
                             <SessionFeedback clickedSlot={clickedSlot} questions={questions} questionLoading={questionLoading} /> :
-                        <SessionActions clickedSlot={clickedSlot} handlePostpone={handlePostpone} />
+                        <SessionActions
+                            setConfirmDelete={setConfirmDelete}
+                            confirmDelete={confirmDelete}
+                            clickedSlot={clickedSlot}
+                            handlePostpone={handlePostpone}
+                            handleDeleteSessionByTutor={handleDeleteSessionByTutor}
+                            handleClose={handleClose}
+                        />
                 }
 
             </div>

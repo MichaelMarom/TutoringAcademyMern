@@ -439,7 +439,7 @@ let get_my_data = async (req, res) => {
     }
 
     sender(async () => {
-        let record = books[1][0][0] || {}
+        let record = books[1][0] || {}
 
         const offset = parseInt(record.GMT, 10);
         let timezones = moment.tz.names().filter(name =>

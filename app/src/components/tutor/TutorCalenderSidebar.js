@@ -52,7 +52,8 @@ function TutorCalenderSidebar({
 
     return (
         <div className="tab-content card h-100" style={{ overflowY: "auto" }}>
-            <div className='highlight small p-2'>To view feedback, postpone, or cancel a lesson, click on the session.</div>
+            <div className='highlight small p-2'> To view feedback, click on past due date lessons that has stars icon. 
+            To postpone, or cancel a lesson, click on a futor date session, and follow dialog.</div>
             <div className='d-flex'>
 
                 <button
@@ -138,7 +139,7 @@ function TutorCalenderSidebar({
                                 fontSize: "12px",
                                 fontFamily: "inherit"
                             }}>
-                                Tutor's Blocked Out Days/Slots
+                                Tutor's Blocked Out Days or hours Slots
                                 <div className="border" style={{ width: "40px", height: "20px", background: disableColor }}></div>
                             </li>
                             <li className="list-group-item d-flex justify-content-between align-items-center w-100" style={{
@@ -169,7 +170,7 @@ function TutorCalenderSidebar({
                                 fontSize: "12px",
                                 fontFamily: "inherit"
                             }}>
-                                Default disabled slots
+                                Default disabled  hours slots
                                 <div className="border" style={{ width: "40px", height: "20px", background: "lightgray" }}></div>
 
                             </li>

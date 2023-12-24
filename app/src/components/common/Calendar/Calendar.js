@@ -342,7 +342,7 @@ const ShowCalendar = ({
     if (reservedSlots?.some(slot => {
       return slot.type === 'intro'
         && slot.subject === selectedTutor.subject
-        && slot.studentName === student.FirstName
+        && slot.studentId === student.AcademyId
         && (slot.end.getTime() > (new Date()).getTime() ||
           (!slot.rating))
     })) {

@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { apiClient } from './config'
+import Subjects from '../pages/tutor/Subjects'
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
@@ -337,20 +338,18 @@ export let get_user_data = (user_id) => {
 
 
 
-export let upload_tutor_rates = (rate_list, AcademyId) => {
-    return new Promise((resolve, reject) => {
-
-        apiClient.post('/tutor/rates', {
-            rate_list, AcademyId
+export let upload_tutor_rates = async (rate, grades, id, faculty, subject) => {
+    try {
+        console.log(id, faculty, subject)
+        const {data} = await apiClient.post(`/tutor/rates/${faculty}/${subject}/${id}`, {
+            grades,
+            rate
         })
-            .then((result) => {
-                resolve(result.data)
-            })
-            .catch((err) => {
-                reject(err)
-            })
-
-    })
+        return data
+    }
+    catch (err) {
+        return err
+    }
 }
 
 
@@ -391,12 +390,13 @@ export let get_my_edu = (AcademyId) => {
 }
 
 
-export let get_rates = (AcademyId) => {
+export let get_rates = (AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
 
         apiClient.get('/tutor/my-rate', {
             params: {
-                AcademyId
+                AcademyId,
+                facultyId
             }
         })
             .then((result) => {

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 const TypeAndSelectInput = ({ options, setInputValue, inputValue }) => {
-    console.log(inputValue)
     const [isOpen, setIsOpen] = useState(false);
 
     const handleInputChange = (event) => {

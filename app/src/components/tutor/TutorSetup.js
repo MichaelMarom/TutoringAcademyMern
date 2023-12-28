@@ -14,13 +14,13 @@ import {
   get_tutor_setup_by_userId,
   post_tutor_setup,
 } from "../../axios/tutor";
-import { get_user_detail } from "../../axios/auth";
 import containerVariants from "../constraint";
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
 import Loading from "../common/Loading";
+import ToolTip from '../common/ToolTip'
 
 import Actions from '../common/Actions'
 import { uploadVideo } from "../../redux/tutor_store/video";
@@ -59,9 +59,6 @@ const TutorSetup = () => {
   let [photo, set_photo] = useState("");
   let [video, set_video] = useState("");
 
-  const [dataFetching, setDataFetching] = useState(false);
-  const [dataUpdated, setDataUpdated] = useState(false)
-
   let grades = [
     { grade: "1st grade" },
     { grade: "2nd grade" },
@@ -81,7 +78,7 @@ const TutorSetup = () => {
   const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
   const [email, set_email] = useState(user[0].email);
-  const [unSavedChanges,setUnsavedChanges]=useState(false);
+  const [unSavedChanges, setUnsavedChanges] = useState(false);
   let [countryList, setCountryList] = useState("");
   let [GMTList, setGMTList] = useState("");
   let [response_list, set_response_list] = useState("");
@@ -117,8 +114,8 @@ const TutorSetup = () => {
     setSelectedVideoOption(option);
   }
 
- let handleTutorGrade = (grade) => {
-    
+  let handleTutorGrade = (grade) => {
+
     if (tutorGrades.some(item => item === grade)) {
       const removedGrades = tutorGrades.filter(item => item !== grade)
       setTutorGrades(removedGrades);
@@ -126,10 +123,10 @@ const TutorSetup = () => {
     else
       setTutorGrades([...tutorGrades, grade]);
 
-  };  
+  };
   const [isAtLeastOneChecked, setIsAtLeastOneChecked] = useState(true); // Assuming initial state is true
 
-  
+
   //upload photo
   useEffect(() => {
     const postImage = async () => {
@@ -172,14 +169,7 @@ const TutorSetup = () => {
   console.log(isLoading, selectedVideoOption, 'videoupd')
 
   useEffect(() => {
-    const AcademyId = localStorage.getItem('tutor_user_id')
-
     const fetchTutorSetup = async () => {
-      
-      setDataFetching(true)
-
-      let result;
-
       if (tutor.AcademyId) {
         let data = tutor;
 
@@ -210,14 +200,11 @@ const TutorSetup = () => {
         setSelectedVideoOption("upload");
       }
       setUploadPhotoClicked(false)
-      setDataUpdated(true)
-
-      setDataFetching(false)
     };
     fetchTutorSetup();
   }, [tutor]);
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     if (tutor.AcademyId !== undefined) {
       let formValues = {
         fname,
@@ -239,38 +226,38 @@ const TutorSetup = () => {
         photo,
         video,
         tutorGrades
-    
+
       }
-      setUnsavedChanges(unsavedChangesHelper(formValues,tutor))
-      
+      setUnsavedChanges(unsavedChangesHelper(formValues, tutor))
+
       // setUnsavedChanges(tutor.FirstName !== fname);
     }
-    
-  },[fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime, response_zone, intro, motivation, headline, photo, video,tutorGrades,tutor])
+
+  }, [fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime, response_zone, intro, motivation, headline, photo, video, tutorGrades, tutor])
 
   const saveTutorSetup = async (e) => {
     e.preventDefault();
-    if(!isValid) {
+    if (!isValid) {
       toast.warning("please enter the correct phone number");
       return;
     }
-    if(!photo) {
+    if (!photo) {
       toast.warning("please upload a photo");
       return;
     }
-    if(!video) {
+    if (!video) {
       toast.warning("please upload your intro video");
       return;
     }
-    if(!tutorGrades.length > 0) {
+    if (!tutorGrades.length > 0) {
       toast.warning("Please select at least one grade");
       return;
     }
-    
+
     document
       .querySelector(".save-overlay")
       ?.setAttribute("id", "save-overlay");
-      
+
     let response = await saver();
     if (response.status === 200) {
       dispatch(setTutor())
@@ -577,8 +564,8 @@ const TutorSetup = () => {
               <p>{typeof dateTime === "object" ? "" : dateTime}</p>
 
             </div>
-            <div className="tutor-setup-top-field container">
-              <div className="profile-photo-cnt">
+            <div className="tutor-setup-top-field " style={{ gap: "25px" }}>
+              <div className="profile-photo-cnt ">
                 <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
                 <input
                   type="file"
@@ -600,40 +587,32 @@ const TutorSetup = () => {
               </div>
 
 
-              <div className="profile-details-cnt pt-3"
-                style={{ float: "left", margin: "0 10px 0 10px ", width: "40%" }}
-              >
+              <div className="profile-details-cnt pt-3">
 
                 <div
                   style={{
                     display: "flex",
                     margin: "0 0 10px 0",
                     padding: "0",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     width: "100%",
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="input-group-text w-50" htmlFor="">
                     First Name
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <input
                     required
-                    style={{
-                      margin: "2.5px 0 0 0",
-                      width: "70%",
-                      float: "right",
-                      position: "relative",
-                    }}
+
                     onChange={(e) => set_fname(e.target.value)}
                     placeholder="First Name"
                     value={fname}
-                    disabled  
+                    disabled
                     type="text"
                     id="fname"
-                    className="form-control"
+                    className="form-control m-0"
                   />
                 </div>
 
@@ -642,29 +621,23 @@ const TutorSetup = () => {
                     display: "flex",
                     margin: "0 0 10px 0",
                     padding: "0",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     width: "100%",
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="input-group-text w-50" htmlFor="">
                     Middle
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <input
-                    style={{
-                      margin: "2.5px 0 0 0",
-                      width: "70%",
-                      float: "right",
-                      position: "relative",
-                    }}
+
                     // onInput={(e) => set_mname(e.target.value)}
                     placeholder="Middle Name"
                     value={mname}
-                    className="form-control"
+                    className="form-control m-0"
                     type="text"
-                    disabled 
+                    disabled
                     id="mname"
                   />
                 </div>
@@ -674,31 +647,25 @@ const TutorSetup = () => {
                     display: "flex",
                     margin: "0 0 10px 0",
                     padding: "0",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     width: "100%",
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="input-group-text w-50" htmlFor="">
                     Last Name
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <input
-                    style={{
-                      margin: "2.5px 0 0 0",
-                      width: "70%",
-                      float: "right",
-                      position: "relative",
-                    }}
+
                     required
                     // onInput={(e) => set_sname(e.target.value)}
                     placeholder="Last Name"
                     value={lname}
                     type="text"
                     id="lname"
-                    disabled  
-                    className="form-control"
+                    disabled
+                    className="form-control m-0"
                   />
                 </div>
 
@@ -708,31 +675,25 @@ const TutorSetup = () => {
                     margin: "0 0 10px 0",
                     padding: "0",
                     alignItems: "center",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     width: "100%",
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="input-group-text w-50" htmlFor="">
                     Email
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <input
-                    className="form-control"
+                    className="form-control m-0"
                     required
-                    style={{
-                      margin: "2.5px 0 0 0",
-                      width: "70%",
-                      float: "right",
-                      position: "relative",
-                    }}
+
                     placeholder="Email"
                     value={email}
                     type="text"
                     id="email"
                     readonly
-                    disabled  
+                    disabled
                   />
                 </div>
                 <div className="err-mssg">
@@ -744,89 +705,60 @@ const TutorSetup = () => {
                     display: "flex",
                     margin: "0 0 10px 0",
                     padding: "0",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     width: "100%",
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="w-50 input-group-text" htmlFor="">
                     Cell Phone
-                  </label>{" "}
-                  &nbsp;&nbsp;
-                  {/*
-                  <input
-                    className="form-control"
-                    required
-                    style={{
-                      margin: "2.5px 0 0 0",
-                      width: "70%",
-                      float: "right",
-                      position: "relative",
-                    }}
-                    onInput={(e) => set_cell(e.target.value)}
-                    placeholder="Cell Phone"
-                    value={cell}
-                    type="text"
-                    id="cellphn"
-                  /> */}
+                  </label>
+
                   <PhoneInput
                     defaultCountry="us"
                     value={cell}
                     onChange={(cell) => set_cell(cell)}
-                  
-                    style={{
-                      margin: "2.5px 0 0 0",
-                      width: "70%",
-                      float: "right",
-                      position: "relative",
-                    }}
                     required
                     disabled={!editMode}
+                    style={{ width: "66%" }}
                   />
-                  
 
-                  
+
+
                 </div>
                 <div
                   style={{
                     display: "flex",
                     width: "100%",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     margin: "0 0 10px 0",
                     display: "flex",
-                    justifyContent: "center",
+
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
-                    Response Time
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  <label className="input-group-text w-50" htmlFor="">
+                    Response Time <ToolTip width="200px" text="Select your response time
+                    to answer the student. Please take notice that the student take this fact as one of the considurations while selecting his/hers tutor." />
+                  </label>
                   <select
-                    className="form-select"
+                    className="form-select m-0"
                     onInput={(e) => set_response_zone(e.target.value)}
                     value={response_zone}
                     id="resZone"
-                    style={{
-                      float: "right",
-                      width: "70%",
-                      margin: "2.5px 0 0 0",
-                      padding: "5px 5px 5px 5px",
-                      margin: "0 0 10px 0",
-                    }}
                     disabled={!editMode}
                     required
                   >
                     {response_list}
                   </select>
+
                 </div>
 
               </div>
 
-              <div className="profile-details-cnt pt-3"
-                style={{ float: "right", margin: "0 10px 0 10px ", width: "40%" }}
+              <div className="profile-details-cnt pt-3 w-50"
               >
                 <div
                   style={{
@@ -835,24 +767,18 @@ const TutorSetup = () => {
                     display: "flex",
                     margin: "0 0 10px 0",
                     padding: "0",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="input-group-text w-50" htmlFor="">
                     Address 1
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <input
-                    className="form-control"
+                    className="form-control m-0"
                     required
-                    style={{
-                      margin: "2.5px 0 0 0",
-                      width: "70%",
-                      float: "right",
-                      position: "relative",
-                    }}
+
                     onInput={(e) => set_add1(e.target.value)}
                     placeholder="Address 1"
                     value={add1}
@@ -865,31 +791,25 @@ const TutorSetup = () => {
                   style={{
                     display: "flex",
                     width: "100%",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     margin: "0 0 10px 0",
                     display: "flex",
-                    justifyContent: "center",
+
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="input-group-text w-50" htmlFor="">
                     Address 2
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <input
-                    className="form-control"
+                    className="form-control m-0"
                     onInput={(e) => set_add2(e.target.value)}
                     placeholder="Optional"
                     value={add2}
                     disabled={!editMode}
                     type="text"
                     id="add2"
-                    style={{
-                      float: "right",
-                      width: "70%",
-                      margin: "2.5px 0 0 0",
-                    }}
                   />
                 </div>
 
@@ -897,20 +817,18 @@ const TutorSetup = () => {
                   style={{
                     display: "flex",
                     width: "100%",
-                    justifyContent: "center",
                     alignItems: "center",
                     margin: "0 0 10px 0",
                     display: "flex",
-                    justifyContent: "center",
+
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <label className="input-group-text w-50" htmlFor="">
                     City/Town
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <input
-                    className="form-control"
+                    className="form-control m-0"
                     required
                     onInput={(e) => set_city(e.target.value)}
                     placeholder="City/Town"
@@ -918,25 +836,18 @@ const TutorSetup = () => {
                     value={city}
                     id="city"
                     disabled={!editMode}
-                    style={{
-                      float: "right",
-                      width: "70%",
-                      margin: "2.5px 0 0 0",
-                    }}
                   />
                 </div>
                 <div
-                  style={{ display: "flex", width: "100%", justifyContent: "center", alignItems: "center", margin: "0 0 10px 0", display: "flex", justifyContent: "center", whiteSpace: "nowrap" }}>
-                  <label style={{ width: "30%" }} htmlFor="country">
+                  style={{ display: "flex", width: "100%", alignItems: "center", margin: "0 0 10px 0", display: "flex", whiteSpace: "nowrap" }}>
+                  <label className="input-group-text w-50" htmlFor="country">
                     Country
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </label>
                   <select
-                    className="form-select"
+                    className="form-select m-0"
                     onInput={(e) => set_country(e.target.value)}
                     id="country"
                     value={country}
-                    style={{ float: "right", width: "70%", margin: "2.5px 0 0 0", padding: "5px", margin: "0 0 10px 0" }}
                     disabled={!editMode}
                     required
                   >
@@ -945,62 +856,55 @@ const TutorSetup = () => {
                 </div>
                 {(options[country] ?? []).length ?
 
-                <div
-                  style={{
-                    display: (options[country] ?? []).length ? 'flex' : 'none',
-                    width: "100%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    display: "flex",
-                    justifyContent: "center",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label style={{ width: "30%" }} htmlFor="">
-                    State/Province
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  <div
+                    className="mb-2"
+                    style={{
+                      display: (options[country] ?? []).length ? 'flex' : 'none',
+                      width: "100%",
 
-                  {(options[country] ?? []).length ?
-                    <select
-                      required
-                      onInput={(e) => set_state(e.target.value)}
-                      id="state"
-                      disabled={!editMode}
-                      value={state}
-                      style={{
-                        float: "right",
-                        width: "70%",
-                        margin: "2.5px 0 0 0",
-                        padding: "5px 5px 5px 5px",
-                        margin: "0 0 10px 0",
-                      }}
-                    >
-                      <option value='' selected disabled>Select State</option>
-                      {(options[country] ?? []).map((item) => <option value={item}>{item}</option>)}
-                    </select> :
-                    <input className="form-control" disabled type="text" value={state} onChange={(e) => set_state(e.target.value)} />
-                  }
-                </div> :''}
+                      alignItems: "center",
+                      display: "flex",
+
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <label className="input-group-text w-50" htmlFor="">
+                      State/Province
+                    </label>
+
+                    {(options[country] ?? []).length ?
+                      <select
+                        className="form-select "
+                        required
+                        onInput={(e) => set_state(e.target.value)}
+                        id="state"
+                        disabled={!editMode}
+                        value={state}
+                      >
+                        <option value='' selected disabled>Select State</option>
+                        {(options[country] ?? []).map((item) => <option value={item}>{item}</option>)}
+                      </select> :
+                      <input className="form-control m-0" disabled type="text" value={state} onChange={(e) => set_state(e.target.value)} />
+                    }
+                  </div> : ''}
 
                 <div
                   style={{
                     display: "flex",
                     width: "100%",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     margin: "0 0 10px 0",
                     display: "flex",
-                    justifyContent: "center",
+
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
+                  <span className="input-group-text w-50" htmlFor="">
                     Zip Code
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  </span>
                   <input
-                    className="form-control"
+                    className="form-control m-0"
                     required
                     onInput={(e) => set_zipCode(e.target.value)}
                     value={zipCode}
@@ -1008,11 +912,6 @@ const TutorSetup = () => {
                     placeholder="Zip-Code"
                     type="text"
                     id="zip"
-                    style={{
-                      float: "right",
-                      width: "70%",
-                      margin: "2.5px 0 0 0",
-                    }}
                   />
                 </div>
 
@@ -1021,34 +920,28 @@ const TutorSetup = () => {
                   style={{
                     display: "flex",
                     width: "100%",
-                    justifyContent: "center",
+
                     alignItems: "center",
                     display: "flex",
-                    justifyContent: "center",
+
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label style={{ width: "30%" }} htmlFor="">
-                    Time Zone
-                  </label>{" "}
-                  &nbsp;&nbsp;
+                  <label className="input-group-text w-50" htmlFor="">
+                    Time Zone <ToolTip width="200px" text={"Select the Greenwich Mean Time (GMT) zone where you reside. It will let the student configure his time availability conducting lessons with you, when in a different time zone. "} />
+                  </label>
                   <select
-                    className="form-select"
+                    className="form-select m-0"
                     onInput={(e) => set_timeZone(e.target.value)}
                     id="timeZone"
                     disabled={!editMode}
                     value={timeZone}
-                    style={{
-                      float: "right",
-                      width: "70%",
-                      margin: "2.5px 0 0 0",
-                      padding: "5px 5px 5px 5px",
-                      margin: "0 0 10px 0",
-                    }}
                     required
                   >
                     {GMTList}
                   </select>
+
+
                 </div>
               </div>
 
@@ -1065,7 +958,7 @@ const TutorSetup = () => {
                 ) : selectedVideoOption === "upload" && video?.length ? (
                   <div className="tutor-tab-video-frame p-3 card">
                     <video src={video} className="w-100 h-100"
-                      controls autoplay 
+                      controls autoplay
                     />
                   </div>
                 ) :
@@ -1081,7 +974,7 @@ const TutorSetup = () => {
                           type="button"
                           className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
                             }`}
-                            disabled={!editMode}
+                          disabled={!editMode}
                           style={{ fontSize: "10px" }}
                           onClick={() => {
                             set_video("");
@@ -1141,10 +1034,10 @@ const TutorSetup = () => {
             </div>
 
 
-            <hr />
+            <hr className="shadow"/>
             <div className="container">
               <div
-                className="border rounded p-2 mt-2"
+                className="border rounded p-2 mt-2 shadow"
                 style={{
                   fontWeight: "bold",
                   margin: "auto",
@@ -1152,18 +1045,18 @@ const TutorSetup = () => {
                   width: "60%",
                 }}
               >
-                <label s htmlFor="headline">
+                <label >
                   Grades I teach
                 </label>
                 <br />
                 {!isAtLeastOneChecked && (<p className="text-danger text-normal">
-                      please select atleast one grade</p>)}
+                  please select atleast one grade</p>)}
                 <div className="tutor-grades">
                   <ul>
                     {grades.map((item) => {
                       const isChecked = tutorGrades.includes(item.grade);
                       return (
-            
+
                         <li>
                           <div
                             className="input-cnt"
@@ -1194,11 +1087,11 @@ const TutorSetup = () => {
                           </div>
                         </li>
                       );
-                      
+
                     })}
                   </ul>
                 </div>
-                
+
               </div>
 
               <div
@@ -1209,12 +1102,12 @@ const TutorSetup = () => {
                   width: "60%",
                 }}
               >
-                <label s htmlFor="headline">
+                <label htmlFor="headline">
                   Headline
                 </label>
                 <br />
                 <input
-                  className="form-control"
+                  className="form-control m-0 shadow"
                   value={headline}
                   maxLength={80}
                   required
@@ -1243,7 +1136,7 @@ const TutorSetup = () => {
                   </label>
                   <br />
                   <textarea
-                    className="form-control"
+                    className="form-control m-0 shadow"
                     value={intro}
                     maxLength={500}
                     required
@@ -1284,14 +1177,14 @@ const TutorSetup = () => {
                   </label>
                   <br />
                   <textarea
-                    className="form-control"
+                    className="form-control m-0 shadow"
                     value={motivation}
                     disabled={!editMode}
                     maxLength={500}
                     required
                     placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
                     onInput={(e) =>
-                      counter(e.target.value, e.target, set_motivation,500)
+                      counter(e.target.value, e.target, set_motivation, 500)
                     }
                     spellcheck="true"
                     style={{ width: "100%", padding: "10px", height: "160px" }}
@@ -1305,10 +1198,10 @@ const TutorSetup = () => {
               </div>
             </div>
           </div>
-          <Actions 
-          onEdit={handleEditClick} 
-          editDisabled={editMode} 
-          unSavedChanges={unSavedChanges} />
+          <Actions
+            onEdit={handleEditClick}
+            editDisabled={editMode}
+            unSavedChanges={unSavedChanges} />
         </form>
       </motion.div>
     </>

@@ -86,13 +86,17 @@ const Profile = () => {
                         <div className="col-lg-6 mb-5 mb-lg-0">
                             <h1 className="my-5 display-3 fw-bold ls-tight">
                                 The best offer <br />
-                                <span className="text-primary">for your business</span>
+                                <span className="text-primary">for your Tutoring carrier</span>
                             </h1>
                             <p style={{ color: 'hsl(217, 10%, 50.8%)' }}>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                Eveniet, itaque accusantium odio, soluta, corrupti aliquam
-                                quibusdam tempora at cupiditate quis eum maiores libero
-                                veritatis? Dicta facilis sint aliquid ipsum atque?
+                            Do you love teaching and helping others? Do you want to earn extra income from the 
+                            comfort of your home? If you answered yes, then you should sign up for our online 
+                            tutoring job today! We are looking for qualified tutors who can teach various 
+                            subjects and levels to students around the world. You can set your own schedule, 
+                            choose your own rates, and work with students who match your expertise and preferences.
+                            Plus, you will get access to our online platform, training materials, and support team. 
+                            Don't miss this opportunity to join our community of passionate and professional tutors. 
+                            Sign up now and start making a difference in someone's life!
                             </p>
                         </div>
 

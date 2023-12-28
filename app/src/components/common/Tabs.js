@@ -15,6 +15,7 @@ const Tabs = ({ links, activeTab, setActiveTab }) => {
                 justifyContent: 'left', marginTop: '5px'
             }}
         >
+            
             <ul id="tutor-header-menus" className="header">
                 {links.map((tab, index) => (
                     <li

@@ -41,11 +41,11 @@ const Footer = () => {
                 <ul>
                     <li className="p-1" ><button className="btn btn-primary fs-4 m-0"  onClick={back}>Back</button></li>
                     
-                    <li className="p-1" id="student-edit" ><button className="btn btn-secondary fs-4 m-0" >edit</button></li>
+                    <li className="p-1" id="student-edit" ><button className="btn btn-secondary fs-4 m-0" >Edit</button></li>
                     
-                    <li className="p-1" id="student-save" ><button className="btn btn-success fs-4 m-0"  >save</button></li>
+                    <li className="p-1" id="student-save" ><button className="btn btn-success fs-4 m-0"  >Save</button></li>
 
-                    <li className="next p-1" ><button className="btn btn-secondary fs-4 m-0"  onClick={next}>next</button></li>
+                    <li className="next p-1" ><button className="btn btn-secondary fs-4 m-0"  onClick={next}>Next</button></li>
                 </ul>
             </div>
         </>

@@ -32,7 +32,7 @@ TUTOR_ROUTES.get('/tutor/tutor-setup', parser, get_tutor_setup);
 
 
 TUTOR_ROUTES.post('/tutor/payment', parser, upload_form_four);
-TUTOR_ROUTES.post('/tutor/rates', parser, upload_tutor_rates);
+TUTOR_ROUTES.post('/tutor/rates/:faculty/:subject/:id', parser, upload_tutor_rates);
 TUTOR_ROUTES.post('/tutor/form-one', parser, post_form_one);
 TUTOR_ROUTES.post('/tutor/form-two', parser, post_form_two);
 TUTOR_ROUTES.post('/tutor/form-three', parser, post_form_three);

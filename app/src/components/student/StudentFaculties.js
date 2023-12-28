@@ -193,7 +193,7 @@ const StudentFaculties = () => {
             <div className="form-subjects" style={{ overflow: 'hidden', height: 'calc(100vh - 50px)' }}>
 
                 <div className="form-subject-alert">
-                    <p style={{ fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center' }}>There are 400+ subjects to select from across 29 faculties for tutoring.</p>
+                    <p style={{ fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center' }}>There are 29 faculties with 400+ subjects to select multiple tutors to compair for nearly each subject.</p>
                 </div>
 
                 <div id="form-subject-data-collection-table">
@@ -246,7 +246,7 @@ const StudentFaculties = () => {
 
 
                     <div className="highlight" style={{ width: '100%' }}>
-                        From the menu above, click on faculty to view all subjects as being tought by the Tutors. Checkbox from the table below the Tutor(s) of interest. They will be dynamically saved in the next "ShortList" tab to compare, and select your tutor.``
+                        From the menu above, click on faculty to view all subjects that can be tought by Tutors. Checkbox from the table below the Tutor(s) of interest. They will be dynamically saved in the next "ShortList" tab to compare, and select your tutor.``
                     </div>
 
                     <div className="form-subject-search-bar">

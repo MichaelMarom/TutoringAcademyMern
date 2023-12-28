@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import Skeleton from 'react-loading-skeleton'
 import { useEffect } from 'react';
-import { get_faculty, get_rates, get_subject, get_user_data, new_subj_request_exist, upload_new_subject, upload_tutor_rates } from '../../axios/tutor';
-import { COLUMNS } from '../../Tables/Subject/columns';
+import { get_rates, get_subject, get_user_data, new_subj_request_exist,
+     upload_new_subject, upload_tutor_rates } from '../../axios/tutor';
 import { socket } from '../../config/socket';
 import CenteredModal from '../common/Modal';
 import Button from '../common/Button';
 import { toast } from 'react-toastify';
-import { toFormData } from 'axios';
 import { FACULTIES } from '../../constants/constants';
+import SubjectCard from './SubjectCard';
+import Actions from '../common/Actions'
+import { object } from 'prop-types';
+import Loading from '../common/Loading';
 
 
 const Subjects = () => {
@@ -20,6 +22,17 @@ const Subjects = () => {
     let [newSubjectReasonData, setNewSubjectReasonData] = useState('');
     const [showAddNewSubjModal, setShowAddNewSubjModal] = useState(false)
     const [newSubjRequestChecking, setNewSubjReqChecking] = useState(false)
+    const [selectedFaculty, setSelectedFaculty] = useState(1);
+    const [rate, setRate] = useState('')
+    const [grades, setGrades] = useState([])
+    let [faculty, set_faculty] = useState([]);
+    const [subjectsWithRates, setSubjectsWithRates] = useState([]);
+
+    let [active_course, set_active_course] = useState([])
+    const [loadingSubs, setLoadingSubs] = useState(false)
+    const handleGrades = () => {
+
+    }
 
     const handleModalClose = () => {
         setShowAddNewSubjModal(false)
@@ -28,22 +41,13 @@ const Subjects = () => {
         setNewSubjectReasonData('')
     }
 
-    let [faculty, set_faculty] = useState([])
-
-    let [active_course, set_active_course] = useState([])
-
-    useEffect(() => {
-        let next = document.querySelector('.tutor-next')
-
-        if (next && next.hasAttribute('id')) {
-            next?.removeAttribute('id');
-        }
-    }, [])
-
     useEffect(() => {
         let user_id = window.localStorage.getItem('tutor_user_id');
-        get_rates(window.localStorage.getItem('tutor_user_id'))
+        setLoadingSubs(true)
+        get_rates(user_id, selectedFaculty)
             .then((result) => {
+                setSubjectsWithRates(result)
+                setLoadingSubs(false)
                 result.map(item => {
                     let c = item.subject
                     let t = document.querySelector('.tables')
@@ -62,15 +66,31 @@ const Subjects = () => {
                             elms[4].innerHTML = result[0].Certificate;
                             elms[5].innerHTML = result[0].CertificateState;
                             elms[6].innerHTML = result[0].CertificateExpiration;
-                            elms[7].innerHTML = `$ <input style='height: 25px; width: 40px; margin: 0;' type='text' placeholder='Dollars' value='${item.rate.split('').splice(1, 2).join('')}' maxlength='2' />.<input style='height: 25px; width: 40px; margin: 0;' type='text' placeholder='cents' value='${item.rate.split('').splice(4, 5).join('')}' maxlength='2' /> `;
-
+                            elms[7].classList.add('col-2')
+                            elms[7].innerHTML = ` <div class="input-group p-2">
+                            <span class="input-group-text">$</span>
+                            <input
+                              type="text"
+                              required
+                              value='${item.rate.split('').splice(1, 2).join('')}'
+                              class="form-control m-0"   style="height:fit-content"
+                              aria-label="Amount (to the nearest dollar)"
+                            />
+                            <input
+                            type="text"
+                            required
+                            value='${item.rate.split('').splice(4, 5).join('')}' 
+                            class="form-control m-0"   style="height:fit-content"
+                            aria-label="Amount (to the nearest dollar)"
+                          />
+                          </div> `;
                         })
                         .catch((err) => err)
 
                 })
             })
             .catch((err) => console.log(err))
-    }, [])
+    }, [selectedFaculty])
 
     let populate_col = e => {
         if (e.target.checked) {
@@ -80,16 +100,33 @@ const Subjects = () => {
 
             get_user_data(user_id)
                 .then((result) => {
-                    let data = result;
+                    let data = result[0];
 
                     let elms = [...e.target.parentElement.parentElement.children];
 
-                    elms[2].innerHTML = result[0].EducationalLevel;
-                    elms[3].innerHTML = result[0].EducationalLevelExperience;
-                    elms[4].innerHTML = result[0].Certificate;
-                    elms[5].innerHTML = result[0].CertificateState;
-                    elms[6].innerHTML = result[0].CertificateExpiration;
-                    elms[7].innerHTML = "$ <input style='height: 25px; width: 40px; margin: 0;' type='text' placeholder='Dollars' value='00' maxlength='2' />.<input style='height: 25px; width: 40px; margin: 0;' type='text' placeholder='cents' value='00' maxlength='2' /> ";
+                    elms[2].innerHTML = data.EducationalLevel;
+                    elms[3].innerHTML = data.EducationalLevelExperience;
+                    elms[4].innerHTML = data.Certificate;
+                    elms[5].innerHTML = data.CertificateState;
+                    elms[6].innerHTML = data.CertificateExpiration;
+                    elms[7].innerHTML = ` <div class="input-group p-2">
+                    <span class="input-group-text">$</span>
+                    <input
+                      type="text"
+                      required
+                      placeholder="00"
+                      class="form-control m-0  " style="height:fit-content"
+                      aria-label="Amount (to the nearest dollar)"
+                    />
+                    <input
+                    type="text"
+                    required
+                    placeholder="cents"
+
+                    class="form-control m-0  " style="height:fit-content"
+                    aria-label="Amount (to the nearest dollar)"
+                  />
+                  </div> `;
 
                 })
                 .catch((err) => err)
@@ -176,82 +213,76 @@ const Subjects = () => {
         scroll_elem.scrollLeft = -w
 
     }
+    const handleSave = (e) => {
+        e.preventDefault()
+
+        let checkboxs = [...document.querySelectorAll('input[type=checkbox]')];
+        let checkedbox = checkboxs.filter(item => item.checked)
+        let values = checkedbox.map(item => {
+            return [...item.parentElement.parentElement.children]
+        })
+        let AcademyId = window.localStorage.getItem('tutor_user_id');
+        let rate_list = [];
+        let rate_err = []
+
+        let result = () => {
+            let file = values.map((item) => {
+                console.log(item[7].children[0].children[1])
+                if (`${item[7].children[0].children[1]?.value}.${item[7].children[0].children[2]?.value}` !== '00.00') {
+                    let doc = { faculty: item[1].dataset.src, course: item[1].innerHTML, rate: "$" + item[7].children[0].children[1]?.value + "." + item[7].children[0].children[2]?.value }
+                    rate_list.push(doc)
+                    rate_err.push(true)
 
 
-    let save = document.querySelector('#tutor-save');
-    if (save)
-        save.onclick = () => {
-            let checkboxs = [...document.querySelectorAll('input[type=checkbox]')];
-            let checkedbox = checkboxs.filter(item => item.checked)
-            let values = checkedbox.map(item => {
-                return [...item.parentElement.parentElement.children]
-            })
-            let AcademyId = window.localStorage.getItem('tutor_user_id');
-            let rate_list = [];
-            let rate_err = []
-
-            let result = () => {
-                let file = values.map((item) => {
-                    if (`${item[7].children[0]?.value}.${item[7].children[1]?.value}` !== '00.00') {
-                        //document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
-                        let doc = { faculty: item[1].dataset.src, course: item[1].innerHTML, rate: "$" + item[7].children[0]?.value + "." + item[7].children[1]?.value }
-                        // item[7].children[0]?.style.border = '1px solid #000';
-                        // item[7].children[1]?.style.border = '1px solid #000';
-                        rate_list.push(doc)
-                        rate_err.push(true)
-
-
-                    } else {
-                        // if (item[7].children[1] && item[7].children[0]) {
-                        //     item[7].children[1]?.style.border = '1px solid red';
-                        //     item[7].children[0]?.style.border = '1px solid red';
-                        // }
-                        rate_err.push(false)
-                        //return false;
-                    }
-
-                })
-
-                let upload_agent = (items, id) => {
-
-                    upload_tutor_rates(items, id)
-                        .then((result) => {
-                            if (result) {
-                                setTimeout(() => {
-                                    document.querySelector('.save-overlay')?.removeAttribute('id');
-                                }, 1000);
-
-                                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                                document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
-                                setTimeout(() => {
-                                    document.querySelector('.tutor-popin')?.removeAttribute('id');
-                                }, 2000);
-                            } else {
-
-                                document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                                document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
-                                setTimeout(() => {
-                                    document.querySelector('.tutor-popin')?.removeAttribute('id');
-                                }, 2000);
-
-                            }
-                        })
-                        .catch((err) => console.log(err))
-                }
-
-                let errCheck = rate_err.filter(item => item === false)
-                if (errCheck.length > 0) {
-                    alert('Please Ensure The Rate Field Is At Least $1')
                 } else {
-                    document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
-                    upload_agent(rate_list, AcademyId)
+                    // if (item[7].children[1] && item[7].children[0]) {
+                    //     item[7].children[1]?.style.border = '1px solid red';
+                    //     item[7].children[0]?.style.border = '1px solid red';
+                    // }
+                    rate_err.push(false)
+                    //return false;
                 }
 
+            })
 
+            let upload_agent = (items, id) => {
+                console.log(items, 'itsm in api')
+                upload_tutor_rates(items, id)
+                    .then((result) => {
+                        if (result) {
+                            setTimeout(() => {
+                                document.querySelector('.save-overlay')?.removeAttribute('id');
+                            }, 1000);
+
+                            document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
+                            document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
+                            setTimeout(() => {
+                                document.querySelector('.tutor-popin')?.removeAttribute('id');
+                            }, 2000);
+                        } else {
+
+                            document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
+                            document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
+                            setTimeout(() => {
+                                document.querySelector('.tutor-popin')?.removeAttribute('id');
+                            }, 2000);
+
+                        }
+                    })
+                    .catch((err) => console.log(err))
             }
 
-            result()
+            let errCheck = rate_err.filter(item => item === false)
+            if (errCheck.length > 0) {
+                alert('Please Ensure The Rate Field Is At Least $1')
+            } else {
+                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
+                upload_agent(rate_list, AcademyId)
+            }
         }
+        result()
+    }
+
 
     const checkRequestExist = async (e) => {
         e.preventDefault()
@@ -291,17 +322,19 @@ const Subjects = () => {
             <div className="save-overlay">
                 <span className="save_loader"></span>
             </div>
-            <div className="tutor-tab-subjects container mt-3">
+            <div className="container mt-3">
 
                 <div className="tutor-tab-subject-data-collection-table">
 
                     <div className="tutor-tab-subject-data-tabs">
                         <div style={{
                             margin: '0 0 0 0', display
-                                : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
+                                : 'flex', alignItems: 'center', justifyContent: 'center', background:
+                                '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
                         }} className="scroller-left" onClick={handle_scroll_left}>
                             <div style={{ opacity: '1' }}>
-                                <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <path d="M11 9L8 12M8 12L11 15M8 12H16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </div>
@@ -311,15 +344,16 @@ const Subjects = () => {
 
                         <ul>
 
-
                             {
-                                faculty.map((item, index) =>
-                                    index === 0
-                                        ?
-                                        <li className='tutor-tab-subject-data-menu' id='table_options_menu' onClick={e => set_active_course(handle_active_course(e))}><a>{item.Faculty}</a></li>
-                                        :
-                                        <li className='tutor-tab-subject-data-menu' onClick={e => set_active_course(handle_active_course(e))}><a>{item.Faculty}</a></li>
-
+                                faculty.map((item, index) => {
+                                    console.log(item, 'facu')
+                                    return <li className='tutor-tab-subject-data-menu'
+                                        style={{
+                                            background: item.Id === selectedFaculty ? "#2471A3" : "",
+                                            color: item.Id === selectedFaculty ? " #F7F9F9" : "",
+                                        }}
+                                        onClick={() => setSelectedFaculty(item.Id)}><a>{item.Faculty}</a></li>
+                                }
                                 )
                             }
                         </ul>
@@ -342,49 +376,43 @@ const Subjects = () => {
 
                     </div>
 
-                    <div className="tables" style={{ height: '60vh', width: '100%', overflow: 'auto', padding: '5px' }}>
+                    {loadingSubs ? <Loading height='50vh' /> : <div >
 
-                        <table style={{ position: 'relative' }}>
-                            <thead >
-                                <tr>
-                                    {COLUMNS.map(item => <th key={item.Header}>{item.Header}</th>)}
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <div className='d-flex rounded justify-content-around
+                         align-items-center
+                         text-bg-primary m-2 p-2'>
+                            <p className='m-0'> Subject</p>
+                            <p className='m-0 col-5'>Grades</p>
+                            <p className='m-0'> Rate</p>
+                            <p className='m-0'> Action</p>
+                        </div>
+                        <div style={{ height: "50vh", overflowY: "auto", overflowX: "hidden", position: "relative" }}>
+                            {
+                                subjectsWithRates.map((item, index) => {
+                                    const rateExtracted = item.rate && parseFloat(item.rate.replace('$', ''))
+                                    const rate = isNaN(rateExtracted) ? '' : rateExtracted
+                                    const grades = JSON.parse(item.grades ?? '[]');
+                                    return <SubjectCard
+                                    faculty={selectedFaculty}
+                                        subject={item.subject}
+                                        rateVal={rate}
+                                        setRate={setRate}
+                                        gradesVal={grades}
+                                        handleGrades={handleGrades}
+                                        onSave={handleSave}
 
-                                {
-                                    active_course
-                                        ?
-                                        active_course.map((item, index) =>
-
-                                            <tr key={index}>
-
-                                                <td className={item.SubjectName} data-src={item.FacultyId}><input type='checkbox' onInput={populate_col} style={{ margin: '8px 0 0 0', cursor: 'pointer', height: '20px', width: '20px' }} value={item.SubjectName} /></td>
-
-                                                <td data-src={item.FacultyId}>{item.SubjectName}</td>
-
-                                                <td data-src={item.FacultyId}></td>
-                                                <td data-src={item.FacultyId}></td>
-                                                <td data-src={item.FacultyId}></td>
-                                                <td data-src={item.FacultyId}></td>
-                                                <td data-src={item.FacultyId}></td>
-                                                <td data-src={item.FacultyId}></td>
-                                            </tr>
-                                        ) : null
+                                    />
                                 }
+                                )
+                            }
+                        </div>
 
-
-                            </tbody>
-                        </table>
-
-
-
-                    </div>
-
+                    </div>}
                 </div>
 
-
             </div>
+
+
             <CenteredModal
                 show={showAddNewSubjModal}
                 handleClose={handleModalClose}
@@ -407,7 +435,7 @@ const Subjects = () => {
                             value={newSubjectReasonData}
                             required className='form-control'
                             onChange={e => setNewSubjectReasonData(e.target.value)}
-                            placeholder='Explain Your Reason For Adding This Subject (max 700 characters)' />
+                            placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-secondary" onClick={handleModalClose}>
@@ -420,6 +448,7 @@ const Subjects = () => {
                     </div>
                 </form>
             </CenteredModal>
+            <Actions saveDisabled={true} />
         </>
     );
 }

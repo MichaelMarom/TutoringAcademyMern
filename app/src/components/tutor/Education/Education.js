@@ -543,7 +543,7 @@ const Education = () => {
                                         required
                                         disabled={!editMode}
                                     >
-                                        <option value="" disabled>Select Education</option>
+                                        <option value="" disabled>Select highest Education</option>
                                         {level_list}
                                     </select>
                                 </div>

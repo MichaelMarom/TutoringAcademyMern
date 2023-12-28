@@ -591,98 +591,58 @@ let get_user_data = (req, res) => {
 
 let upload_tutor_rates = (req, res) => {
 
-    try {
-        let { rate_list, AcademyId } = req.body;
+    let { id, faculty, subject } = req.params;
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
 
-        let book = []
-
-        let data = rate_list.map(async (item, index) => {
-
-            let action = async cb => {
-                await marom_db(async (config) => {
-                    const sql = require('mssql');
-                    var poolConnection = await sql.connect(config);
-
-                    let result = poolConnection ? await get_action(poolConnection, item) : 'connection error';
-                    cb(result, index);
-
-                })
-            }
-
-
-            let response = action(async (result, index) => {
-
-                if (result) {
-
-                    try {
-                        await marom_db(async (config) => {
-                            const sql = require('mssql');
-                            var poolConnection = await sql.connect(config);
-
-                            let result = poolConnection ? await insert_rates(poolConnection, item) : 'connection error';
-
-                            book.push(result)
-                            if (book.length > (rate_list.length / 2)) {
-
-                                res.status(200).send(true)
-                            }
+            var poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const existed = await poolConnection.request().query(
+                    find('SubjectRates', {
+                        AcademyId: id,
+                        subject,
+                        faculty
+                    }, "AND", {
+                        AcademyId: "varchar",
+                        subject: "varchar",
+                        faculty: "varchar"
+                    })
+                )
+                let result;
+                if (existed.recordset.length) {
+                    result = await poolConnection.request().query(
+                        update('SubjectRates', req.body, {
+                            AcademyId: id,
+                            subject,
+                            faculty
+                        }, {
+                            AcademyId: "varchar",
+                            subject: "varchar",
+                            faculty: "varchar"
                         })
-                    } catch (error) {
-                        console.log(error)
-                    }
-
-                } else {
-
-                    try {
-                        await marom_db(async (config) => {
-                            const sql = require('mssql');
-                            var poolConnection = await sql.connect(config);
-
-                            let result = poolConnection ? await update_rates(poolConnection, item) : 'connection error';
-
-                            book.push(result)
-                            if (book.length > (rate_list.length / 2)) {
-                                res.status(200).send(true)
-                            }
-                        })
-                    } catch (error) {
-                        console.log(error)
-                    }
-
-
+                    )
                 }
-            })
-
-        })
-
-        let get_action = async (poolConnection, item) => {
-            let records = await poolConnection.request().query(`SELECT * FROM "SubjectRates"`)
-            let get_duplicate = await records.recordset.filter(file => file.subject === item.course && file.AcademyId === AcademyId);
-
-            let result = get_duplicate.length > 0 ? false : true;
-            return (result);
+                else {
+                    result = await poolConnection.request().query(
+                        insert('SubjectRates', {
+                            ...req.body, ...{
+                                AcademyId: id,
+                                subject: subject,
+                                faculty: faculty
+                            }
+                        })
+                    )
+                }
+                res.status(200).send(result.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
         }
 
-        let insert_rates = async (poolConnection, item) => {
-            let records = await poolConnection.request().query(`INSERT INTO "SubjectRates"(faculty, subject, rate, AcademyId) VALUES('${item.faculty}','${item.course}','${item.rate}','${AcademyId}') `)
-
-            let result = await records.rowsAffected[0] === 1 ? true : false
-
-            return (result);
-        }
-
-        let update_rates = async (poolConnection, item) => {
-            let records = await poolConnection.request().query(`UPDATE "SubjectRates" set faculty='${item.faculty}', subject='${item.course}', rate='${item.rate}'  WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' AND CONVERT(VARCHAR, subject) = '${item.course}' `)
-
-            let result = await records.rowsAffected[0] === 1 ? true : false
-            return (result);
-
-        }
-
-    } catch (err) {
-        console.log('Error message', err)
-    }
-
+    })
 }
 
 let upload_form_four = (req, res) => {
@@ -842,22 +802,28 @@ let get_my_data = async (req, res) => {
 
 
 let get_rates = (req, res) => {
-    let { AcademyId } = req.query;
+    let { AcademyId, facultyId, subject } = req.query;
     marom_db(async (config) => {
-        const sql = require('mssql');
+        try {
+            const sql = require('mssql');
 
-        var poolConnection = await sql.connect(config);
-        if (poolConnection) {
-            poolConnection.request().query(
+            var poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `
+                    select sb.SubjectName as subject, sb.FacultyId as facultyId, sr.rate, sr.AcademyId, sr.grades as grades, 
+                    sb.CreatedOn from SubjectRates as sr right join Subjects as sb on 
+                    cast(sr.subject  as varchar(max))=cast( sb.SubjectName as varchar(max))
+                    where sb.FacultyId = ${facultyId} and ( cast(sr.AcademyId as varchar) = '${AcademyId}' or sr.AcademyId is 
+                    null )
                 `
-                    SELECT * From SubjectRates WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' 
-                `
-            )
-                .then((result) => {
-                    res.status(200).send(result.recordset)
-                })
-                .catch(err => console.log(err))
-
+                )
+                res.status(200).send(result.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
         }
 
     })

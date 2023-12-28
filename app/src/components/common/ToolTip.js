@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FaInfoCircle } from "react-icons/fa";
+
 const tooltipStyle = {
   display: 'flex',
   flexDirection: 'column',
@@ -22,11 +24,11 @@ const Tooltip = ({ text, children, direction = "top", width = "100px" }) => {
 
   return (
     <div
-      className="custom-tooltip-wrapper"
+      className="custom-tooltip-wrapper mx-2"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {children}
+      {children ? children : <FaInfoCircle size={16} color="rgb(0, 150, 255)"/>}
       {showTooltip && (
         <div className={`custom-tooltip ${direction}`}
           style={{

@@ -56,9 +56,9 @@ function EventModal({
       moment.utc(convertToDate(slot.start)).isSame(moment.utc(convertToDate(rescheduleTime))));
 
     if (sessionOnSameTime)
-      return toast.warning('Session is already on same time!')
+      return toast.warning('Session is already on the same time!')
     if (sessionExistOnSelectedTime.length)
-      return toast.warning('Session is already exist on that time!')
+      return toast.warning('Session is already exist for that time!')
 
     const rescheduleEndTime = moment(convertToDate(rescheduleTime)).add(1, 'hours');
 
@@ -125,7 +125,7 @@ function EventModal({
     }
     else if (existIntroSession && selectedType === 'intro' && selectedSlots.length > 1) {
       setCanPostEvents(false)
-      toast.warning('Cannot book more than 1 Intro session!')
+      toast.warning('Cannot book the same subject intro session twice!')
     }
     else {
       setCanPostEvents(true)

@@ -100,7 +100,6 @@ const get_setup_detail = async (req, res) => {
                         find('StudentSetup', { userId }, 'AND', { userId: 'varchar(max)' })
                     )
                 }
-                console.log(result, 'reslogfin');
                 res.status(200).send(result.recordset[0]);
             }
         } catch (err) {
@@ -121,7 +120,6 @@ const forget_password = async (req, res) => {
                 const result = await poolConnection.request().query(
                     findByAnyIdColumn('Users', req.params)
                 );
-                console.log(result.recordset, req.body)
                 if (!result.recordset.length) throw new Error(`user with email = ${email} not found`);
                 const hashedPassword = await bcrypt.hash(req.body.password, 10);
                 const updateData = await poolConnection.request().query(

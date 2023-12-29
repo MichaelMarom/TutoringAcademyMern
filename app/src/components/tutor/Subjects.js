@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { get_rates, get_subject, get_user_data, new_subj_request_exist,
-     upload_new_subject, upload_tutor_rates } from '../../axios/tutor';
+import {
+    get_rates, get_subject, get_user_data, new_subj_request_exist,
+    upload_new_subject, upload_tutor_rates
+} from '../../axios/tutor';
 import { socket } from '../../config/socket';
 import CenteredModal from '../common/Modal';
 import Button from '../common/Button';
@@ -9,7 +11,6 @@ import { toast } from 'react-toastify';
 import { FACULTIES } from '../../constants/constants';
 import SubjectCard from './SubjectCard';
 import Actions from '../common/Actions'
-import { object } from 'prop-types';
 import Loading from '../common/Loading';
 
 
@@ -23,16 +24,10 @@ const Subjects = () => {
     const [showAddNewSubjModal, setShowAddNewSubjModal] = useState(false)
     const [newSubjRequestChecking, setNewSubjReqChecking] = useState(false)
     const [selectedFaculty, setSelectedFaculty] = useState(1);
-    const [rate, setRate] = useState('')
-    const [grades, setGrades] = useState([])
     let [faculty, set_faculty] = useState([]);
     const [subjectsWithRates, setSubjectsWithRates] = useState([]);
 
-    let [active_course, set_active_course] = useState([])
     const [loadingSubs, setLoadingSubs] = useState(false)
-    const handleGrades = () => {
-
-    }
 
     const handleModalClose = () => {
         setShowAddNewSubjModal(false)
@@ -48,140 +43,9 @@ const Subjects = () => {
             .then((result) => {
                 setSubjectsWithRates(result)
                 setLoadingSubs(false)
-                result.map(item => {
-                    let c = item.subject
-                    let t = document.querySelector('.tables')
-                    let files = [...t.querySelectorAll('input[type=checkbox]')]
-                    let r = files.filter((item) =>
-                        item.value.toLowerCase() === c.toLowerCase()
-                    )
-
-                    get_user_data(user_id)
-                        .then((result) => {
-                            r[0].checked = true;
-                            let elms = r[0].parentElement.parentElement.children;
-
-                            elms[2].innerHTML = result[0].EducationalLevel;
-                            elms[3].innerHTML = result[0].EducationalLevelExperience;
-                            elms[4].innerHTML = result[0].Certificate;
-                            elms[5].innerHTML = result[0].CertificateState;
-                            elms[6].innerHTML = result[0].CertificateExpiration;
-                            elms[7].classList.add('col-2')
-                            elms[7].innerHTML = ` <div class="input-group p-2">
-                            <span class="input-group-text">$</span>
-                            <input
-                              type="text"
-                              required
-                              value='${item.rate.split('').splice(1, 2).join('')}'
-                              class="form-control m-0"   style="height:fit-content"
-                              aria-label="Amount (to the nearest dollar)"
-                            />
-                            <input
-                            type="text"
-                            required
-                            value='${item.rate.split('').splice(4, 5).join('')}' 
-                            class="form-control m-0"   style="height:fit-content"
-                            aria-label="Amount (to the nearest dollar)"
-                          />
-                          </div> `;
-                        })
-                        .catch((err) => err)
-
-                })
             })
             .catch((err) => console.log(err))
     }, [selectedFaculty])
-
-    let populate_col = e => {
-        if (e.target.checked) {
-
-
-            let user_id = window.localStorage.getItem('tutor_user_id');
-
-            get_user_data(user_id)
-                .then((result) => {
-                    let data = result[0];
-
-                    let elms = [...e.target.parentElement.parentElement.children];
-
-                    elms[2].innerHTML = data.EducationalLevel;
-                    elms[3].innerHTML = data.EducationalLevelExperience;
-                    elms[4].innerHTML = data.Certificate;
-                    elms[5].innerHTML = data.CertificateState;
-                    elms[6].innerHTML = data.CertificateExpiration;
-                    elms[7].innerHTML = ` <div class="input-group p-2">
-                    <span class="input-group-text">$</span>
-                    <input
-                      type="text"
-                      required
-                      placeholder="00"
-                      class="form-control m-0  " style="height:fit-content"
-                      aria-label="Amount (to the nearest dollar)"
-                    />
-                    <input
-                    type="text"
-                    required
-                    placeholder="cents"
-
-                    class="form-control m-0  " style="height:fit-content"
-                    aria-label="Amount (to the nearest dollar)"
-                  />
-                  </div> `;
-
-                })
-                .catch((err) => err)
-        } else {
-            let elms = [...e.target.parentElement.parentElement.children];
-
-            elms[2].innerHTML = ''
-            elms[3].innerHTML = ''
-            elms[4].innerHTML = ''
-            elms[5].innerHTML = ''
-            elms[6].innerHTML = ''
-            elms[7].innerHTML = ''
-
-
-            let AcademyId = window.localStorage.getItem('tutor_user_id');
-            let subject = e.target.value;
-
-            socket.emit('DeleteSubjectRate', { AcademyId, subject })
-        }
-
-
-    }
-
-    useEffect(() => {
-        get_subject(1)
-            .then((result) => set_active_course(result.recordset))
-            .catch((err) => err)
-
-    }, []);
-
-    let getSubject = (id) => {
-        get_subject(id)
-            .then((result) => set_active_course(result.recordset))
-            .catch((err) => err)
-    }
-
-
-
-    let handle_active_course = e => {
-        let elem = e.currentTarget;
-        //let tables = [...document.querySelectorAll('table')];
-        //let active_table = tables.filter(item => !item.hasAttribute('id'));
-        //active_table[0]?.setAttribute('id', 'hide_table');
-        let index_of_elem = [...elem.parentElement.children].indexOf(elem);
-        getSubject(index_of_elem + 1);
-        //tables[index_of_elem]?.removeAttribute('id');
-
-
-        let deactivedElem = [...elem.parentElement.children].filter(item => item.hasAttribute('id'))[0];
-        deactivedElem?.removeAttribute('id');
-        elem?.setAttribute('id', 'table_options_menu')
-
-
-
-    }
 
     const getFacultiesOption = () => {
         let list = FACULTIES.map(item => {
@@ -194,7 +58,6 @@ const Subjects = () => {
         setNewSubjectFaculty(list)
     }
     useEffect(() => { getFacultiesOption() }, [newSubjectFacultyData])
-
 
     let handle_scroll_right = () => {
 
@@ -213,76 +76,6 @@ const Subjects = () => {
         scroll_elem.scrollLeft = -w
 
     }
-    const handleSave = (e) => {
-        e.preventDefault()
-
-        let checkboxs = [...document.querySelectorAll('input[type=checkbox]')];
-        let checkedbox = checkboxs.filter(item => item.checked)
-        let values = checkedbox.map(item => {
-            return [...item.parentElement.parentElement.children]
-        })
-        let AcademyId = window.localStorage.getItem('tutor_user_id');
-        let rate_list = [];
-        let rate_err = []
-
-        let result = () => {
-            let file = values.map((item) => {
-                console.log(item[7].children[0].children[1])
-                if (`${item[7].children[0].children[1]?.value}.${item[7].children[0].children[2]?.value}` !== '00.00') {
-                    let doc = { faculty: item[1].dataset.src, course: item[1].innerHTML, rate: "$" + item[7].children[0].children[1]?.value + "." + item[7].children[0].children[2]?.value }
-                    rate_list.push(doc)
-                    rate_err.push(true)
-
-
-                } else {
-                    // if (item[7].children[1] && item[7].children[0]) {
-                    //     item[7].children[1]?.style.border = '1px solid red';
-                    //     item[7].children[0]?.style.border = '1px solid red';
-                    // }
-                    rate_err.push(false)
-                    //return false;
-                }
-
-            })
-
-            let upload_agent = (items, id) => {
-                console.log(items, 'itsm in api')
-                upload_tutor_rates(items, id)
-                    .then((result) => {
-                        if (result) {
-                            setTimeout(() => {
-                                document.querySelector('.save-overlay')?.removeAttribute('id');
-                            }, 1000);
-
-                            document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                            document.querySelector('.tutor-popin').innerHTML = 'Data Was Saved Successfully...'
-                            setTimeout(() => {
-                                document.querySelector('.tutor-popin')?.removeAttribute('id');
-                            }, 2000);
-                        } else {
-
-                            document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                            document.querySelector('.tutor-popin').innerHTML = 'Data Was Not Saved Successfully...'
-                            setTimeout(() => {
-                                document.querySelector('.tutor-popin')?.removeAttribute('id');
-                            }, 2000);
-
-                        }
-                    })
-                    .catch((err) => console.log(err))
-            }
-
-            let errCheck = rate_err.filter(item => item === false)
-            if (errCheck.length > 0) {
-                alert('Please Ensure The Rate Field Is At Least $1')
-            } else {
-                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
-                upload_agent(rate_list, AcademyId)
-            }
-        }
-        result()
-    }
-
 
     const checkRequestExist = async (e) => {
         e.preventDefault()
@@ -318,11 +111,7 @@ const Subjects = () => {
 
     return (
         <>
-            <div className="tutor-popin"></div>
-            <div className="save-overlay">
-                <span className="save_loader"></span>
-            </div>
-            <div className="container mt-3">
+            <div className="container" style={{ marginTop: "2px" }}>
 
                 <div className="tutor-tab-subject-data-collection-table">
 
@@ -340,7 +129,6 @@ const Subjects = () => {
                             </div>
 
                         </div>
-
 
                         <ul>
 
@@ -370,21 +158,24 @@ const Subjects = () => {
 
                     </div>
 
-                    <div className="highlight">
-                        Select your faculty above, and checkbox the subject(s) from the list below that you are proficient to tutor. Then add the rate for the subject, and save. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking this lable; <Button className='btn-primary btn-small' type="button"
-                            handleClick={() => setShowAddNewSubjModal(true)} > Search or Add New Subject</Button>
+                    <div className="highlight d-flex flex-column align-items-center">
+                        <p>
+                            Select your faculty above, then from the list below click on the 'Edit' button for your subject (you can select more than one). Type your rate, select the school grades you tutor for this subject. and SAVE. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking here:
+                        </p>
+                        <Button className='btn-primary btn-small text-center' type="button"
+                            handleClick={() => setShowAddNewSubjModal(true)} > Search/Add New Subject</Button>
 
                     </div>
 
                     {loadingSubs ? <Loading height='50vh' /> : <div >
 
-                        <div className='d-flex rounded justify-content-around
+                        <div className='d-flex rounded justify-content-between
                          align-items-center
-                         text-bg-primary m-2 p-2'>
-                            <p className='m-0'> Subject</p>
-                            <p className='m-0 col-5'>Grades</p>
-                            <p className='m-0'> Rate</p>
-                            <p className='m-0'> Action</p>
+                         mx-2 p-2' style={{ color: "white", background: "#2471A3" }}>
+                            <p className='m-0 col-2'> Subject</p>
+                            <p className='m-0 col-6'>School Grades (elementary, middle, & high school)</p>
+                            <p className='m-0 col-3 text-start'> $ Rate</p>
+                            <p className='m-0 col-1'> Action</p>
                         </div>
                         <div style={{ height: "50vh", overflowY: "auto", overflowX: "hidden", position: "relative" }}>
                             {
@@ -393,14 +184,10 @@ const Subjects = () => {
                                     const rate = isNaN(rateExtracted) ? '' : rateExtracted
                                     const grades = JSON.parse(item.grades ?? '[]');
                                     return <SubjectCard
-                                    faculty={selectedFaculty}
+                                        faculty={selectedFaculty}
                                         subject={item.subject}
                                         rateVal={rate}
-                                        setRate={setRate}
                                         gradesVal={grades}
-                                        handleGrades={handleGrades}
-                                        onSave={handleSave}
-
                                     />
                                 }
                                 )
@@ -432,6 +219,7 @@ const Subjects = () => {
                             onChange={e => setNewSubjectData(e.target.value)} type='text'
                             placeholder='Type your subject here' />
                         <textarea
+                            style={{ height: "200px" }}
                             value={newSubjectReasonData}
                             required className='form-control'
                             onChange={e => setNewSubjectReasonData(e.target.value)}

@@ -95,7 +95,7 @@ const AccDetails = ({ sessions }) => {
         if (chatId) return navigate(`/tutor/chat/${chatId}`)
         const data = await create_chat({ User1ID: studentId, User2ID: tutorId })
         if (data[0]?.ChatID) return navigate(`/tutor/chat/${data[0].ChatID}`)
-        toast.warning('Student does not exist!')
+        toast.warning('This Student does not exist!')
     }
 
     const totalAmount = sessions

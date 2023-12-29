@@ -425,7 +425,7 @@ const ShowCalendar = ({
       convertToDate(event.start).getTime() === clickedDate.getTime() || convertToDate(event.end).getTime() === slotInfo.end.getTime()));
 
     if (!isStudentRoute && !disableColor) { toast.warning("Please select color before disabling slots!"); return }
-    if (isEventAlreadyExist && slotInfo.action === "doubleClick") { toast.warning("Event already exist in that slot. Please select another slot to continue!"); return }
+    if (isEventAlreadyExist && slotInfo.action === "doubleClick") { toast.warning("Event already exist for the selected slot. Please select another slot to continue!"); return }
     if (clickedUpperSlot && activeView != views.MONTH) return;
     if (clickedDate.getTime() < (new Date()).getTime() && slotInfo.action === "doubleClick") {
       toast.warning(`Cannot ${!isStudentLoggedIn ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);
@@ -582,7 +582,7 @@ const ShowCalendar = ({
   const handleEventClick = (event) => {
     const ownSession = !isStudentLoggedIn || event.studentId === student?.AcademyId;
     if (!ownSession) {
-      toast.warning('You cannot see details of another students session')
+      toast.warning('We are sorry. You cannot see details of another student session')
       return
     }
     setClickedSlot(event)

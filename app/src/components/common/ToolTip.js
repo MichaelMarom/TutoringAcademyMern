@@ -11,7 +11,7 @@ const tooltipStyle = {
   overflow: 'hidden',
 };
 
-const Tooltip = ({ text, children, direction = "top", width = "100px" }) => {
+const Tooltip = ({ text, children, direction = "top", width = "100px", color = "rgb(0, 150, 255)" }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleMouseEnter = () => {
@@ -28,7 +28,7 @@ const Tooltip = ({ text, children, direction = "top", width = "100px" }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {children ? children : <FaInfoCircle size={16} color="rgb(0, 150, 255)"/>}
+      {children ? children : <FaInfoCircle size={16} color={color} />}
       {showTooltip && (
         <div className={`custom-tooltip ${direction}`}
           style={{

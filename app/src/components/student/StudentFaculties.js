@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShortlist } from '../../redux/student_store/shortlist';
 import { create_chat } from '../../axios/chat';
+import Tooltip from '../common/ToolTip';
 
 const StudentFaculties = () => {
     const dispatch = useDispatch()
@@ -113,7 +114,7 @@ const StudentFaculties = () => {
                     create_chat({ User1ID: student.AcademyId, User2ID: tutorSelectedId })
                         .then(() => { toast.success('You can also chat with selected tutor in MessageBoard Tab!') })
                         .catch((err => console.log(err)))
-                        
+
                     setTimeout(() => {
                         document.querySelector('.save-overlay')?.removeAttribute('id');
                     }, 1000);
@@ -161,7 +162,21 @@ const StudentFaculties = () => {
     }, [response])
 
 
-    let multi_student_cols = [{ Header: '# Select' }, { Header: 'Subject' }, { Header: 'Tutor' }, { Header: 'Experience' }, { Header: 'Certification', }, { Header: 'State', }, { Header: 'Expiration', }, { Header: 'Rate', }]
+    let multi_student_cols = [
+        { Header: '# Select' },
+        { Header: 'Subject' },
+        { Header: 'Tutor' },
+        { Header: 'Experience' },
+        { Header: 'Certification' },
+        { Header: 'State' },
+        { Header: 'Expiration' },
+        { Header: 'Rate' },
+        {
+            Header: 'CancellationPolicy', tooltip: <Tooltip color='white'  direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
+        },
+        {
+            Header: 'ResponseTime', tooltip: <Tooltip color='white' direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
+        }]
 
     let handleSavedDeleteData = e => {
 
@@ -177,15 +192,10 @@ const StudentFaculties = () => {
         else {
             setCheckBoxClicked(elem)
         }
-
-
     }
-
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
 
     return (
         <>
-
             <div className="tutor-popin"></div>
             <div className="save-overlay">
                 <span className="save_loader"></span>
@@ -193,7 +203,10 @@ const StudentFaculties = () => {
             <div className="form-subjects" style={{ overflow: 'hidden', height: 'calc(100vh - 50px)' }}>
 
                 <div className="form-subject-alert">
-                    <p style={{ fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign: 'center' }}>There are 29 faculties with 400+ subjects to select multiple tutors to compair for nearly each subject.</p>
+                    <p style={{
+                        fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign:
+                            'center'
+                    }}> There are 31 faculties containing 400+ subjects to select from.</p>
                 </div>
 
                 <div id="form-subject-data-collection-table">
@@ -245,15 +258,15 @@ const StudentFaculties = () => {
 
 
 
-                    <div className="highlight" style={{ width: '100%' }}>
-                        From the menu above, click on faculty to view all subjects that can be tought by Tutors. Checkbox from the table below the Tutor(s) of interest. They will be dynamically saved in the next "ShortList" tab to compare, and select your tutor.``
+                    <div className="highlight m-0" style={{ width: '100%' }}>
+                        From the sub menu above, select the faculty of interest. Then checkbox from the table below the Tutor(s) of interest. Your selected tutors be shown in the next "ShortList" tab to compare, then select your tutor.
                     </div>
 
-                    <div className="form-subject-search-bar">
+                    {/* <div className="form-subject-search-bar">
                         <div>
                             <label style={{ float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px' }} htmlFor="search"><h6>                                                               </h6></label>
                         </div>
-                    </div>
+                    </div> */}
 
 
                     <div className="tables" style={{ height: '600px', width: '100%', overflow: 'auto', padding: '5px' }}>
@@ -262,7 +275,7 @@ const StudentFaculties = () => {
                             {response?.length ?
                                 <thead>
                                     <tr>
-                                        {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>)}
+                                        {multi_student_cols.map(item => <th key={item.Header}>{item.Header}{item.tooltip}</th>)}
                                     </tr>
                                 </thead>
                                 :
@@ -303,6 +316,9 @@ const StudentFaculties = () => {
                                                             new Date(experience.CertificateExpiration).toLocaleDateString() : "-"}
                                                     </td>
                                                     <td>{faculty.rate}</td>
+                                                    <td>{faculty.cancPolicy} Hrs </td>
+                                                    <td>{faculty.responseTime.replace("Hours", 'Hrs')} </td>
+
                                                 </tr>
                                             }
                                             )

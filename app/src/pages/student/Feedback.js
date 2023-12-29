@@ -61,7 +61,6 @@ export const Feedback = () => {
             else {
                 const updatedReservedSlots = reservedSlots.map(slot => {
                     if (slot.id === selectedEvent.id) {
-                        console.log(slot, questions)
                         slot.rating = (questions.reduce((sum, question) => {
                             sum = question.star + sum
                             return sum
@@ -74,7 +73,6 @@ export const Feedback = () => {
                     studentId, tutorId: selectedEvent.tutorId,
                     bookedSlots, reservedSlots: updatedReservedSlots
                 }));
-                console.log(updatedReservedSlots)
                 setReservedSlots([...updatedReservedSlots])
             }
             setFeedbackData(feedbackData.map(slot => {
@@ -103,7 +101,6 @@ export const Feedback = () => {
                 return slot
             })
         if (selectedEvent.type === 'booked') {
-            // setBookedSlots([...updatedSlots])
             const data = dispatch(postStudentBookings({
                 studentId, tutorId: selectedEvent.tutorId,
                 bookedSlots: updatedSlots, reservedSlots
@@ -117,10 +114,7 @@ export const Feedback = () => {
                 studentId, tutorId: selectedEvent.tutorId,
                 bookedSlots, reservedSlots: updatedSlots
             }));
-            // setReservedSlots([...updatedSlots])
             data?.response?.status === 400 && toast.error("Error while saving the data");
-
-            // toast.success('Data Succesfully Saved')
         }
     }
 

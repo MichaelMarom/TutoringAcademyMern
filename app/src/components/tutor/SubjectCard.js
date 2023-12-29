@@ -5,7 +5,7 @@ import Button from '../common/Button'
 import { upload_tutor_rates } from '../../axios/tutor'
 import { toast } from 'react-toastify'
 
-const SubjectCard = ({ subject, onSave, rateVal, gradesVal, handleGrades, faculty }) => {
+const SubjectCard = ({ subject,rateVal, gradesVal,faculty }) => {
     const [rate, setRate] = useState(rateVal)
     const [grades, setGrades] = useState(gradesVal)
     const [editable, setEditable] = useState(false);
@@ -30,6 +30,7 @@ const SubjectCard = ({ subject, onSave, rateVal, gradesVal, handleGrades, facult
             value: "University"
         }
     ]
+
     const validate = (value) => {
         const regex = /^\d{1,3}?$/;
 
@@ -47,9 +48,10 @@ const SubjectCard = ({ subject, onSave, rateVal, gradesVal, handleGrades, facult
 
     const handleSave = async (e) => {
         e.preventDefault()
-        if (!grades.length) return toast.warning("Please selct at least one grade!")
+        if (!grades.length) return toast.warning("Please select at least one range of school grades!")
+        if (rate < 3) return toast.warning("The minumim rate you can is $3!")
         setEditable(false);
-        const data = await upload_tutor_rates(rate, grades, tutorId, faculty, subject)
+        const data = await upload_tutor_rates(`$${rate}.00`, grades, tutorId, faculty, subject)
         if (data?.response?.status === 400) {
             toast.error('Failed to Save Record')
         }
@@ -64,13 +66,13 @@ const SubjectCard = ({ subject, onSave, rateVal, gradesVal, handleGrades, facult
             <form onSubmit={handleSave}
                 className=' d-flex justify-content-between align-items-center'>
 
-                <div className='d-flex '>
+                <div className='d-flex col-6'>
                     {options.map(option =>
                         <GradePills editable={editable} grade={option.value} setGrades={setGrades} grades={grades} />)
                     }
                 </div>
-                <div className='col-2'>
-                    <Input placeholder={"00"} inputGroupText={"$"} required className="form-control m-0" inputGroup={true} vertical={false} value={rate} onChange={handleOnChangeRate} disabled={!editable} />
+                <div className='col-2 text-center'>
+                    <Input style={{width:"50px", padding:"5px", height:"30px"}} placeholder={"00"} inputGroupText={"$"} required className="form-control m-0" inputGroup={true} vertical={false} value={rate} onChange={handleOnChangeRate} disabled={!editable} />
                 </div>
                 <div className='float-end'>
 

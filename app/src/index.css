@@ -110,12 +110,37 @@ button.Toastify__close-button.Toastify__close-button--light {
   font-size: 13px;
   z-index: 999;
 }
+.custom-tooltip.bottomleft{
+  position: absolute;
+  top: 20px;
+  right: -27px;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 999;
+}
 
 .custom-tooltip.left {
   height: auto;
   position: absolute;
   top: -83px;
   left: -3rem;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 999;
+}
+
+.custom-tooltip.bottomright{
+  position: absolute;
+  top: 20px;
+  left: 50px;
   transform: translateX(-50%);
   background-color: #333;
   color: #fff;

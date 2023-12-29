@@ -8,6 +8,8 @@ import { convertTutorIdToName } from '../../helperFunctions/generalHelperFunctio
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
 import Avatar from '../common/Avatar';
+import Tooltip from '../common/ToolTip';
+import Actions from '../common/Actions';
 
 const StudentShortList = () => {
 
@@ -41,17 +43,62 @@ const StudentShortList = () => {
     }
 
     let multi_student_cols = [
-        { Header: 'Photo' },
-        { Header: 'Demo Lesson @50%' },
-        { Header: 'Subject' },
-        { Header: 'Tutor Name' },
-        { Header: 'Country' },
-        { Header: 'Tutor Time' },
-        { Header: "Time Zone Diff" },
-        { Header: 'Tutor Schedule' },
-        { Header: 'FeedBack' },
-        { Header: 'Tutor Profile' },
-        { Header: 'Rate' }]
+        { Header: 'Photo', width: "7%", },
+        {
+            Header: 'Demo Lesson @50%',
+            width: "7%",
+            tooltip: <Tooltip color='white' width="200px" direction='bottomright'
+                text="The student must conduct an introduction lesson with tutor as a prerequisite of booking further lessons.
+                the Academy wants to be sure that the student feels comfurtable with the tutors. After the 'intro' lesson" />
+        },
+        { Header: 'Subject', width: "7%", },
+        { Header: 'Tutor Name', width: "7%", },
+        { Header: 'Country', width: "7%", },
+        {
+            Header: 'Tutor Time',
+            width: "7%",
+            tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
+                text="The time show the local time (UTC) at the tutor's location." />
+        },
+        {
+            Header: "Time Zone Diff",
+            width: "7%",
+            tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
+                text="The numbers below calculate the difference between your time zone and the tutor. When difference is between +/-3 to 6 Hours, we provide orange background. And if is 7 time zones or more, we show blinking red background. When you book your lesson on the tutor's calendar, it will be shown on your calendar adjusted to your local time (UTC). " />
+        },
+        {
+            Header: 'Tutor Schedule',
+            width: "7%",
+            tooltip: <Tooltip width="200px" color='white' direction='bottomright'
+                text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
+        },
+        {
+            Header: 'FeedBack',
+            width: "7%",
+            tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
+                text="To view tutor's feedback as graded by other students, click the button below." />
+        },
+        {
+            Header: 'Tutor Profile',
+            width: "7%",
+            tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
+                text="To view the full tutor's profile, include introduction video, education credentials, verifications, work experience, and more, Click on the button below." />
+        },
+        { Header: 'Rate', width: "7%", },
+        {
+            Header: 'Cancellation Policy',
+            width: "7%",
+            tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
+                text="This is the time the tutor allows you to cancell the booked lesson without penalty. if cancel less than this time, you will not be compensated. Otherwise you be refunded in full" />
+        },
+        {
+            Header: 'Response Time',
+            width: "7%",
+            tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
+                text="This is the time the tutor committed to response to you address him/her. Please take notice that this committment is in effect during tutor's local time (UTC) business hours. " />
+        }
+
+    ]
 
     let redirect_to_tutor_profile = () => {
         navigate('/tutor/tutor-profile')
@@ -63,7 +110,7 @@ const StudentShortList = () => {
             const tutorOffset = parseInt(tutorGMT, 10);
 
             const difference = studentOffset - tutorOffset;
-            console.log(difference, studentOffset,student.GMT,student, tutorOffset)
+            console.log(difference, studentOffset, student.GMT, student, tutorOffset)
             return difference
         } catch (error) {
             console.log('Invalid GMT offset format');
@@ -80,98 +127,117 @@ const StudentShortList = () => {
     }
     if (shortlistLoading) return <Loading />
     return (
-        <>
-            <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
-                <div className="form-into-prompt shadow-sm" style={{ padding: '20px' }}>
-                    {response.length ?
-                        <div style={{ margin: 'auto', width: '100%', textAlign: 'center', fontSize: 'Medium', fontWeight: 'bold' }}>
-                            To view complete tutor's profile include presentation video, click on 'View Profile' button, or double click on tutor's picture.</div>
-                        :
-                        <div className='text-danger'> no record found!</div>
+        <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
+            <div className="form-into-prompt shadow-sm " style={{ padding: '20px', height: "94vh" }}>
+                <div className='d-flex rounded justify-content-between
+                         align-items-center
+                         p-2' style={{ color: "white", background: "#2471A3" }}>
+                    {multi_student_cols.map(item =>
 
-                    }
+                        <div className='text-center d-flex flex-column'
+                            style={{ width: item.width }}>
+                            <p className='m-0' key={item.Header} > {item.Header}</p>
+                            <div style={{ float: "right" }}>
+                                {item.tooltip}
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <div className="tables" style={{ height: '70vh', width: '100%', overflowY: "auto" }}>
+                    <table>
+                        {response.length ?
+                            <thead className='d-none'>
+                                <tr>
+                                    {multi_student_cols.map(item =>
+                                        <th key={item.Header} className=''>{item.Header}{item.tooltip}</th>
+                                    )}
+                                </tr>
+                            </thead> : null}
+                        <tbody>
+                            {
+                                response.length > 0
+                                    ?
+                                    response.map((item, index) => {
+                                        const tutorSetup = item.tutorData;
+                                        const tutorDemoLesson = item.tutorDemoLesson;
+                                        const tutorShortList = item.tutorShortList;
+                                        const rate = tutorShortList.rate
+                                        return (
+                                            <tr onDoubleClick={() =>
+                                                redirect_to_tutor_profile(tutorSetup?.AcademyId)} key={index}>
+                                                <td className='' style={{ width: multi_student_cols[0].width }}>
+                                                    <Avatar
+                                                        size='100'
+                                                        indicSize='20px'
+                                                        avatarSrc={tutorSetup?.Photo}
+                                                        online={tutorSetup.Online}
+                                                    />
+                                                </td>
+                                                <td style={{ width: multi_student_cols[0].width }}>
+                                                    <input type='checkbox'
+                                                        style={{ height: '20px', width: '20px' }}
+                                                        checked={tutorShortList?.IntroSessionDiscount || false}
+                                                    />
+                                                </td>
+                                                <td style={{ width: multi_student_cols[1].width }} className=''>
+                                                    {tutorShortList?.Subject}
+                                                </td>
+                                                <td style={{ width: multi_student_cols[2].width }} className=''>
+                                                    {convertTutorIdToName(tutorSetup?.AcademyId)}
+                                                </td>
+                                                <td style={{ width: multi_student_cols[3].width }}>
+                                                    {tutorSetup?.Country}
+                                                </td>
+                                                <td style={{ width: multi_student_cols[4].width }} className=' text-center'>
+                                                    {showDate(convertGMTToLocalTime(tutorSetup?.GMT), wholeDateFormat)} <br />
+                                                </td>
+                                                <td style={{ width: multi_student_cols[5].width }} className=''>
+                                                    <div className={`d-inline card px-1 m-auto ${classByDifference(calculateTimeDifference(tutorSetup?.GMT))}`}
+                                                        style={{ fontSize: "18px" }}
+                                                    >
+                                                        {calculateTimeDifference(tutorSetup?.GMT) > 0 ?
+                                                            `+${calculateTimeDifference(tutorSetup?.GMT)}` :
+                                                            calculateTimeDifference(tutorSetup?.GMT)}
+                                                    </div>
+                                                </td>
+                                                <td style={{ width: multi_student_cols[6].width }}>
+                                                    <button className='btn btn-outline-primary btn-sm'
+                                                        onClick={() => handleNavigateToSchedule(item)}>
+                                                        Book Lesson</button>
+                                                </td>
+                                                <td style={{ width: multi_student_cols[7].width }} >
+                                                    <button className='btn btn-outline-success btn-sm'
+                                                        onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>
+                                                        Feedbacks</button>
+                                                </td>
+                                                <td style={{ width: multi_student_cols[8].width }}>
+                                                    <button className='btn btn-outline-primary btn-sm'
+                                                        onClick={() => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>
+                                                        View Profile</button>
+                                                </td>
+                                                <td style={{ width: multi_student_cols[9].width }}>{rate}</td>
+                                                <td style={{ width: multi_student_cols[10].width }}>
+                                                    {tutorShortList.CancellationPolicy} Hrs
+                                                </td>
 
-                    <div className="tables" style={{ height: '800px', width: '100%', overflow: 'auto', padding: '5px' }}>
+                                                <td style={{ width: multi_student_cols[11].width }}>
+                                                    {tutorSetup.ResponseHrs.replace("Hours", "Hrs")}
+                                                </td>
 
-                        <table>
-                            {response.length ?
-                                <thead>
-                                    <tr>
-                                        {multi_student_cols.map(item => <th key={item.Header}>{item.Header}</th>
-                                        )}
-                                    </tr>
-                                </thead> : null}
-                            <tbody>
-                                {
-                                    response.length > 0
-                                        ?
-                                        response.map((item, index) => {
-                                            const tutorSetup = item.tutorData;
-                                            const tutorDemoLesson = item.tutorDemoLesson;
-                                            const tutorShortList = item.tutorShortList;
-                                            return (
-                                                <tr
-                                                    onDoubleClick={() =>
-                                                        redirect_to_tutor_profile(tutorSetup?.AcademyId)} key={index}>
-                                                    <td className='col-1'>
-                                                        <Avatar
-                                                            size='100'
-                                                            indicSize='20px'
-                                                            avatarSrc={tutorSetup?.Photo}
-                                                            online={tutorSetup.Online}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <input type='checkbox'
-                                                            style={{ height: '20px', width: '20px' }}
-                                                            checked={tutorShortList?.IntroSessionDiscount || false}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        {tutorShortList?.Subject}
-                                                    </td>
-                                                    <td>
-                                                        {convertTutorIdToName(tutorSetup?.AcademyId)}
-                                                    </td>
-                                                    <td>
-                                                        {tutorSetup?.Country}
-                                                    </td>
-                                                    <td className='col-1 text-center'>
-                                                        {showDate(convertGMTToLocalTime(tutorSetup?.GMT), wholeDateFormat)} <br />
-                                                    </td>
-                                                    <td className='col-1'>
-                                                        <div className={`d-inline mr-2 card px-1 w-50 m-auto ${classByDifference(calculateTimeDifference(tutorSetup?.GMT))}`}>
-                                                            {calculateTimeDifference(tutorSetup?.GMT) > 0 ? `+${calculateTimeDifference(tutorSetup?.GMT)}` : calculateTimeDifference(tutorSetup?.GMT)}
-                                                        </div>
-                                                    </td>
-                                                    <td >
-                                                        <button className='btn btn-outline-primary' onClick={() => handleNavigateToSchedule(item)}>Book Lesson</button>
-                                                    </td>
-                                                    <td >
-                                                        <button className='btn btn-outline-success' onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>Feedbacks</button>
-                                                    </td>
-                                                    <td>
-                                                        <button className='btn btn-outline-primary' onClick={e => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>View Profile</button>
-                                                    </td>
-                                                    <td>{tutorShortList?.Rate}</td>
-                                                    <td>
-                                                        <input style={{ height: '20px', width: '20px' }} type='radio' />
-                                                    </td>
+                                            </tr>
+                                        )
+                                    }) :
+                                    null
+                            }
 
-                                                </tr>
-                                            )
-                                        }) :
-                                        null
-                                }
-
-                            </tbody>
-                        </table>
-
-                    </div>
+                        </tbody>
+                    </table>
 
                 </div>
-            </motion.div>
-        </>
+            </div>
+            <Actions saveDisabled="true" />
+
+        </motion.div>
     );
 }
 

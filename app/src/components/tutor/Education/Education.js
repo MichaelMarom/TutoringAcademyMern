@@ -41,13 +41,6 @@ const Education = () => {
         }
     }
 
-    useEffect(() => {
-        let next = document.querySelector('.tutor-next')
-
-        if (next && next.hasAttribute('id')) {
-            next?.removeAttribute('id');
-        }
-    }, [])
 
     const [editMode, setEditMode] = useState(false);
     const [unSavedChanges, setUnsavedChanges] = useState(false);
@@ -401,10 +394,10 @@ const Education = () => {
         set_level(e.target.value)
     }
 
-
     let certified = e => {
         set_certificate(e.target.value)
     }
+
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -418,6 +411,7 @@ const Education = () => {
             setDegreeFile(file);
         }
     }
+
     const handleResumeFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -1041,24 +1035,24 @@ const Education = () => {
 
                         </div>
                     </div>
-                    <div className="tutor-tab-education-experience">
+                    <div className="tutor-tab-education-experience" style={{ marginTop: "75px" }}>
                         <div className="education-work-experience-logo">
                             <img
                                 src={career}
-                                style={{ height: '85%', width: '200px', display: 'block', margin: 'auto', padding: '30px' }}
+                                style={{ height: '85%', width: '200px', display: 'block', margin: 'auto', padding: '5px 10px 5px 10px' }}
                                 alt=""
                             />
 
                         </div>
-                        <div className=''>
+                        <div style={{ width: "450px" }}>
 
-                            <h6 className='border-bottom'>Work Experience</h6>
                             <RichTextEditor
                                 value={workExperience}
                                 onChange={handleEditorChange}
                                 readOnly={!editMode}
                                 placeholder="Enter Your Work Experience"
                                 required
+
                             />
                             {
                                 resumePath ?
@@ -1084,7 +1078,8 @@ const Education = () => {
                                             className="form-control m-0"
                                             onChange={handleResumeFileUpload}
                                         />
-                                    </div>}
+                                    </div>
+                            }
                         </div>
                     </div>
 

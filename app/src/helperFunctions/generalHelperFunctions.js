@@ -78,7 +78,9 @@ export const unsavedChangesHelper = (fieldValues, tutor) => {
 }
 
 export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
+  console.log( tutor.DegreeYear, fieldValues.graduagteYr3)
   return (
+
     tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
     (tutor.EducationalLevel !== undefined && fieldValues.level !== undefined && tutor.EducationalLevel !== fieldValues.level) ||
     (tutor.BachCountry !== undefined && fieldValues.countryForAssociate !== undefined && tutor.BachCountry !== fieldValues.countryForAssociate) ||
@@ -98,12 +100,11 @@ export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
     (tutor.EducationalLevelExperience !== undefined && fieldValues.experience !== undefined && tutor.EducationalLevelExperience !== fieldValues.experience) ||
     (tutor.College1Year !== undefined && fieldValues.graduateYr1 !== undefined && tutor.College1Year !== fieldValues.graduateYr1) ||
     (tutor.College2StateYear !== undefined && fieldValues.graduateYr2 !== undefined && tutor.College2StateYear !== fieldValues.graduateYr2) ||
-    (tutor.DegreeYear !== undefined && fieldValues.graduateYr3 !== undefined && tutor.DegreeYear !== fieldValues.graduateYr3) ||
+    (tutor.DegreeYear !== undefined && fieldValues.graduagteYr3 !== undefined && tutor.DegreeYear !== fieldValues.graduagteYr3) ||
     (tutor.DoctorateGradYr !== undefined && fieldValues.doctorateGraduateYear !== undefined && tutor.DoctorateGradYr !== fieldValues.doctorateGraduateYear) ||
     (tutor.CertificateExpiration !== undefined && fieldValues.expiration !== undefined && tutor.CertificateExpiration !== fieldValues.expiration) ||
-    // (tutor.NativeLang !== undefined && fieldValues.othelang !== undefined && tutor.NativeLang !== fieldValues.othelang) ||
     (tutor.WorkExperience !== undefined && fieldValues.workExperience !== undefined && tutor.WorkExperience !== fieldValues.workExperience)
-    // Add more comparisons for other fields
+    // (tutor.DoctorateGradYr !== undefined && fieldValues.graduagteYr3 !== undefined && tutor.DoctorateGradYr !== fieldValues.graduagteYr3)
   );
 }
 

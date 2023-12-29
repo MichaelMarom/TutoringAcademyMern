@@ -108,8 +108,8 @@ const TutorSetup = () => {
   let dispatch = useDispatch();
 
   const [selectedVideoOption, setSelectedVideoOption] = useState(null);
-
   const handleOptionClick = (option) => {
+    console.log("hit")
     setUploadVideoClicked(true);
     setSelectedVideoOption(option);
   }
@@ -581,9 +581,10 @@ const TutorSetup = () => {
                 <div className="tutor-tab-photo-frame">
                   <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' />
                 </div>
-                <button id="btn" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
+
+                <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto" }} type="label" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
                   Upload
-                </button>
+                </label>
               </div>
 
 
@@ -605,7 +606,6 @@ const TutorSetup = () => {
                   </label>
                   <input
                     required
-
                     onChange={(e) => set_fname(e.target.value)}
                     placeholder="First Name"
                     value={fname}
@@ -995,22 +995,23 @@ const TutorSetup = () => {
                           defaultValue={''}
                           onChange={handleVideo}
                           type="file"
+                          name="video"
                           style={{ display: "none" }}
                           id="video"
                         />
                         {/* : null} */}
-                        <button
+                        <label
                           id="btn"
+                          type="button"
                           htmlFor="video"
-                          disabled={!editMode}
-                          style={{ fontSize: "10px" }}
+                          style={{ pointerEvents: !editMode ? "none" : "auto", fontSize: "10px" }}
                           className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
                             }`}
                           onClick={() => handleOptionClick("upload")}
                         >
                           <BsCloudUpload size={15} /> <br />
                           Upload Video
-                        </button>
+                        </label>
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -1020,8 +1021,7 @@ const TutorSetup = () => {
                           style={{ fontSize: "10px" }}
                           className={`btn btn-danger `}
                           onClick={() => set_video("")}
-                          disabled={!editMode}
-                        >
+                          disabled={!editMode}>
                           <BsTrash size={15} />
                           <br />
                           Delete Video
@@ -1034,7 +1034,7 @@ const TutorSetup = () => {
             </div>
 
 
-            <hr className="shadow"/>
+            <hr className="shadow" />
             <div className="container">
               <div
                 className="border rounded p-2 mt-2 shadow"

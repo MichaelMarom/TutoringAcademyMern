@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const TermOfUse = () => {
   return (
-    <TutorLayout>
+    <TutorLayout showLegacyFooter={false}>
       <TermOfUseComp />
     </TutorLayout>
   );

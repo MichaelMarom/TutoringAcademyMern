@@ -48,8 +48,7 @@ const StudentShortList = () => {
             Header: 'Demo Lesson @50%',
             width: "7%",
             tooltip: <Tooltip color='white' width="200px" direction='bottomright'
-                text="The student must conduct an introduction lesson with tutor as a prerequisite of booking further lessons.
-                the Academy wants to be sure that the student feels comfurtable with the tutors. After the 'intro' lesson" />
+                text="The student must conduct an introduction lesson with tutor. Most Tutors motivate students by offering the 'Intro' lesson at half price. The discounted 'Intro' marked by a green check boxk icon. After the 'intro' lesson performed, the student must provide a feedback before permitted to book further lessons with the tutor."  />
         },
         { Header: 'Subject', width: "7%", },
         { Header: 'Tutor Name', width: "7%", },

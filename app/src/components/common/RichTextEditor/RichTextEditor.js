@@ -1,28 +1,66 @@
-import React, { useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import Quill styles
-import "./styles.css"
-const RichTextEditor = ({ value, onChange, readOnly,placeholder }) => {
-  const handleEditorChange = (content) => {
-    onChange(content);
+import React, { useEffect, useState } from 'react';
+import ReactQuill, { Quill } from 'react-quill';
+import ImageResize from 'quill-image-resize-module-react';
+import ImageDropAndPaste from 'quill-image-drop-and-paste'
+import 'react-quill/dist/quill.snow.css';
+
+Quill.register('modules/imageResize', ImageResize);
+// Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
+
+const RichTextEditor = ({ value, onChange, readOnly, placeholder }) => {
+  const image = () => {
+    console.log("image")
+  }
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+      ['link', 'image'],
+      [{ 'color': [] }],
+      ['clean']
+    ],
+    imageResize: {
+      parchment: Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize']
+    },
+    // imageDropAndPaste: {
+    //   // add an custom image handler
+    //   handler: image,
+    // },
   };
 
+  useEffect(() => {
+    window.Quill = Quill
+  }, [])
+
+  const formats = [
+    'header',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image',
+    'color',
+    'size',
+    'align',
+  ];
+
   return (
-    <div>
+    <div className="text-editor">
       <ReactQuill
+        theme="snow"
+        modules={modules}
+        formats={formats}
         value={value}
-        onChange={handleEditorChange}
-        readOnly={readOnly}
-        style={{
-          height:"500px",
-          backgroundColor: readOnly ? '#e9ecef' : ''
-      }}
-        required
         placeholder={placeholder}
         disabled={readOnly}
+        style={{ height: "92vh", backgroundColor: readOnly ? "#e9ecef" : "", }}
+        onChange={(value) => onChange(value)}
+        readOnly={readOnly}
       />
     </div>
   );
 };
 
 export default RichTextEditor;
+

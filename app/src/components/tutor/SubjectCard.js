@@ -12,8 +12,8 @@ const SubjectCard = ({ subject,rateVal, gradesVal,faculty }) => {
     const tutorId = localStorage.getItem('tutor_user_id')
     const options = [
         {
-            value: '1-3',
-            text: '1-3'
+            value: 'K-3',
+            text: 'K-3'
         },
         {
             value: '4-6',

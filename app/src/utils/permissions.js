@@ -32,6 +32,8 @@ import Chat from "../pages/Chat";
 import { Schedules } from "../pages/student/Schedules";
 import { SingleTutorFeedbacks } from "../pages/student/SingleTutorFeedbacks";
 
+import TOS from '../pages/Admin/TOS'
+import PlatformIntro from "../pages/Admin/PlatformIntro";
 const rolePermissions = {
   tutor: [
     { path: "/tutor/intro", component: <Intro /> },
@@ -71,6 +73,9 @@ const rolePermissions = {
     { path: "/admin/tutor-data", component: <TutorTable /> },
     { path: "/admin/student-data", component: <StudentTable /> },
     { path: "/admin/new-subject", component: <TutorNewSubject /> },
+    { path: "/admin/tos", component: <TOS /> },
+    { path: "/admin/intro", component: <PlatformIntro /> },
+
   ],
   common: [
     { path: "/login", component: <Login /> },

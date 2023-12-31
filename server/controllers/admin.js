@@ -1,4 +1,5 @@
 const { marom_db, connecteToDB } = require('../db');
+const { insert, update } = require('../helperfunctions/crud_queries');
 const { shortId } = require('../modules');
 
 
@@ -191,7 +192,79 @@ let decline_new_subject = (req, res) => {
 
 
 }
+
+const postTerms = async (req, res) => {
+    await marom_db(async (config) => {
+        const sql = require('mssql');
+        const poolConnection = await sql.connect(config);
+        try {
+            // Check if there's an existing record for the tutorId
+            const existingRecord =
+                await poolConnection.request().query(`
+          SELECT * FROM Constants WHERE ID = 1
+        `);
+
+            if (existingRecord.recordset.length) {
+                // Update the existing record
+
+                if (poolConnection) {
+                    const result = await poolConnection.request().query(update('Constants', req.body, { ID: 1 }));
+
+                    if (result.rowsAffected[0] === 1) {
+                        res.status(200).json(result.recordset[0]);
+                    } else {
+                        res.status(500).json({ success: false, message: 'Failed to update terms.' });
+                    }
+                }
+            } else {
+                // Insert a new record
+                if (poolConnection) {
+                    const result = await poolConnection.request().query(
+                        insert('Constants', req.body)
+                    );
+
+                    if (result.rowsAffected[0] === 1) {
+                        res.status(200).json({ success: true, message: 'Terms stored successfully.' });
+                    } else {
+                        res.status(500).json({ success: false, message: 'Failed to store terms.' });
+                    }
+                }
+
+            }
+        }
+
+        catch (error) {
+            console.error('Error storing terms:', error.message);
+            res.status(500).json({ success: false, message: 'Internal server error.' });
+        }
+    })
+};
+let get_Constants = (req, res) => {
+    marom_db(async (config) => {
+        const sql = require('mssql');
+
+        var poolConnection = await sql.connect(config);
+        // console.log(poolConnection._connected)
+        if (poolConnection) {
+            poolConnection.request().query(
+                `
+                    SELECT * From Constants where ID = 1 
+                `
+            )
+                .then((result) => {
+                    res.status(200).send(result.recordset)
+                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
+                })
+                .catch(err => console.log(err))
+
+        }
+
+    })
+}
+
 module.exports = {
+    postTerms,
+    get_Constants,
     get_tutor_data,
     get_student_data,
     set_tutor_status,

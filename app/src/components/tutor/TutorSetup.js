@@ -17,14 +17,14 @@ import {
 import containerVariants from "../constraint";
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
-import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
+import { convertGMTOffsetToLocalString, showDate } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
 import Loading from "../common/Loading";
 import ToolTip from '../common/ToolTip'
 
 import Actions from '../common/Actions'
 import { uploadVideo } from "../../redux/tutor_store/video";
-import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, STATES, UK_STATES, US_STATES } from "../../constants/constants";
+import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, STATES, UK_STATES, US_STATES, wholeDateFormat } from "../../constants/constants";
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import SelectOrTypeInput from "../common/SelectTypeInput";
 import { unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
@@ -74,6 +74,8 @@ const TutorSetup = () => {
     { grade: "12th grade" },
     { grade: "Academic" },
   ]
+  console.log(video, photo, video.length)
+
   let [tutorGrades, setTutorGrades] = useState([]);
   const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
@@ -560,10 +562,7 @@ const TutorSetup = () => {
       >
         <form onSubmit={saveTutorSetup} className="pt-4">
           <div style={{ overflowY: "auto", height: "90%" }}>
-            <div className="d-flex justify-content-center align-items-center">
-              <p>{typeof dateTime === "object" ? "" : dateTime}</p>
 
-            </div>
             <div className="tutor-setup-top-field " style={{ gap: "25px" }}>
               <div className="profile-photo-cnt ">
                 <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
@@ -579,7 +578,10 @@ const TutorSetup = () => {
                   {picUploading && <Loading height="10px" iconSize="20px" loadingText="uploading picture ..." />}
                 </div>
                 <div className="tutor-tab-photo-frame">
-                  <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' />
+                  {photo ? <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' /> :
+                    `You must upload your picture, and video on this tab.  
+                  You are permitted to move to next tabs without validating that, but your account will not be activated until it’s done`
+                  }
                 </div>
 
                 <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto" }} type="label" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
@@ -739,9 +741,8 @@ const TutorSetup = () => {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label className="input-group-text w-50" htmlFor="">
-                    Response Time <ToolTip width="200px" text="Select your response time
-                    to answer the student. Please take notice that the student take this fact as one of the considurations while selecting his/hers tutor." />
+                  <label className="input-group-text w-50" htmlFor=""  style={{fontSize:"14px"}}>
+                    Response Time <ToolTip width="200px" text="Select your response time answering the student during business time in your time zone. Please take notice that the student take this fact as one of the considurations of selecting you as tutor." />
                   </label>
                   <select
                     className="form-select m-0"
@@ -756,6 +757,33 @@ const TutorSetup = () => {
 
                 </div>
 
+                <div
+                  style={{
+                    display: "flex",
+                    width: "100%",
+
+                    alignItems: "center",
+                    display: "flex",
+
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <label className="input-group-text w-50" htmlFor="">
+                    Time Zone <ToolTip width="200px" text={"Select the Greenwich Mean Time (GMT) zone where you reside. It will let the student configure his time availability conducting lessons with you, when in a different time zone. "} />
+                  </label>
+                  <select
+                    className="form-select m-0"
+                    onInput={(e) => set_timeZone(e.target.value)}
+                    id="timeZone"
+                    disabled={!editMode}
+                    value={timeZone}
+                    required
+                  >
+                    {GMTList}
+                  </select>
+
+
+                </div>
               </div>
 
               <div className="profile-details-cnt pt-3 w-50"
@@ -772,7 +800,7 @@ const TutorSetup = () => {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label className="input-group-text w-50" htmlFor="">
+                  <label className="input-group-text w-50" htmlFor=""   style={{fontSize:"14px"}}>
                     Address 1
                   </label>
                   <input
@@ -915,7 +943,6 @@ const TutorSetup = () => {
                   />
                 </div>
 
-
                 <div
                   style={{
                     display: "flex",
@@ -928,26 +955,21 @@ const TutorSetup = () => {
                   }}
                 >
                   <label className="input-group-text w-50" htmlFor="">
-                    Time Zone <ToolTip width="200px" text={"Select the Greenwich Mean Time (GMT) zone where you reside. It will let the student configure his time availability conducting lessons with you, when in a different time zone. "} />
+                    UTC  <ToolTip width="200px" text={"utc tooltip"} />
                   </label>
-                  <select
-                    className="form-select m-0"
-                    onInput={(e) => set_timeZone(e.target.value)}
-                    id="timeZone"
-                    disabled={!editMode}
-                    value={timeZone}
-                    required
-                  >
-                    {GMTList}
-                  </select>
-
-
+                  <input
+                    className="form-control m-0"
+                    disabled
+                    value={typeof dateTime === "object" ? "" : dateTime}
+                  />
                 </div>
+
               </div>
 
               <div className="profile-video-cnt mt-3 "
                 style={{ float: "right", width: "70%", height: "250px" }}
               >
+                <h6>Upload your intro video</h6>
                 <div className="mb-2">
                   {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
                 </div>
@@ -963,6 +985,8 @@ const TutorSetup = () => {
                   </div>
                 ) :
                   <div className="tutor-tab-video-frame p-3 card">
+                    <div style={{ textAlign: "justify" }}> Providing your video, is mandatory. Your registration is at the stage of 'pending' until you upload it. An introduction video is a great way to showcase your personality, skills and teaching style for potential students. It can help you stand out from other tutors and attract more atudents. Creating your video, briefly introduce yourself, your experience and your approach to tutoring. Mention what subjects and levels you can teach, and how you can help students achieve their goals. You should speak clearly, and confidently. A good introduction video can make a lasting impression and increase your chances of getting hired.
+                    </div>
                   </div>
                 }
 

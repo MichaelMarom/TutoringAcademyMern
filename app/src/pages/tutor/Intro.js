@@ -4,7 +4,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const TutorIntro = () => {
     return (
-        <TutorLayout>
+        <TutorLayout showLegacyFooter={false}>
             <Intro />
         </TutorLayout>
     );

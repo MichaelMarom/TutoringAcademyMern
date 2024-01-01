@@ -1386,33 +1386,89 @@ const get_tutor_profile_data = async (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `SELECT
-                    ts.AcademyId,
-                    ts.FirstName,
-                    te.BachCountry,
-                   tc.ChatID,
-                    ISNULL(
-                        (
-                            SELECT sr.subject AS Subject,
-                                   sr.rate AS Rate
-                            FROM SubjectRates AS sr
-                            WHERE CAST(sr.AcademyId AS VARCHAR(MAX)) = 
-                            CAST(ts.AcademyId AS VARCHAR(MAX))
-                            FOR JSON PATH
-                        ), '') AS Subjects
-                FROM
-                    TutorSetup AS ts
-                JOIN
-                    Education AS te ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(te.AcademyId AS VARCHAR(MAX))
-                LEFT JOIN
-                    Chat AS tc ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(tc.User2ID AS VARCHAR(MAX))
-                    and cast(tc.User2ID as varchar) = 'xsxs. c. z2e08ec'
-                WHERE
-                    CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST('Asiya. B6055bd' AS VARCHAR(MAX))
-                GROUP BY
-                    ts.AcademyId, ts.FirstName, te.BachCountry, tc.ChatID;                
-                   `
+                    CAST(ts.AcademyId AS VARCHAR(MAX)) AS AcademyId,
+                        CAST(ts.Video AS VARCHAR(MAX)) AS Video,
+                        CAST(ts.Photo AS VARCHAR(MAX)) AS Photo,
+                        CAST(ts.Address1 AS VARCHAR(MAX)) AS Address1,
+                        CAST(ts.Address2 AS VARCHAR(MAX)) AS Address2,
+                        CAST(ts.CellPhone AS VARCHAR(MAX)) AS CellPhone,
+                        CAST(ts.CityTown AS VARCHAR(MAX)) AS CityTown,
+                        CAST(ts.Country AS VARCHAR(MAX)) AS Country,
+                        CAST(ts.FirstName AS VARCHAR(MAX)) AS FirstName,
+                        CAST(ts.LastName AS VARCHAR(MAX)) AS LastName,
+                        CAST(ts.GMT AS VARCHAR(MAX)) AS GMT,
+                        CAST(ts.Grades AS VARCHAR(MAX)) AS Grades,
+                        CAST(ts.HeadLine AS VARCHAR(MAX)) AS HeadLine,
+                        CAST(ts.Motivate AS VARCHAR(MAX)) AS Motivate,
+                        CAST(ts.Introduction AS VARCHAR(MAX)) AS Introduction,
+                        CAST(ts.MiddleName AS VARCHAR(MAX)) AS MiddleName,
+                        CAST(ts.Online AS VARCHAR(MAX)) AS Online,
+                        CAST(ts.ResponseHrs AS VARCHAR(MAX)) AS ResponseHrs,
+                        CAST(ts.StateProvince AS VARCHAR(MAX)) AS StateProvince,
+                        CAST(ts.ZipCode AS VARCHAR(MAX)) AS ZipCode,
+                        CAST(te.BachCountry AS VARCHAR(MAX)) AS BachCountry,
+                        CAST(te.CertCountry AS VARCHAR(MAX)) AS CertCountry,
+                        CAST(te.Certificate AS VARCHAR(MAX)) AS Certificate,
+                        CAST(te.CertificateExpiration AS VARCHAR(MAX)) AS CertificateExpiration,
+                        -- Continue casting other columns from Education table
+                        CAST(te.College1 AS VARCHAR(MAX)) AS College1,
+                        CAST(te.College1State AS VARCHAR(MAX)) AS College1State,
+                        -- ... (Continue for other columns in the Education table)
+                        CAST(tc.ChatID AS VARCHAR(MAX)) AS ChatID,
+                        ISNULL(
+                            (
+                                SELECT sr.subject AS Subject,
+                                       sr.rate AS Rate
+                                FROM SubjectRates AS sr
+                                WHERE CAST(sr.AcademyId AS VARCHAR(MAX)) = CAST(ts.AcademyId AS VARCHAR(MAX))
+                                FOR JSON PATH
+                            ), '') AS Subjects
+                    FROM
+                        TutorSetup AS ts
+                    JOIN
+                        Education AS te ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(te.AcademyId AS VARCHAR(MAX))
+                    LEFT JOIN
+                        Chat AS tc ON CAST(ts.AcademyId AS VARCHAR) = tc.User2ID 
+                        AND CAST(tc.User2ID AS VARCHAR) = 'xsxs. c. z2e08ec'
+                    WHERE
+                        CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST('Asiya. B6055bd' AS VARCHAR(MAX))
+                    GROUP BY
+                        tc.ChatID,
+                        CAST(ts.AcademyId AS VARCHAR(MAX)),
+                        CAST(ts.Photo AS VARCHAR(MAX)),
+                        CAST(ts.Video AS VARCHAR(MAX)),
+                        CAST(ts.Address1 AS VARCHAR(MAX)),
+                        CAST(ts.Address2 AS VARCHAR(MAX)),
+                        CAST(ts.CellPhone AS VARCHAR(MAX)),
+                        CAST(ts.CityTown AS VARCHAR(MAX)),
+                        CAST(ts.Country AS VARCHAR(MAX)),
+                        CAST(ts.FirstName AS VARCHAR(MAX)),
+                        CAST(ts.LastName AS VARCHAR(MAX)),
+                        CAST(ts.GMT AS VARCHAR(MAX)),
+                        CAST(ts.Grades AS VARCHAR(MAX)),
+                        CAST(ts.HeadLine AS VARCHAR(MAX)),
+                        CAST(ts.Motivate AS VARCHAR(MAX)),
+                        CAST(ts.Introduction AS VARCHAR(MAX)),
+                        CAST(ts.LastName AS VARCHAR(MAX)),
+                        CAST(ts.MiddleName AS VARCHAR(MAX)),
+                        CAST(ts.Online AS VARCHAR(MAX)),
+                        CAST(ts.ResponseHrs AS VARCHAR(MAX)),
+                        CAST(ts.StateProvince AS VARCHAR(MAX)),
+                        CAST(ts.ZipCode AS VARCHAR(MAX)),
+                        CAST(te.BachCountry AS VARCHAR(MAX)),
+                        CAST(te.CertCountry AS VARCHAR(MAX)),
+                        CAST(te.CertCountry AS VARCHAR(MAX)),
+                        -- Continue for other columns in the GROUP BY clause
+                        CAST(te.College1 AS VARCHAR(MAX)),
+                        CAST(te.College1State AS VARCHAR(MAX)),
+                        CAST(te.Certificate AS VARCHAR(MAX)),
+                        CAST(te.CertificateExpiration AS VARCHAR(MAX))
+                        -- ... (Continue for other columns in the Education table)
+                    `
                 );
-                res.status(200).send(result.recordset[0])
+                const formattedResult =
+                    { ...result.recordset[0], subjects: JSON.parse(result.recordset[0].Subjects ?? '[]') }
+                res.status(200).send(formattedResult)
             }
         }
         catch (err) {

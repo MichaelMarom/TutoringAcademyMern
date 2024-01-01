@@ -1,7 +1,6 @@
-import { useTable } from 'react-table';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { COLUMNS, DATA } from '../../Tables/Faculty/columns';
+import { COLUMNS } from '../../Tables/Faculty/columns';
 import { useMemo } from 'react';
 import { get_student_short_list, get_student_short_list_data, get_tutor_subject, upload_student_short_list } from '../../axios/student';
 import { socket } from '../../config/socket';
@@ -15,8 +14,6 @@ import Tooltip from '../common/ToolTip';
 const StudentFaculties = () => {
     const dispatch = useDispatch()
     const [response, setResponse] = useState([]);
-    const [data, setData] = useState([]);
-    const columns = useMemo(() => COLUMNS, []);
     const [checkBoxClicked, setCheckBoxClicked] = useState("")
     const { student } = useSelector(state => state.student)
 
@@ -105,12 +102,10 @@ const StudentFaculties = () => {
             let data = doc.map(item => item.dataset.id)
 
             if (data[0]) {
-                let list = data[0].split('-')
                 let res = upload_student_short_list(data);
 
                 if (res) {
                     const tutorSelectedId = data[0].split('-')[0]
-                    console.log(data[0], student.AcademyId);
                     create_chat({ User1ID: student.AcademyId, User2ID: tutorSelectedId })
                         .then(() => { toast.success('You can also chat with selected tutor in MessageBoard Tab!') })
                         .catch((err => console.log(err)))
@@ -172,7 +167,7 @@ const StudentFaculties = () => {
         { Header: 'Expiration' },
         { Header: 'Rate' },
         {
-            Header: 'CancellationPolicy', tooltip: <Tooltip color='white'  direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
+            Header: 'CancellationPolicy', tooltip: <Tooltip color='white' direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
         },
         {
             Header: 'ResponseTime', tooltip: <Tooltip color='white' direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
@@ -187,7 +182,8 @@ const StudentFaculties = () => {
 
         if (!elem.checked) {
             toast.error("This record was removed from your shortlist")
-            socket.emit('studentIllShorList', { id })
+            socket.emit('studentIllShorList', { id });
+            getShortlist()
         }
         else {
             setCheckBoxClicked(elem)

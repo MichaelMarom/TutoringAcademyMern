@@ -12,8 +12,6 @@ import Tooltip from '../common/ToolTip';
 import Actions from '../common/Actions';
 
 const StudentShortList = () => {
-
-    // columns.js
     let navigate = useNavigate()
     const dispatch = useDispatch()
     const { shortlist: response, isLoading: shortlistLoading } = useSelector(state => state.shortlist)
@@ -48,7 +46,8 @@ const StudentShortList = () => {
             Header: 'Demo Lesson @50%',
             width: "7%",
             tooltip: <Tooltip color='white' width="200px" direction='bottomright'
-                text="The student must conduct an introduction lesson with tutor. Most Tutors motivate students by offering the 'Intro' lesson at half price. The discounted 'Intro' marked by a green check boxk icon. After the 'intro' lesson performed, the student must provide a feedback before permitted to book further lessons with the tutor."  />
+                text="The student must conduct an introduction lesson with tutor. Most Tutors motivate students by offering the 'Intro' lesson at half price. The discounted 'Intro' marked by a green check boxk icon. 
+                After the 'intro' lesson performed, the student must provide a feedback before permitted to book further lessons with the tutor."  />
         },
         { Header: 'Subject', width: "7%", },
         { Header: 'Tutor Name', width: "7%", },
@@ -99,8 +98,8 @@ const StudentShortList = () => {
 
     ]
 
-    let redirect_to_tutor_profile = () => {
-        navigate('/tutor/tutor-profile')
+    let redirect_to_tutor_profile = (id) => {
+        navigate(`/tutor-profile/${id}`)
     }
 
     const calculateTimeDifference = (tutorGMT) => {
@@ -115,6 +114,7 @@ const StudentShortList = () => {
             console.log('Invalid GMT offset format');
         }
     };
+
     const classByDifference = (difference) => {
         if (difference >= -3 && difference <= 3) {
             return 'text-bg-success';
@@ -124,6 +124,7 @@ const StudentShortList = () => {
             return 'text-bg-danger blinking-frame-red';
         }
     }
+
     if (shortlistLoading) return <Loading />
     return (
         <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>

@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const TutorProfile = () => {
   return (
-    <TutorLayout>
+    <TutorLayout showLegacyFooter={false}>
       <TutorProfileComp />
     </TutorLayout>
   );

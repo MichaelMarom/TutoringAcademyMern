@@ -23,6 +23,7 @@ import { setTutor } from "./redux/tutor_store/tutorData";
 import { setChats } from "./redux/chat/chat";
 import { socket } from "./config/socket";
 import { moment } from './config/moment';
+import TutorProfile from "./pages/tutor/TutorProfile";
 
 const App = () => {
   let location = useLocation();
@@ -174,6 +175,8 @@ const App = () => {
       path: "/signup",
       element: <Signup />,
     },
+    { path: "/tutor-profile/:id", element: <TutorProfile /> },
+
     ...activeRoutes,
     {
       path: "*",

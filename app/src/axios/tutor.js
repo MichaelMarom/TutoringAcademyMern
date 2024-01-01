@@ -653,3 +653,16 @@ export const get_last_pay_day = async () => {
     }
 }
 
+
+
+
+export const get_tutor_profile = async (tutorId, studentId) => {
+    try {
+        const { data } = await apiClient.get(`/profile/${tutorId}/${studentId}`);
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}

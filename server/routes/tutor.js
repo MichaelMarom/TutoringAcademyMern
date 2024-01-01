@@ -1,4 +1,4 @@
-const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response,subject_already_exist, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details, storeEvents, fetchStudentsBookings, storeCalenderTutorRecord, get_tutor_status, faculties, post_new_subject, post_tutor_setup, get_tutor_market_data, get_tutor_students, postTerms, getSessionsDetails, last_pay_day} = require('../controllers/tutor');
+const { subjects, post_form_one, get_countries, get_gmt, get_state, get_experience, get_level, get_degree, get_certificates, post_form_two, get_user_data, get_response, subject_already_exist, upload_tutor_rates, get_my_data, get_rates, upload_form_four, get_tutor_setup, post_form_three, get_my_edu, get_tutor_rates, get_bank_details, storeEvents, fetchStudentsBookings, storeCalenderTutorRecord, get_tutor_status, faculties, post_new_subject, post_tutor_setup, get_tutor_market_data, get_tutor_students, postTerms, getSessionsDetails, last_pay_day, get_tutor_profile_data } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -47,6 +47,7 @@ TUTOR_ROUTES.get('/tutor/market-data', get_tutor_market_data)
 
 TUTOR_ROUTES.get('/tutor/get_students/:academyId', parser, get_tutor_students)
 TUTOR_ROUTES.get('/tutor/session/:tutorId', parser, getSessionsDetails)
+TUTOR_ROUTES.get('/profile/:tutorId/:studentId', get_tutor_profile_data)
 
 module.exports = {
     TUTOR_ROUTES

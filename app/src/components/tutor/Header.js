@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { get_tutor_setup, get_tutor_status } from "../../axios/tutor";
+import { get_tutor_setup } from "../../axios/tutor";
 
 
 const Header = () => {
@@ -36,7 +35,6 @@ const Header = () => {
         { url: 'chat', name: 'Message Board' },
         { url: 'market-place', name: 'Market place' },
         { url: 'collaboration', name: 'Collaboration' },
-        { url: 'tutor-profile', name: 'Tutor Profile' },
     ];
 
     useEffect(() => {

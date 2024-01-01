@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
 import {
-    get_rates, get_subject, get_user_data, new_subj_request_exist,
-    upload_new_subject, upload_tutor_rates
+    get_rates, new_subj_request_exist,
+    upload_new_subject
 } from '../../axios/tutor';
-import { socket } from '../../config/socket';
 import CenteredModal from '../common/Modal';
 import Button from '../common/Button';
 import { toast } from 'react-toastify';
@@ -134,7 +133,6 @@ const Subjects = () => {
 
                             {
                                 faculty.map((item, index) => {
-                                    console.log(item, 'facu')
                                     return <li className='tutor-tab-subject-data-menu'
                                         style={{
                                             background: item.Id === selectedFaculty ? "#2471A3" : "",
@@ -172,7 +170,7 @@ const Subjects = () => {
                         <div className='d-flex rounded justify-content-between
                          align-items-center
                          mx-2 p-2' style={{ color: "white", background: "#2471A3" }}>
-                            <p className='m-0 col-2'> Subject</p>
+                            <p className='m-0 col-2'>{subjectsWithRates.length} Subjects</p>
                             <p className='m-0 col-6'>School Grades (elementary, middle, & high school)</p>
                             <p className='m-0 col-3 text-start'> $ Rate</p>
                             <p className='m-0 col-1'> Action</p>

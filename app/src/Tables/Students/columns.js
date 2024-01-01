@@ -43,8 +43,8 @@ export const COLUMNS = [
         accessor: 'Date Start',
     },
     {
-        Header: 'Date Last',
-        accessor: 'Date Last',
+        Header: 'Last Active Date',
+        accessor: 'Last Active Date',
     },
     {
         Header: 'Total $ Gross',

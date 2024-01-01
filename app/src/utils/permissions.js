@@ -46,7 +46,6 @@ const rolePermissions = {
     { path: "/tutor/scheduling", component: <Scheduling /> },
     { path: "/tutor/term-of-use", component: <TermOfUse /> },
     { path: "/tutor/market-place", component: <MarketPlace /> },
-    { path: "/tutor/tutor-profile", component: <TutorProfile /> },
     { path: "/tutor/collaboration", component: <TutorClass /> },
     { path: '/tutor/chat', component: <Chat /> },
     { path: '/tutor/chat/:id', component: <Chat /> }

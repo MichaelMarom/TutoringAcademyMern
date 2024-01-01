@@ -955,7 +955,7 @@ const TutorSetup = () => {
                   }}
                 >
                   <label className="input-group-text w-50" htmlFor="">
-                    UTC  <ToolTip width="200px" text={"utc tooltip"} />
+                    UTC  <ToolTip width="200px" text={"Coordinated Universal Time or 'UTC' is the primary time standard by which the world regulate local time. "} />
                   </label>
                   <input
                     className="form-control m-0"

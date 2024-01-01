@@ -230,7 +230,7 @@ let post_form_two = async (req, res) => {
 
                 return result.recordset
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     });
 
     if (!duplicate.length) {
@@ -582,7 +582,7 @@ let get_user_data = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -784,7 +784,7 @@ let get_my_data = async (req, res) => {
             .then(() => {
                 response_2(cb)
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     }
 
     sender(() => {
@@ -810,12 +810,14 @@ let get_rates = (req, res) => {
             var poolConnection = await sql.connect(config);
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    `
-                    select sb.SubjectName as subject, sb.FacultyId as facultyId, sr.rate, sr.AcademyId, sr.grades as grades, 
-                    sb.CreatedOn from SubjectRates as sr right join Subjects as sb on 
-                    cast(sr.subject  as varchar(max))=cast( sb.SubjectName as varchar(max))
-                    where sb.FacultyId = ${facultyId} and ( cast(sr.AcademyId as varchar) = '${AcademyId}' or sr.AcademyId is 
-                    null )
+                    `Select sb.SubjectName as subject, sb.FacultyId as facultyId, sr.rate, sr.AcademyId, 
+                    sr.grades as grades, 
+                    sb.CreatedOn FROM Subjects as sb
+                    LEFT JOIN SubjectRates as sr ON  cast(sr.subject  as varchar(max))=
+                    cast( sb.SubjectName as varchar(max)) and 
+                    cast( sr.faculty as varchar(max))= 
+                      cast(sb.FacultyId as varchar(max)) and cast( sr.AcademyId  as varchar)= '${AcademyId}'
+                    where sb.FacultyId = ${facultyId}
                 `
                 )
                 res.status(200).send(result.recordset)
@@ -838,13 +840,14 @@ let get_tutor_rates = (req, res) => {
         if (poolConnection) {
             poolConnection.request().query(
                 `
-                    SELECT * From TutorRates WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' 
+                    SELECT * From TutorRates WHERE 
+                    CONVERT(VARCHAR, AcademyId) = '${AcademyId}' 
                 `
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+                .catch(err => console.log(err))
 
         }
 
@@ -865,7 +868,7 @@ let faculties = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -887,7 +890,7 @@ let get_bank_details = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -993,7 +996,7 @@ let storeCalenderTutorRecord = (req, res) => {
                     .then((result) => {
                         res.status(200).send(result.recordset);
                     })
-                    // .catch(err => console.log(err))
+                // .catch(err => console.log(err))
             }
         })
     } catch (error) {
@@ -1017,7 +1020,7 @@ let get_tutor_status = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-                // .catch(err => console.log(err))
+            // .catch(err => console.log(err))
 
         }
 
@@ -1102,7 +1105,7 @@ let get_tutor_market_data = async (req, res) => {
             .then((result) => {
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let Education = await connecteToDB.then(poolConnection =>
@@ -1111,7 +1114,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
 
     )
 
@@ -1121,7 +1124,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
 
     )
 
@@ -1131,7 +1134,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let CertificateTypes = await connecteToDB.then(poolConnection =>
@@ -1140,7 +1143,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
 
     )
 
@@ -1150,7 +1153,7 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let Faculty = await connecteToDB.then(poolConnection =>
@@ -1159,8 +1162,8 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     let GMT = await connecteToDB.then(poolConnection =>
@@ -1169,8 +1172,8 @@ let get_tutor_market_data = async (req, res) => {
 
                 return (result.recordset);
             })
-            // .catch(err => console.log(err))
-            // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
+        // .catch(err => console.log(err))
     )
 
     new Promise((resolve, reject) => {
@@ -1374,7 +1377,53 @@ let last_pay_day = async (req, res) => {
     })
 }
 
+const get_tutor_profile_data = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    `SELECT
+                    ts.AcademyId,
+                    ts.FirstName,
+                    te.BachCountry,
+                   tc.ChatID,
+                    ISNULL(
+                        (
+                            SELECT sr.subject AS Subject,
+                                   sr.rate AS Rate
+                            FROM SubjectRates AS sr
+                            WHERE CAST(sr.AcademyId AS VARCHAR(MAX)) = 
+                            CAST(ts.AcademyId AS VARCHAR(MAX))
+                            FOR JSON PATH
+                        ), '') AS Subjects
+                FROM
+                    TutorSetup AS ts
+                JOIN
+                    Education AS te ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(te.AcademyId AS VARCHAR(MAX))
+                LEFT JOIN
+                    Chat AS tc ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(tc.User2ID AS VARCHAR(MAX))
+                    and cast(tc.User2ID as varchar) = 'xsxs. c. z2e08ec'
+                WHERE
+                    CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST('Asiya. B6055bd' AS VARCHAR(MAX))
+                GROUP BY
+                    ts.AcademyId, ts.FirstName, te.BachCountry, tc.ChatID;                
+                   `
+                );
+                res.status(200).send(result.recordset[0])
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
+    get_tutor_profile_data,
     getSessionsDetails,
     subject_already_exist,
     last_pay_day,

@@ -23,25 +23,25 @@ const Header = () => {
     }, [location]);
 
     const tabs = [
-        { url: 'intro', name: 'Introduction' },
-        { url: 'setup', name: 'Tutor Setup' },
-        { url: 'education', name: 'Education' },
-        { url: 'rates', name: 'Motivate' },
-        { url: 'accounting', name: 'Accounting' },
-        { url: 'subjects', name: 'Subjects' },
-        { url: 'my-students', name: 'My students' },
-        { url: 'scheduling', name: 'Scheduling' },
-        { url: 'term-of-use', name: 'Terms Of Use' },
-        { url: 'chat', name: 'Message Board' },
-        { url: 'market-place', name: 'Market place' },
-        { url: 'collaboration', name: 'Collaboration' },
+        { url: '/tutor/intro', name: 'Introduction' },
+        { url: '/tutor/setup', name: 'Tutor Setup' },
+        { url: '/tutor/education', name: 'Education' },
+        { url: '/tutor/rates', name: 'Motivate' },
+        { url: '/tutor/accounting', name: 'Accounting' },
+        { url: '/tutor/subjects', name: 'Subjects' },
+        { url: '/tutor/my-students', name: 'My students' },
+        { url: '/tutor/scheduling', name: 'Scheduling' },
+        { url: '/tutor/term-of-use', name: 'Terms Of Use' },
+        { url: '/tutor/chat', name: 'Message Board' },
+        { url: '/tutor/market-place', name: 'Market place' },
+        { url: '/tutor/collaboration', name: 'Collaboration' },
+        { url: `/tutor-profile/${localStorage.getItem("tutor_user_id")}`, name: 'Profile' },
+
     ];
 
     useEffect(() => {
         set_screen_name(localStorage.getItem('tutor_screen_name'))
     }, [localStorage.getItem('tutor_screen_name')]);
-
-
 
     useEffect(() => {
         let user_id = window.localStorage.getItem('tutor_user_id');
@@ -60,7 +60,7 @@ const Header = () => {
 
     let handleTabClick = e => {
         let url = e.currentTarget.dataset.url;
-        nav(`/tutor/${url}`)
+        nav(`${url}`)
 
         let urls = [
             'intro', 'setup', 'education', 'rates', 'accounting', 'subjects', 'my-students', 'scheduling', 'term-of-use', 'market-place', 'collaboration', 'tutor-profile'
@@ -92,11 +92,13 @@ const Header = () => {
     return (
         <>
 
-            <div className="screen-name btn-success rounded" 
-            style={{ display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed', 
-            top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px', 
-            padding: '3px 5px 0', height: '30px', 
-            background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red', color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff' }}>
+            <div className="screen-name btn-success rounded"
+                style={{
+                    display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
+                    top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px',
+                    padding: '3px 5px 0', height: '30px',
+                    background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red', color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff'
+                }}>
                 {screen_name}
             </div>
 

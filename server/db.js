@@ -1,7 +1,4 @@
-const { express, path, fs, parser, cookieParser, mocha, mongodb, morgan, cors, shortId, jwt } = require('./modules');
-const mysql = require('mysql');
-var Connection = require('tedious').Connection;
-var Request = require('tedious').Request;
+const { mongodb } = require('./modules');
 var TYPES = require('tedious').TYPES;
 let { MongoClient } = mongodb
 
@@ -64,25 +61,6 @@ let connecteToDB = new Promise((resolve, reject) => {
 
 
 })
-
-/*let knex = require('knex')({
-    client: 'mssql',
-    connection: {
-      host : 'tutoringacademy.database.windows.net',
-      port : 1433,
-      user : 'michael',
-      password : '43Naomi333',
-      database : 'Tutoringacademy'
-    },
-    dialect: 'mssql',
-    dialectOptions: { 
-      options: {
-        encrypt: true
-      }
-    }
-  });
-*/
-
 
 const knex = require('knex')({
   client: 'mssql',

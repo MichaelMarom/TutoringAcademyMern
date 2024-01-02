@@ -10,14 +10,12 @@ import { PhoneNumberUtil } from 'google-libphonenumber';
 import { toast } from 'react-toastify'
 
 import {
-  get_tutor_setup_by_acaId,
-  get_tutor_setup_by_userId,
   post_tutor_setup,
 } from "../../axios/tutor";
 import containerVariants from "../constraint";
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
-import { convertGMTOffsetToLocalString, showDate } from "../../helperFunctions/timeHelperFunctions";
+import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
 import Loading from "../common/Loading";
 import ToolTip from '../common/ToolTip'

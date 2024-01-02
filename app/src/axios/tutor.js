@@ -341,7 +341,7 @@ export let get_user_data = (user_id) => {
 export let upload_tutor_rates = async (rate, grades, id, faculty, subject) => {
     try {
         console.log(id, faculty, subject)
-        const {data} = await apiClient.post(`/tutor/rates/${faculty}/${subject}/${id}`, {
+        const { data } = await apiClient.post(`/tutor/rates/${faculty}/${subject}/${id}`, {
             grades,
             rate
         })
@@ -609,14 +609,15 @@ export const post_tutor_setup = async (data) => {
         if (data.intro !== undefined) dataObject.Introduction = data.intro;
         if (data.motivation !== undefined) dataObject.Motivate = data.motivation;
         if (data.userId !== undefined) dataObject.userId = data.userId;
-        if (data.grades !== undefined) dataObject.Grades = data.grades;
+        if (data.grades !== undefined) dataObject.Grades = JSON.stringify(data.grades);
         dataObject.TutorScreenname = data.mname.length ?
             `${data.fname}. ${data.mname[0]}. ${data.lname[0]}` :
             `${data.fname}. ${data.lname[0]}`;
         dataObject.AcademyId = uuidv4();
-        return apiClient.post('/tutor/setup', dataObject);
+        return await apiClient.post('/tutor/setup', dataObject);
     } catch (err) {
         console.log(err)
+        return err
     }
 }
 
@@ -640,8 +641,6 @@ export const get_sessions_details = async (AcademyId) => {
     }
 }
 
-
-
 export const get_last_pay_day = async () => {
     try {
         const { data } = await apiClient.get(`/p-payment/last_payday`);
@@ -652,9 +651,6 @@ export const get_last_pay_day = async () => {
         return err
     }
 }
-
-
-
 
 export const get_tutor_profile = async (tutorId, studentId) => {
     try {

@@ -56,6 +56,31 @@ const update = (tableName, values, where, casting = {}, returnUpdated = true) =>
 };
 
 
+const parameteriedUpdateQuery = (tableName, values, where, casting = {}, returnUpdated = true) => {
+    const updateFieldsArray = Object.keys(values);
+    const setClause = updateFieldsArray.map((field) => {
+        const updatedValue = typeof values[field] === 'object' ? JSON.stringify(values[field]) : values[field];
+        return `${field} = @${field}`;
+    }).join(', ');
+
+    const whereFieldsArray = Object.keys(where);
+    const whereClause = whereFieldsArray.map((field) => {
+        const fieldCasting = casting[field] || '';
+        return `${field} = @${field}`;
+    }).join(' AND ');
+
+    const parameterizedValues = { ...values, ...where };
+
+    const parameterizedQuery = `
+        UPDATE ${tableName} SET ${setClause} WHERE ${whereClause};
+        ${returnUpdated ? `SELECT * FROM ${tableName} WHERE ${whereClause};` : ``}
+        `;
+
+    console.log(parameterizedQuery);
+    return { query: parameterizedQuery, values: parameterizedValues };
+};
+
+
 const updateById = (id, tableName, fields) => {
     const { disableDates, disableWeekDays, disableHourSlots, enableHourSlots, disableHoursRange, enabledDays, disableColor } = fields;
     const query = `UPDATE ${tableName}
@@ -125,6 +150,7 @@ module.exports = {
     updateById,
     findByAnyIdColumn,
     update,
+    parameteriedUpdateQuery,
     find
 }
 

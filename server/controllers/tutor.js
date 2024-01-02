@@ -2,7 +2,7 @@ const { resolve } = require('path/posix');
 const { marom_db, knex, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
 const moment = require('moment-timezone');
-const { insert, updateById, getAll, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
+const { insert, updateById, getAll, find, findByAnyIdColumn, update, parameteriedUpdateQuery } = require('../helperfunctions/crud_queries');
 
 const multer = require('multer');
 const path = require('path');
@@ -1057,17 +1057,25 @@ const post_tutor_setup = (req, res) => {
         try {
             const sql = require('mssql');
             const poolConnection = await sql.connect(config);
-
             if (poolConnection) {
                 const findtutorSetup = await poolConnection.request().query(
                     findByAnyIdColumn('TutorSetup', { userId: req.body.userId })
                 );
                 if (findtutorSetup.recordset.length) {
                     delete req.body["AcademyId"]
-                    const updated = await poolConnection.request().query(
-                        update('TutorSetup', req.body, { AcademyId: findtutorSetup.recordset[0].AcademyId })
-                    );
-                    if (updated.rowsAffected[0]) {
+                    const request = poolConnection.request();
+                    request.input('AcademyId', sql.NVarChar(sql.MAX), findtutorSetup.recordset[0].AcademyId);
+                    Object.keys(req.body).map((key) => {
+                        request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
+                    })
+                    const { values, query } = parameteriedUpdateQuery('TutorSetup',
+                        req.body,
+                        { AcademyId: findtutorSetup.recordset[0].AcademyId })
+                    const result = await request.query(query);
+                    // const updated = await poolConnection.request().query(
+                    //     update('TutorSetup', req.body, { AcademyId: findtutorSetup.recordset[0].AcademyId })
+                    // );
+                    if (result.rowsAffected[0]) {
                         const result = await poolConnection.request().query(
                             findByAnyIdColumn("TutorSetup",
                                 { AcademyId: findtutorSetup.recordset[0].AcademyId })

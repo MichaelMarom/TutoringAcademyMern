@@ -17,15 +17,6 @@ const TutorProfile = () => {
     const params = useParams();
     const studentId = localStorage.getItem('student_user_id');
     const [data, setProfileData] = useState({})
-    // const [dateTime, setDateTime] = useState(null);
-
-
-    // useEffect(() => {
-    //     if (GMT) {
-    //         const localTime = convertGMTOffsetToLocalString(GMT);
-    //         setDateTime(localTime);
-    //     }
-    // }, [GMT]);
 
     useEffect(() => {
         const fetch_profile = async () => {
@@ -51,8 +42,21 @@ const TutorProfile = () => {
                             <div className='p-1 bg-white rounded-circle'>
                                 <Avatar avatarSrc={data.Photo} size='150px' indicSize='30px' />
                             </div>
-                            <h2 className='text-start px-2 m-4'>
-                                {capitalizeFirstLetter(data.FirstName)} {capitalizeFirstLetter(data.LastName)}</h2>
+                            <div className='text-start px-2 m-4 d-flex flex-column' style={{ gap: "5px" }} >
+                                <h2>
+                                    {capitalizeFirstLetter(data.FirstName)} {capitalizeFirstLetter(data.LastName)}</h2>
+                                <div className='d-flex align-items-center' style={{ gap: "20px" }}>
+
+                                    <div className='d-flex align-items-center' style={{ gap: "10px" }}>
+                                        <FaLocationDot size={32} />
+                                        <h5 className='m-0'> {data.Country}</h5>
+                                    </div>
+                                    <div className='d-flex align-items-center' style={{ gap: "10px" }}>
+
+                                        <h5 className='m-0'>{convertGMTOffsetToLocalString(data.GMT)}</h5> - Local
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className='m-2 '>
                             <div className='d-flex '>
@@ -64,14 +68,7 @@ const TutorProfile = () => {
                     <div className='d-flex mt-4' style={{ gap: "20px" }}>
                         <div className='col-4'>
                             <div className='bg-white rounded p-4 d-flex flex-column' style={{ gap: "15px" }}>
-                                <div className='d-flex align-items-center' style={{ gap: "10px" }}>
-                                    <FaLocationDot size={32} />
-                                    <h5 className='m-0'> {data.Country}</h5>
-                                </div>
-                                <div className='d-flex align-items-center' style={{ gap: "10px" }}>
-                                    <GiTimeSynchronization size={32} />
-                                    <h5 className='m-0'>{convertGMTOffsetToLocalString(data.GMT)}</h5>
-                                </div>
+
                                 <div className='d-flex align-items-center' style={{ gap: "10px" }}>
                                     <IoTime size={32} />
                                     <h5 className='m-0'>{data.ResponseHrs}</h5>
@@ -136,9 +133,7 @@ const TutorProfile = () => {
                         </div>
                     </div>
 
-
                 </div>
-
             </div>
         </div >
     );

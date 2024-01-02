@@ -158,19 +158,29 @@ const StudentFaculties = () => {
 
 
     let multi_student_cols = [
-        { Header: '# Select' },
-        { Header: 'Subject' },
-        { Header: 'Tutor' },
-        { Header: 'Experience' },
-        { Header: 'Certification' },
-        { Header: 'State' },
-        { Header: 'Expiration' },
-        { Header: 'Rate' },
         {
-            Header: 'CancellationPolicy', tooltip: <Tooltip color='white' direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
+            Header: '# Select',
+            width: "7%",
+            tooltip: <Tooltip color='white' width="200px" direction='bottomright'
+                text="The student must conduct an introduction lesson with tutor. Most Tutors motivate students by offering the 'Intro' lesson at half price. The discounted 'Intro' marked by a green check boxk icon. 
+            After the 'intro' lesson performed, the student must provide a feedback before permitted to book further lessons with the tutor."  />
+        },
+        { Header: 'Subject', width: "7%", },
+        { Header: 'Tutor', width: "7%", },
+        { Header: 'Experience', width: "7%", },
+        { Header: 'Certification', width: "7%", },
+        { Header: 'State', width: "7%", },
+        { Header: 'Expiration', width: "7%", },
+        { Header: 'Rate', width: "7%", },
+        {
+            Header: 'CancellationPolicy',
+            width: "7%",
+            tooltip: <Tooltip width="200px" color='white' direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
         },
         {
-            Header: 'ResponseTime', tooltip: <Tooltip color='white' direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
+            Header: 'ResponseTime',
+            width: "7%",
+            tooltip: <Tooltip width="200px" color='white' direction='bottomleft' text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
         }]
 
     let handleSavedDeleteData = e => {
@@ -198,16 +208,9 @@ const StudentFaculties = () => {
             </div>
             <div className="form-subjects" style={{ overflow: 'hidden', height: 'calc(100vh - 50px)' }}>
 
-                <div className="form-subject-alert">
-                    <p style={{
-                        fontSize: 'large', fontWeight: 'bold', color: 'blue', width: '100%', textAlign:
-                            'center'
-                    }}> There are 31 faculties containing 400+ subjects to select from.</p>
-                </div>
-
                 <div id="form-subject-data-collection-table">
 
-                    <div className="form-subject-data-tabs" style={{ display: 'flex', margin: 'auto', padding: '0 0 0 0', justifyContent: 'center', alignItems: 'center', overflowX: 'hidden', width: '100%' }}>
+                    <div className="form-subject-data-tabs mt-1" style={{ display: 'flex', margin: 'auto', padding: '0 0 0 0', justifyContent: 'center', alignItems: 'center', overflowX: 'hidden', width: '100%' }}>
 
                         <div style={{
                             margin: '0 0 0 0', display
@@ -255,21 +258,32 @@ const StudentFaculties = () => {
 
 
                     <div className="highlight m-0" style={{ width: '100%' }}>
-                        From the sub menu above, select the faculty of interest. Then checkbox from the table below the Tutor(s) of interest. Your selected tutors be shown in the next "ShortList" tab to compare, then select your tutor.
+                        There are 31 faculties containing 400+ subjects to select from. From the sub menu above, select the faculty of interest.
+                        Then checkbox from the table below the Tutor(s) of interest. Your selected tutors be shown in the next "Short List" tab to compare
+                        from the list. Then on the SHORT LIST tab, click on BOOK LESSON button to view tutor calendar.
                     </div>
 
-                    {/* <div className="form-subject-search-bar">
-                        <div>
-                            <label style={{ float: 'left', border: '1px solid #eee', padding: '5px 10px 0 10px' }} htmlFor="search"><h6>                                                               </h6></label>
-                        </div>
-                    </div> */}
 
+                    <div className='d-flex rounded justify-content-between
+                         align-items-center
+                         p-2' style={{ color: "white", background: "#2471A3" }}>
+                        {multi_student_cols.map(item =>
+
+                            <div className='text-center d-flex flex-column'
+                                style={{ width: item.width }}>
+                                <p className='m-0' key={item.Header} > {item.Header}</p>
+                                <div style={{ float: "right" }}>
+                                    {item.tooltip}
+                                </div>
+                            </div>
+                        )}
+                    </div>
 
                     <div className="tables" style={{ height: '600px', width: '100%', overflow: 'auto', padding: '5px' }}>
 
                         <table>
                             {response?.length ?
-                                <thead>
+                                <thead className='d-none'>
                                     <tr>
                                         {multi_student_cols.map(item => <th key={item.Header}>{item.Header}{item.tooltip}</th>)}
                                     </tr>
@@ -289,31 +303,31 @@ const StudentFaculties = () => {
                                                 let faculty = item[0] || {};
                                                 let experience = item[1] || {};
                                                 return <tr>
-                                                    <td id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
+                                                    <td style={{ width: multi_student_cols[0].width }} id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
 
                                                         <input onInput={handleSavedDeleteData} type='checkbox' style={{ height: '20px', width: '20px' }} />
                                                     </td>
 
-                                                    <td>{faculty.subject}</td>
-                                                    <td>
+                                                    <td style={{ width: multi_student_cols[1].width }}>{faculty.subject}</td>
+                                                    <td style={{ width: multi_student_cols[2].width }}>
                                                         {(faculty.AcademyId).split(".").slice(0, 2).join(".")}
                                                     </td>
-                                                    <td>
+                                                    <td style={{ width: multi_student_cols[3].width }}>
                                                         {experience.EducationalLevelExperience}
                                                     </td>
-                                                    <td>
+                                                    <td style={{ width: multi_student_cols[4].width }}>
                                                         {experience.Certificate}
                                                     </td>
-                                                    <td>
+                                                    <td style={{ width: multi_student_cols[5].width }}>
                                                         {experience.CertificateState}
                                                     </td>
-                                                    <td>
+                                                    <td style={{ width: multi_student_cols[6].width }}>
                                                         {experience.CertificateExpiration?.length ?
                                                             new Date(experience.CertificateExpiration).toLocaleDateString() : "-"}
                                                     </td>
-                                                    <td>{faculty.rate}</td>
-                                                    <td>{faculty.cancPolicy} Hrs </td>
-                                                    <td>{faculty.responseTime.replace("Hours", 'Hrs')} </td>
+                                                    <td style={{ width: multi_student_cols[7].width }}>{faculty.rate}</td>
+                                                    <td style={{ width: multi_student_cols[8].width }}>{faculty.cancPolicy} Hrs </td>
+                                                    <td style={{ width: multi_student_cols[9].width }}>{faculty.responseTime.replace("Hours", 'Hrs')} </td>
 
                                                 </tr>
                                             }

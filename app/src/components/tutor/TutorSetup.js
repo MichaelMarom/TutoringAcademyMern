@@ -563,8 +563,8 @@ const TutorSetup = () => {
         <form onSubmit={saveTutorSetup} className="pt-4">
           <div style={{ overflowY: "auto", height: "90%" }}>
 
-            <div className="tutor-setup-top-field " style={{ gap: "25px" }}>
-              <div className="profile-photo-cnt ">
+            <div className="tutor-setup-top-field container justify-content-between" style={{ gap: "25px" }}>
+              <div className="profile-photo-cnt " style={{ width: "15%" }}>
                 <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
                 <input
                   type="file"
@@ -577,7 +577,7 @@ const TutorSetup = () => {
                 <div className="mb-2">
                   {picUploading && <Loading height="10px" iconSize="20px" loadingText="uploading picture ..." />}
                 </div>
-                <div className="tutor-tab-photo-frame">
+                <div style={{ border: "1px dotted black" }}>
                   {photo ? <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' /> :
                     `You must upload your picture, and video on this tab.  
                   You are permitted to move to next tabs without validating that, but your account will not be activated until it’s done`
@@ -590,8 +590,7 @@ const TutorSetup = () => {
               </div>
 
 
-              <div className="profile-details-cnt pt-3">
-
+              <div className="profile-details-cnt pt-3" style={{ width: "25%" }}>
                 <div
                   style={{
                     display: "flex",
@@ -698,9 +697,6 @@ const TutorSetup = () => {
                     disabled
                   />
                 </div>
-                <div className="err-mssg">
-                  Email already exist, Please try something else...
-                </div>
 
                 <div
                   style={{
@@ -729,6 +725,7 @@ const TutorSetup = () => {
 
 
                 </div>
+
                 <div
                   style={{
                     display: "flex",
@@ -741,7 +738,7 @@ const TutorSetup = () => {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label className="input-group-text w-50" htmlFor=""  style={{fontSize:"14px"}}>
+                  <label className="input-group-text w-50" htmlFor="" style={{ fontSize: "14px" }}>
                     Response Time <ToolTip width="200px" text="Select your response time answering the student during business time in your time zone. Please take notice that the student take this fact as one of the considurations of selecting you as tutor." />
                   </label>
                   <select
@@ -786,7 +783,7 @@ const TutorSetup = () => {
                 </div>
               </div>
 
-              <div className="profile-details-cnt pt-3 w-50"
+              <div className="profile-details-cnt pt-3" style={{ width: "25%" }}
               >
                 <div
                   style={{
@@ -800,7 +797,7 @@ const TutorSetup = () => {
                     whiteSpace: "nowrap",
                   }}
                 >
-                  <label className="input-group-text w-50" htmlFor=""   style={{fontSize:"14px"}}>
+                  <label className="input-group-text w-50" htmlFor="" style={{ fontSize: "14px" }}>
                     Address 1
                   </label>
                   <input
@@ -967,9 +964,9 @@ const TutorSetup = () => {
               </div>
 
               <div className="profile-video-cnt mt-3 "
-                style={{ float: "right", width: "70%", height: "250px" }}
+                style={{ float: "right", width: "30%", height: "250px" }}
               >
-                <h6>Upload your intro video</h6>
+                <h6>Profile intro video</h6>
                 <div className="mb-2">
                   {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
                 </div>
@@ -978,19 +975,19 @@ const TutorSetup = () => {
                     <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
                   </div>
                 ) : selectedVideoOption === "upload" && video?.length ? (
-                  <div className="tutor-tab-video-frame p-3 card">
+                  <div className="" style={{ border: "1px dotted black" }}>
                     <video src={video} className="w-100 h-100"
                       controls autoplay
                     />
                   </div>
                 ) :
-                  <div className="tutor-tab-video-frame p-3 card">
-                    <div style={{ textAlign: "justify" }}> Providing your video, is mandatory. Your registration is at the stage of 'pending' until you upload it. An introduction video is a great way to showcase your personality, skills and teaching style for potential students. It can help you stand out from other tutors and attract more atudents. Creating your video, briefly introduce yourself, your experience and your approach to tutoring. Mention what subjects and levels you can teach, and how you can help students achieve their goals. You should speak clearly, and confidently. A good introduction video can make a lasting impression and increase your chances of getting hired.
+                  <div className="tutor-tab-video-frame p-2 card">
+                    <div style={{ textAlign: "justify", fontSize: "13px" }}> Providing your video, is mandatory. Your registration is at the stage of 'pending' until you upload it. An introduction video is a great way to showcase your personality, skills and teaching style for potential students. It can help you stand out from other tutors and attract more atudents. Creating your video, briefly introduce yourself, your experience and your approach to tutoring. Mention what subjects and levels you can teach, and how you can help students achieve their goals. You should speak clearly, and confidently. A good introduction video can make a lasting impression and increase your chances of getting hired.
                     </div>
                   </div>
                 }
 
-                <div className="container mt-2">
+                <div className=" mt-2">
                   <div className="row justify-content-center align-items-center">
                     <div className="col-md-4">
                       <div className="text-center">

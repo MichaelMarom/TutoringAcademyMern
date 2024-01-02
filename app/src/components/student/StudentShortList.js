@@ -53,7 +53,7 @@ const StudentShortList = () => {
         { Header: 'Tutor Name', width: "7%", },
         { Header: 'Country', width: "7%", },
         {
-            Header: 'Tutor Time',
+            Header: 'Tutor Local Time',
             width: "7%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="The time show the local time (UTC) at the tutor's location." />
@@ -71,7 +71,7 @@ const StudentShortList = () => {
                 text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
         },
         {
-            Header: 'FeedBack',
+            Header: 'Students FeedBack',
             width: "7%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="To view tutor's feedback as graded by other students, click the button below." />
@@ -87,10 +87,10 @@ const StudentShortList = () => {
             Header: 'Cancellation Policy',
             width: "7%",
             tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
-                text="This is the time the tutor allows you to cancell the booked lesson without penalty. if cancel less than this time, you will not be compensated. Otherwise you be refunded in full" />
+                text="Number of hours the tutor allows you to cancell the booked lesson without penalty. if you cancel less than the indicated hours, you liable for the lesson amount. Otherwise you will receive refund." />
         },
         {
-            Header: 'Response Time',
+            Header: 'Tutor Response Time',
             width: "7%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="This is the time the tutor committed to response to you address him/her. Please take notice that this committment is in effect during tutor's local time (UTC) business hours. " />

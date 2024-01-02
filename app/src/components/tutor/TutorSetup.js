@@ -572,10 +572,10 @@ const TutorSetup = () => {
                   style={{ display: "none" }}
                   id="photo"
                 />
-                <div className="mb-2">
+                <div className="mb-2 w-100 h-100">
                   {picUploading && <Loading height="10px" iconSize="20px" loadingText="uploading picture ..." />}
                 </div>
-                <div style={{ border: "1px dotted black" }}>
+                <div className="w-100 h-100" style={{ border: "1px dotted black" }}>
                   {photo ? <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' /> :
                     `You must upload your picture, and video on this tab.  
                   You are permitted to move to next tabs without validating that, but your account will not be activated until it’s done`

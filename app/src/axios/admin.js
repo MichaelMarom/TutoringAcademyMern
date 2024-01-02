@@ -83,7 +83,6 @@ export let set_tutor_status = (Id, Status) => {
     })
 }
 
-
 export let get_student_data = () => {
 
     return new Promise((resolve, reject) => {
@@ -127,6 +126,7 @@ export const post_termsOfUse = async (data) => {
         return error;
     }
 };
+
 export const get_adminConstants = async (data) => {
     try {
         const response = await apiClient.get(`/admin/get-constants`);

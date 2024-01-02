@@ -67,17 +67,19 @@ import RichTextEditor from '../common/RichTextEditor/RichTextEditor';
 import Actions from '../common/Actions';
 import { get_adminConstants, post_termsOfUse } from '../../axios/admin';
 import { useLocation } from 'react-router';
+import Loading from '../common/Loading';
 
 const Intro = () => {
-    const location = useLocation();
     const [unSavedChanges, setUnsavedChanges] = useState(false);
 
     const [db_intro, set_db_intro] = useState('');
 
     const [intro, set_intro] = useState('');
     const userRole = localStorage.getItem("user_role")
-    console.log(userRole)
     const [editMode, setEditMode] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(true)
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -88,10 +90,12 @@ const Intro = () => {
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
+            setFetching(false)
         };
 
         fetchData();
     }, []);
+
     useEffect(() => {
         setUnsavedChanges(intro !== undefined && db_intro !== undefined && intro !== db_intro)
     }, [intro, db_intro]);
@@ -104,35 +108,35 @@ const Intro = () => {
     };
     const handleSave = async (e) => {
         e.preventDefault();
+        setLoading(true)
         const response = await post_termsOfUse({ IntroContent: intro });
         set_db_intro(response.data.IntroContent);
-        // After saving, set editing mode back to false
         setEditMode(false);
+        setLoading(false)
     };
-
+    if (fetching)
+        return <Loading />
     return (
-        <>
-            <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="tutor-tab">
-                <form onSubmit={handleSave}>
-                    <div className='px-4'>
-                        <RichTextEditor
-                            value={intro}
-                            onChange={handleEditorChange}
-                            readOnly={!editMode}
-                            placeholder="Enter Your Work Experience"
-                            style={{ height: "100vh" }}
-                            image
-                        />
-                    </div>
-                    <Actions
-                        saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
-                        editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
-                        onEdit={handleEditClick}
-                        unSavedChanges={unSavedChanges}
+        <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="tutor-tab">
+            <form onSubmit={handleSave}>
+                <div className='px-4'>
+                    <RichTextEditor
+                        value={intro}
+                        onChange={handleEditorChange}
+                        readOnly={!editMode}
+                        placeholder="Enter Your Work Experience"
+                        style={{ height: "100vh" }}
                     />
-                </form>
-            </motion.div>
-        </>
+                </div>
+                <Actions
+                    loading={loading}
+                    saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
+                    editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
+                    onEdit={handleEditClick}
+                    unSavedChanges={unSavedChanges}
+                />
+            </form>
+        </motion.div>
     );
 }
 

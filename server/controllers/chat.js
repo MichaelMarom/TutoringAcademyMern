@@ -1,5 +1,5 @@
 const { marom_db } = require('../db');
-const { getAll, insert, find, update } = require('../helperfunctions/crud_queries');
+const { getAll, insert, find, update, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
 
 function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -93,8 +93,15 @@ const post_message = async (req, res) => {
             const poolConnection = await sql.connect(config);
 
             if (poolConnection) {
-                const result = await poolConnection.request().query(
-                    insert("Message", req.body)
+                const request = poolConnection.request();
+
+                request.input('Text', sql.NVarChar(sql.MAX), req.body.Text);
+                request.input('Date', sql.NVarChar(sql.MAX), req.body.Date);
+                request.input('Sender', sql.NVarChar(sql.MAX), req.body.Sender);
+                request.input('ChatID', sql.Int, req.body.ChatID);
+
+                const result = await request.query(
+                    parameterizedInsertQuery("Message", req.body).query
                 );
 
                 res.status(200).send(result.recordset);

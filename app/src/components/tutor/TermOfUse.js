@@ -66,6 +66,7 @@ import { useEffect, useState } from "react";
 import RichTextEditor from "../common/RichTextEditor/RichTextEditor";
 import Actions from "../common/Actions";
 import { get_adminConstants, post_termsOfUse } from "../../axios/admin";
+import Loading from "../common/Loading";
 
 const TermOfUse = () => {
     useEffect(() => {
@@ -81,10 +82,11 @@ const TermOfUse = () => {
     const [db_terms, set_db_terms] = useState('');
     const [userRole, setUserRole] = useState('');
     const [editMode, setEditMode] = useState(false);
-    const tutorId = localStorage.getItem('tutor_user_id');
-    const [agreed, set_agreed] = useState(false);
-    useEffect( () => {
-        const fetchData =async()=>{
+    const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(true)
+
+    useEffect(() => {
+        const fetchData = async () => {
             try {
 
                 const storedUserRole = localStorage.getItem('user_role');
@@ -97,9 +99,12 @@ const TermOfUse = () => {
                 console.error('Error fetching data:', error);
 
             }
+            setFetching(false)
+
         }
         fetchData();
     }, []);
+
     useEffect(() => {
         if (terms !== undefined && db_terms !== undefined && terms !== db_terms) {
             console.log(terms, "terms", db_terms, "db_terms");
@@ -109,43 +114,47 @@ const TermOfUse = () => {
         }
 
     }, [terms, db_terms])
+
     const handleEditorChange = (value) => {
         set_terms(value);
     };
+
     const handleEditClick = () => {
         setEditMode(true);
     };
+
     const handleSave = async (e) => {
         e.preventDefault();
-
+        setLoading(true)
         const response = await post_termsOfUse({ TermContent: terms });
-        console.log(response.data);
         set_db_terms(response.data.TermContent);
-
         setEditMode(false);
+        setLoading(false)
     };
-    return (
 
-        <>
-            <div className="form-term-of-use">
-                <form action='' onSubmit={handleSave}>
-                    <div className='px-4'>
-                        <RichTextEditor
-                            value={terms}
-                            onChange={handleEditorChange}
-                            readOnly={!editMode}
-                            placeholder="Enter Your Work Experience"
-                        // required
-                        />
-                    </div>
-                    <Actions
-                        saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
-                        editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
-                        onEdit={handleEditClick}
-                        unSavedChanges={unSavedChanges}
+    if (fetching)
+        return <Loading />
+    return (
+        <div className="form-term-of-use">
+            <form onSubmit={handleSave}>
+                <div className='px-4'>
+                    <RichTextEditor
+                        value={terms}
+                        onChange={handleEditorChange}
+                        readOnly={!editMode}
+                        placeholder="Enter Your Work Experience"
+                    // required
                     />
-                </form>
-<div className="d-none">
+                </div>
+                <Actions
+                    loading={loading}
+                    saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
+                    editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
+                    onEdit={handleEditClick}
+                    unSavedChanges={unSavedChanges}
+                />
+            </form>
+            <div className="d-none">
                 <div className="term-of-use-cnt">
                     TUTORING ACADEMY TERMS OF USE.
                     CHECKING THE BOX BELOW, CONSTITUTES YOUR ACCEPTANCE OF THIS TERMS OF USE;
@@ -190,8 +199,8 @@ const TermOfUse = () => {
                 </div>
 
             </div>
-            </div>
-        </>
+        </div>
+
     );
 }
 

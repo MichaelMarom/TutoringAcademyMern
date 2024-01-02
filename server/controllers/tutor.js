@@ -2,7 +2,7 @@ const { resolve } = require('path/posix');
 const { marom_db, knex, connecteToDB } = require('../db');
 const { shortId } = require('../modules');
 const moment = require('moment-timezone');
-const { insert, updateById, getAll, find, findByAnyIdColumn, update, parameteriedUpdateQuery } = require('../helperfunctions/crud_queries');
+const { insert, updateById, getAll, find, findByAnyIdColumn, update, parameteriedUpdateQuery, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
 
 const multer = require('multer');
 const path = require('path');
@@ -212,7 +212,7 @@ let post_form_one = (req, res) => {
 
 }
 
-let post_form_two = async (req, res) => {
+let post_edu_form = async (req, res) => {
 
     let { level, university1, university2, university3, degree, degreeFile, certificate, certificateFile,
         language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2,
@@ -230,7 +230,7 @@ let post_form_two = async (req, res) => {
 
                 return result.recordset
             })
-        // .catch(err => console.log(err))
+            .catch(err => console.log(err))
     });
 
     if (!duplicate.length) {
@@ -238,10 +238,12 @@ let post_form_two = async (req, res) => {
             const sql = require('mssql');
 
             var poolConnection = await sql.connect(config);
+            const request = poolConnection.request();
+            request.input('WorkExperience', sql.NVarChar(sql.MAX), workExperience);
             if (poolConnection) {
-                var resultSet = poolConnection.request().query(
-                    `
-                        INSERT INTO "Education" (EducationalLevel, EducationalLevelExperience, College1, 
+
+                var resultSet = request.query(
+                    ` INSERT INTO "Education" (EducationalLevel, EducationalLevelExperience, College1, 
                             College1State, College1Year, College2, College2State, College2StateYear, 
                             DoctorateCollege, DoctorateState, DoctorateGradYr, Degree,DegreeFile, DegreeState, 
                             DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, 
@@ -251,7 +253,7 @@ let post_form_two = async (req, res) => {
                         '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
                         '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}','${state4}',
                         '${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}',
-                        '${language}','${state6}','${otherang}','${workExperience}', '${user_id}',
+                        '${language}','${state6}','${otherang}',@WorkExperience, '${user_id}',
                         '${countryForDeg}','${countryForMast}',
                         '${countryForCert}','${countryForDoc}','${countryForAssociate}','${resume}') `
                 )
@@ -279,8 +281,10 @@ let post_form_two = async (req, res) => {
             console.log('uploading data...')
 
             var poolConnection = await sql.connect(config);
+            const request = poolConnection.request();
+            request.input('WorkExperience', sql.NVarChar(sql.MAX), workExperience);
             if (poolConnection) {
-                var resultSet = poolConnection.request().query(
+                var resultSet = request.query(
                     `
                         UPDATE  "Education" SET EducationalLevel = '${level}', EducationalLevelExperience = '${experience}',
                          College1 = '${university1}', DoctorateCollege = '${university3}',DoctorateState = '${doctorateState}', 
@@ -289,7 +293,7 @@ let post_form_two = async (req, res) => {
                          College2State = '${state3}', College2StateYear = '${graduagteYr2}', Degree = '${degree}',
                          DegreeState ='${state4}', DegreeYear = '${graduagteYr3}', Certificate = '${certificate}',
                           CertificateState = '${state5}', CertificateExpiration = '${expiration}', NativeLang = '${language}', 
-                          NativeLangState = '${state6}', NativeLangOtherLang = '${otherang}', WorkExperience = '${workExperience}',
+                          NativeLangState = '${state6}', NativeLangOtherLang = '${otherang}', WorkExperience = @WorkExperience,
                           CertificateFile = '${certificateFile}', DegreeFile='${degreeFile}',DegCountry='${countryForDeg}',
                          MastCountry= '${countryForMast}',
                          CertCountry= '${countryForCert}',
@@ -1068,13 +1072,10 @@ const post_tutor_setup = (req, res) => {
                     Object.keys(req.body).map((key) => {
                         request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
                     })
-                    const { values, query } = parameteriedUpdateQuery('TutorSetup',
-                        req.body,
+                    const { query } = parameteriedUpdateQuery('TutorSetup', req.body,
                         { AcademyId: findtutorSetup.recordset[0].AcademyId })
                     const result = await request.query(query);
-                    // const updated = await poolConnection.request().query(
-                    //     update('TutorSetup', req.body, { AcademyId: findtutorSetup.recordset[0].AcademyId })
-                    // );
+
                     if (result.rowsAffected[0]) {
                         const result = await poolConnection.request().query(
                             findByAnyIdColumn("TutorSetup",
@@ -1091,9 +1092,13 @@ const post_tutor_setup = (req, res) => {
                         req.body.LastName[0] + shortId.generate() :
                         req.body.FirstName + '.' + ' ' + req.body.LastName[0] + shortId.generate();
 
-                    const result = await poolConnection.request().query(
-                        insert('TutorSetup', req.body)
-                    );
+                    const request = poolConnection.request();
+                    Object.keys(req.body).map((key) => {
+                        request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
+                    })
+                    const { query } = parameterizedInsertQuery('TutorSetup', req.body)
+                    const result = await request.query(query);
+
                     res.status(200).send(result.recordset);
                 }
             }
@@ -1394,34 +1399,32 @@ const get_tutor_profile_data = async (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `SELECT
-                    CAST(ts.AcademyId AS VARCHAR(MAX)) AS AcademyId,
+                        CAST(ts.AcademyId AS VARCHAR(MAX)) AS AcademyId,
+                        CAST(ts.TutorScreenname AS VARCHAR(MAX)) AS TutorScreenname,
+
                         CAST(ts.Video AS VARCHAR(MAX)) AS Video,
                         CAST(ts.Photo AS VARCHAR(MAX)) AS Photo,
-                        CAST(ts.Address1 AS VARCHAR(MAX)) AS Address1,
-                        CAST(ts.Address2 AS VARCHAR(MAX)) AS Address2,
                         CAST(ts.CellPhone AS VARCHAR(MAX)) AS CellPhone,
                         CAST(ts.CityTown AS VARCHAR(MAX)) AS CityTown,
                         CAST(ts.Country AS VARCHAR(MAX)) AS Country,
                         CAST(ts.FirstName AS VARCHAR(MAX)) AS FirstName,
-                        CAST(ts.LastName AS VARCHAR(MAX)) AS LastName,
                         CAST(ts.GMT AS VARCHAR(MAX)) AS GMT,
                         CAST(ts.Grades AS VARCHAR(MAX)) AS Grades,
                         CAST(ts.HeadLine AS VARCHAR(MAX)) AS HeadLine,
                         CAST(ts.Motivate AS VARCHAR(MAX)) AS Motivate,
                         CAST(ts.Introduction AS VARCHAR(MAX)) AS Introduction,
-                        CAST(ts.MiddleName AS VARCHAR(MAX)) AS MiddleName,
                         CAST(ts.Online AS VARCHAR(MAX)) AS Online,
                         CAST(ts.ResponseHrs AS VARCHAR(MAX)) AS ResponseHrs,
                         CAST(ts.StateProvince AS VARCHAR(MAX)) AS StateProvince,
-                        CAST(ts.ZipCode AS VARCHAR(MAX)) AS ZipCode,
+
                         CAST(te.BachCountry AS VARCHAR(MAX)) AS BachCountry,
                         CAST(te.CertCountry AS VARCHAR(MAX)) AS CertCountry,
                         CAST(te.Certificate AS VARCHAR(MAX)) AS Certificate,
                         CAST(te.CertificateExpiration AS VARCHAR(MAX)) AS CertificateExpiration,
-                        -- Continue casting other columns from Education table
                         CAST(te.College1 AS VARCHAR(MAX)) AS College1,
                         CAST(te.College1State AS VARCHAR(MAX)) AS College1State,
-                        -- ... (Continue for other columns in the Education table)
+                        CAST(te.WorkExperience AS VARCHAR(MAX)) As WorkExperience,
+
                         CAST(tc.ChatID AS VARCHAR(MAX)) AS ChatID,
                         ISNULL(
                             (
@@ -1442,11 +1445,11 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST('Asiya. B6055bd' AS VARCHAR(MAX))
                     GROUP BY
                         tc.ChatID,
+                        CAST(ts.TutorScreenname AS VARCHAR(MAX)),
+
                         CAST(ts.AcademyId AS VARCHAR(MAX)),
                         CAST(ts.Photo AS VARCHAR(MAX)),
                         CAST(ts.Video AS VARCHAR(MAX)),
-                        CAST(ts.Address1 AS VARCHAR(MAX)),
-                        CAST(ts.Address2 AS VARCHAR(MAX)),
                         CAST(ts.CellPhone AS VARCHAR(MAX)),
                         CAST(ts.CityTown AS VARCHAR(MAX)),
                         CAST(ts.Country AS VARCHAR(MAX)),
@@ -1457,25 +1460,23 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(ts.HeadLine AS VARCHAR(MAX)),
                         CAST(ts.Motivate AS VARCHAR(MAX)),
                         CAST(ts.Introduction AS VARCHAR(MAX)),
-                        CAST(ts.LastName AS VARCHAR(MAX)),
-                        CAST(ts.MiddleName AS VARCHAR(MAX)),
                         CAST(ts.Online AS VARCHAR(MAX)),
                         CAST(ts.ResponseHrs AS VARCHAR(MAX)),
                         CAST(ts.StateProvince AS VARCHAR(MAX)),
-                        CAST(ts.ZipCode AS VARCHAR(MAX)),
+
                         CAST(te.BachCountry AS VARCHAR(MAX)),
                         CAST(te.CertCountry AS VARCHAR(MAX)),
                         CAST(te.CertCountry AS VARCHAR(MAX)),
-                        -- Continue for other columns in the GROUP BY clause
                         CAST(te.College1 AS VARCHAR(MAX)),
                         CAST(te.College1State AS VARCHAR(MAX)),
                         CAST(te.Certificate AS VARCHAR(MAX)),
-                        CAST(te.CertificateExpiration AS VARCHAR(MAX))
-                        -- ... (Continue for other columns in the Education table)
+                        CAST(te.CertificateExpiration AS VARCHAR(MAX)),
+                        CAST(te.WorkExperience AS VARCHAR(MAX))
+
                     `
                 );
                 const formattedResult =
-                    { ...result.recordset[0], subjects: JSON.parse(result.recordset[0].Subjects ?? '[]') }
+                    { ...result.recordset[0], Subjects: JSON.parse(result.recordset[0].Subjects ?? '[]') }
                 res.status(200).send(formattedResult)
             }
         }
@@ -1497,7 +1498,7 @@ module.exports = {
     post_tutor_setup,
     faculties,
     post_form_one,
-    post_form_two,
+    post_edu_form,
     post_form_three,
     get_countries,
     get_gmt,

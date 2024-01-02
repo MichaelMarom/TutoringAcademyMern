@@ -1,5 +1,5 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert, update } = require('../helperfunctions/crud_queries');
+const { insert, update, parameteriedUpdateQuery, parameterizedInsertQuery, findByAnyIdColumn } = require('../helperfunctions/crud_queries');
 const { shortId } = require('../modules');
 
 
@@ -198,53 +198,52 @@ const postTerms = async (req, res) => {
         const sql = require('mssql');
         const poolConnection = await sql.connect(config);
         try {
-            // Check if there's an existing record for the tutorId
             const existingRecord =
-                await poolConnection.request().query(`
-          SELECT * FROM Constants WHERE ID = 1
-        `);
+                await poolConnection.request().query(findByAnyIdColumn('Constants', { ID: 1 }));
 
             if (existingRecord.recordset.length) {
-                // Update the existing record
 
                 if (poolConnection) {
-                    const result = await poolConnection.request().query(update('Constants', req.body, { ID: 1 }));
+                    const request = poolConnection.request();
 
-                    if (result.rowsAffected[0] === 1) {
-                        res.status(200).json(result.recordset[0]);
-                    } else {
-                        res.status(500).json({ success: false, message: 'Failed to update terms.' });
-                    }
+                    request.input('ID', sql.Int, 1);
+                    request.input('TermContent', sql.NVarChar(sql.MAX), req.body.TermContent);
+                    request.input('IntroContent', sql.NVarChar(sql.MAX), req.body.IntroContent);
+
+                    const result = await request.query(parameteriedUpdateQuery('Constants', req.body, { ID: 1 }).query);
+
+                    res.status(200).json(result.recordset[0]);
+
                 }
             } else {
-                // Insert a new record
                 if (poolConnection) {
-                    const result = await poolConnection.request().query(
-                        insert('Constants', req.body)
+                    const request = poolConnection.request();
+
+                    request.input('ID', sql.Int, 1);
+                    request.input('TermContent', sql.NVarChar(sql.MAX), req.body.TermContent);
+                    request.input('IntroContent', sql.NVarChar(sql.MAX), req.body.IntroContent);
+
+                    await request.query(
+                        parameterizedInsertQuery('Constants', req.body).query
                     );
 
-                    if (result.rowsAffected[0] === 1) {
-                        res.status(200).json({ success: true, message: 'Terms stored successfully.' });
-                    } else {
-                        res.status(500).json({ success: false, message: 'Failed to store terms.' });
-                    }
+                    res.status(200).json({ success: true, message: 'Terms stored successfully.' });
+
                 }
 
             }
-        }
-
-        catch (error) {
+        } catch (error) {
             console.error('Error storing terms:', error.message);
-            res.status(500).json({ success: false, message: 'Internal server error.' });
+            res.status(400).json({ success: false, message: error.message });
         }
     })
 };
+
 let get_Constants = (req, res) => {
     marom_db(async (config) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
-        // console.log(poolConnection._connected)
         if (poolConnection) {
             poolConnection.request().query(
                 `
@@ -253,7 +252,6 @@ let get_Constants = (req, res) => {
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
-                    //result.recordset.map(item => item.AcademyId === user_id ? item : null)
                 })
                 .catch(err => console.log(err))
 

@@ -41,7 +41,6 @@ const Education = () => {
         }
     }
 
-
     const [editMode, setEditMode] = useState(false);
     const [unSavedChanges, setUnsavedChanges] = useState(false);
 
@@ -167,12 +166,15 @@ const Education = () => {
         )
         return response;
     }
+
     const handleEditClick = () => {
         setEditMode(!editMode);
     };
+
     const handleEditorChange = (value) => {
         set_workExperience(value);
     };
+    
     useEffect(() => {
         if (files.AcademyId !== undefined) {
             let fieldValues = {

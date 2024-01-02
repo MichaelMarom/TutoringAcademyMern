@@ -32,7 +32,9 @@ const Actions = ({
                         <button onClick={onEdit} type='button' className="btn btn-warning" disabled={editDisabled}>Edit</button>
                     </div>
                     <div className="col-1">
-                        <Button handleClick={onSave} className={`btn btn-primary ${unSavedChanges ? 'blinking-button' : ''}`} type="submit" loading={loading} disabled={saveDisabled} >
+                        <Button handleClick={onSave} className={`btn btn-primary 
+                        ${unSavedChanges ? 'blinking-button' : ''}`} type="submit" loading={loading}
+                            disabled={saveDisabled || loading} >
                             Save
                         </Button>
                     </div>

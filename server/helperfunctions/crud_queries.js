@@ -56,16 +56,14 @@ const update = (tableName, values, where, casting = {}, returnUpdated = true) =>
 };
 
 
-const parameteriedUpdateQuery = (tableName, values, where, casting = {}, returnUpdated = true) => {
+const parameteriedUpdateQuery = (tableName, values, where, returnUpdated = true) => {
     const updateFieldsArray = Object.keys(values);
     const setClause = updateFieldsArray.map((field) => {
-        const updatedValue = typeof values[field] === 'object' ? JSON.stringify(values[field]) : values[field];
         return `${field} = @${field}`;
     }).join(', ');
 
     const whereFieldsArray = Object.keys(where);
     const whereClause = whereFieldsArray.map((field) => {
-        const fieldCasting = casting[field] || '';
         return `${field} = @${field}`;
     }).join(' AND ');
 
@@ -78,6 +76,24 @@ const parameteriedUpdateQuery = (tableName, values, where, casting = {}, returnU
 
     console.log(parameterizedQuery);
     return { query: parameterizedQuery, values: parameterizedValues };
+};
+
+const parameterizedInsertQuery = (tableName, values) => {
+    const fieldsArray = Object.keys(values);
+    const valuesArray = Object.keys(values).map(key => values[key]);
+
+    const valuePlaceholders = fieldsArray.map(field => `@${field}`).join(', ');
+
+    const query = `
+        INSERT INTO ${tableName} ${fieldsArray.length ? `(${fieldsArray.join(', ')})` : ''}
+        OUTPUT inserted.*
+        VALUES (${valuePlaceholders});
+    `;
+
+    const parameterizedValues = { ...values, value: valuesArray };
+
+    console.log(query);
+    return { query, values: parameterizedValues };
 };
 
 
@@ -151,6 +167,7 @@ module.exports = {
     findByAnyIdColumn,
     update,
     parameteriedUpdateQuery,
+    parameterizedInsertQuery,
     find
 }
 

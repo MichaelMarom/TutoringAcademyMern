@@ -5,7 +5,7 @@ import { get_my_data, get_rates, get_tutor_profile } from '../../axios/tutor';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { useParams } from 'react-router';
 import Avatar from '../common/Avatar';
-import { capitalizeFirstLetter } from '../../helperFunctions/generalHelperFunctions';
+import { capitalizeFirstLetter, escapeHtml } from '../../helperFunctions/generalHelperFunctions';
 import Button from '../common/Button';
 import Loading from '../common/Loading';
 import { FaLocationDot } from "react-icons/fa6";
@@ -17,6 +17,7 @@ const TutorProfile = () => {
     const params = useParams();
     const studentId = localStorage.getItem('student_user_id');
     const [data, setProfileData] = useState({})
+    const [activeTab, setActiveTab] = useState('bach')
 
     useEffect(() => {
         const fetch_profile = async () => {
@@ -44,16 +45,19 @@ const TutorProfile = () => {
                             </div>
                             <div className='text-start px-2 m-4 d-flex flex-column' style={{ gap: "5px" }} >
                                 <h2>
-                                    {capitalizeFirstLetter(data.FirstName)} {capitalizeFirstLetter(data.LastName)}</h2>
+                                    {capitalizeFirstLetter(data.TutorScreenname)}</h2>
                                 <div className='d-flex align-items-center' style={{ gap: "20px" }}>
 
                                     <div className='d-flex align-items-center' style={{ gap: "10px" }}>
                                         <FaLocationDot size={32} />
                                         <h5 className='m-0'> {data.Country}</h5>
                                     </div>
-                                    <div className='d-flex align-items-center' style={{ gap: "10px" }}>
+                                    <div className='d-flex align-items-end' style={{ gap: "10px" }}>
 
-                                        <h5 className='m-0'>{convertGMTOffsetToLocalString(data.GMT)}</h5> - Local
+                                        <h5 className='m-0'>{convertGMTOffsetToLocalString(data.GMT)}</h5>
+                                        <p className='m-0'>
+                                            - Local
+                                        </p >
                                     </div>
                                 </div>
                             </div>
@@ -123,11 +127,60 @@ const TutorProfile = () => {
                                 <div>
 
                                     <h5 className=''>
+                                        Work Experience
+                                    </h5>
+                                    <div className='border p-2' dangerouslySetInnerHTML={{ __html: data.WorkExperience }} />
+                                </div>
+                                <div>
+
+                                    <h5 className=''>
                                         Education
                                     </h5>
-                                    <p className='border p-2'>
-                                        {data.WorkExperience}
-                                    </p>
+                                    <div className='border p-2'>
+                                        <ul class="nav nav-tabs">
+                                            <li class="nav-item">
+                                                <p class={`nav-link ${activeTab === 'bach' ? "active" : ""}`}
+                                                    aria-current="page"
+                                                    onClick={() => setActiveTab('bach')}
+                                                >Baclors</p>
+                                                <p class={`nav-link ${activeTab === 'mast' ? "active" : ""}`}
+                                                    aria-current="page"
+                                                    onClick={() => setActiveTab('mast')}
+                                                >Master</p>
+                                                <p class={`nav-link ${activeTab === 'doc' ? "active" : ""}`}
+                                                    aria-current="page"
+                                                    onClick={() => setActiveTab('doc')}
+                                                >Doctorate</p>
+                                                <p class={`nav-link ${activeTab === 'cert' ? "active" : ""}`}
+                                                    aria-current="page"
+                                                    onClick={() => setActiveTab('cert')}
+                                                >Ceritficate</p>
+                                                <p class={`nav-link ${activeTab === 'deg' ? "active" : ""}`}
+                                                    aria-current="page"
+                                                    onClick={() => setActiveTab('deg')}
+                                                >Degree</p>
+
+                                            </li>
+                                        </ul>
+                                        <div className='border border-l border-r border-b px-2'>
+
+                                            {activeTab === 'bach' &&
+                                                <div>Bachlors  &&infor hre</div>
+                                            }
+                                            {activeTab === 'mast' &&
+                                                <div>MAsters  &&infor hre</div>
+                                            }
+                                            {activeTab === 'doc' &&
+                                                <div>Doctorate  &&infor hre</div>
+                                            }
+                                            {activeTab === 'cert' &&
+                                                <div>Cerificate  &&infor hre</div>
+                                            }
+                                            {activeTab === 'deg' &&
+                                                <div>Degree  &&infor hre</div>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

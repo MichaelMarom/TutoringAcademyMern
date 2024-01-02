@@ -6,7 +6,7 @@
     background-image: linear-gradient(#000 50px, transparent 0),
         linear-gradient(#000 50px, transparent 0),
         linear-gradient(#000 50px, transparent 0),
-        linear-gradient(#000 50px, transparent 0), 
+        linear-gradient(#000 50px, transparent 0),
         linear-gradient(#000 50px, transparent 0),
         linear-gradient(#000 50px, transparent 0);
     background-position: 0px center, 15px center, 30px center, 45px center, 60px center, 75px center, 90px center;
@@ -145,7 +145,8 @@
     display: none;
 }
 
-html,body{
+html,
+body {
     overflow: hidden;
 }
 
@@ -232,7 +233,7 @@ html,body{
         background-color: #ffffff;
     }
 
-    ul{
+    ul {
         list-style-type: none;
         margin: 0;
         display: flex;
@@ -244,6 +245,7 @@ html,body{
         scroll-behavior: smooth;
         transition: cubic-bezier(0.165, 0.84, 0.44, 1);
     }
+
     ul.header {
         height: 100%;
         overflow-x: auto;
@@ -260,6 +262,10 @@ html,body{
         justify-content: center;
         float: left;
         cursor: pointer;
+    }
+
+    ul.nav.nav-tabs li {
+        padding: 0 !important;
     }
 
 
@@ -490,7 +496,7 @@ html,body{
         position: relative;
     }
 
-   
+
 
     .tutor-tab-education-info {
         height: calc(100% - 40px);
@@ -686,7 +692,7 @@ html,body{
         padding: 0 40px 0 40px;
     }
 
-   
+
     #table_options_menu {
         background: #2471A3;
         color: #F7F9F9;
@@ -860,7 +866,7 @@ html,body{
         border-radius: 5px;
     }
 
-    .tutor-teaching-subject{
+    .tutor-teaching-subject {
         height: 100px;
         width: 350px;
         padding: 5px;
@@ -869,7 +875,7 @@ html,body{
         background-color: #efefef;
     }
 
-    .tutor-teaching-subject div{
+    .tutor-teaching-subject div {
         padding: 8px;
         float: left;
         font-size: small;
@@ -951,7 +957,7 @@ html,body{
 
 
 
-    
+
 
 }
 

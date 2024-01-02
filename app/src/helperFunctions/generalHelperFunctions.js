@@ -78,7 +78,7 @@ export const unsavedChangesHelper = (fieldValues, tutor) => {
 }
 
 export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
-  console.log( tutor.DegreeYear, fieldValues.graduagteYr3)
+  console.log(tutor.DegreeYear, fieldValues.graduagteYr3)
   return (
 
     tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
@@ -116,3 +116,7 @@ export const capitalizeFirstLetter = (name) => {
 export function getFileExtension(filename) {
   return filename.split('.').pop();
 }
+
+export const escapeHtml = (unsafeHtml) => {
+  return unsafeHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+};

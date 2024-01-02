@@ -227,7 +227,7 @@ export let upload_form_two = (level, university1, university2, university3, degr
     countryForAssociate, resume) => {
     return new Promise((resolve, reject) => {
 
-        apiClient.post('/tutor/form-two', {
+        apiClient.post('/tutor/edu', {
             level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
             state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
             doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,

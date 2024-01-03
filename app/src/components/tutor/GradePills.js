@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { BsPlus, BsX } from 'react-icons/bs';
 
-const GradePills = ({ grade, editable, setGrades, grades }) => {
+const GradePills = ({ grade, editable, setGrades, grades, hasIcon = true }) => {
     const [selected, setSelected] = useState(false);
-
+    console.log(hasIcon, ';deff')
     const handleToggle = () => {
         setSelected(!selected);
         const filteredGrades = grades.filter(item => item !== grade)
@@ -26,7 +26,7 @@ const GradePills = ({ grade, editable, setGrades, grades }) => {
             onClick={handleToggle}
         >
             <p className='m-0' style={{ fontSize: "14px" }}> {grade}</p>
-            {grades.find(item => item === grade) ? <BsX /> : <BsPlus />}
+            {hasIcon && (grades.find(item => item === grade) ? <BsX /> : <BsPlus />)}
         </div>
     );
 };

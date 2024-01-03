@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import Input from '../common/Input'
 import GradePills from './GradePills'
 import Button from '../common/Button'
-import { upload_tutor_rates } from '../../axios/tutor'
+import { remove_subject_rates, upload_tutor_rates } from '../../axios/tutor'
 import { toast } from 'react-toastify'
 
-const SubjectCard = ({ subject,rateVal, gradesVal,faculty }) => {
+const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
     const [rate, setRate] = useState(rateVal)
     const [grades, setGrades] = useState(gradesVal)
     const [editable, setEditable] = useState(false);
@@ -42,14 +42,22 @@ const SubjectCard = ({ subject,rateVal, gradesVal,faculty }) => {
 
     const handleOnChangeRate = (value) => {
         if (validate(value)) {
-            setRate(value)
+            setRate(value ? parseInt(value, 10) : '')
         }
+    }
+
+    const removeFromSubjectRates = async () => {
+        setGrades([])
+        setEditable(false);
+        await remove_subject_rates(id)
+        toast.success('The subject is successfully removed from your teaching list!')
     }
 
     const handleSave = async (e) => {
         e.preventDefault()
         if (!grades.length) return toast.warning("Please select at least one range of school grades!")
-        if (rate < 3) return toast.warning("The minumim rate you can is $3!")
+        if (rate < 3) return toast.warning("Minimum rate is $3")
+
         setEditable(false);
         const data = await upload_tutor_rates(`$${rate}.00`, grades, tutorId, faculty, subject)
         if (data?.response?.status === 400) {
@@ -61,7 +69,8 @@ const SubjectCard = ({ subject,rateVal, gradesVal,faculty }) => {
     }
 
     return (
-        <div className={`border p-2 rounded  mx-2 d-flex justify-content-between align-items-center `} style={{ background: !editable ? '#d8d8d8' : "" }}>
+        <div className={`border p-2 rounded  mx-2 d-flex justify-content-between align-items-center `}
+            style={{ background: !editable ? '#d8d8d8' : "" }}>
             <h6 className='m-0 text-start col-2'>{subject}</h6>
             <form onSubmit={handleSave}
                 className=' d-flex justify-content-between align-items-center'>
@@ -72,13 +81,23 @@ const SubjectCard = ({ subject,rateVal, gradesVal,faculty }) => {
                     }
                 </div>
                 <div className='col-2 text-center'>
-                    <Input style={{width:"50px", padding:"5px", height:"30px"}} placeholder={"00"} inputGroupText={"$"} required className="form-control m-0" inputGroup={true} vertical={false} value={rate} onChange={handleOnChangeRate} disabled={!editable} />
+                    <Input style={{ width: "50px", padding: "5px", height: "30px" }}
+                        placeholder={"00"} inputGroupText={"$"} className="form-control m-0" inputGroup={true} vertical={false} value={rate} onChange={handleOnChangeRate} disabled={!editable} />
                 </div>
                 <div className='float-end'>
 
-                    <Button type={"button"} className='btn-primary btn-sm' handleClick={() => setEditable(!editable)}>
-                        Edit
-                    </Button>
+                    {!editable &&
+                        <Button className='btn-primary btn-sm' handleClick={() => setEditable(!editable)}>
+                            Edit
+                        </Button>
+                    }
+                    {(rate === '') && editable &&
+                        <Button type={"button"} className='btn-warning btn-sm' handleClick={() => removeFromSubjectRates()}
+                        >
+                            Revert
+                        </Button>
+                    }
+
 
                     <Button type='submit' className='btn-success btn-sm' disabled={!editable}>
                         Save

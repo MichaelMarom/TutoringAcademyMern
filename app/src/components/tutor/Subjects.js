@@ -186,6 +186,7 @@ const Subjects = () => {
                                         subject={item.subject}
                                         rateVal={rate}
                                         gradesVal={grades}
+                                        id={item.SID}
                                     />
                                 }
                                 )

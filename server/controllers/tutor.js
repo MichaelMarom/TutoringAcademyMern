@@ -649,6 +649,31 @@ let upload_tutor_rates = (req, res) => {
     })
 }
 
+let remove_subject_rates = (req, res) => {
+
+    let { id } = req.params;
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+
+            var poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const deleted = await poolConnection.request().query(
+                    `Delete FROM SubjectRates where SID = '${id}'`
+                )
+                console.log(deleted)
+
+                res.status(200).send(deleted)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+
+    })
+}
+
 let upload_form_four = (req, res) => {
 
     let { start_day, acct_name, acct_type, bank_name, acct, routing, ssh,
@@ -815,7 +840,7 @@ let get_rates = (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `Select sb.SubjectName as subject, sb.FacultyId as facultyId, sr.rate, sr.AcademyId, 
-                    sr.grades as grades, 
+                    sr.grades as grades, sr.SID,
                     sb.CreatedOn FROM Subjects as sb
                     LEFT JOIN SubjectRates as sr ON  cast(sr.subject  as varchar(max))=
                     cast( sb.SubjectName as varchar(max)) and 
@@ -1417,19 +1442,44 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(ts.ResponseHrs AS VARCHAR(MAX)) AS ResponseHrs,
                         CAST(ts.StateProvince AS VARCHAR(MAX)) AS StateProvince,
 
+                        CAST(te.WorkExperience AS VARCHAR(MAX)) As WorkExperience,
+                        CAST(te.EducationalLevel AS VARCHAR(MAX)) as EducationalLevel,
+                        CAST(te.EducationalLevelExperience AS VARCHAR(MAX)) EducationLevelExp,
                         CAST(te.BachCountry AS VARCHAR(MAX)) AS BachCountry,
+                        CAST(te.College1 AS VARCHAR(MAX)) AS College1,
+                        CAST(te.College1State AS VARCHAR(MAX)) AS College1State,
+                        CAST(te.College1Year AS VARCHAR(MAX)) AS BachYear,
                         CAST(te.CertCountry AS VARCHAR(MAX)) AS CertCountry,
                         CAST(te.Certificate AS VARCHAR(MAX)) AS Certificate,
                         CAST(te.CertificateExpiration AS VARCHAR(MAX)) AS CertificateExpiration,
-                        CAST(te.College1 AS VARCHAR(MAX)) AS College1,
-                        CAST(te.College1State AS VARCHAR(MAX)) AS College1State,
-                        CAST(te.WorkExperience AS VARCHAR(MAX)) As WorkExperience,
+                        CAST(te.CertificateExpiration AS VARCHAR(MAX)) as CertExpDate,
+                        CAST(te.DoctorateState AS VARCHAR(MAX)) as DocState,
+                        CAST(te.DoctorateGradYr AS VARCHAR(MAX)) as DocYr,
+                        CAST(te.DoctorateCollege AS VARCHAR(MAX)) as DocCollege,
+                        CAST(te.DocCountry AS VARCHAR(MAX)) as DocCountry,
+                        CAST(te.NativeLang AS VARCHAR(MAX)) as NativeLang,
+                        CAST(te.NativeLangOtherLang AS VARCHAR(MAX)) as OtherLang,
+                        CAST(te.Degree AS VARCHAR(MAX)) as Degree,
+                        CAST(te.DegreeState AS VARCHAR(MAX)) as DegState,
+                        CAST(te.DegreeYear AS VARCHAR(MAX)) as DegYr,
+                        CAST(te.DegCountry AS VARCHAR(MAX)) as DegCountry,
+                        CAST(te.MastCountry AS VARCHAR(MAX)) as MastCountry,
+                        CAST(te.College2 AS VARCHAR(MAX)) as MastCollege,
+                        CAST(te.College2State AS VARCHAR(MAX)) as MastState,
+                        CAST(te.College2StateYear AS VARCHAR(MAX)) as MastYr,
+
+
 
                         CAST(tc.ChatID AS VARCHAR(MAX)) AS ChatID,
+
+                        CAST(tr.CancellationPolicy AS VARCHAR(MAX)) AS CancellationPolicy,
+                        CAST(tr.IntroSessionDiscount AS VARCHAR(MAX))  AS IntroSessionDiscount,
+
+
                         ISNULL(
                             (
                                 SELECT sr.subject AS Subject,
-                                       sr.rate AS Rate
+                                       sr.rate AS Rate, sr.Grades AS SubjectGrades
                                 FROM SubjectRates AS sr
                                 WHERE CAST(sr.AcademyId AS VARCHAR(MAX)) = CAST(ts.AcademyId AS VARCHAR(MAX))
                                 FOR JSON PATH
@@ -1440,9 +1490,12 @@ const get_tutor_profile_data = async (req, res) => {
                         Education AS te ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(te.AcademyId AS VARCHAR(MAX))
                     LEFT JOIN
                         Chat AS tc ON CAST(ts.AcademyId AS VARCHAR) = tc.User2ID 
-                        AND CAST(tc.User2ID AS VARCHAR) = 'xsxs. c. z2e08ec'
+                        AND CAST(tc.User1ID AS VARCHAR) = '${req.params.studentId}'
+                    LEFT JOIN
+                        TutorRates AS tr ON CAST(tr.AcademyId AS VARCHAR) = ts.AcademyId
+                        
                     WHERE
-                        CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST('Asiya. B6055bd' AS VARCHAR(MAX))
+                        CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST('${req.params.tutorId}' AS VARCHAR(MAX))
                     GROUP BY
                         tc.ChatID,
                         CAST(ts.TutorScreenname AS VARCHAR(MAX)),
@@ -1463,20 +1516,44 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(ts.Online AS VARCHAR(MAX)),
                         CAST(ts.ResponseHrs AS VARCHAR(MAX)),
                         CAST(ts.StateProvince AS VARCHAR(MAX)),
-
+                        
+                        CAST(te.WorkExperience AS VARCHAR(MAX)),
+                        CAST(te.EducationalLevel AS VARCHAR(MAX)),
+                        CAST(te.EducationalLevelExperience AS VARCHAR(MAX)),
                         CAST(te.BachCountry AS VARCHAR(MAX)),
-                        CAST(te.CertCountry AS VARCHAR(MAX)),
-                        CAST(te.CertCountry AS VARCHAR(MAX)),
                         CAST(te.College1 AS VARCHAR(MAX)),
                         CAST(te.College1State AS VARCHAR(MAX)),
+                        CAST(te.College1Year AS VARCHAR(MAX)),
+                        CAST(te.CertCountry AS VARCHAR(MAX)),
                         CAST(te.Certificate AS VARCHAR(MAX)),
                         CAST(te.CertificateExpiration AS VARCHAR(MAX)),
-                        CAST(te.WorkExperience AS VARCHAR(MAX))
+                        CAST(te.DoctorateState AS VARCHAR(MAX)),
+                        CAST(te.DoctorateGradYr AS VARCHAR(MAX)),
+                        CAST(te.DoctorateCollege AS VARCHAR(MAX)),
+                        CAST(te.DocCountry AS VARCHAR(MAX)),
+                        CAST(te.NativeLang AS VARCHAR(MAX)),
+                        CAST(te.NativeLangOtherLang AS VARCHAR(MAX)),
+                        CAST(te.Degree AS VARCHAR(MAX)),
+                        CAST(te.DegreeState AS VARCHAR(MAX)),
+                        CAST(te.DegreeYear AS VARCHAR(MAX)),
+                        CAST(te.DegCountry AS VARCHAR(MAX)),
+                        CAST(te.MastCountry AS VARCHAR(MAX)),
+                        CAST(te.College2 AS VARCHAR(MAX)),
+                        CAST(te.College2State AS VARCHAR(MAX)),
+                        CAST(te.College2StateYear AS VARCHAR(MAX)),
+
+
+                        CAST(tr.IntroSessionDiscount AS VARCHAR(MAX)),
+                        CAST(tr.CancellationPolicy AS VARCHAR(MAX))
 
                     `
                 );
+                const record = result.recordset[0];
                 const formattedResult =
-                    { ...result.recordset[0], Subjects: JSON.parse(result.recordset[0].Subjects ?? '[]') }
+                {
+                    ...record, Subjects: JSON.parse(record.Subjects ?? '[]'),
+                    OtherLang: JSON.parse(record.OtherLang), NativeLang: JSON.parse(record.NativeLang)
+                }
                 res.status(200).send(formattedResult)
             }
         }
@@ -1490,6 +1567,7 @@ const get_tutor_profile_data = async (req, res) => {
 module.exports = {
     get_tutor_profile_data,
     getSessionsDetails,
+    remove_subject_rates,
     subject_already_exist,
     last_pay_day,
     subjects,

@@ -352,6 +352,16 @@ export let upload_tutor_rates = async (rate, grades, id, faculty, subject) => {
     }
 }
 
+export const remove_subject_rates = async (id) => {
+    try {
+        const { data } = await apiClient.delete(`/subject-rate/${id}`)
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}
 
 export let get_my_data = (AcademyId) => {
     return new Promise((resolve, reject) => {

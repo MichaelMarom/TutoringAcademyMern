@@ -405,10 +405,10 @@ const Rates = () => {
                   checked={discountEnabled}
                 />
                 <label className="form-check-label" for="flexSwitchCheckChecked">
-                  My Student's 10% markup
+                  My Student's code
                 </label>
 
-                <Tooltip text="Provide the code below to be used at student's setup tab. It will reduce the platform service charge by 10%. You must generate new code for each of your students" width="200px">
+                <Tooltip text="Provide the code below to be used by your student for this platform.You must generate new code for each of your students" width="200px">
                   <FaInfoCircle size={20} color="#0096ff" />
                 </Tooltip>
               </div>

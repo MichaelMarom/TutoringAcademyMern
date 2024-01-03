@@ -10,7 +10,9 @@ import Button from '../common/Button';
 import Loading from '../common/Loading';
 import { FaLocationDot } from "react-icons/fa6";
 import { IoTime } from "react-icons/io5";
-import { GiTimeSynchronization } from "react-icons/gi";
+import GradePills from './GradePills';
+import ToolTip from '../common/ToolTip'
+import SubjectCard from './SubjectCard';
 
 
 const TutorProfile = () => {
@@ -18,6 +20,40 @@ const TutorProfile = () => {
     const studentId = localStorage.getItem('student_user_id');
     const [data, setProfileData] = useState({})
     const [activeTab, setActiveTab] = useState('bach')
+    const [sortedGrades, setSortedGrades] = useState([]);
+    const customSort = (a, b) => {
+        if (a === "Academic") {
+            return -1;
+        } else if (b === "Academic") {
+            return 1;
+        } else if (a.includes("grade") && b.includes("grade")) {
+            const aGrade = parseInt(a);
+            const bGrade = parseInt(b);
+            return aGrade - bGrade;
+        } else {
+            return a.localeCompare(b);
+        }
+    }
+
+    const customSortForSubjectsGrades = (a, b) => {
+        const getOrder = (value) => {
+            if (value === 'K-3') return 1;
+            if (value === 'University') return Infinity;
+            const range = value.split('-');
+            return parseInt(range[0]); // Sort numerically based on the starting number of the range
+        };
+    
+        const orderA = getOrder(a);
+        const orderB = getOrder(b);
+    
+        return orderA - orderB;
+    }
+    useEffect(() => {
+        if (data.Grades) {
+            const grades = JSON.parse(data.Grades ?? '[]');
+            setSortedGrades(grades.sort(customSort))
+        }
+    }, [data])
 
     useEffect(() => {
         const fetch_profile = async () => {
@@ -27,72 +63,136 @@ const TutorProfile = () => {
 
         fetch_profile();
     }, [params.id, studentId])
+
     if (!Object.keys(data).length)
         return <Loading />
     return (
-        <div style={{ background: "lightGray", height: "90vh", overflowY: "auto" }}>
+        <div style={{ background: "lightGray", height: "93vh", overflowY: "auto" }}>
             <div className='container'>
                 <div className=''>
-                    <div >
-                        <video src={data.Video} className="w-100 bg-white rounded py-5  px-4 mt-4" style={{ height: "300px" }}
-                            controls autoplay
-                        />
-                    </div>
-                    <div className='d-flex align-items-start justify-content-between w-100 mt-4 rounded  bg-white ' style={{ bottom: "-100px" }}>
-                        <div className='d-flex align-items-start'>
+
+                    <div className='d-flex align-items-start justify-content-between w-100 mt-4 rounded  bg-white '
+                    >
+                        <div className='d-flex align-items-start' style={{ width: "40%" }}>
                             <div className='p-1 bg-white rounded-circle'>
                                 <Avatar avatarSrc={data.Photo} size='150px' indicSize='30px' />
                             </div>
-                            <div className='text-start px-2 m-4 d-flex flex-column' style={{ gap: "5px" }} >
-                                <h2>
-                                    {capitalizeFirstLetter(data.TutorScreenname)}</h2>
+                            <div className='text-start p-2 d-flex flex-column' style={{ gap: "5px" }} >
+                                <div>
+                                    <div className='d-flex align-items-end' style={{ gap: "20px" }}>
+
+                                        <h2 className='m-0'>
+                                            {capitalizeFirstLetter(data.TutorScreenname)}</h2>
+                                    </div>
+
+                                    <p className='m-0'>{data.HeadLine}</p>
+                                </div>
+
                                 <div className='d-flex align-items-center' style={{ gap: "20px" }}>
 
                                     <div className='d-flex align-items-center' style={{ gap: "10px" }}>
-                                        <FaLocationDot size={32} />
-                                        <h5 className='m-0'> {data.Country}</h5>
-                                    </div>
-                                    <div className='d-flex align-items-end' style={{ gap: "10px" }}>
+                                        <div className='d-flex align-items-end' style={{ gap: "20px" }}>
 
-                                        <h5 className='m-0'>{convertGMTOffsetToLocalString(data.GMT)}</h5>
-                                        <p className='m-0'>
-                                            - Local
-                                        </p >
+                                            <FaLocationDot size={20} />
+                                            <h5 className='m-0'> {data.Country}</h5>
+                                            <h5 className='m-0'>GMT: {data.GMT}</h5>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div className='d-flex align-items-end' style={{ gap: "10px" }}>
+                                    <IoTime size={20} />
+                                    <h5 className='m-0'>{convertGMTOffsetToLocalString(data.GMT)}</h5>
+
+                                </div>
+                                <div className='m-2 '>
+                                    <div className='d-flex '>
+                                        <Button className='btn-sm btn-primary'>Chat</Button>
+                                        <Button className='btn-sm btn-success'>See Schedule</Button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className='m-2 '>
-                            <div className='d-flex '>
-                                <Button className='btn-sm btn-primary'>Chat</Button>
-                                <Button className='btn-sm btn-success'>See Schedule</Button>
+                        <div className=' d-flex flex-column p-4 justfy-content-between h-100'
+                            style={{
+                                width: "30%",
+                                gap: "10px"
+                            }}>
+                            <div className='d-flex align-items-center' style={{ gap: "5px" }}>
+                                <ToolTip text={'res time'} />
+
+                                <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                    Response Time -
+                                </div>
+                                <h6 className='m-0'>{data.ResponseHrs}</h6>
                             </div>
+
+                            <div className='d-flex align-items-center' style={{ gap: "5px" }}>
+                                <ToolTip text={'canc policy'} />
+
+                                <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                    Cancellation Policy -
+                                </div>
+                                <h6 className='m-0'>{data.CancellationPolicy}</h6>
+                            </div>
+                            {
+                                data.IntroSessionDiscount &&
+                                <div className='d-flex align-items-center' style={{ gap: "5px" }}>
+                                    <ToolTip text={'intro lesson discount'} />
+                                    <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                        <span className='text-success'> Enabled</span> 50% Off on Intro Lesson
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+
+                        <div className="w-25 h-100">
+                            <video src={data.Video} className=" rounded w-100 " style={{ height: "230px" }}
+                                controls autoplay
+                            />
                         </div>
                     </div>
                     <div className='d-flex mt-4' style={{ gap: "20px" }}>
                         <div className='col-4'>
                             <div className='bg-white rounded p-4 d-flex flex-column' style={{ gap: "15px" }}>
 
-                                <div className='d-flex align-items-center' style={{ gap: "10px" }}>
-                                    <IoTime size={32} />
-                                    <h5 className='m-0'>{data.ResponseHrs}</h5>
-                                </div>
-                                <div className='d-flex flex-column align-items-start' style={{ gap: "10px" }}>
+                                <div className='d-flex flex-column align-items-start' >
 
                                     <h5 className='m-0'>Languages</h5>
-                                    <div className='d-flex align-items-center' style={{ gap: "10px" }}>
-
-                                        <h6 className='text-start m-0'> English</h6> - Native
+                                    <div className='d-flex align-items-center'>
+                                        <GradePills grades={[]} grade={data.NativeLang.value} editable={false} hasIcon={false} />
+                                        - Native
                                     </div>
-                                    <div className='d-flex align-items-center' style={{ gap: "10px" }}>
-
-                                        <h6 className='text-start m-0'> Urdu</h6> - Fluent
-                                    </div>
+                                    {data.OtherLang.map(lang =>
+                                        <div className='d-flex align-items-center'>
+                                            {/* <h6 className='text-start m-0'> {lang.value}</h6> */}
+                                            <GradePills grades={[]} grade={lang.value} editable={false} hasIcon={false} />
+                                        </div>
+                                    )
+                                    }
                                 </div>
-                            </div>
-                        </div>
-                        <div className='w-75'>
-                            <div className='bg-white p-4 rounded'>
+                                <div>
+
+                                    <h5 className=''>
+                                        Grades I Teach
+                                    </h5>
+                                    <p className='border p-2'>
+                                        <div className='d-flex align-items-center  flex-wrap'
+                                            style={{ gap: "5px" }}>
+                                            {sortedGrades.map(grade =>
+                                                <div style={{ width: "30%" }}>
+                                                    <GradePills
+                                                        grade={grade}
+                                                        editable={false}
+                                                        grades={[]}
+                                                        hasIcon={false} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </p>
+                                </div>
                                 <div>
 
                                     <h5 className=''>
@@ -102,6 +202,11 @@ const TutorProfile = () => {
                                         {data.Introduction}
                                     </p>
                                 </div>
+                            </div>
+                        </div>
+                        <div className='w-75'>
+                            <div className='bg-white p-4 rounded'>
+
                                 <div>
 
                                     <h5 className=''>
@@ -114,72 +219,256 @@ const TutorProfile = () => {
                                 <div>
 
                                     <h5 className=''>
-                                        Grades I Teach
-                                    </h5>
-                                    <p className='border p-2'>
-                                        {JSON.parse(data.Grades).map(grade =>
-                                            <div className='d-flex align-items-center' style={{ gap: "10px" }}>
-                                                <h6 className='text-start m-0'> {grade}</h6> - primary
-                                            </div>
-                                        )}
-                                    </p>
-                                </div>
-                                <div>
-
-                                    <h5 className=''>
-                                        Work Experience
+                                        Work Experience (Total Experience - {data.EducationLevelExp})
                                     </h5>
                                     <div className='border p-2' dangerouslySetInnerHTML={{ __html: data.WorkExperience }} />
                                 </div>
-                                <div>
+                                <div className='mt-4'>
 
                                     <h5 className=''>
                                         Education
                                     </h5>
-                                    <div className='border p-2'>
-                                        <ul class="nav nav-tabs">
-                                            <li class="nav-item">
-                                                <p class={`nav-link ${activeTab === 'bach' ? "active" : ""}`}
+                                    <div className='border p-2 d-flex '>
+                                        <ul class="nav flex-column p-0 align-items-start"
+                                            style={{ width: "20%", borderRight: "1px solid lightblue" }}>
+                                            <li class="nav-item w-100 p-0">
+                                                <p class={`nav-link m-0 ${activeTab === 'bach' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('bach')}
-                                                >Baclors</p>
-                                                <p class={`nav-link ${activeTab === 'mast' ? "active" : ""}`}
+                                                >Bachelor</p>
+                                            </li>
+                                            <li class="nav-item w-100 p-0">
+                                                <p class={`nav-link m-0 ${activeTab === 'mast' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('mast')}
                                                 >Master</p>
-                                                <p class={`nav-link ${activeTab === 'doc' ? "active" : ""}`}
+                                            </li>
+                                            <li class="nav-item w-100 p-0">
+                                                <p class={`nav-link m-0 ${activeTab === 'doc' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('doc')}
                                                 >Doctorate</p>
-                                                <p class={`nav-link ${activeTab === 'cert' ? "active" : ""}`}
+                                            </li>
+                                            <li class="nav-item w-100 p-0">
+                                                <p class={`nav-link m-0 ${activeTab === 'cert' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('cert')}
-                                                >Ceritficate</p>
-                                                <p class={`nav-link ${activeTab === 'deg' ? "active" : ""}`}
+                                                >Certificate</p>
+                                            </li>
+                                            <li class="nav-item w-100 p-0">
+                                                <p class={`nav-link m-0 m-0 ${activeTab === 'deg' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('deg')}
                                                 >Degree</p>
-
                                             </li>
                                         </ul>
-                                        <div className='border border-l border-r border-b px-2'>
 
+                                        <div className='px-2 w-75 d-flex justify-content-end'>
                                             {activeTab === 'bach' &&
-                                                <div>Bachlors  &&infor hre</div>
+
+                                                <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
+                                                    <h5 className=' text-center'>Bachelor Info</h5>
+
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Country -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.BachCountry}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            College -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.College1}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            State -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.College1State}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Year of Graduation -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.BachYear}</h6>
+                                                    </div>
+                                                </div>
                                             }
                                             {activeTab === 'mast' &&
-                                                <div>MAsters  &&infor hre</div>
+                                                <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
+                                                    <h5 className=' text-center'>Master Info</h5>
+
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Country -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.MastCountry}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            University -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.MastCollege}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            State -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.MastState}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Year of Graduation -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.MastYr}</h6>
+                                                    </div>
+                                                </div>
                                             }
                                             {activeTab === 'doc' &&
-                                                <div>Doctorate  &&infor hre</div>
+                                                <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
+                                                    <h5 className=' text-center'>Doctorate Info</h5>
+
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Country -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.DocCountry}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            University -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.DocCollege}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            State -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.DocState}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Year of Graduation -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.DocYr}</h6>
+                                                    </div>
+                                                </div>
                                             }
                                             {activeTab === 'cert' &&
-                                                <div>Cerificate  &&infor hre</div>
+                                                <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
+                                                    <h5 className=' text-center'>Certificate Info</h5>
+
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Country -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.CertCountry}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Name -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.Certificate}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Expiration Date -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.CertificateExpiration}</h6>
+                                                    </div>
+                                                </div>
                                             }
                                             {activeTab === 'deg' &&
-                                                <div>Degree  &&infor hre</div>
+                                                <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
+                                                    <h5 className=' text-center'>Degree Info</h5>
+
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Country -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.DegCountry}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Name -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.EducationalLevel}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            State -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.DegState}</h6>
+                                                    </div>
+                                                    <div className='d-flex align-items-center'
+                                                        style={{ gap: "15px" }}>
+                                                        <div className='text-primary'
+                                                            style={{ fontSize: "16px", fontWeight: "bold" }}>
+                                                            Year -
+                                                        </div>
+                                                        <h6 className='m-0'>{data.DegYr}</h6>
+                                                    </div>
+                                                </div>
                                             }
                                         </div>
+                                    </div>
+                                </div>
+                                <div className='mt-4'>
+
+                                    <h5 className=''>
+                                        Subjects I Teach
+                                    </h5>
+                                    <div className=''>
+                                        {data.Subjects.map(item => {
+                                            const subjectGrades = JSON.parse(!item.SubjectGrades ?
+                                                '[]' : item.SubjectGrades).sort(customSortForSubjectsGrades);
+                                            return <div className={`border p-2 rounded d-flex justify-content-between align-items-center `} style={{ background: '#d8d8d8' }}>
+                                                <p className='m-0 text-start col-2' style={{ fontSize: "14px" }}>{item.Subject}</p>
+                                                <div className='d-flex col-9'>
+                                                    {subjectGrades.map(option =>
+                                                        <GradePills editable={false} grade={option} grades={[]} />)
+                                                    }
+                                                </div>
+                                                <h6 className='m-0 text-start col-1'>{item.Rate}</h6>
+                                            </div>
+                                        })}
                                     </div>
                                 </div>
                             </div>

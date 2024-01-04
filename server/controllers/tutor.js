@@ -220,7 +220,7 @@ let post_edu_form = async (req, res) => {
         countryForMast,
         countryForCert,
         countryForDoc,
-        countryForAssociate, resume } = req.body;
+        countryForAssociate, resume, cert_file_name, deg_file_name } = req.body;
 
 
     let duplicate = await connecteToDB.then(async (poolConnection) => {
@@ -248,14 +248,15 @@ let post_edu_form = async (req, res) => {
                             DoctorateCollege, DoctorateState, DoctorateGradYr, Degree,DegreeFile, DegreeState, 
                             DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, 
                             NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId,DegCountry,
-                            MastCountry,CertCountry, DocCountry, BachCountry,Resume)
+                            MastCountry,CertCountry, DocCountry, BachCountry,Resume,CertFileName, DegFileName)
                         VALUES ('${level}', '${experience}', '${university1}',
                         '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
                         '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}','${state4}',
                         '${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}',
                         '${language}','${state6}','${otherang}',@WorkExperience, '${user_id}',
                         '${countryForDeg}','${countryForMast}',
-                        '${countryForCert}','${countryForDoc}','${countryForAssociate}','${resume}') `
+                        '${countryForCert}','${countryForDoc}','${countryForAssociate}','${resume}', 
+                        '${cert_file_name}','${deg_file_name}') `
                 )
 
                 resultSet.then((result) => {
@@ -299,7 +300,7 @@ let post_edu_form = async (req, res) => {
                          CertCountry= '${countryForCert}',
                           DocCountry='${countryForDoc}',
                           BachCountry='${countryForAssociate}',
-                          Resume='${resume}'
+                          Resume='${resume}', CertFileName= '${cert_file_name}',DegFileName= '${deg_file_name}'
                           WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
                         `
                 )
@@ -1467,6 +1468,9 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(te.College2 AS VARCHAR(MAX)) as MastCollege,
                         CAST(te.College2State AS VARCHAR(MAX)) as MastState,
                         CAST(te.College2StateYear AS VARCHAR(MAX)) as MastYr,
+                        CAST(te.Resume AS VARCHAR(MAX)) As Resume,
+                        CAST(te.CertFileName AS VARCHAR(MAX)) As CertFileName,
+                        CAST(te.DegFileName AS VARCHAR(MAX)) As DegFileName,
 
 
 
@@ -1541,18 +1545,22 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(te.College2 AS VARCHAR(MAX)),
                         CAST(te.College2State AS VARCHAR(MAX)),
                         CAST(te.College2StateYear AS VARCHAR(MAX)),
-
+                        CAST(te.Resume AS VARCHAR(MAX)) ,
+                        CAST(te.CertFileName AS VARCHAR(MAX)),
+                        CAST(te.DegFileName AS VARCHAR(MAX)) ,
 
                         CAST(tr.IntroSessionDiscount AS VARCHAR(MAX)),
                         CAST(tr.CancellationPolicy AS VARCHAR(MAX))
 
                     `
                 );
-                const record = result.recordset[0];
+                const record = result.recordset[0] || null;
+                if (!record) return res.status(200).send({})
                 const formattedResult =
                 {
-                    ...record, Subjects: JSON.parse(record.Subjects ?? '[]'),
-                    OtherLang: JSON.parse(record.OtherLang), NativeLang: JSON.parse(record.NativeLang)
+                    ...record, Subjects: JSON.parse(record.Subjects.length ?
+                        record.Subjects : '[]'),
+                    OtherLang: JSON.parse(record.OtherLang ?? '[]'), NativeLang: JSON.parse(record.NativeLang ?? '[]')
                 }
                 res.status(200).send(formattedResult)
             }

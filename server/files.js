@@ -5,7 +5,8 @@ const unlinkAsync = fs.promises.unlink;
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        const destinationPath = path.resolve(__dirname, 'uploads');
+        cb(null, destinationPath);
     },
     filename: (req, file, cb) => {
         const fileName = req.query.fileName;
@@ -54,8 +55,5 @@ const handleFileDeletion = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
-
-
 
 module.exports = { upload, handleFileDeletion };

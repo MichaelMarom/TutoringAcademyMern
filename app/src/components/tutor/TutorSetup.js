@@ -72,7 +72,8 @@ const TutorSetup = () => {
     { grade: "12th grade" },
     { grade: "Academic" },
   ]
-  console.log(video, photo, video.length)
+
+  console.log(video, photo, video?.length)
 
   let [tutorGrades, setTutorGrades] = useState([]);
   const isValid = isPhoneValid(cell);
@@ -236,22 +237,14 @@ const TutorSetup = () => {
   }, [fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime, response_zone, intro, motivation, headline, photo, video, tutorGrades, tutor])
 
   const saveTutorSetup = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!isValid) {
       toast.warning("please enter the correct phone number");
       return;
     }
-    if (!photo) {
-      toast.warning("please upload a photo");
-      return;
-    }
-    if (!video) {
-      toast.warning("please upload your intro video");
-      return;
-    }
-    if (!tutorGrades.length > 0) {
-      toast.warning("Please select at least one grade");
-      return;
+    if (!video || !photo) toast.warning('You did not select photo and or/Video. SO your Profile will remian in Pending state until you do not add them!')
+    if (!tutorGrades?.length > 0) {
+      return toast.warning("Please select at least one grade");
     }
 
     document
@@ -466,7 +459,7 @@ const TutorSetup = () => {
 
   let handleImage = () => {
     setUploadPhotoClicked(true)
-    let frame = document.querySelector(".tutor-tab-photo-frame");
+    // let frame = document.querySelector(".tutor-tab-photo-frame");
 
     let f = document.querySelector("#photo");
 
@@ -475,16 +468,16 @@ const TutorSetup = () => {
     if (type.split("/")[0] !== "image") {
       alert("Only Image Can Be Uploaded To This Field");
     } else {
-      frame.innerHTML = "";
+      // frame.innerHTML = "";
 
       let reader = new FileReader();
 
       reader.onload = (result) => {
-        let img = `<img src='${reader.result}' style='height: 100%; width: 100%; '}} alt='photo' />`;
+        // let img = `<img src='${reader.result}' style='height: 100%; width: 100%; '}} alt='photo' />`;
 
         set_photo(reader.result);
 
-        frame?.insertAdjacentHTML("afterbegin", img);
+        // frame?.insertAdjacentHTML("afterbegin", img);
       };
       reader.readAsDataURL([...f.files][0]);
     }
@@ -508,7 +501,7 @@ const TutorSetup = () => {
   };
 
   let counter = (inputs, elem, cb, length) => {
-    let charLength = inputs.length;
+    let charLength = inputs?.length;
     cb(inputs);
 
     if (charLength < length) {
@@ -608,7 +601,6 @@ const TutorSetup = () => {
                     onChange={(e) => set_fname(e.target.value)}
                     placeholder="First Name"
                     value={fname}
-                    disabled
                     type="text"
                     id="fname"
                     className="form-control m-0"
@@ -630,13 +622,12 @@ const TutorSetup = () => {
                     Middle
                   </label>
                   <input
-
-                    // onInput={(e) => set_mname(e.target.value)}
+                    onInput={(e) => set_mname(e.target.value)}
                     placeholder="Middle Name"
                     value={mname}
                     className="form-control m-0"
                     type="text"
-                    disabled
+                    // disabled
                     id="mname"
                   />
                 </div>
@@ -656,14 +647,13 @@ const TutorSetup = () => {
                     Last Name
                   </label>
                   <input
-
                     required
-                    // onInput={(e) => set_sname(e.target.value)}
+                    onInput={(e) => set_sname(e.target.value)}
                     placeholder="Last Name"
                     value={lname}
                     type="text"
                     id="lname"
-                    disabled
+                    // disabled
                     className="form-control m-0"
                   />
                 </div>
@@ -877,12 +867,12 @@ const TutorSetup = () => {
                     {countryList}
                   </select>
                 </div>
-                {(options[country] ?? []).length ?
+                {(options[country] ?? [])?.length ?
 
                   <div
                     className="mb-2"
                     style={{
-                      display: (options[country] ?? []).length ? 'flex' : 'none',
+                      display: (options[country] ?? [])?.length ? 'flex' : 'none',
                       width: "100%",
 
                       alignItems: "center",
@@ -895,7 +885,7 @@ const TutorSetup = () => {
                       State/Province
                     </label>
 
-                    {(options[country] ?? []).length ?
+                    {(options[country] ?? [])?.length ?
                       <select
                         className="form-select "
                         required
@@ -1008,7 +998,7 @@ const TutorSetup = () => {
                     </div>
                     <div className="col-md-4">
                       <div className="text-center">
-                        {/* {video.length ? */}
+                        {/* {video?.length ? */}
                         <input
                           data-type="file"
                           defaultValue={''}

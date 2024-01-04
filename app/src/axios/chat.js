@@ -32,6 +32,11 @@ export const post_message = async (body) => {
     }
 }
 
+/**
+ * 
+ * @param {{User1ID:"String", User2ID:"String"}} body 
+ * @returns 
+ */
 export const create_chat = async (body) => {
     try {
         console.log(body)
@@ -44,7 +49,7 @@ export const create_chat = async (body) => {
     }
 }
 
-export const set_online_status = async (isOnline, id,role) => {
+export const set_online_status = async (isOnline, id, role) => {
     try {
         const { data } = await apiClient.post(`/chat/online/${id}/${role}`, { Online: isOnline });
         return data

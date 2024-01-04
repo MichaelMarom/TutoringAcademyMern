@@ -116,7 +116,3 @@ export const capitalizeFirstLetter = (name) => {
 export function getFileExtension(filename) {
   return filename.split('.').pop();
 }
-
-export const escapeHtml = (unsafeHtml) => {
-  return unsafeHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-};

@@ -4,6 +4,8 @@ import ImageResize from 'quill-image-resize-module-react';
 import ImageDropAndPaste from 'quill-image-drop-and-paste'
 import 'react-quill/dist/quill.snow.css';
 
+import './styles.css'
+
 Quill.register('modules/imageResize', ImageResize);
 // Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 

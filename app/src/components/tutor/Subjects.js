@@ -158,7 +158,7 @@ const Subjects = () => {
 
                     <div className="highlight d-flex flex-column align-items-center">
                         <p>
-                            Select your faculty above, then from the list below click on the 'Edit' button for your subject (you can select more than one). Type your rate, select the school grades you tutor for this subject. and SAVE. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking here:
+                            Select your faculty above, then from the list below click on the 'Edit' button for each subject that you teach (you can select more than one). Type your rate, select the school grade(s) you tutor for this subject and SAVE. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking here:
                         </p>
                         <Button className='btn-primary btn-small text-center' type="button"
                             handleClick={() => setShowAddNewSubjModal(true)} > Search/Add New Subject</Button>

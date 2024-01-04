@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { COLUMNS } from '../../Tables/Me/columns';
 import { useEffect } from 'react';
 import { get_my_data } from '../../axios/student';
 import moment from 'moment-timezone'

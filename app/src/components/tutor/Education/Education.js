@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 
-import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_form_two } from '../../../axios/tutor';
+import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_edu_form, upload_form_two } from '../../../axios/tutor';
 import career from '../../../images/Experience-photo50.jpg';
 
 import Select from 'react-select'
@@ -13,11 +13,8 @@ import Loading from '../../common/Loading';
 import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES, languages } from '../../../constants/constants'
 import { getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
-import FileUpload from '../../common/FileUpload/FileUpload';
 import PDFViewer from './PDFViewer'
 import Button from '../../common/Button';
-
-
 
 const languageOptions = languages.map((language) => ({
     value: language,
@@ -35,6 +32,7 @@ const Education = () => {
         const selectedValue = e.target.value;
         set_expiration(selectedValue);
     }
+
     function handleBlur() {
         if (expiration < getToday()) {
             set_expiration(getToday());
@@ -95,6 +93,9 @@ const Education = () => {
     let [db_edu_level, set_db_edu_level] = useState('');
     let [db_edu_cert, set_db_edu_cert] = useState('');
     const [fetchingEdu, setFetchingEdu] = useState(false);
+    const [deg_file_name, set_deg_file_name] = useState('');
+    const [cert_file_name, set_cert_file_name] = useState('');
+
     const options = {
         "Australia": AUST_STATES,
         "USA": US_STATES,
@@ -112,6 +113,10 @@ const Education = () => {
             setCertificateFile(null)
             setCertFileContent(null)
         }
+        if (level === 'Undergraduate Student') {
+            set_graduateYr1('current')
+        }
+
         // eslint-disable-next-line
     }, [level, certificate])
 
@@ -129,11 +134,10 @@ const Education = () => {
         set_d_list(d)
     }, [])
 
-
     let AcademyId = window.localStorage.getItem('tutor_user_id');
 
     let saver = () => {
-        let response = upload_form_two(level,
+        let response = upload_edu_form(level,
             university1,
             university2,
             university3,
@@ -162,7 +166,9 @@ const Education = () => {
             countryForCert,
             countryForDoc,
             countryForAssociate,
-            resumePath
+            resumePath,
+            cert_file_name,
+            deg_file_name
         )
         return response;
     }
@@ -174,9 +180,9 @@ const Education = () => {
     const handleEditorChange = (value) => {
         set_workExperience(value);
     };
-    
+
     useEffect(() => {
-        if (files.AcademyId !== undefined) {
+        if (files?.AcademyId !== undefined) {
             let fieldValues = {
                 level,
                 university1,
@@ -264,7 +270,6 @@ const Education = () => {
             .then((result) => {
                 if (result.length > 0) {
                     let data = result[0];
-                    console.log(data);
                     set_files(data)
                     set_workExperience(data.WorkExperience)
                     set_university1(data.College1)
@@ -305,7 +310,11 @@ const Education = () => {
 
                     set_expiration(data.CertificateExpiration)
                     set_experience(data.EducationalLevelExperience)
+
                     set_resumePath(data.Resume);
+                    set_deg_file_name(data.DegFileName)
+                    set_cert_file_name(data.CertFileName)
+
                     setDataFetched(true)
                 } else {
                     set_files(null)
@@ -400,7 +409,7 @@ const Education = () => {
         set_certificate(e.target.value)
     }
 
-    const handleFileUpload = (event) => {
+    const handleDegFileUpload = (event) => {
         const file = event.target.files[0];
 
         if (file) {
@@ -410,6 +419,9 @@ const Education = () => {
                 setDegreeFileContent(base64);
             };
             reader.readAsDataURL(file);
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const fileName = `${AcademyId}-degree-${level}.${fileExtension}`;
+            set_deg_file_name(fileName)
             setDegreeFile(file);
         }
     }
@@ -427,10 +439,9 @@ const Education = () => {
         if (degreeFile) {
             const formData = new FormData();
             formData.append('file', degreeFile);
-
             try {
-                const filePrefix = `${AcademyId}-degree-${degree}`
-                const response = await upload_file(formData, filePrefix)
+
+                const response = await upload_file(formData, deg_file_name)
 
                 console.log(response.data);
             } catch (error) {
@@ -440,6 +451,7 @@ const Education = () => {
             console.warn('Please select a file before uploading.');
         }
     };
+
     const handleUploadResumeToServer = async () => {
         if (resumeFile) {
             const previousFilePath = await getPreviousFilePathFromDB(AcademyId);
@@ -461,14 +473,15 @@ const Education = () => {
             console.warn('Please select a file before uploading.');
         }
     };
+
     const handleUploadCertificateToServer = async () => {
         if (certificateFile) {
             const formData = new FormData();
             formData.append('file', certificateFile);
 
             try {
-                const filePrefix = `${AcademyId}-certificate-${certificate}`
-                const response = await upload_file(formData, filePrefix)
+
+                const response = await upload_file(formData, cert_file_name)
 
                 console.log(response.data.filePath);
             } catch (error) {
@@ -490,6 +503,9 @@ const Education = () => {
             };
             reader.readAsDataURL(file);
             setCertificateFile(file);
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            const fileName = `${AcademyId}-certificate-${certificate}.${fileExtension}`;
+            set_cert_file_name(fileName)
         }
     }
 
@@ -563,10 +579,17 @@ const Education = () => {
                         {level !== 'No Academic Education' && level.length ? (
                             <>
                                 <div className="row mt-3 p-3 shadow  border shadow">
-                                    <h6 className='border-bottom'>Bachelor Degree</h6>
+                                    {
+                                        <h6 className='border-bottom'>
+                                            {(level === 'Associate Degree' ||
+                                                level === 'Undergraduate Student') ?
+                                                'College' : 'Bachelor Degree'}
+                                        </h6>
+                                    }
                                     <div className='d-flex justify-content-between'>
                                         <div className="col-md-3">
-                                            <label className="text-secondary" htmlFor="university1">{level === 'Associate Degree' ?
+                                            <label className="text-secondary" htmlFor="university1">{(level === 'Associate Degree' ||
+                                                level === 'Undergraduate Student') ?
                                                 'College Name' : 'Bachelor Degree Institute:'}</label>
                                             <input
                                                 type="text"
@@ -623,7 +646,7 @@ const Education = () => {
 
                                         <div className="col-md-3">
                                             <label className="text-secondary" htmlFor="yr1">Graduation Year:</label>
-                                            <select
+                                            {level === 'Undergraduate Student' ? <div>{graduateYr1}</div> : <select
                                                 id="yr1"
                                                 className="form-control m-0 w-100"
                                                 onChange={(e) => set_graduateYr1(e.target.value)}
@@ -637,8 +660,9 @@ const Education = () => {
                                                         {item}
                                                     </option>
                                                 ))}
-                                            </select>
-                                        </div></div>
+                                            </select>}
+                                        </div>
+                                    </div>
 
                                 </div>
                                 {
@@ -824,7 +848,7 @@ const Education = () => {
                                                             name="degreeFile"
                                                             disabled={!editMode}
                                                             className="form-control m-0"
-                                                            onChange={handleFileUpload}
+                                                            onChange={handleDegFileUpload}
                                                             required
                                                         />
                                                     </div>
@@ -1037,7 +1061,8 @@ const Education = () => {
 
                         </div>
                     </div>
-                    <div className="tutor-tab-education-experience" style={{ marginTop: "75px" }}>
+                    <div className="tutor-tab-education-experience"
+                        style={{ marginTop: "75px" }}>
                         <div className="education-work-experience-logo">
                             <img
                                 src={career}
@@ -1090,9 +1115,8 @@ const Education = () => {
                         onEdit={handleEditClick}
                         unSavedChanges={unSavedChanges} />
                 </form>
-            </div >
-        </div >
-
+            </div>
+        </div>
     );
 }
 

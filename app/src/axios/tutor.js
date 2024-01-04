@@ -218,13 +218,13 @@ export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, a
 }
 
 
-export let upload_form_two = (level, university1, university2, university3, degree, degreeFile, certificate,
+export let upload_edu_form = (level, university1, university2, university3, degree, degreeFile, certificate,
     certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1,
     graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
     countryForMast,
     countryForCert,
     countryForDoc,
-    countryForAssociate, resume) => {
+    countryForAssociate, resume, cert_file_name, deg_file_name) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/edu', {
@@ -234,7 +234,7 @@ export let upload_form_two = (level, university1, university2, university3, degr
             countryForMast,
             countryForCert,
             countryForDoc,
-            countryForAssociate, resume
+            countryForAssociate, resume, cert_file_name, deg_file_name
         })
             .then((result) => {
                 resolve(result.data)

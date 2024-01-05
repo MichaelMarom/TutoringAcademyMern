@@ -15,7 +15,7 @@ import Signup from "./pages/Signup";
 import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
-import { setShortlist, setShortlistAction } from "./redux/student_store/shortlist";
+import { setShortlist } from "./redux/student_store/shortlist";
 import { get_my_data } from "./axios/student";
 
 import { setStudent } from "./redux/student_store/studentData";
@@ -42,6 +42,8 @@ const App = () => {
   const loggedInUserDetail = studentLoggedIn ? student : tutor;
   const role = studentLoggedIn ? 'student' : 'tutor';
   const { shortlist, isLoading } = useSelector(state => state.shortlist)
+  const nullValues = ['undefined', 'null']
+
 
   //ids
   useEffect(() => {
@@ -59,7 +61,7 @@ const App = () => {
   useEffect(() => {
     if (user[0] && user[0].role !== 'admin')
       get_tutor_setup_by_userId(user[0].SID).then((result) => {
-        localStorage.setItem("tutor_user_id", result[0]?.AcademyId);
+        localStorage.setItem("tutor_user_id", result[0]?.AcademyId || null);
       });
   }, [user]);
 
@@ -73,14 +75,12 @@ const App = () => {
       moment.tz.setDefault(tutor.timeZone);
     }
   }, [tutor, student])
-
+  console.log(typeof (studentUserId), 'typeof studentuserId', studentUserId)
   useEffect(() => {
     dispatch(setShortlist())
     const getStudentDetails = async () => {
-
-      if (studentUserId === "undefined") {
-        dispatch(setStudent({}));
-        return
+      if (nullValues.includes(studentUserId)) {
+        return dispatch(setStudent({}));
       }
       const res = await get_my_data(studentUserId)
       dispatch(setStudent(res[1][0][0]));

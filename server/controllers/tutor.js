@@ -1250,11 +1250,13 @@ let get_tutor_market_data = async (req, res) => {
 }
 
 let get_tutor_students = async (req, res) => {
-    try {
-        const { academyId } = req.params;
+    marom_db(async (config) => {
+        try {
+            const { academyId } = req.params;
+            const sql = require('mssql');
 
-        const students = await connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`
+            const poolConnection = await sql.connect(config)
+            const students = await poolConnection.request().query(`
             SELECT * FROM StudentShortList as ss join StudentSetup as st on
             cast(st.AcademyId as varchar(max)) = cast(ss.Student as varchar(max)) join StudentBookings as sb
             on cast(sb.studentId as varchar)= cast(ss.Student  as varchar) and 
@@ -1262,43 +1264,43 @@ let get_tutor_students = async (req, res) => {
             sb.subjectName=cast(ss.Subject as varchar)
             WHERE  CONVERT(VARCHAR, ss.AcademyId) = '${academyId}'
            `)
-                .then((result) => result.recordset)
-        );
-        const formattedResult = students.map(student => {
-            const reservedSlots = JSON.parse(student.reservedSlots || '[]');
-            const bookedSlots = JSON.parse(student.bookedSlots || '[]');
-            // const 
-            const allPastSession = reservedSlots.concat(bookedSlots).filter((session) =>
-                new Date(session.end) < new Date());
-            allPastSession.sort((a, b) => a.date - b.date);
-            const oldestSession = allPastSession.length > 0 ? allPastSession[0] : null;
-            const latestSession = allPastSession.length > 0 ? allPastSession[allPastSession.length - 1] : null;
-            const sumOfRates = allPastSession.reduce((total, session) => {
-                const rateValue = parseFloat(session.rate.replace('$', ''));
-                return total + rateValue;
-            }, 0);
+           
+            const formattedResult = students.recordset.map(student => {
+                const reservedSlots = JSON.parse(student.reservedSlots || '[]');
+                const bookedSlots = JSON.parse(student.bookedSlots || '[]');
+                // const 
+                const allPastSession = reservedSlots.concat(bookedSlots).filter((session) =>
+                    new Date(session.end) < new Date());
+                allPastSession.sort((a, b) => a.date - b.date);
+                const oldestSession = allPastSession.length > 0 ? allPastSession[0] : null;
+                const latestSession = allPastSession.length > 0 ? allPastSession[allPastSession.length - 1] : null;
+                const sumOfRates = allPastSession.reduce((total, session) => {
+                    const rateValue = parseFloat(session.rate.replace('$', ''));
+                    return total + rateValue;
+                }, 0);
 
-            return {
-                id: student.AcademyId[1],
-                online: student.Online,
-                photo: student.Photo === 'undefined' ? null : student.Photo,
-                screenName: student.ScreenName[1],
-                subject: student.Subject,
-                country: student.Country,
-                gmt: student.GMT,
-                grade: student.Grade,
-                totalHours: allPastSession.length,
-                dateStart: allPastSession.length ? oldestSession.start : null,
-                dateLast: allPastSession.length ? latestSession.start : null,
-                totalGross: '',
-                totalNet: sumOfRates
-            }
-        })
-        res.status(200).json(formattedResult);
-    } catch (error) {
-        console.error('Error fetching tutor students:', error);
-        res.status(400).json({ error: error.message });
-    }
+                return {
+                    id: student.AcademyId[1],
+                    online: student.Online,
+                    photo: student.Photo === 'undefined' ? null : student.Photo,
+                    screenName: student.ScreenName[1],
+                    subject: student.Subject,
+                    country: student.Country,
+                    gmt: student.GMT,
+                    grade: student.Grade,
+                    totalHours: allPastSession.length,
+                    dateStart: allPastSession.length ? oldestSession.start : null,
+                    dateLast: allPastSession.length ? latestSession.start : null,
+                    totalGross: '',
+                    totalNet: sumOfRates
+                }
+            })
+            res.status(200).json(formattedResult);
+        } catch (error) {
+            console.error('Error fetching tutor students:', error);
+            res.status(400).json({ error: error.message });
+        }
+    })
 }
 
 let getSessionsDetails = async (req, res) => {

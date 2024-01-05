@@ -50,10 +50,7 @@ export let get_tutor_new_subject = () => {
 }
 
 export let get_tutor_data = () => {
-
     return new Promise((resolve, reject) => {
-
-
         apiClient.get('/admin/tutor-data', {})
             .then((result) => {
                 resolve(result.data)
@@ -61,14 +58,12 @@ export let get_tutor_data = () => {
             .catch((err) => {
                 reject(err)
             })
-
     })
 }
 
 export let set_tutor_status = (Id, Status) => {
 
     return new Promise((resolve, reject) => {
-
 
         apiClient.post('/admin/set-tutor-status', {
             Id, Status

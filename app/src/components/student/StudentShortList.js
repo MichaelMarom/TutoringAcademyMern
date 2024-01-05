@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion';
-import containerVariants from '../constraint';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTutor } from '../../redux/student_store/selectedTutor';
@@ -53,31 +51,31 @@ const StudentShortList = () => {
         { Header: 'Tutor Name', width: "7%", },
         { Header: 'Country', width: "7%", },
         {
-            Header: 'Tutor Local Time',
+            Header: 'Tutor Local Time (UTC).',
             width: "7%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="The time show the local time (UTC) at the tutor's location." />
         },
         {
-            Header: "Time Zone Diff",
+            Header: "Be Aware Time Zone Diff",
             width: "7%",
             tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
                 text="The numbers below calculate the difference between your time zone and the tutor. When difference is between +/-3 to 6 Hours, we provide orange background. And if is 7 time zones or more, we show blinking red background. When you book your lesson on the tutor's calendar, it will be shown on your calendar adjusted to your local time (UTC). " />
         },
         {
-            Header: 'Tutor Schedule',
+            Header: 'View Tutor Schedule',
             width: "7%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomright'
                 text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
         },
         {
-            Header: 'Students FeedBack',
+            Header: 'Consult Students FeedBack',
             width: "7%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="To view tutor's feedback as graded by other students, click the button below." />
         },
         {
-            Header: 'Tutor Profile',
+            Header: 'Examine Tutor Profile',
             width: "7%",
             tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
                 text="To view the full tutor's profile, include introduction video, education credentials, verifications, work experience, and more, Click on the button below." />
@@ -127,7 +125,7 @@ const StudentShortList = () => {
 
     if (shortlistLoading) return <Loading />
     return (
-        <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="form-intro" style={{ overflow: "hidden" }}>
+        <>
             <div className="form-into-prompt shadow-sm " style={{ padding: '20px', height: "94vh" }}>
                 <div className='d-flex rounded justify-content-between
                          align-items-center
@@ -236,8 +234,7 @@ const StudentShortList = () => {
                 </div>
             </div>
             <Actions saveDisabled="true" />
-
-        </motion.div>
+        </>
     );
 }
 

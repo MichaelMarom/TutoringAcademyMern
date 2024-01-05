@@ -22,19 +22,29 @@ const LoginPage = () => {
         e.preventDefault();
         setLoading(true)
         const result = await login(loginForm);
-        console.log(result)
+        localStorage.setItem('tutor_user_id', null)
+        localStorage.setItem('student_user_id', null)
+        localStorage.setItem('student_screen_name', null)
+        localStorage.setItem('tutor_screen_name', null)
+        localStorage.setItem('user', null)
+        localStorage.setItem('user_role', null)
+        localStorage.setItem('logged_user', null)
+
+
         if (result.status === 200) {
             toast.success("Login Successfull!");
             setLoginForm({});
             localStorage.setItem('user', JSON.stringify(result.data));
+            localStorage.setItem('user_role', result.data[0].role)
+
             const getUserSetup = await get_user_setup_detail(result.data[0].role, result.data[0].SID);
             dispatch(setUser(result.data))
             if (result.data[0].role === 'admin') {
-                navigate(`/${result.data[0].role}/tutor-data`);
-                return
+                return navigate(`/${result.data[0].role}/tutor-data`);
+
             }
             localStorage.setItem(`${result.data[0].role}_user_id`, getUserSetup.AcademyId)
-            navigate(`/${result.data[0].role}/setup`);
+            navigate(`/${result.data[0].role}/intro`);
         }
         else {
             toast.warning(result.message)

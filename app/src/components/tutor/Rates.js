@@ -44,7 +44,7 @@ const Rates = () => {
   const fetchDataFromApi = () => {
     get_tutor_rates(window.localStorage.getItem("tutor_user_id"))
       .then((result) => {
-        if (Object.keys(result[0]).length) {
+        if (result.length) {
           setDbState(result[0]);
           setMultiStudentHourlyRate(result[0].MutiStudentHourlyRate);
           setSelectedCancPolicy(result[0].CancellationPolicy);
@@ -96,13 +96,6 @@ const Rates = () => {
             document.querySelector("#freeDemoNo").checked = true;
           }
 
-          if (result[0].ConsentRecordingLesson === "yes") {
-            document.querySelector("#consentRecordingYes").checked = true;
-            document.querySelector("#consentRecordingNo").checked = false;
-          } else {
-            document.querySelector("#consentRecordingYes").checked = false;
-            document.querySelector("#consentRecordingNo").checked = true;
-          }
         } else {
         }
       })
@@ -110,9 +103,10 @@ const Rates = () => {
         console.log(err);
       });
   }
+
   useEffect(() => {
     fetchDataFromApi()
-       // eslint-disable-next-line
+    // eslint-disable-next-line
   }, []);
 
   const currentState = {
@@ -128,6 +122,8 @@ const Rates = () => {
   };
 
   const compareStates = () => {
+    console.log(dbState, 'dbState')
+    if (!(Object.keys(dbState).length)) return setChangesMade(false)
     for (const key in currentState) {
       if (currentState[key] !== dbState?.[key]) {
         setChangesMade(true);
@@ -139,7 +135,7 @@ const Rates = () => {
 
   useEffect(() => {
     compareStates();
-       // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [currentState, dbState]);
 
   let saver = async () => {
@@ -160,7 +156,6 @@ const Rates = () => {
     return response;
   };
 
-
   useEffect(() => {
     let next = document.querySelector(".tutor-next");
 
@@ -174,6 +169,7 @@ const Rates = () => {
     { Header: "Select" },
     { Header: "Discount" },
   ];
+
   let subscription_discount = [
     { discount: "0%", hours: '1-5' },
     { discount: "6.0%", hours: '6-11' },
@@ -200,7 +196,6 @@ const Rates = () => {
     }
     setLoading(false)
   }
-
 
   useEffect(() => {
     setTimeout(() => {
@@ -465,7 +460,7 @@ const Rates = () => {
                 />
                 <label className="form-check-label" for="flexSwitchCheckChecked">
                   My hourly Charge for teaching a public or private school class (up to 30 students).
-                  Only tutors that fill up this field are being shown to schools. 
+                  Only tutors that fill up this field are being shown to schools.
                 </label>
 
 

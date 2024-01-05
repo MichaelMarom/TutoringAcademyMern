@@ -19,7 +19,7 @@ const slice = createSlice({
             state.shortlist = action.payload;
         },
         setShortlist: (state, action) => {
-            console.log('ffe, ',action.payload)
+            console.log('ffe, ', action.payload)
             state.isLoading = false;
             state.shortlist = action.payload
         }
@@ -33,8 +33,11 @@ export const setShortlistAction = slice.actions.setShortlist
 export function setShortlist() {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading())
-        if (!window.localStorage.getItem('student_user_id')) {
-            return [];
+        const nullValues = ['undefined', 'null']
+
+        if (!window.localStorage.getItem('student_user_id') ||
+            nullValues.includes(localStorage.getItem('student_user_id'))) {
+            return dispatch(slice.actions.setShortlist([]));
         }
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
         result.sort(function (a, b) {

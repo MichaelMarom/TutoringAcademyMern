@@ -1,7 +1,7 @@
 
 
 export const COLUMNS = [
-    
+
     {
         Header: 'Status',
         accessor: 'Status',
@@ -50,10 +50,10 @@ export const COLUMNS = [
         Header: 'BG Verified',
         accessor: 'BG Verified',
     },
-    /*{
-        Header: 'Video',
-        accessor: 'Video',
-    }*/
+    {
+        Header: 'Action',
+        accessor: 'Action',
+    }
 ];
 
 

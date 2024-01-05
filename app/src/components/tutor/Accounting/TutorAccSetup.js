@@ -40,11 +40,10 @@ const TutorAccSetup = ({ sessions }) => {
 
     const totalNet = sessions.reduce((sum, session) => sum + session.net, 0)
 
-
     const validate = () => {
         const fields = { SSH: { value: ssh, pattern: /^\d{3}-\d{2}-\d{4}$/ } };
 
-        if (fields.SSH.value.length && !fields.SSH.pattern.test(fields.SSH.value)) {
+        if (fields.SSH.value?.length && !fields.SSH.pattern.test(fields.SSH.value)) {
             toast.warning('Please follow XXX-XX-XXXX pattern for SSH');
             return false
         }

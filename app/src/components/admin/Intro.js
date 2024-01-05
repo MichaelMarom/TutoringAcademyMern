@@ -1,12 +1,5 @@
-import { useTable } from 'react-table';
-import { COLUMNS, DATA } from '../../Tables/Prompt/columns';
-import { useMemo } from 'react';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useEffect } from 'react';
-import axios from 'axios';
-import { useCallback } from 'react';
-import containerVariants from '../constraint';
 import RichTextEditor from '../common/RichTextEditor/RichTextEditor';
 import Actions from '../common/Actions';
 import { get_adminConstants, post_termsOfUse } from '../../axios/admin';
@@ -73,29 +66,24 @@ const Intro = () => {
     };
 
     return (
-        <>
-            <motion.div variants={containerVariants} initial='hidden' animate='visible' exit='exit' className="tutor-tab">
+        <form onSubmit={handleSave}>
+            <div className='px-4'>
+                <RichTextEditor
+                    value={intro}
+                    onChange={handleEditorChange}
+                    readOnly={!editMode}
+                    placeholder="Enter Your Work Experience"
+                // required
+                />
+            </div>
+            <Actions
+                saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
+                editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
+                onEdit={handleEditClick}
+                unSavedChanges={unSavedChanges}
 
-                <form onSubmit={handleSave}>
-                    <div className='px-4'>
-                        <RichTextEditor
-                            value={intro}
-                            onChange={handleEditorChange}
-                            readOnly={!editMode}
-                            placeholder="Enter Your Work Experience"
-                        // required
-                        />
-                    </div>
-                    <Actions
-                        saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
-                        editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
-                        onEdit={handleEditClick}
-                        unSavedChanges={unSavedChanges}
-
-                    />
-                </form>
-            </motion.div>
-        </>
+            />
+        </form>
     );
 }
 

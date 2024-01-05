@@ -88,7 +88,7 @@ const TutorProfile = () => {
     if (fetching)
         return <Loading />
     else if (!Object.keys(data).length)
-        return <h5 className='text-danger p-5'>Please complete your profile first!</h5>
+        return <h5 className='text-danger p-5'>In order to view your profile, Please first must to complete uploading your Photo, Video, Diploma or Certification!</h5>
     return (
         <div style={{ background: "lightGray", height: "93vh", overflowY: "auto" }}>
             <div className='container'>
@@ -149,7 +149,7 @@ const TutorProfile = () => {
                                 gap: "10px"
                             }}>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'res time'} />
+                                <ToolTip text={'The number of hours the tutor will respond to a student (within tutor UTC business time).'} />
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
                                     Response Time -
@@ -158,7 +158,7 @@ const TutorProfile = () => {
                             </div>
 
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'canc policy'} />
+                                <ToolTip text={'The number of hours before the lesson starts where student can cancel the lesson with no penalty.'} />
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
                                     Cancellation Policy -
@@ -166,7 +166,7 @@ const TutorProfile = () => {
                                 <h6 className='m-0'>{data.CancellationPolicy}</h6>
                             </div>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'intro lesson discount'} />
+                                <ToolTip text={'When the tutor provide a discount of 50% for the student booking the INTRODUCTION lesson, the on/off switch is showing green color. '} />
                                 <div className='text-primary d-flex align-items-center' style={{ gap: "10px", fontSize: "16px", fontWeight: "bold" }}>
                                     <h6 className='m-0'>
                                         50% Off on Intro Lesson

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { get_tutor_setup } from "../../axios/tutor";
+import { useSelector } from "react-redux";
 
 
 const Header = () => {
-
 
     let nav = useNavigate()
     let location = useLocation()
@@ -13,7 +12,7 @@ const Header = () => {
     let [screen_name, set_screen_name] = useState(window.localStorage.getItem('tutor_screen_name'));
 
     let [tutorState, setTutorState] = useState('Pending')
-
+    const { tutor } = useSelector(state => state.tutor);
 
     useEffect(() => {
         const element = document.getElementById('tutor-tab-header-list-active');
@@ -44,17 +43,11 @@ const Header = () => {
     }, [localStorage.getItem('tutor_screen_name')]);
 
     useEffect(() => {
-        let user_id = window.localStorage.getItem('tutor_user_id');
-        get_tutor_setup(user_id)
-            .then((result) => {
-
-                setTutorState(result[0].Status)
-            })
-            .catch(err => console.log(err))
-    }, []);
+        setTutorState(tutor.Status)
+    }, [tutor]);
 
     useEffect(() => {
-        const currentTab = location.pathname.split('/').pop();
+        const currentTab = location.pathname;
         setActiveTab(currentTab)
     }, [location])
 
@@ -63,11 +56,11 @@ const Header = () => {
         nav(`${url}`)
 
         let urls = [
-            'intro', 'setup', 'education', 'rates', 'accounting', 'subjects', 'my-students', 'scheduling', 'term-of-use', 'market-place', 'collaboration', 'tutor-profile'
+            'intro', 'setup', 'education', 'rates', 'accounting', 'subjects', 'my-students',
+            'scheduling', 'term-of-use', 'market-place', 'collaboration', 'tutor-profile'
         ]
         let new_index = urls.indexOf(url);
         window.localStorage.setItem('tab_index', new_index)
-
     }
 
     let handle_scroll_right = () => {
@@ -87,17 +80,19 @@ const Header = () => {
         scroll_elem.scrollLeft = -w
 
     }
-
+    const statesColours = {
+        'pending': "primary",
+        'active': "success",
+        "under-review": "warning",
+        "disapproved": "danger"
+    }
 
     return (
         <>
-
-            <div className="screen-name btn-success rounded"
+            <div className={`screen-name btn-success rounded text-bg-${statesColours[tutorState]} p-2`}
                 style={{
                     display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
-                    top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px',
-                    padding: '3px 5px 0', height: '30px',
-                    background: tutorState === 'Pending' ? 'yellow' : tutorState === 'Active' ? 'green' : tutorState === 'Suspended' ? 'orange' : 'red', color: tutorState === 'Pending' ? '#000' : tutorState === 'Active' ? '#fff' : tutorState === 'Suspended' ? '#fff' : '#fff'
+                    top: '15px', zIndex: '999', fontWeight: 'bold', left: '45px',
                 }}>
                 {screen_name}
             </div>

@@ -4,6 +4,7 @@ import { wholeDateFormat } from '../../constants/constants';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import Avatar from '../common/Avatar';
 import Loading from '../common/Loading';
+import Actions from '../common/Actions'
 
 const MyStudents = () => {
   const [students, setStudents] = useState([]);
@@ -62,7 +63,12 @@ const MyStudents = () => {
           ))}
         </tbody>
       </table>
-    </div>)
+      <Actions
+        editDisabled={true}
+        saveDisabled={true}
+      />
+    </div>
+  )
 };
 
 

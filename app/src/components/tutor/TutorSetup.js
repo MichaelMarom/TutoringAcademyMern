@@ -1,5 +1,4 @@
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload, BsTrash } from "react-icons/bs";
 import moment from "moment";
@@ -12,7 +11,6 @@ import { toast } from 'react-toastify'
 import {
   post_tutor_setup,
 } from "../../axios/tutor";
-import containerVariants from "../constraint";
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
@@ -22,9 +20,8 @@ import ToolTip from '../common/ToolTip'
 
 import Actions from '../common/Actions'
 import { uploadVideo } from "../../redux/tutor_store/video";
-import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, STATES, UK_STATES, US_STATES, wholeDateFormat } from "../../constants/constants";
+import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, UK_STATES, US_STATES } from "../../constants/constants";
 import { setTutor } from "../../redux/tutor_store/tutorData";
-import SelectOrTypeInput from "../common/SelectTypeInput";
 import { unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
 
 
@@ -36,6 +33,7 @@ const isPhoneValid = (phone) => {
     return false;
   }
 };
+
 const TutorSetup = () => {
   const [editMode, setEditMode] = useState(false);
   let [fname, set_fname] = useState("");
@@ -89,6 +87,7 @@ const TutorSetup = () => {
   const [uploadVideoClicked, setUploadVideoClicked] = useState(false)
   const [userId, setUserId] = useState(JSON.parse(localStorage.getItem("user"))[0].SID)
   const [picUploading, setPicUploading] = useState(false);
+  const [savingRecord, setSavingRecord] = useState(false)
 
   const [dbCountry, setDBCountry] = useState(null)
 
@@ -152,6 +151,7 @@ const TutorSetup = () => {
   const handleEditClick = () => {
     setEditMode(!editMode);
   };
+
   //upload video
   useEffect(() => {
     const upload_video = async () => {
@@ -167,11 +167,9 @@ const TutorSetup = () => {
     upload_video()
   }, [video])
 
-  console.log(isLoading, selectedVideoOption, 'videoupd')
-
   useEffect(() => {
     const fetchTutorSetup = async () => {
-      if (tutor.AcademyId) {
+      if (tutor) {
         let data = tutor;
 
         setUserId(tutor.userId)
@@ -239,19 +237,17 @@ const TutorSetup = () => {
   const saveTutorSetup = async (e) => {
     e.preventDefault()
     if (!isValid) {
-      toast.warning("please enter the correct phone number");
-      return;
+      return toast.warning("please enter the correct phone number");
     }
-    if (!video || !photo) toast.warning('You did not select photo and or/Video. SO your Profile will remian in Pending state until you do not add them!')
+    if (!video || !photo) toast.warning('Since You did not uploaded your photo or Video, your Profile will stay in Pending status, and can not be activated until you upload the missing items!')
     if (!tutorGrades?.length > 0) {
       return toast.warning("Please select at least one grade");
     }
 
-    document
-      .querySelector(".save-overlay")
-      ?.setAttribute("id", "save-overlay");
-
+    setSavingRecord(true)
     let response = await saver();
+    setSavingRecord(false)
+
     if (response.status === 200) {
       dispatch(setTutor())
       window.localStorage.setItem(
@@ -259,19 +255,11 @@ const TutorSetup = () => {
         response.data[0]?.TutorScreenname
       );
       dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
-      setTimeout(() => {
-        document.querySelector(".save-overlay")?.removeAttribute("id");
-      }, 1000);
       setEditMode(false);
       toast.success("Data saved successfully");
     }
     else {
-      setTimeout(() => {
-        document.querySelector(".save-overlay")?.removeAttribute("id");
-      }, 1000);
-
       toast.danger("Error saving the Data ")
-
     }
   }
 
@@ -335,7 +323,7 @@ const TutorSetup = () => {
       // photo,
       // video,
       tutorGrades,
-      userId,
+      userId: user[0].SID,
       grades: tutorGrades
     });
     return response;
@@ -536,620 +524,608 @@ const TutorSetup = () => {
   }, [recordedVideo]);
 
 
-  if (tutorDataLoading)
+  if (tutorDataLoading || savingRecord)
     return <Loading height="80vh" />
   return (
-    <>
-      <div className="tutor-popin"></div>
-      <div className="save-overlay">
-        <span className="save_loader"></span>
-      </div>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        className="tutor-tab-setup"
-      >
-        <form onSubmit={saveTutorSetup} className="pt-4">
-          <div style={{ overflowY: "auto", height: "90%" }}>
+    <form onSubmit={saveTutorSetup} className="pt-4">
+      <div style={{ overflowY: "auto", height: "90%" }}>
 
-            <div className="tutor-setup-top-field container justify-content-between" style={{ gap: "25px" }}>
-              <div className="profile-photo-cnt " style={{ width: "15%" }}>
-                <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
-                <input
-                  type="file"
-                  data-type="file"
-                  name="photo"
-                  onChange={handleImage}
-                  style={{ display: "none" }}
-                  id="photo"
-                />
-                <div className="mb-2 w-100 h-100">
-                  {picUploading && <Loading height="10px" iconSize="20px" loadingText="uploading picture ..." />}
-                </div>
-                <div className="w-100 h-100" style={{ border: "1px dotted black" }}>
-                  {photo ? <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' /> :
-                    `You must upload your picture, and video on this tab.  
+        <div className="tutor-setup-top-field container justify-content-between" style={{ gap: "25px" }}>
+          <div className="profile-photo-cnt " style={{ width: "15%" }}>
+            <h5 style={{ whiteSpace: "nowrap" }}>Profile Photo</h5>
+            <input
+              type="file"
+              data-type="file"
+              name="photo"
+              onChange={handleImage}
+              style={{ display: "none" }}
+              id="photo"
+            />
+            <div className="mb-2 w-100 h-100">
+              {picUploading && <Loading height="10px" iconSize="20px" loadingText="uploading picture ..." />}
+            </div>
+            <div className="w-100 h-100" style={{ border: "1px dotted black" }}>
+              {photo ? <img src={photo} style={{ height: ' 100%', width: ' 100%' }} alt='photo' /> :
+                `You must upload your picture, and video on this tab.  
                   You are permitted to move to next tabs without validating that, but your account will not be activated until it’s done`
-                  }
-                </div>
+              }
+            </div>
 
-                <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto" }} type="label" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
-                  Upload
+            <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto" }} type="label" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
+              Upload
+            </label>
+          </div>
+
+
+          <div className="profile-details-cnt pt-3" style={{ width: "25%" }}>
+            <div
+              style={{
+                display: "flex",
+                margin: "0 0 10px 0",
+                padding: "0",
+
+                alignItems: "center",
+                width: "100%",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                First Name
+              </label>
+              <input
+                required
+                onChange={(e) => set_fname(e.target.value)}
+                placeholder="First Name"
+                value={fname}
+                type="text"
+                id="fname"
+                className="form-control m-0"
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                margin: "0 0 10px 0",
+                padding: "0",
+
+                alignItems: "center",
+                width: "100%",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                Middle
+              </label>
+              <input
+                onInput={(e) => set_mname(e.target.value)}
+                placeholder="Middle Name"
+                value={mname}
+                className="form-control m-0"
+                type="text"
+                // disabled
+                id="mname"
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                margin: "0 0 10px 0",
+                padding: "0",
+
+                alignItems: "center",
+                width: "100%",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                Last Name
+              </label>
+              <input
+                required
+                onInput={(e) => set_sname(e.target.value)}
+                placeholder="Last Name"
+                value={lname}
+                type="text"
+                id="lname"
+                // disabled
+                className="form-control m-0"
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                margin: "0 0 10px 0",
+                padding: "0",
+                alignItems: "center",
+
+                alignItems: "center",
+                width: "100%",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                Email
+              </label>
+              <input
+                className="form-control m-0"
+                required
+
+                placeholder="Email"
+                value={email}
+                type="text"
+                id="email"
+                readonly
+                disabled
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                margin: "0 0 10px 0",
+                padding: "0",
+
+                alignItems: "center",
+                width: "100%",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="w-50 input-group-text" htmlFor="">
+                Cell Phone
+              </label>
+
+              <PhoneInput
+                defaultCountry="us"
+                value={cell}
+                onChange={(cell) => set_cell(cell)}
+                required
+                disabled={!editMode}
+                style={{ width: "66%" }}
+              />
+
+
+
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+
+                alignItems: "center",
+                margin: "0 0 10px 0",
+                display: "flex",
+
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="" style={{ fontSize: "14px" }}>
+                Response Time <ToolTip width="200px" text="Select your response time answering the student during business time in your time zone. Please take notice that the student take this fact as one of the considurations of selecting you as tutor." />
+              </label>
+              <select
+                className="form-select m-0"
+                onInput={(e) => set_response_zone(e.target.value)}
+                value={response_zone}
+                id="resZone"
+                disabled={!editMode}
+                required
+              >
+                {response_list}
+              </select>
+
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+
+                alignItems: "center",
+                display: "flex",
+
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                Time Zone <ToolTip width="200px" text={"Select the Greenwich Mean Time (GMT) zone where you reside. It will let the student configure his time availability conducting lessons with you, when in a different time zone. "} />
+              </label>
+              <select
+                className="form-select m-0"
+                onInput={(e) => set_timeZone(e.target.value)}
+                id="timeZone"
+                disabled={!editMode}
+                value={timeZone}
+                required
+              >
+                {GMTList}
+              </select>
+
+
+            </div>
+          </div>
+
+          <div className="profile-details-cnt pt-3" style={{ width: "25%" }}
+          >
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                display: "flex",
+                margin: "0 0 10px 0",
+                padding: "0",
+
+                alignItems: "center",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="" style={{ fontSize: "14px" }}>
+                Address 1
+              </label>
+              <input
+                className="form-control m-0"
+                required
+
+                onInput={(e) => set_add1(e.target.value)}
+                placeholder="Address 1"
+                value={add1}
+                type="text"
+                id="add1"
+                disabled={!editMode}
+              />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+
+                alignItems: "center",
+                margin: "0 0 10px 0",
+                display: "flex",
+
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                Address 2
+              </label>
+              <input
+                className="form-control m-0"
+                onInput={(e) => set_add2(e.target.value)}
+                placeholder="Optional"
+                value={add2}
+                disabled={!editMode}
+                type="text"
+                id="add2"
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+                alignItems: "center",
+                margin: "0 0 10px 0",
+                display: "flex",
+
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                City/Town
+              </label>
+              <input
+                className="form-control m-0"
+                required
+                onInput={(e) => set_city(e.target.value)}
+                placeholder="City/Town"
+                type="text"
+                value={city}
+                id="city"
+                disabled={!editMode}
+              />
+            </div>
+            <div
+              style={{ display: "flex", width: "100%", alignItems: "center", margin: "0 0 10px 0", display: "flex", whiteSpace: "nowrap" }}>
+              <label className="input-group-text w-50" htmlFor="country">
+                Country
+              </label>
+              <select
+                className="form-select m-0"
+                onInput={(e) => set_country(e.target.value)}
+                id="country"
+                value={country}
+                disabled={!editMode}
+                required
+              >
+                {countryList}
+              </select>
+            </div>
+            {(options[country] ?? [])?.length ?
+
+              <div
+                className="mb-2"
+                style={{
+                  display: (options[country] ?? [])?.length ? 'flex' : 'none',
+                  width: "100%",
+
+                  alignItems: "center",
+                  display: "flex",
+
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <label className="input-group-text w-50" htmlFor="">
+                  State/Province
                 </label>
-              </div>
 
-
-              <div className="profile-details-cnt pt-3" style={{ width: "25%" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    margin: "0 0 10px 0",
-                    padding: "0",
-
-                    alignItems: "center",
-                    width: "100%",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    First Name
-                  </label>
-                  <input
-                    required
-                    onChange={(e) => set_fname(e.target.value)}
-                    placeholder="First Name"
-                    value={fname}
-                    type="text"
-                    id="fname"
-                    className="form-control m-0"
-                  />
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    margin: "0 0 10px 0",
-                    padding: "0",
-
-                    alignItems: "center",
-                    width: "100%",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    Middle
-                  </label>
-                  <input
-                    onInput={(e) => set_mname(e.target.value)}
-                    placeholder="Middle Name"
-                    value={mname}
-                    className="form-control m-0"
-                    type="text"
-                    // disabled
-                    id="mname"
-                  />
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    margin: "0 0 10px 0",
-                    padding: "0",
-
-                    alignItems: "center",
-                    width: "100%",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    Last Name
-                  </label>
-                  <input
-                    required
-                    onInput={(e) => set_sname(e.target.value)}
-                    placeholder="Last Name"
-                    value={lname}
-                    type="text"
-                    id="lname"
-                    // disabled
-                    className="form-control m-0"
-                  />
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    margin: "0 0 10px 0",
-                    padding: "0",
-                    alignItems: "center",
-
-                    alignItems: "center",
-                    width: "100%",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    Email
-                  </label>
-                  <input
-                    className="form-control m-0"
-                    required
-
-                    placeholder="Email"
-                    value={email}
-                    type="text"
-                    id="email"
-                    readonly
-                    disabled
-                  />
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    margin: "0 0 10px 0",
-                    padding: "0",
-
-                    alignItems: "center",
-                    width: "100%",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="w-50 input-group-text" htmlFor="">
-                    Cell Phone
-                  </label>
-
-                  <PhoneInput
-                    defaultCountry="us"
-                    value={cell}
-                    onChange={(cell) => set_cell(cell)}
-                    required
-                    disabled={!editMode}
-                    style={{ width: "66%" }}
-                  />
-
-
-
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-
-                    alignItems: "center",
-                    margin: "0 0 10px 0",
-                    display: "flex",
-
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="" style={{ fontSize: "14px" }}>
-                    Response Time <ToolTip width="200px" text="Select your response time answering the student during business time in your time zone. Please take notice that the student take this fact as one of the considurations of selecting you as tutor." />
-                  </label>
-                  <select
-                    className="form-select m-0"
-                    onInput={(e) => set_response_zone(e.target.value)}
-                    value={response_zone}
-                    id="resZone"
-                    disabled={!editMode}
-                    required
-                  >
-                    {response_list}
-                  </select>
-
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-
-                    alignItems: "center",
-                    display: "flex",
-
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    Time Zone <ToolTip width="200px" text={"Select the Greenwich Mean Time (GMT) zone where you reside. It will let the student configure his time availability conducting lessons with you, when in a different time zone. "} />
-                  </label>
-                  <select
-                    className="form-select m-0"
-                    onInput={(e) => set_timeZone(e.target.value)}
-                    id="timeZone"
-                    disabled={!editMode}
-                    value={timeZone}
-                    required
-                  >
-                    {GMTList}
-                  </select>
-
-
-                </div>
-              </div>
-
-              <div className="profile-details-cnt pt-3" style={{ width: "25%" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    display: "flex",
-                    margin: "0 0 10px 0",
-                    padding: "0",
-
-                    alignItems: "center",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="" style={{ fontSize: "14px" }}>
-                    Address 1
-                  </label>
-                  <input
-                    className="form-control m-0"
-                    required
-
-                    onInput={(e) => set_add1(e.target.value)}
-                    placeholder="Address 1"
-                    value={add1}
-                    type="text"
-                    id="add1"
-                    disabled={!editMode}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-
-                    alignItems: "center",
-                    margin: "0 0 10px 0",
-                    display: "flex",
-
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    Address 2
-                  </label>
-                  <input
-                    className="form-control m-0"
-                    onInput={(e) => set_add2(e.target.value)}
-                    placeholder="Optional"
-                    value={add2}
-                    disabled={!editMode}
-                    type="text"
-                    id="add2"
-                  />
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    alignItems: "center",
-                    margin: "0 0 10px 0",
-                    display: "flex",
-
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    City/Town
-                  </label>
-                  <input
-                    className="form-control m-0"
-                    required
-                    onInput={(e) => set_city(e.target.value)}
-                    placeholder="City/Town"
-                    type="text"
-                    value={city}
-                    id="city"
-                    disabled={!editMode}
-                  />
-                </div>
-                <div
-                  style={{ display: "flex", width: "100%", alignItems: "center", margin: "0 0 10px 0", display: "flex", whiteSpace: "nowrap" }}>
-                  <label className="input-group-text w-50" htmlFor="country">
-                    Country
-                  </label>
-                  <select
-                    className="form-select m-0"
-                    onInput={(e) => set_country(e.target.value)}
-                    id="country"
-                    value={country}
-                    disabled={!editMode}
-                    required
-                  >
-                    {countryList}
-                  </select>
-                </div>
                 {(options[country] ?? [])?.length ?
-
-                  <div
-                    className="mb-2"
-                    style={{
-                      display: (options[country] ?? [])?.length ? 'flex' : 'none',
-                      width: "100%",
-
-                      alignItems: "center",
-                      display: "flex",
-
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <label className="input-group-text w-50" htmlFor="">
-                      State/Province
-                    </label>
-
-                    {(options[country] ?? [])?.length ?
-                      <select
-                        className="form-select "
-                        required
-                        onInput={(e) => set_state(e.target.value)}
-                        id="state"
-                        disabled={!editMode}
-                        value={state}
-                      >
-                        <option value='' selected disabled>Select State</option>
-                        {(options[country] ?? []).map((item) => <option value={item}>{item}</option>)}
-                      </select> :
-                      <input className="form-control m-0" disabled type="text" value={state} onChange={(e) => set_state(e.target.value)} />
-                    }
-                  </div> : ''}
-
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-
-                    alignItems: "center",
-                    margin: "0 0 10px 0",
-                    display: "flex",
-
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <span className="input-group-text w-50" htmlFor="">
-                    Zip Code
-                  </span>
-                  <input
-                    className="form-control m-0"
+                  <select
+                    className="form-select "
                     required
-                    onInput={(e) => set_zipCode(e.target.value)}
-                    value={zipCode}
+                    onInput={(e) => set_state(e.target.value)}
+                    id="state"
                     disabled={!editMode}
-                    placeholder="Zip-Code"
-                    type="text"
-                    id="zip"
-                  />
-                </div>
-
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-
-                    alignItems: "center",
-                    display: "flex",
-
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <label className="input-group-text w-50" htmlFor="">
-                    UTC  <ToolTip width="200px" text={"Coordinated Universal Time or 'UTC' is the primary time standard by which the world regulate local time. "} />
-                  </label>
-                  <input
-                    className="form-control m-0"
-                    disabled
-                    value={typeof dateTime === "object" ? "" : dateTime}
-                  />
-                </div>
-
-              </div>
-
-              <div className="profile-video-cnt mt-3 "
-                style={{ float: "right", width: "30%", height: "250px" }}
-              >
-                <h6>Profile intro video</h6>
-                <div className="mb-2">
-                  {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
-                </div>
-                {selectedVideoOption === "record" ? (
-                  <div className="w-100">
-                    <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
-                  </div>
-                ) : selectedVideoOption === "upload" && video?.length ? (
-                  <div className="" style={{ border: "1px dotted black" }}>
-                    <video src={video} className="w-100 h-100"
-                      controls autoplay
-                    />
-                  </div>
-                ) :
-                  <div className="tutor-tab-video-frame p-2 card">
-                    <div style={{ textAlign: "justify", fontSize: "13px" }}> Providing your video, is mandatory. Your registration is at the stage of 'pending' until you upload it. An introduction video is a great way to showcase your personality, skills and teaching style for potential students. It can help you stand out from other tutors and attract more atudents. Creating your video, briefly introduce yourself, your experience and your approach to tutoring. Mention what subjects and levels you can teach, and how you can help students achieve their goals. You should speak clearly, and confidently. A good introduction video can make a lasting impression and increase your chances of getting hired.
-                    </div>
-                  </div>
+                    value={state}
+                  >
+                    <option value='' selected disabled>Select State</option>
+                    {(options[country] ?? []).map((item) => <option value={item}>{item}</option>)}
+                  </select> :
+                  <input className="form-control m-0" disabled type="text" value={state} onChange={(e) => set_state(e.target.value)} />
                 }
+              </div> : ''}
 
-                <div className=" mt-2">
-                  <div className="row justify-content-center align-items-center">
-                    <div className="col-md-4">
-                      <div className="text-center">
-                        <button
-                          type="button"
-                          className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
-                            }`}
-                          disabled={!editMode}
-                          style={{ fontSize: "10px" }}
-                          onClick={() => {
-                            set_video("");
-                            handleOptionClick("record");
-                          }}
-                        >
-                          <BsCameraVideo size={15} />
-                          <br />
-                          Record Video
-                        </button>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="text-center">
-                        {/* {video?.length ? */}
-                        <input
-                          data-type="file"
-                          defaultValue={''}
-                          onChange={handleVideo}
-                          type="file"
-                          name="video"
-                          style={{ display: "none" }}
-                          id="video"
-                        />
-                        {/* : null} */}
-                        <label
-                          id="btn"
-                          type="button"
-                          htmlFor="video"
-                          style={{ pointerEvents: !editMode ? "none" : "auto", fontSize: "10px" }}
-                          className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
-                            }`}
-                          onClick={() => handleOptionClick("upload")}
-                        >
-                          <BsCloudUpload size={15} /> <br />
-                          Upload Video
-                        </label>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="text-center">
-                        <button
-                          type="button"
-                          style={{ fontSize: "10px" }}
-                          className={`btn btn-danger `}
-                          onClick={() => set_video("")}
-                          disabled={!editMode}>
-                          <BsTrash size={15} />
-                          <br />
-                          Delete Video
-                        </button>
-                      </div>
-                    </div>
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+
+                alignItems: "center",
+                margin: "0 0 10px 0",
+                display: "flex",
+
+                whiteSpace: "nowrap",
+              }}
+            >
+              <span className="input-group-text w-50" htmlFor="">
+                Zip Code
+              </span>
+              <input
+                className="form-control m-0"
+                required
+                onInput={(e) => set_zipCode(e.target.value)}
+                value={zipCode}
+                disabled={!editMode}
+                placeholder="Zip-Code"
+                type="text"
+                id="zip"
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                width: "100%",
+
+                alignItems: "center",
+                display: "flex",
+
+                whiteSpace: "nowrap",
+              }}
+            >
+              <label className="input-group-text w-50" htmlFor="">
+                UTC  <ToolTip width="200px" text={"Coordinated Universal Time or 'UTC' is the primary time standard by which the world regulate local time. "} />
+              </label>
+              <input
+                className="form-control m-0"
+                disabled
+                value={typeof dateTime === "object" ? "" : dateTime}
+              />
+            </div>
+
+          </div>
+
+          <div className="profile-video-cnt mt-3 "
+            style={{ float: "right", width: "30%", height: "250px" }}
+          >
+            <h6>Tutor's introduction video</h6>
+            <div className="mb-2">
+              {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
+            </div>
+            {selectedVideoOption === "record" ? (
+              <div className="w-100">
+                <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
+              </div>
+            ) : selectedVideoOption === "upload" && video?.length ? (
+              <div className="" style={{ border: "1px dotted black" }}>
+                <video src={video} className="w-100 h-100"
+                  controls autoplay
+                />
+              </div>
+            ) :
+              <div className="tutor-tab-video-frame p-2 card">
+                <div style={{ textAlign: "justify", fontSize: "13px" }}> Providing your video, is mandatory. Your registration is at the stage of 'pending' until you upload it. An introduction video is a great way to showcase your personality, skills and teaching style for potential students. It can help you stand out from other tutors and attract more atudents. Creating your video, briefly introduce yourself, your experience and your approach to tutoring. Mention what subjects and levels you can teach, and how you can help students achieve their goals. You should speak clearly, and confidently. A good introduction video can make a lasting impression and increase your chances of getting hired.
+                </div>
+              </div>
+            }
+
+            <div className=" mt-2">
+              <div className="row justify-content-center align-items-center">
+                <div className="col-md-4">
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
+                        }`}
+                      disabled={!editMode}
+                      style={{ fontSize: "10px" }}
+                      onClick={() => {
+                        set_video("");
+                        handleOptionClick("record");
+                      }}
+                    >
+                      <BsCameraVideo size={15} />
+                      <br />
+                      Record Video
+                    </button>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="text-center">
+                    {/* {video?.length ? */}
+                    <input
+                      data-type="file"
+                      defaultValue={''}
+                      onChange={handleVideo}
+                      type="file"
+                      name="video"
+                      style={{ display: "none" }}
+                      id="video"
+                    />
+                    {/* : null} */}
+                    <label
+                      id="btn"
+                      type="button"
+                      htmlFor="video"
+                      style={{ pointerEvents: !editMode ? "none" : "auto", fontSize: "10px" }}
+                      className={`btn btn-warning ${selectedVideoOption === "upload" ? "active" : ""
+                        }`}
+                      onClick={() => handleOptionClick("upload")}
+                    >
+                      <BsCloudUpload size={15} /> <br />
+                      Upload Video
+                    </label>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      style={{ fontSize: "10px" }}
+                      className={`btn btn-danger `}
+                      onClick={() => set_video("")}
+                      disabled={!editMode}>
+                      <BsTrash size={15} />
+                      <br />
+                      Delete Video
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
 
 
-            <hr className="shadow" />
-            <div className="container">
-              <div
-                className="border rounded p-2 mt-2 shadow"
-                style={{
-                  fontWeight: "bold",
-                  margin: "auto",
-                  textAlign: "center",
-                  width: "60%",
-                }}
-              >
-                <label >
-                  Grades I teach
-                </label>
-                <br />
-                {!isAtLeastOneChecked && (<p className="text-danger text-normal">
-                  please select atleast one grade</p>)}
-                <div className="tutor-grades">
-                  <ul>
-                    {grades.map((item) => {
-                      const isChecked = tutorGrades.includes(item.grade);
-                      return (
+        <hr className="shadow" />
+        <div className="container">
+          <div
+            className="border rounded p-2 mt-2 shadow"
+            style={{
+              fontWeight: "bold",
+              margin: "auto",
+              textAlign: "center",
+              width: "60%",
+            }}
+          >
+            <label >
+              Grades I teach
+            </label>
+            <br />
+            {!isAtLeastOneChecked && (<p className="text-danger text-normal">
+              please select atleast one grade</p>)}
+            <div className="tutor-grades">
+              <ul>
+                {grades.map((item) => {
+                  const isChecked = tutorGrades.includes(item.grade);
+                  return (
 
-                        <li>
-                          <div
-                            className="input-cnt"
-                            style={{
-                              width: "fit-content",
-                              cursor: "pointer",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <input
-                              style={{
-                                background: "blue",
-                                color: "blue",
-                                height: "25px",
-                                width: "25px",
-                              }}
-                              type="checkbox"
-                              checked={isChecked}
-                              disabled={!editMode}
-                              id={item.grade}
-                              onInput={() => handleTutorGrade(item.grade)}
-                              className=" grades"
-                            />
+                    <li>
+                      <div
+                        className="input-cnt"
+                        style={{
+                          width: "fit-content",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        <input
+                          style={{
+                            background: "blue",
+                            color: "blue",
+                            height: "25px",
+                            width: "25px",
+                          }}
+                          type="checkbox"
+                          checked={isChecked}
+                          disabled={!editMode}
+                          id={item.grade}
+                          onInput={() => handleTutorGrade(item.grade)}
+                          className=" grades"
+                        />
 
-                            &nbsp;
-                            <label htmlFor={item.grade}>{item.grade}</label>
-                          </div>
-                        </li>
-                      );
+                        &nbsp;
+                        <label htmlFor={item.grade}>{item.grade}</label>
+                      </div>
+                    </li>
+                  );
 
-                    })}
-                  </ul>
-                </div>
+                })}
+              </ul>
+            </div>
 
-              </div>
+          </div>
 
-              <div
-                style={{
-                  fontWeight: "bold",
-                  margin: "auto",
-                  textAlign: "center",
-                  width: "60%",
-                }}
-              >
-                <label htmlFor="headline">
-                  Headline
-                </label>
-                <br />
-                <input
-                  className="form-control m-0 shadow"
-                  value={headline}
-                  maxLength={80}
-                  required
-                  spellcheck="true"
-                  disabled={!editMode}
-                  placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
-                  onInput={(e) =>
-                    counter(e.target.value, e.target, set_headline, 80)
-                  }
-                  type="text"
-                  style={{ width: "100%", height: "50px", margin: "0 0 10px 0" }}
-                />
-                <div className="inputValidator">
-                  Your have reached the max limit of 80 characters.
-                </div>
-              </div>
+          <div
+            style={{
+              fontWeight: "bold",
+              margin: "auto",
+              textAlign: "center",
+              width: "60%",
+            }}
+          >
+            <label htmlFor="headline">
+              Headline
+            </label>
+            <br />
+            <input
+              className="form-control m-0 shadow"
+              value={headline}
+              maxLength={80}
+              required
+              spellcheck="true"
+              disabled={!editMode}
+              placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
+              onInput={(e) =>
+                counter(e.target.value, e.target, set_headline, 80)
+              }
+              type="text"
+              style={{ width: "100%", height: "50px", margin: "0 0 10px 0" }}
+            />
+            <div className="inputValidator">
+              Your have reached the max limit of 80 characters.
+            </div>
+          </div>
 
-              <div className="tutor-setup-bottom-field d-flex justify-content-between"
-                style={{ gap: "20px" }}>
-                <div
-                  className="profile-headline"
-                  style={{ textAlign: "center", float: "left" }}
-                >
-                  <label style={{ fontWeight: "bold" }} htmlFor="intro">
-                    Introduction
-                  </label>
-                  <br />
-                  <textarea
-                    className="form-control m-0 shadow"
-                    value={intro}
-                    maxLength={500}
-                    required
-                    placeholder="The Academy mandates the tutor uploading a self introductionary video. 
+          <div className="tutor-setup-bottom-field d-flex justify-content-between"
+            style={{ gap: "20px" }}>
+            <div
+              className="profile-headline"
+              style={{ textAlign: "center", float: "left" }}
+            >
+              <label style={{ fontWeight: "bold" }} htmlFor="intro">
+                Introduction
+              </label>
+              <br />
+              <textarea
+                className="form-control m-0 shadow"
+                value={intro}
+                maxLength={500}
+                required
+                placeholder="The Academy mandates the tutor uploading a self introductionary video. 
                     It's important for the student to check if the tutor accent is clear for him.
                     A self-introduction video is a great way to showcase your personality and teaching style to potential students. 
                     Here are some tips on how to create a self-introduction video of tutor to students.
@@ -1163,57 +1139,58 @@ const TutorSetup = () => {
                     - Record your video in a quiet and well-lit place, with a neutral background and good audio quality.
                     - Review your video before uploading it and make sure it is error-free and reflects your best self.
                     "
-                    onInput={(e) =>
-                      counter(e.target.value, e.target, set_intro, 500)
-                    }
-                    style={{ width: "100%", padding: "10px", height: "160px" }}
-                    name=""
-                    spellcheck="true"
-                    disabled={!editMode}
-                    id=""
-                  ></textarea>
-                  <div className="inputValidator">
-                    Your have reached the max limit of 1500 characters.
-                  </div>
-                </div>
+                onInput={(e) =>
+                  counter(e.target.value, e.target, set_intro, 500)
+                }
+                style={{ width: "100%", padding: "10px", height: "160px" }}
+                name=""
+                spellcheck="true"
+                disabled={!editMode}
+                id=""
+              ></textarea>
+              <div className="inputValidator">
+                Your have reached the max limit of 1500 characters.
+              </div>
+            </div>
 
-                <div
-                  className="profile-motivation"
-                  style={{ textAlign: "center", float: "right" }}
-                >
-                  <label style={{ fontWeight: "bold" }} htmlFor="intro">
-                    Motivate
-                  </label>
-                  <br />
-                  <textarea
-                    className="form-control m-0 shadow"
-                    value={motivation}
-                    disabled={!editMode}
-                    maxLength={500}
-                    required
-                    placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
-                    onInput={(e) =>
-                      counter(e.target.value, e.target, set_motivation, 500)
-                    }
-                    spellcheck="true"
-                    style={{ width: "100%", padding: "10px", height: "160px" }}
-                    name=""
-                    id=""
-                  ></textarea>
-                  <div className="inputValidator">
-                    Your have reached the max limit of 500 characters.
-                  </div>
-                </div>
+            <div
+              className="profile-motivation"
+              style={{ textAlign: "center", float: "right" }}
+            >
+              <label style={{ fontWeight: "bold" }} htmlFor="intro">
+                Motivate
+              </label>
+              <br />
+              <textarea
+                className="form-control m-0 shadow"
+                value={motivation}
+                disabled={!editMode}
+                maxLength={500}
+                required
+                placeholder='Write Something That will motivate Your Students. Use the "Motivate" tab to set up your promotions. Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid subscription for multi lessons...If you hold a teacher certificate, and wish to provide your profession to a full class of students in a public school, you can charge the school a premium.  '
+                onInput={(e) =>
+                  counter(e.target.value, e.target, set_motivation, 500)
+                }
+                spellcheck="true"
+                style={{ width: "100%", padding: "10px", height: "160px" }}
+                name=""
+                id=""
+              ></textarea>
+              <div className="inputValidator">
+                Your have reached the max limit of 500 characters.
               </div>
             </div>
           </div>
-          <Actions
-            onEdit={handleEditClick}
-            editDisabled={editMode}
-            unSavedChanges={unSavedChanges} />
-        </form>
-      </motion.div>
-    </>
+        </div>
+      </div>
+      <Actions
+        nextDisabled={!tutor.AcademyId}
+        onEdit={handleEditClick}
+        editDisabled={editMode}
+        unSavedChanges={unSavedChanges}
+        loading={savingRecord}
+      />
+    </form>
   );
 };
 

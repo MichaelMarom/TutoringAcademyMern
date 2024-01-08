@@ -8,7 +8,8 @@ import Actions from '../common/Actions'
 
 const MyStudents = () => {
   const [students, setStudents] = useState([]);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -16,18 +17,19 @@ const MyStudents = () => {
       const AcademyId = localStorage.getItem('tutor_user_id');
       const response = await get_tutor_students(AcademyId);
       setStudents(response);
+      setFetching(false)
       setLoading(false)
     };
 
     fetchStudents();
   }, []);
 
-  if (loading)
+  if (loading || fetching)
     return <Loading />
   return (
     <div className="mt-4">
       <h2>My Students</h2>
-      <table className="">
+      {(!!students.length) ? < table className="">
         <thead>
           <tr>
             <th>Photo</th>
@@ -62,12 +64,14 @@ const MyStudents = () => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> :
+        <h5 className='text-danger'>No Students Found!</h5>
+      }
       <Actions
         editDisabled={true}
         saveDisabled={true}
       />
-    </div>
+    </div >
   )
 };
 

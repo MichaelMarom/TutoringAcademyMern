@@ -1094,10 +1094,17 @@ const post_tutor_setup = (req, res) => {
                 if (findtutorSetup.recordset.length) {
                     delete req.body["AcademyId"]
                     const request = poolConnection.request();
-                    request.input('AcademyId', sql.NVarChar(sql.MAX), findtutorSetup.recordset[0].AcademyId);
+                    request.input('AcademyId', sql.NVarChar(sql.MAX),
+                        findtutorSetup.recordset[0].AcademyId);
+
                     Object.keys(req.body).map((key) => {
+                        if (key === 'VacationMode')
+                            return request.input('VacationMode', sql.Bit, req.body.VacationMode);
+
                         request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
                     })
+
+
                     const { query } = parameteriedUpdateQuery('TutorSetup', req.body,
                         { AcademyId: findtutorSetup.recordset[0].AcademyId })
                     const result = await request.query(query);
@@ -1264,7 +1271,7 @@ let get_tutor_students = async (req, res) => {
             sb.subjectName=cast(ss.Subject as varchar)
             WHERE  CONVERT(VARCHAR, ss.AcademyId) = '${academyId}'
            `)
-           
+
             const formattedResult = students.recordset.map(student => {
                 const reservedSlots = JSON.parse(student.reservedSlots || '[]');
                 const bookedSlots = JSON.parse(student.bookedSlots || '[]');
@@ -1492,7 +1499,7 @@ const get_tutor_profile_data = async (req, res) => {
                             ), '') AS Subjects
                     FROM
                         TutorSetup AS ts
-                    JOIN
+                    LEFT JOIN
                         Education AS te ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(te.AcademyId AS VARCHAR(MAX))
                     LEFT JOIN
                         Chat AS tc ON CAST(ts.AcademyId AS VARCHAR) = tc.User2ID 

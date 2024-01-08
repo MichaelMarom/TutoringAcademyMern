@@ -17,8 +17,10 @@ const TutorLayout = ({ children, showLegacyFooter = true }) => {
 
     return (
         <div>
-            {(!tutor.Status || tutor.Status === 'pending') ?
-                <Steps steps={steps} currentStep={currentStep} /> : < Header />}
+            {/* {(!tutor.Status || tutor.Status === 'pending') ?
+                <Steps steps={steps} currentStep={currentStep} /> : */}
+            < Header />
+            {/* // } */}
             {children}
             {showLegacyFooter ?
                 <Footer /> :

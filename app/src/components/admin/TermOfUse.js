@@ -24,14 +24,12 @@ const TermOfUse = () => {
             try {
 
                 const storedUserRole = localStorage.getItem('user_role');
-                // const storedUserRole = 'notadmin';
                 const result = await get_adminConstants();
                 set_terms(result.data[0].TermContent);
                 set_db_terms(result.data[0].TermContent);
                 setUserRole(storedUserRole);
             } catch (error) {
                 console.error('Error fetching data:', error);
-
             }
         }
         fetchData();

@@ -620,9 +620,14 @@ export const post_tutor_setup = async (data) => {
         if (data.motivation !== undefined) dataObject.Motivate = data.motivation;
         if (data.userId !== undefined) dataObject.userId = data.userId;
         if (data.grades !== undefined) dataObject.Grades = JSON.stringify(data.grades);
+        if (data.start !== undefined) dataObject.StartVacation = data.start;
+        if (data.end !== undefined) dataObject.EndVacation = data.end;
+        if (data.vacation_mode !== undefined) dataObject.VacationMode = data.vacation_mode;
+
         dataObject.TutorScreenname = data.mname.length ?
             `${data.fname}. ${data.mname[0]}. ${data.lname[0]}` :
             `${data.fname}. ${data.lname[0]}`;
+
         dataObject.AcademyId = uuidv4();
         return await apiClient.post('/tutor/setup', dataObject);
     } catch (err) {

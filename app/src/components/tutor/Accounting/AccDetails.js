@@ -126,6 +126,7 @@ const AccDetails = ({ sessions }) => {
 
         return date;
     }
+    
     if (loading)
         return <Loading />
     return (

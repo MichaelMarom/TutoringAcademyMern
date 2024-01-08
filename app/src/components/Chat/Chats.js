@@ -19,9 +19,6 @@ function DiscussionItem({ fetchingMessages, online, setSelectedChat, selectedCha
                     <h6 className='text-start'>  {name}</h6>
                     <span className="ks-datetime">{datetime}</span>
                 </div>
-                {/* <div className="ks-message d-flex ">
-                    <p> {message}</p>
-                </div> */}
             </div>
         </li>
     );
@@ -69,12 +66,15 @@ export default function Chats({ fetchingMessages, setSelectedChat, selectedChat,
     return (
         <div className="ks-discussions">
             <SearchBar />
-            <DiscussionList
+          {(!!discussionData.length) ?  <DiscussionList
                 setSelectedChat={setSelectedChat}
                 discussions={discussionData}
                 fetchingMessages={fetchingMessages}
                 selectedChat={selectedChat}
-            />
+            />:
+            <div className='border rounded-pill shadow px-4 m-2'> Students will contact you. Then Chat will apear here. </div>
+        
+        }
         </div>
     );
 }

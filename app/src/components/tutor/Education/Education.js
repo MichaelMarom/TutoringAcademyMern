@@ -1085,14 +1085,18 @@ const Education = () => {
                                 resumePath ?
                                     <div className='d-flex justify-content-between align-items-center my-3'>
                                         <div>
-                                            {getFileExtension(resumePath) === 'pdf' ?
+                                            {/* {getFileExtension(resumePath) === 'pdf' ?
                                                 <PDFViewer pdfUrl={`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`} />
-                                                : <img height={80} width={80} src={`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`} alt="resume" />}
+                                                : <img height={80} width={80} src={`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`} alt="resume" />} */}
                                             <h6>Resume Uploaded <IoIosCheckmarkCircle color='green' size='20' /> </h6>
                                             <p className='text-primary text-decoration-underline cursor-pointer'
-                                                onClick={() => window.open(`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`, '_blank')}>See uploaded Resume</p>
+                                                onClick={() =>
+                                                    window.open(`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`, '_blank')}>
+                                                See uploaded Resume</p>
                                         </div>
-                                        <Button className='btn-sm btn-primary' handleClick={() => set_resumePath(null)}>Upload new resume</Button>
+                                        <Button className='btn-sm btn-primary' handleClick={() => set_resumePath(null)}>
+                                            Upload new resume
+                                        </Button>
                                     </div> :
                                     <div className="form-outline my-3">
                                         <h6 className='border-bottom'>Upload your Resume</h6>

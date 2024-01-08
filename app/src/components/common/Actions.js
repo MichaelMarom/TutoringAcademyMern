@@ -67,13 +67,13 @@ const Actions = ({
                     </div>
                     <div className="col-1">
                         <Button handleClick={onSave} className={`btn btn-primary 
-                        ${unSavedChanges ? 'blinking-button' : ''}`} type="submit" loading={loading}
+                        ${(unSavedChanges && !saveDisabled) ? 'blinking-button' : ''}`} type="submit" loading={loading}
                             disabled={saveDisabled || loading} >
                             Save
                         </Button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onNext} disabled={unSavedChanges || loading || nextDisabled || !isNextTabExist}
+                        <button onClick={onNext} disabled={!saveDisabled && (unSavedChanges || loading || nextDisabled || !isNextTabExist)}
                             type='button' className="btn btn-success">Next</button>
                     </div>
                 </div>

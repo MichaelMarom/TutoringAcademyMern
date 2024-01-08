@@ -74,7 +74,7 @@ const ShowCalendar = ({
   const [weekDaysTimeSlots, setWeekDaysTimeSlots] = useState([])
 
   let { reservedSlots, bookedSlots } = useSelector(state => state.bookings);
-  console.log(disableHourSlots)
+
   //apis functions
   const updateTutorDisableRecord = async () => {
     await updateTutorDisableslots(tutorAcademyId, {
@@ -112,8 +112,8 @@ const ShowCalendar = ({
   const getTimeZonedEnableHours = (originalDates, timeZone) => {
     if (!isStudentLoggedIn || !timeZone) return originalDates;
     return originalDates?.map(dateString => {
-      const date = moment.utc(convertToDate(dateString)).tz(timeZone);
-      const dateObjDate = date.toDate()
+      // const date = moment.utc(convertToDate(dateString)).tz(timeZone);
+      // const dateObjDate = date.toDate()
       return dateString; // You can customize the format
     });
   }
@@ -600,6 +600,14 @@ const ShowCalendar = ({
     if (date && moment(date).isSame(moment(date), 'day')) {
       const formattedTime = moment(date).format('h:00 a');
       const isFutureDate = date.getTime() >= (new Date()).getTime();
+
+      const checkDate = moment.tz(date, timeZone);
+      const startDate = moment.tz(tutor.StartVacation, tutor.timeZone);
+      const endDate = moment.tz(tutor.EndVacation, tutor.timeZone);
+
+      const existBetweenVacationRange = checkDate.isBetween(startDate, endDate, null, '[]');
+
+      console.log(tutor.timeZone, checkDate.get('hours'), startDate.get('hours'), endDate.get('hours'), checkDate.get('date'), existBetweenVacationRange)
       //student checks
       const existInDisableWeekTimeSlots = weekDaysTimeSlots?.some(slot => {
         const dateMoment = moment(date).tz(timeZone)
@@ -639,7 +647,6 @@ const ShowCalendar = ({
         return slot[0] === formattedTime && momentTime.isBetween(startTime, endTime, undefined, '[]');
       })
 
-
       //swithes checks
       if (existsinReservedSlots) {
         return {
@@ -654,6 +661,13 @@ const ShowCalendar = ({
       else if (existInSelectedSlotEnd) {
         return {
           className: "place-holder-end-slot"
+        }
+      }
+      else if (existBetweenVacationRange) {
+        return {
+          style: {
+            backgroundColor: "rgb(226,244,227)"
+          }
         }
       }
       else if (existInDisableHourSlots || (isStudentLoggedIn && existInDisableWeekTimeSlots && isFutureDate)) {

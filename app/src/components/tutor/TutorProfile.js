@@ -149,7 +149,7 @@ const TutorProfile = () => {
                                 gap: "10px"
                             }}>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'The number of hours the tutor will respond to a student (within tutor UTC business time).'} />
+                                <ToolTip width='300px' text={'The number of hours the tutor will respond to a student (within tutor UTC business time).'} />
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
                                     Response Time -
@@ -158,21 +158,24 @@ const TutorProfile = () => {
                             </div>
 
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'The number of hours before the lesson starts where student can cancel the lesson with no penalty.'} />
+                                <ToolTip width='300px' text={'The number of hours before the lesson starts where student can cancel the lesson with no penalty.'} />
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
                                     Cancellation Policy -
                                 </div>
-                                <h6 className='m-0'>{data.CancellationPolicy}</h6>
+                                <h6 className='m-0'>
+                                    {data.CancellationPolicy ? data.CancellationPolicy :
+                                        <span className='text-danger'>not set</span>}
+                                </h6>
                             </div>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'When the tutor provide a discount of 50% for the student booking the INTRODUCTION lesson, the on/off switch is showing green color. '} />
+                                <ToolTip width='300px' text={'When the tutor provide a discount of 50% for the student booking the INTRODUCTION lesson, the on/off switch is showing green color. '} />
                                 <div className='text-primary d-flex align-items-center' style={{ gap: "10px", fontSize: "16px", fontWeight: "bold" }}>
                                     <h6 className='m-0'>
                                         50% Off on Intro Lesson
                                     </h6>
 
-                                    <div className="form-check form-switch" style={{marginBottom:"-10px"}}>
+                                    <div className="form-check form-switch" style={{ marginBottom: "-10px" }}>
                                         <input
                                             className="form-check-input"
                                             type="checkbox"
@@ -183,7 +186,8 @@ const TutorProfile = () => {
                                 </div>
                             </div>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'canc policy'} />
+                                <ToolTip width='300px'
+                                    text={'The Tutor Identity is verified by the academy in various ways.'} />
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
                                     Verified Tutor
@@ -191,10 +195,10 @@ const TutorProfile = () => {
                                 <IoIosCheckmarkCircle size={20} color='green' />
                             </div>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'canc policy'} />
+                                <ToolTip width='300px' text={'Tutor Diploma is uploaded to the academy servers. The student can view the Diploma by clicking on the PDF symbol below.'} />
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
-                                    Verifid Diploma
+                                    Verified Diploma
                                 </div>
                                 {data.DegFileName ?
                                     <IoIosCheckmarkCircle size={20} color='green' /> :
@@ -203,7 +207,9 @@ const TutorProfile = () => {
 
                             </div>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip text={'canc policy'} />
+                                <ToolTip width='300px' text={`Tutor Certificate is uploaded to the academy servers. 
+                                The student can view the Certificate by clicking on the PDF symbol below.`} />
+
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
                                     Verified Certificate
@@ -228,21 +234,21 @@ const TutorProfile = () => {
                         <div className='col-4'>
                             <div className='bg-white rounded p-4 d-flex flex-column' style={{ gap: "15px" }}>
 
-                                <div className='d-flex flex-column align-items-start' >
+                                {data.NativeLang.length ?
+                                    <div className='d-flex flex-column align-items-start' >
 
-                                    <h5 className='m-0'>Languages</h5>
-                                    <div className='d-flex align-items-center'>
-                                        <GradePills grades={[]} grade={data.NativeLang.value} editable={false} hasIcon={false} />
-                                        - Native
-                                    </div>
-                                    {data.OtherLang.map(lang =>
+                                        <h5 className='m-0'>Languages</h5>
                                         <div className='d-flex align-items-center'>
-                                            {/* <h6 className='text-start m-0'> {lang.value}</h6> */}
-                                            <GradePills grades={[]} grade={lang.value} editable={false} hasIcon={false} />
+                                            <GradePills grades={[]} grade={data.NativeLang.value} editable={false} hasIcon={false} />
+                                            - Native
                                         </div>
-                                    )
-                                    }
-                                </div>
+                                        {data.OtherLang.map(lang =>
+                                            <div className='d-flex align-items-center'>
+                                                <GradePills grades={[]} grade={lang.value} editable={false} hasIcon={false} />
+                                            </div>
+                                        )
+                                        }
+                                    </div> : null}
                                 <div>
 
                                     <h5 className=''>
@@ -286,13 +292,13 @@ const TutorProfile = () => {
                                         {data.Motivate}
                                     </p>
                                 </div>
-                                <div>
+                                {data.WorkExperience && <div>
 
                                     <h5 className=''>
                                         Work Experience (Total Experience - {data.EducationLevelExp})
                                     </h5>
                                     <div className='border p-2' dangerouslySetInnerHTML={{ __html: data.WorkExperience }} />
-                                </div>
+                                </div>}
                                 <div className='mt-4'>
                                     <h5 className=''>
                                         Education

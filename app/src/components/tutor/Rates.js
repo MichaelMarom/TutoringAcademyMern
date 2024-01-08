@@ -361,7 +361,8 @@ const Rates = () => {
                   <label className="form-check-label mr-3" for="flexSwitchCheckChecked">
                     50% Intro Session
                   </label>
-                  <Tooltip text="The academy mandate an |intro| sessions a for new student as a prerequisite to book further sessions with a new tutor. Your 50% discount motivate student to select you. " width="200px">
+                  <Tooltip text="The academy mandate an |intro| sessions for new student as a prerequisite to book further sessions with the tutor. Your 50% discount motivate student to select you. "
+                    width="200px">
                     <FaInfoCircle size={20} color="#0096ff" />
                   </Tooltip>
                 </div>

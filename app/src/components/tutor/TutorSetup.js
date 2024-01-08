@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload, BsTrash } from "react-icons/bs";
-import moment from "moment";
+import { moment } from "../../config/moment";
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { PhoneNumberUtil } from 'google-libphonenumber';
@@ -13,7 +13,7 @@ import {
 } from "../../axios/tutor";
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
-import { convertGMTOffsetToLocalString } from "../../helperFunctions/timeHelperFunctions";
+import { convertGMTOffsetToLocalString, showDate } from "../../helperFunctions/timeHelperFunctions";
 import ProfileVideoRecord from "./ProfileVideoRecord";
 import Loading from "../common/Loading";
 import ToolTip from '../common/ToolTip'
@@ -23,6 +23,7 @@ import { uploadVideo } from "../../redux/tutor_store/video";
 import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, UK_STATES, US_STATES } from "../../constants/constants";
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import { unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
+import ReactDatePicker from "react-datepicker";
 
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -71,8 +72,6 @@ const TutorSetup = () => {
     { grade: "Academic" },
   ]
 
-  console.log(video, photo, video?.length)
-
   let [tutorGrades, setTutorGrades] = useState([]);
   const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
@@ -87,12 +86,17 @@ const TutorSetup = () => {
   const [uploadVideoClicked, setUploadVideoClicked] = useState(false)
   const [userId, setUserId] = useState(JSON.parse(localStorage.getItem("user"))[0].SID)
   const [picUploading, setPicUploading] = useState(false);
-  const [savingRecord, setSavingRecord] = useState(false)
+  const [savingRecord, setSavingRecord] = useState(false);
+
+  const [vacation_mode, set_vacation_mode] = useState(false)
+  const [start, setStart] = useState(moment().toDate());
+  const [end, setEnd] = useState(null)
 
   const [dbCountry, setDBCountry] = useState(null)
 
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
+
   const options = {
     "Australia": AUST_STATES,
     "USA": US_STATES,
@@ -108,6 +112,7 @@ const TutorSetup = () => {
   let dispatch = useDispatch();
 
   const [selectedVideoOption, setSelectedVideoOption] = useState(null);
+
   const handleOptionClick = (option) => {
     console.log("hit")
     setUploadVideoClicked(true);
@@ -124,8 +129,6 @@ const TutorSetup = () => {
       setTutorGrades([...tutorGrades, grade]);
 
   };
-  const [isAtLeastOneChecked, setIsAtLeastOneChecked] = useState(true); // Assuming initial state is true
-
 
   //upload photo
   useEffect(() => {
@@ -197,6 +200,10 @@ const TutorSetup = () => {
         set_video(data.Video);
         setRecordedVideo(data.VideoRecorded)
         setSelectedVideoOption("upload");
+        console.log(data.VacationMode)
+        set_vacation_mode(data.VacationMode)
+        setStart(data.StartVacation)
+        setEnd(data.EndVacation)
       }
       setUploadPhotoClicked(false)
     };
@@ -224,22 +231,24 @@ const TutorSetup = () => {
         headline,
         photo,
         video,
-        tutorGrades
-
+        tutorGrades,
+        start,
+        end,
+        vacation_mode,
       }
       setUnsavedChanges(unsavedChangesHelper(formValues, tutor))
-
-      // setUnsavedChanges(tutor.FirstName !== fname);
     }
 
-  }, [fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime, response_zone, intro, motivation, headline, photo, video, tutorGrades, tutor])
+  }, [fname, mname, lname, cell, add1, add2, city, state, zipCode, country, timeZone, dateTime,
+    response_zone, intro, motivation, headline, photo, video, tutorGrades, tutor, start, end, vacation_mode])
 
   const saveTutorSetup = async (e) => {
     e.preventDefault()
     if (!isValid) {
       return toast.warning("please enter the correct phone number");
     }
-    if (!video || !photo) toast.warning('Since You did not uploaded your photo or Video, your Profile will stay in Pending status, and can not be activated until you upload the missing items!')
+    if (!video || !photo)
+      toast.warning('Since You did not uploaded your photo or Video, your Profile will stay in Pending status, and can not be activated until you upload the missing items!')
     if (!tutorGrades?.length > 0) {
       return toast.warning("Please select at least one grade");
     }
@@ -259,47 +268,8 @@ const TutorSetup = () => {
       toast.success("Data saved successfully");
     }
     else {
-      toast.danger("Error saving the Data ")
+      toast.error("Error saving the Data ")
     }
-  }
-
-  if (document.querySelector("#tutor-edit")) {
-    document.querySelector("#tutor-edit").onclick = async () => {
-      let input = [...document.querySelectorAll("input")].filter(
-        (item) =>
-          item.id !== "fname" && item.id !== "mname" && item.id !== "lname"
-      );
-      let select = [...document.querySelectorAll("select")];
-      let textarea = [...document.querySelectorAll("textarea")];
-
-      let doc = [
-        document.querySelector(".profile-photo-cnt"),
-        document.querySelector(".profile-video-cnt"),
-      ];
-
-      let field = [...input, ...select, ...textarea, ...doc];
-
-      field.map((item) => {
-        item.style.opacity = 1;
-        item.style.pointerEvents = "all";
-      });
-
-      function trackChanges(inputs, selects, textareas) {
-        let list = [...inputs, ...selects, ...textareas];
-        // list.map((item) => {
-        //   item.onChange = () => {
-        //     document.querySelector("#tutor-save").style.opacity = "1";
-        //     document.querySelector("#tutor-save").style.pointerEvents = "all";
-        //   };
-        // });
-      }
-
-      trackChanges(
-        [...document.querySelectorAll("input")],
-        [...document.querySelectorAll("select")],
-        [...document.querySelectorAll("textarea")]
-      );
-    };
   }
 
   let saver = async () => {
@@ -307,7 +277,6 @@ const TutorSetup = () => {
       fname,
       mname,
       lname,
-      email: user[0].email,
       cell,
       add1,
       add2,
@@ -320,15 +289,16 @@ const TutorSetup = () => {
       intro,
       motivation,
       headline,
-      // photo,
-      // video,
       tutorGrades,
-      userId: user[0].SID,
-      grades: tutorGrades
+      userId: tutor.userId ? tutor.userId : user[0].SID,
+      grades: tutorGrades,
+      start,
+      end,
+      vacation_mode
     });
     return response;
   };
-
+  
   useEffect(() => {
     const sortedCountries = Countries.sort((a, b) => a.Country.localeCompare(b.Country));
     let countries = sortedCountries.map((item) => (
@@ -522,6 +492,16 @@ const TutorSetup = () => {
   useEffect(() => {
     console.log(recordedVideo, "vbfbvfhb");
   }, [recordedVideo]);
+
+  const formatUTC = (dateInt, addOffset = false) => {
+    let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
+
+    if (tutor.timeZone) {
+      date = date.tz(tutor.timeZone).toDate();
+    }
+
+    return date;
+  }
 
 
   if (tutorDataLoading || savingRecord)
@@ -1021,62 +1001,104 @@ const TutorSetup = () => {
 
         <hr className="shadow" />
         <div className="container">
-          <div
-            className="border rounded p-2 mt-2 shadow"
-            style={{
-              fontWeight: "bold",
-              margin: "auto",
-              textAlign: "center",
-              width: "60%",
-            }}
-          >
-            <label >
-              Grades I teach
-            </label>
-            <br />
-            {!isAtLeastOneChecked && (<p className="text-danger text-normal">
-              please select atleast one grade</p>)}
-            <div className="tutor-grades">
-              <ul>
-                {grades.map((item) => {
-                  const isChecked = tutorGrades.includes(item.grade);
-                  return (
+          <div className="d-flex justify-content-between">
+            <div
+              className="border rounded p-2 mt-2 shadow"
+              style={{
+                fontWeight: "bold",
+                textAlign: "center",
+                width: "50%",
+              }}
+            >
+              <label >
+                Grades I teach
+              </label>
+              <br />
+              <div className="tutor-grades">
+                <ul>
+                  {grades.map((item) => {
+                    const isChecked = tutorGrades.includes(item.grade);
+                    return (
 
-                    <li>
-                      <div
-                        className="input-cnt"
-                        style={{
-                          width: "fit-content",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <input
+                      <li>
+                        <div
+                          className="input-cnt"
                           style={{
-                            background: "blue",
-                            color: "blue",
-                            height: "25px",
-                            width: "25px",
+                            width: "fit-content",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
                           }}
-                          type="checkbox"
-                          checked={isChecked}
-                          disabled={!editMode}
-                          id={item.grade}
-                          onInput={() => handleTutorGrade(item.grade)}
-                          className=" grades"
-                        />
+                        >
+                          <input
+                            style={{
+                              background: "blue",
+                              color: "blue",
+                              height: "25px",
+                              width: "25px",
+                            }}
+                            type="checkbox"
+                            checked={isChecked}
+                            disabled={!editMode}
+                            id={item.grade}
+                            onInput={() => handleTutorGrade(item.grade)}
+                            className=" grades"
+                          />
 
-                        &nbsp;
-                        <label htmlFor={item.grade}>{item.grade}</label>
-                      </div>
-                    </li>
-                  );
+                          &nbsp;
+                          <label htmlFor={item.grade}>{item.grade}</label>
+                        </div>
+                      </li>
+                    );
 
-                })}
-              </ul>
+                  })}
+                </ul>
+              </div>
+
             </div>
+            <div className="border p-2 shadow rounded" style={{ width: "40%" }}>
+              <div className="form-check form-switch d-flex gap-3" style={{ fontSize: "16px " }}>
+                <input
+                  className="form-check-input "
+                  type="checkbox"
+                  role="switch"
+                  style={{
+                    width: "30px",
+                    height: "15px"
+                  }}
+                  onChange={() => set_vacation_mode(!vacation_mode)}
+                  checked={vacation_mode}
+                />
+                <label className="form-check-label mr-3" for="flexSwitchCheckChecked" >
+                  Vacation Mode
+                </label>
+                <ToolTip text="Turn the switch to 'On' to block the period of time you do not want to tutor. A light green color will indicate your selected period on your calendar. 
+                Then students will not be able to book lessons with you for that period. 
+                By the end date, the switch will turn to 'Off' automatically." width="200px" />
+              </div>
+              {vacation_mode &&
+                <div >
+                  <h6 className="text-start">  Enter Start and end Date</h6>
+                  <div className="d-flex align-items-center" style={{ gap: '10px' }}>
+                    <ReactDatePicker
+                      selected={formatUTC(start, true)}
+                      onChange={date => setStart(formatUTC(date))}
+                      dateFormat="MMM d, yyyy"
+                      className="form-control"
+                    />
 
+                    <h6 className="m-0">and</h6>
+                    <ReactDatePicker
+                      selected={formatUTC(end, true)}
+                      onChange={date => setEnd(formatUTC(date))}
+                      dateFormat="MMM d, yyyy"
+                      className="form-control"
+                    />
+                  </div>
+                  {/* <h6 className="text-start m-0 text-primary">You have selected vacation from {showDate(start) }</h6> */}
+                </div>
+              }
+            </div>
           </div>
 
           <div

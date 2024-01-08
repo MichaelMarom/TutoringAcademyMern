@@ -16,7 +16,6 @@ const Intro = () => {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true)
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -33,15 +32,19 @@ const Intro = () => {
     }, []);
 
     useEffect(() => {
-        setUnsavedChanges(intro !== undefined && db_intro !== undefined && intro !== db_intro)
+        console.log(intro, db_intro, intro !== db_intro)
+        setUnsavedChanges(intro !== undefined && db_intro !== undefined &&
+            intro !== db_intro)
     }, [intro, db_intro]);
 
     const handleEditorChange = (value) => {
         set_intro(value);
     };
+
     const handleEditClick = () => {
         setEditMode(true);
     };
+
     const handleSave = async (e) => {
         e.preventDefault();
         setLoading(true)
@@ -50,6 +53,7 @@ const Intro = () => {
         setEditMode(false);
         setLoading(false)
     };
+
     if (fetching)
         return <Loading />
     return (

@@ -12,6 +12,7 @@ import { get_chat_message, post_message, set_online_status } from '../axios/chat
 import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
 import { socket } from '../config/socket'
 import { setChats } from '../redux/chat/chat';
+import Actions from '../components/common/Actions';
 
 function Chat() {
     const [selectedChat, setSelectedChat] = useState({});
@@ -138,9 +139,9 @@ function Chat() {
     return (
         <CommonLayout role={loggedInRole}
             showLegacyFooter={false}>
-            <div className="container" style={{ height: "100vh" }}>
-                <div className="ks-page-content">
-                    <div className="ks-page-content-body">
+            <div className="container" style={{ height: "65vh" }}>
+                <div className="h-100 m-4">
+                    <div className="ks-page-content-body h-100">
                         <div className="border ks-messenger shadow">
                             <Chats
                                 setSelectedChat={setSelectedChat}
@@ -160,6 +161,9 @@ function Chat() {
                     </div>
                 </div>
             </div>
+            <Actions editDisabled={true}
+                saveDisabled={true}
+            />
         </CommonLayout>
     );
 }

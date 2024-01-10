@@ -601,13 +601,13 @@ const ShowCalendar = ({
       const formattedTime = moment(date).format('h:00 a');
       const isFutureDate = date.getTime() >= (new Date()).getTime();
 
-      const checkDate = moment.tz(date, timeZone);
-      const startDate = moment.tz(tutor.StartVacation, tutor.timeZone);
-      const endDate = moment.tz(tutor.EndVacation, tutor.timeZone);
+      const checkDate = moment.utc(date);
+      const startDate = moment.utc(tutor.StartVacation).utc()
+      const endDate = moment.utc(tutor.EndVacation).utc()
 
       const existBetweenVacationRange = checkDate.isBetween(startDate, endDate, null, '[]');
 
-      console.log(tutor.timeZone, checkDate.get('hours'), startDate.get('hours'), endDate.get('hours'), checkDate.get('date'), existBetweenVacationRange)
+      console.log(endDate.tz(), startDate.get('hour'), endDate.get('hour'), checkDate.get('date'))
       //student checks
       const existInDisableWeekTimeSlots = weekDaysTimeSlots?.some(slot => {
         const dateMoment = moment(date).tz(timeZone)
@@ -727,7 +727,6 @@ const ShowCalendar = ({
       const storedMomentDate = moment(storeDate);
       return storedMomentDate.isSame(slotDateMoment, 'day')
     })
-
 
     if (isFutureDate &&
       (!isStudentLoggedIn && disableWeekDays && disableWeekDays?.includes(dayName))

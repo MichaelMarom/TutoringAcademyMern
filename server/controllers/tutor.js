@@ -1100,7 +1100,8 @@ const post_tutor_setup = (req, res) => {
                     Object.keys(req.body).map((key) => {
                         if (key === 'VacationMode')
                             return request.input('VacationMode', sql.Bit, req.body.VacationMode);
-
+                        if (key === 'StartVacation' || key === 'EndVacation')
+                            return request.input(key, sql.DateTime, req.body[key]);
                         request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
                     })
 

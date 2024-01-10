@@ -298,7 +298,7 @@ const TutorSetup = () => {
     });
     return response;
   };
-  
+
   useEffect(() => {
     const sortedCountries = Countries.sort((a, b) => a.Country.localeCompare(b.Country));
     let countries = sortedCountries.map((item) => (
@@ -493,15 +493,47 @@ const TutorSetup = () => {
     console.log(recordedVideo, "vbfbvfhb");
   }, [recordedVideo]);
 
-  const formatUTC = (dateInt, addOffset = false) => {
-    let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
 
-    if (tutor.timeZone) {
-      date = date.tz(tutor.timeZone).toDate();
+  const formatUTC = (dateInt, addOffset = false, startDate = false) => {
+    let date = (!dateInt || dateInt.length < 1) ? new Date : new Date(dateInt);
+    const currentDate = new Date();
+    if (date < currentDate) {
+      return null; // You can also throw an error here if you prefer
     }
-
-    return date;
+    if (typeof dateInt === "string") {
+      return date;
+    } else {
+      if (startDate) {
+        date.setHours(0)
+        date.setMinutes(0)
+      }
+      else {
+        date.setHours(23)
+        date.setMinutes(59)
+      }
+      console.log(date, moment(date).tz(), date.getHours(), date.getDate(), date.getFullYear(), date.getMonth() + 1)
+      console.log(date.getHours())
+      return date;
+    }
   }
+  // const formatUTC = (dateInt, startDate) => {
+  //   let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
+  //   const timezone = date.tz(); // Get the timezone
+  //   console.log(timezone, tutor.timeZone)
+  //   if (tutor.timeZone) {
+  //     if (startDate) {
+  //       date = date.tz(tutor.timeZone).startOf('day');
+  //     }
+  //     else {
+  //       date = date.tz(tutor.timeZone).endOf('day')
+
+  //     }
+  //   }
+
+  //   console.log(date.get("date"), date.get('hours'))
+  //   return date.toDate();
+  // }
+  console.log("ReactDatePicker Value:", formatUTC(start, true, true));
 
 
   if (tutorDataLoading || savingRecord)
@@ -1081,16 +1113,23 @@ const TutorSetup = () => {
                   <h6 className="text-start">  Enter Start and end Date</h6>
                   <div className="d-flex align-items-center" style={{ gap: '10px' }}>
                     <ReactDatePicker
-                      selected={formatUTC(start, true)}
-                      onChange={date => setStart(formatUTC(date))}
+                      selected={(moment(start).tz(tutor.timeZone)).toDate()}
+                      onChange={date => {
+                        const originalMoment = moment(date).startOf('day').utc();
+                        console.log(originalMoment.get('hour'), originalMoment.get('date'), date.getHours())
+                        setStart(originalMoment.toISOString())
+                      }}
                       dateFormat="MMM d, yyyy"
                       className="form-control"
                     />
 
                     <h6 className="m-0">and</h6>
                     <ReactDatePicker
-                      selected={formatUTC(end, true)}
-                      onChange={date => setEnd(formatUTC(date))}
+                      selected={(moment(end).tz(tutor.timeZone)).toDate()}
+                      onChange={date => {
+                        const originalMoment = moment(date).endOf('day').utc();
+                        setEnd(originalMoment.toISOString())
+                      }}
                       dateFormat="MMM d, yyyy"
                       className="form-control"
                     />

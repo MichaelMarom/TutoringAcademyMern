@@ -72,8 +72,10 @@ export const unsavedChangesHelper = (fieldValues, tutor) => {
     tutor.ResponseHrs !== undefined && fieldValues.response_zone !== undefined && tutor.ResponseHrs !== fieldValues.response_zone ||
     tutor.StateProvince !== undefined && fieldValues.state !== undefined && tutor.StateProvince !== fieldValues.state ||
     tutor.Video !== undefined && fieldValues.video !== undefined && tutor.Video !== fieldValues.video ||
-    tutor.ZipCode !== undefined && fieldValues.zipCode !== undefined && tutor.ZipCode !== fieldValues.zipCode
-    // Add more checks for other fields as needed
+    tutor.ZipCode !== undefined && fieldValues.zipCode !== undefined && tutor.ZipCode !== fieldValues.zipCode ||
+    tutor.StartVacation !== undefined && fieldValues.start !== undefined && tutor.StartVacation !== fieldValues.start ||
+    tutor.EndVacation !== undefined && fieldValues.end !== undefined && tutor.EndVacation !== fieldValues.end ||
+    tutor.VacationMode !== undefined && fieldValues.vacation_mode !== undefined && tutor.VacationMode !== fieldValues.vacation_mode
   );
 }
 

@@ -114,7 +114,6 @@ const TutorSetup = () => {
   const [selectedVideoOption, setSelectedVideoOption] = useState(null);
 
   const handleOptionClick = (option) => {
-    console.log("hit")
     setUploadVideoClicked(true);
     setSelectedVideoOption(option);
   }
@@ -146,9 +145,7 @@ const TutorSetup = () => {
         console.log(data, 'upk9ad photo')
       }
     }
-
     postImage()
-
   }, [photo, userExist])
 
   const handleEditClick = () => {
@@ -516,31 +513,17 @@ const TutorSetup = () => {
       return date;
     }
   }
-  // const formatUTC = (dateInt, startDate) => {
-  //   let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
-  //   const timezone = date.tz(); // Get the timezone
-  //   console.log(timezone, tutor.timeZone)
-  //   if (tutor.timeZone) {
-  //     if (startDate) {
-  //       date = date.tz(tutor.timeZone).startOf('day');
-  //     }
-  //     else {
-  //       date = date.tz(tutor.timeZone).endOf('day')
 
-  //     }
-  //   }
-
-  //   console.log(date.get("date"), date.get('hours'))
-  //   return date.toDate();
-  // }
-  console.log("ReactDatePicker Value:", formatUTC(start, true, true));
-
+  const gmtInInt = parseInt(tutor.GMT)
+  // for reactdatepicker because it opertae on new Date() not on moment.
+  // getting getLocalGMT and then multiple it with -1 to add (-5:00) or subtract (+5:00)
+  const getLocalGMT = parseInt((offset => (offset < 0 ? '+' : '-') + ('00' + Math.abs(offset / 60 | 0)).slice(-2) + ':' + ('00' + Math.abs(offset % 60)).slice(-2))(new Date().getTimezoneOffset())) * -1;
 
   if (tutorDataLoading || savingRecord)
     return <Loading height="80vh" />
   return (
     <form onSubmit={saveTutorSetup} className="pt-4">
-      <div style={{ overflowY: "auto", height: "90%" }}>
+      <div style={{ overflowY: "auto", height: "77vh" }}>
 
         <div className="tutor-setup-top-field container justify-content-between" style={{ gap: "25px" }}>
           <div className="profile-photo-cnt " style={{ width: "15%" }}>
@@ -1091,6 +1074,7 @@ const TutorSetup = () => {
             <div className="border p-2 shadow rounded" style={{ width: "40%" }}>
               <div className="form-check form-switch d-flex gap-3" style={{ fontSize: "16px " }}>
                 <input
+                  disabled={!editMode}
                   className="form-check-input "
                   type="checkbox"
                   role="switch"
@@ -1109,15 +1093,21 @@ const TutorSetup = () => {
                 By the end date, the switch will turn to 'Off' automatically." width="200px" />
               </div>
               {vacation_mode &&
-                <div >
-                  <h6 className="text-start">  Enter Start and end Date</h6>
+                <div>
+                  <h6 className="text-start">Enter Start and end Date</h6>
                   <div className="d-flex align-items-center" style={{ gap: '10px' }}>
                     <ReactDatePicker
-                      selected={(moment(start).tz(tutor.timeZone)).toDate()}
+                      disabled={!editMode}
+                      selected={new Date(moment(start).toDate().getTime() + (gmtInInt + getLocalGMT) * 60 * 60 * 1000)}
                       onChange={date => {
-                        const originalMoment = moment(date).startOf('day').utc();
-                        console.log(originalMoment.get('hour'), originalMoment.get('date'), date.getHours())
-                        setStart(originalMoment.toISOString())
+                        date.setHours(0);
+                        date.setMinutes(0);
+                        date.setSeconds(0);
+                        const originalMoment = moment.tz(date, tutor.timeZone).startOf('day');
+                        const utcMomentStartDate = originalMoment.clone();
+                        // utcMomentStartDate.utc()
+                        console.log(originalMoment.get('hour'), utcMomentStartDate.get('hour'), originalMoment.get('date'), date.getDate(), date.getHours())
+                        setStart(utcMomentStartDate)
                       }}
                       dateFormat="MMM d, yyyy"
                       className="form-control"
@@ -1125,8 +1115,12 @@ const TutorSetup = () => {
 
                     <h6 className="m-0">and</h6>
                     <ReactDatePicker
-                      selected={(moment(end).tz(tutor.timeZone)).toDate()}
+                      disabled={!editMode}
+                      selected={moment(end).toDate()}
                       onChange={date => {
+                        date.setHours(0);
+                        date.setMinutes(0)
+                        date.setSeconds(0)
                         const originalMoment = moment(date).endOf('day').utc();
                         setEnd(originalMoment.toISOString())
                       }}

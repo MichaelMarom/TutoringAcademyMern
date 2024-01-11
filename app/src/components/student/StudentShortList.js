@@ -8,6 +8,8 @@ import { wholeDateFormat } from '../../constants/constants';
 import Avatar from '../common/Avatar';
 import Tooltip from '../common/ToolTip';
 import Actions from '../common/Actions';
+import tutorData from '../../redux/tutor_store/tutorData';
+import { moment } from '../../config/moment'
 
 const StudentShortList = () => {
     let navigate = useNavigate()
@@ -26,7 +28,10 @@ const StudentShortList = () => {
             disableColor: item.tutorData?.disableColor,
             introDiscountEnabled: item.tutorShortList.IntroSessionDiscount || false,
             activateSubscriptionOption: item.tutorShortList.ActivateSubscriptionOption === "true",
-            discountHours: item.tutorShortList.DiscountHours
+            discountHours: item.tutorShortList.DiscountHours,
+            StartVacation: item.tutorData.StartVacation,
+            EndVacation: item.tutorData.EndVacation,
+            VacationMode: item.tutorData.VacationMode,
         }))
         navigate('/student/booking')
     }
@@ -39,57 +44,69 @@ const StudentShortList = () => {
     }
 
     let multi_student_cols = [
-        { Header: 'Photo', width: "7%", },
+        { Header: 'Photo', width: "6%", },
+        {
+            Header: 'VacationMode',
+            width: "6%",
+            tooltip: <Tooltip color='white' width="200px" direction='bottomright'
+                text="vacation permitted to book further lessons with the tutor." />
+        },
+        {
+            Header: 'Vacations',
+            width: "6%",
+            tooltip: <Tooltip color='white' width="200px" direction='bottomright'
+                text="date" />
+        },
         {
             Header: 'Demo Lesson @50%',
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip color='white' width="200px" direction='bottomright'
                 text="The student must conduct an introduction lesson with tutor. Most Tutors motivate students by offering the 'Intro' lesson at half price. The discounted 'Intro' marked by a green check boxk icon. 
                 After the 'intro' lesson performed, the student must provide a feedback before permitted to book further lessons with the tutor."  />
         },
-        { Header: 'Subject', width: "7%", },
-        { Header: 'Tutor Name', width: "7%", },
-        { Header: 'Country', width: "7%", },
+        { Header: 'Subject', width: "6%", },
+        { Header: 'Tutor Name', width: "6%", },
+        { Header: 'Country', width: "6%", },
         {
             Header: 'Tutor Local Time (UTC).',
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="The time show the local time (UTC) at the tutor's location." />
         },
         {
             Header: "Be Aware Time Zone Diff",
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
                 text="The numbers below calculate the difference between your time zone and the tutor. When difference is between +/-3 to 6 Hours, we provide orange background. And if is 7 time zones or more, we show blinking red background. When you book your lesson on the tutor's calendar, it will be shown on your calendar adjusted to your local time (UTC). " />
         },
         {
             Header: 'View Tutor Schedule',
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomright'
                 text="Its cancellation time, if you delet your booked session before that, then you will be refunded ful amount" />
         },
         {
             Header: 'Consult Students FeedBack',
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="To view tutor's feedback as graded by other students, click the button below." />
         },
         {
             Header: 'Examine Tutor Profile',
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
                 text="To view the full tutor's profile, include introduction video, education credentials, verifications, work experience, and more, Click on the button below." />
         },
-        { Header: 'Rate', width: "7%", },
+        { Header: 'Rate', width: "6%", },
         {
             Header: 'Cancellation Policy',
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip color='white' direction='bottomleft' width='200px'
                 text="Number of hours the tutor allows you to cancell the booked lesson without penalty. if you cancel less than the indicated hours, you liable for the lesson amount. Otherwise you will receive refund." />
         },
         {
             Header: 'Tutor Response Time',
-            width: "7%",
+            width: "6%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
                 text="This is the time the tutor committed to response to you address him/her. Please take notice that this committment is in effect during tutor's local time (UTC) business hours. " />
         }
@@ -106,7 +123,6 @@ const StudentShortList = () => {
             const tutorOffset = parseInt(tutorGMT, 10);
 
             const difference = studentOffset - tutorOffset;
-            console.log(difference, studentOffset, student.GMT, student, tutorOffset)
             return difference
         } catch (error) {
             console.log('Invalid GMT offset format');
@@ -161,8 +177,7 @@ const StudentShortList = () => {
                                         const tutorShortList = item.tutorShortList;
                                         const rate = tutorShortList.rate
                                         return (
-                                            <tr onDoubleClick={() =>
-                                                redirect_to_tutor_profile(tutorSetup?.AcademyId)} key={index}>
+                                            <tr key={index}>
                                                 <td className='' style={{ width: multi_student_cols[0].width }}>
                                                     <Avatar
                                                         size='100'
@@ -171,6 +186,26 @@ const StudentShortList = () => {
                                                         online={tutorSetup.Online}
                                                     />
                                                 </td>
+                                                <td className='m-auto' style={{ width: multi_student_cols[0].width }}>
+                                                    <div className="form-check form-switch d-flex gap-3 justify-content-center" style={{ fontSize: "16px " }}>
+                                                        <input
+                                                            className="form-check-input "
+                                                            type="checkbox"
+                                                            role="switch"
+                                                            style={{
+                                                                width: "30px",
+                                                                height: "15px"
+                                                            }}
+                                                            checked={tutorSetup.VacationMode}
+                                                        />
+
+                                                    </div>
+                                                </td>
+                                                <td style={{ width: multi_student_cols[0].width }}>
+                                                    {tutorSetup.VacationMode ?
+                                                        `${showDate(tutorSetup.StartVacation)} - ${showDate(tutorSetup.EndVacation)}`
+                                                        : `-`
+                                                    }  </td>
                                                 <td style={{ width: multi_student_cols[0].width }}>
                                                     <input type='checkbox'
                                                         style={{ height: '20px', width: '20px' }}

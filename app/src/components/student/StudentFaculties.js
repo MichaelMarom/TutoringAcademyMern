@@ -175,12 +175,14 @@ const StudentFaculties = () => {
         {
             Header: 'CancellationPolicy',
             width: "7%",
-            tooltip: <Tooltip width="200px" color='white' direction='bottomleft' text="Indicate the cancellation period in hours. If you delete your booked session before that, then you will be refunded the full amount" />
+            tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
+                text="Indicate the cancellation period in hours. If you delete your booked session before that, then you will be refunded the full amount" />
         },
         {
             Header: 'ResponseTime',
             width: "7%",
-            tooltip: <Tooltip width="200px" color='white' direction='bottomleft' text="Indicate the cancellation period in hours. If you delete your booked session before that, then you will be refunded the full amount" />
+            tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
+                text="Indicate the cancellation period in hours. If you delete your booked session before that, then you will be refunded the full amount" />
         }]
 
     let handleSavedDeleteData = e => {

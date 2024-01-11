@@ -602,12 +602,11 @@ const ShowCalendar = ({
       const isFutureDate = date.getTime() >= (new Date()).getTime();
 
       const checkDate = moment.utc(date);
-      const startDate = moment.utc(tutor.StartVacation).utc()
-      const endDate = moment.utc(tutor.EndVacation).utc()
+      const startDate = moment.utc((isStudentLoggedIn ? selectedTutor.StartVacation : tutor.StartVacation)).utc()
+      const endDate = moment.utc((isStudentLoggedIn ? selectedTutor.EndVacation : tutor.EndVacation)).utc()
 
-      const existBetweenVacationRange = checkDate.isBetween(startDate, endDate, null, '[]');
+      const existBetweenVacationRange = (isStudentLoggedIn ? selectedTutor.VacationMode : tutor.VacationMode) && checkDate.isBetween(startDate, endDate, null, '[]');
 
-      console.log(endDate.tz(), startDate.get('hour'), endDate.get('hour'), checkDate.get('date'))
       //student checks
       const existInDisableWeekTimeSlots = weekDaysTimeSlots?.some(slot => {
         const dateMoment = moment(date).tz(timeZone)

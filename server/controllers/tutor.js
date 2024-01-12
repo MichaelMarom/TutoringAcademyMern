@@ -1147,15 +1147,7 @@ let get_tutor_market_data = async (req, res) => {
 
     let { id } = req.query;
 
-    let TutortData = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From TutorSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
-            .then((result) => {
-                return (result.recordset);
-            })
-        // .catch(err => console.log(err))
-    )
-
-    let Education = await connecteToDB.then(poolConnection =>
+    let Education = async () => await connecteToDB.then(poolConnection =>
         poolConnection.request().query(`SELECT * From Education WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
 
@@ -1165,96 +1157,71 @@ let get_tutor_market_data = async (req, res) => {
 
     )
 
-    let Exprience = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From Experience `)
-            .then((result) => {
+    // let Exprience = await connecteToDB.then(poolConnection =>
+    //     poolConnection.request().query(`SELECT * From Experience `)
+    //         .then((result) => {
 
-                return (result.recordset);
-            })
-        // .catch(err => console.log(err))
+    //             return (result.recordset);
+    //         })
+    //     // .catch(err => console.log(err))
 
-    )
+    // )
 
-    let EducationalLevel = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From EducationalLevel `)
-            .then((result) => {
+    // let EducationalLevel = await connecteToDB.then(poolConnection =>
+    //     poolConnection.request().query(`SELECT * From EducationalLevel `)
+    //         .then((result) => {
 
-                return (result.recordset);
-            })
-        // .catch(err => console.log(err))
-    )
+    //             return (result.recordset);
+    //         })
+    //     // .catch(err => console.log(err))
+    // )
 
-    let CertificateTypes = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM CertificateTypes `)
-            .then((result) => {
+    // let CertificateTypes = await connecteToDB.then(poolConnection =>
+    //     poolConnection.request().query(`SELECT * FROM CertificateTypes `)
+    //         .then((result) => {
 
-                return (result.recordset);
-            })
-        // .catch(err => console.log(err))
+    //             return (result.recordset);
+    //         })
+    //     // .catch(err => console.log(err))
 
-    )
+    // )
 
-    let Subjects = await connecteToDB.then(poolConnection =>
+    let Subjects = async () => await connecteToDB.then(poolConnection =>
         poolConnection.request().query(`SELECT * FROM SubjectRates WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
-
                 return (result.recordset);
             })
-        // .catch(err => console.log(err))
+            .catch(err => console.log(err))
     )
 
-    let Faculty = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM Faculty `)
-            .then((result) => {
+    // let Faculty = await connecteToDB.then(poolConnection =>
+    //     poolConnection.request().query(`SELECT * FROM Faculty `)
+    //         .then((result) => {
 
-                return (result.recordset);
-            })
-        // .catch(err => console.log(err))
-        // .catch(err => console.log(err))
-    )
+    //             return (result.recordset);
+    //         })
+    //     // .catch(err => console.log(err))
+    //     // .catch(err => console.log(err))
+    // )
 
-    let GMT = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM GMT`)
-            .then((result) => {
+    // let GMT = await connecteToDB.then(poolConnection =>
+    //     poolConnection.request().query(`SELECT * FROM GMT`)
+    //         .then((result) => {
 
-                return (result.recordset);
-            })
-        // .catch(err => console.log(err))
-        // .catch(err => console.log(err))
-    )
-
-    new Promise((resolve, reject) => {
-        resolve(TutortData)
-    })
-        .then((TutortData) => {
-            return { TutortData, Exprience }
+    //             return (result.recordset);
+    //         })
+    //     // .catch(err => console.log(err))
+    //     // .catch(err => console.log(err))
+    // )
+    try {
+        res.status(200).send({
+            Education: await Education(),
+            Subjects: await Subjects()
         })
-        .then(({ TutortData, Exprience }) => {
-            return { TutortData, EducationalLevel, Exprience }
-        })
-        .then(({ TutortData, EducationalLevel, Exprience }) => {
-            return { TutortData, EducationalLevel, Exprience, CertificateTypes }
-        })
-        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes }) => {
-            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }
-        })
-        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
-            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty }
-        })
-        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
-            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT }
-        })
-        .then(({ TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
-            return { TutortData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, Education }
-        })
-        .then((result) => {
-            res.send(result)
-        })
-        .catch(e => {
-            console.log(e)
-        })
-
-
+    }
+    catch (e) {
+        res.status(400).send({ message: e.message })
+    }
 }
 
 let get_tutor_students = async (req, res) => {

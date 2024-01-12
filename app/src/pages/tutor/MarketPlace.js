@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const MarketPlace = () => {
   return (
-    <TutorLayout>
+    <TutorLayout showLegacyFooter={false}>
       <MarketPlaceComp />
     </TutorLayout>
   );

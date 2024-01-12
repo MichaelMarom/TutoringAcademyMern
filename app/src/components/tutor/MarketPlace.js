@@ -1,49 +1,33 @@
-import { useEffect, useState } from "react";
-import { get_student_market_data } from "../../axios/student";
-import { G } from "@react-pdf/renderer";
+import { useState } from "react";
 import Ads from "./Ads";
+import Tabs from "../common/Tabs";
+import Actions from "../common/Actions";
 
 const StudentMarketPlace = () => {
 
     let [activeTab, setActiveTab] = useState('')
 
-    let handleActiveOption = e => {
-        let elem = e.currentTarget;
-
-        let src =  elem.dataset.src;
-
-        [...elem.parentElement.children].filter(item => item.hasAttribute('id'))[0]?.removeAttribute('id')
-        elem?.setAttribute('id', 'student-market-place-header-active');
-
-        if(src === 'ads'){
-            setActiveTab(<Ads />)
-        }else{
-            setActiveTab('')
-        }
+    const tabs = [
+        { label: 'The market place', component: null },
+        { label: 'Advertise', component: <Ads /> },
+        { label: `Tutor's bid`, component: null },
+    ];
 
 
-    }
-    
-    
-
-    return ( 
-        
+    return (
         <>
-           <div className="student-market-place-header">
-                <ul>
-                    <li onClick={handleActiveOption} id="student-market-place-header-active"><a>The market place</a></li>
-                    <li data-src='ads'  onClick={handleActiveOption}><a>Advertise</a></li>
-                    <li onClick={handleActiveOption}><a>Tutor's bid</a></li>
-                </ul>
-            </div>
+            <Tabs links={tabs}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+            />
 
-            {
-                activeTab
-            }
-
-
+            {activeTab}
+            <Actions
+                saveDisabled={true}
+                editDisabled={true}
+            />
         </>
-     );
+    );
 }
- 
+
 export default StudentMarketPlace;

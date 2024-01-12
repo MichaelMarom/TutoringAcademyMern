@@ -191,6 +191,7 @@
   /* Track */
   ::-webkit-scrollbar-track {
     background: #dbdbdb;
+    border-radius: 6px;
   }
 
   /* Handle */
@@ -277,10 +278,6 @@
     left: 0;
   }
 
-  .student-market-place-btns button {
-    height: 50px;
-    width: 100px;
-  }
 
   .student-market-place-top-form {
     height: 80px;

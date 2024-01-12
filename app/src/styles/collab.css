@@ -59,7 +59,7 @@
         appearance: none;
         width: 20px;
         height: 20px;
-        border-radius: 50%;
+        border-radius: 50% ;
         background: #04AA6D;
         cursor: pointer;
     }
@@ -665,11 +665,13 @@
     /* Track */
     ::-webkit-scrollbar-track {
         background: #f1f1f1;
+        border-radius: 6px;
     }
     
     /* Handle */
     ::-webkit-scrollbar-thumb {
         background:#47c176;
+        border-radius: 200px;
         /* background: rgb(117, 117, 117); */
     }
     

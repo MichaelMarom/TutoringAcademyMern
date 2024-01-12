@@ -210,7 +210,7 @@ const Ads = () => {
                         </div>
                         
                         <div className="input-cnt" style={{marginBottom: '15px'}}>
-                            <label htmlFor="">UTC (Max time zones)</label>
+                            <label htmlFor="">UTC (Tutor's time zone)</label>
                             
                             <input  style={{width: '300px'}} min={0} max={12} defaultValue={0} type="number" name="" id="Ad" />
                            

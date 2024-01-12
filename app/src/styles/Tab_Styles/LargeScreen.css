@@ -964,19 +964,24 @@ body {
 
 ::-webkit-scrollbar {
     width: 5px;
+    border-radius: 20px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #e5e5e5;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
     background: rgb(117, 117, 117);
+    border-radius: 200px;
+
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+    border-radius: 200px;
+
 }

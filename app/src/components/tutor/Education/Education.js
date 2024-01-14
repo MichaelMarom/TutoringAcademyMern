@@ -222,6 +222,7 @@ const Education = () => {
                 db_edu_level,
                 db_edu_cert,
                 fetchingEdu,
+                resumePath
             }
             setUnsavedChanges(unsavedEducationChangesHelper(fieldValues, files))
         }
@@ -259,7 +260,8 @@ const Education = () => {
         db_edu_level,
         db_edu_cert,
         fetchingEdu,
-        files
+        files,
+        resumePath
     ])
 
     //fetching DB
@@ -511,6 +513,8 @@ const Education = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
+        if ((!resumePath || resumePath === 'null') && !workExperience.length)
+            return toast.error('Please either upload Resume or Type Work Experience!')
         let res = await saver()
         if (res) {
             handleUploadDegreeToServer()
@@ -1071,6 +1075,37 @@ const Education = () => {
                             />
 
                         </div>
+                        {
+                            (resumePath && resumePath !== 'null') ?
+                                <div className='d-flex justify-content-between align-items-center my-3'>
+                                    <div>
+                                        {/* {getFileExtension(resumePath) === 'pdf' ?
+                                                <PDFViewer pdfUrl={`${process.env.REACT_APP_SERVER_URL}/uploads/${resumePath}`} />
+                                                : <img height={80} width={80} src={`${process.env.REACT_APP_SERVER_URL}/uploads/${resumePath}`} alt="resume" />} */}
+                                        <h6>Resume Uploaded <IoIosCheckmarkCircle color='green' size='20' /> </h6>
+                                        {/* <p className='text-primary text-decoration-underline cursor-pointer'
+                                            onClick={() =>
+                                                window.open(`${process.env.REACT_APP_SERVER_URL}/uploads/${resumePath}`, '_blank')}>
+                                            See uploaded Resume</p> */}
+                                    </div>
+                                    <Button className='btn-sm btn-primary' handleClick={() => set_resumePath(null)}>
+                                        Upload new resume
+                                    </Button>
+                                </div> :
+                                <div className="form-outline my-3">
+                                    <h6 className='border-bottom'>Upload your Resume</h6>
+                                    <input
+                                        type="file"
+                                        accept=".pdf, .jpeg, .png, .jpg"
+                                        id="degreeFile"
+                                        name="degreeFile"
+                                        disabled={!editMode}
+                                        className="form-control m-0"
+                                        onChange={handleResumeFileUpload}
+                                    />
+                                </div>
+                        }
+                        <div className='fs-5 text-center w-100 mb-4' style={{ fontWeight: "bold" }}>OR</div>
                         <div style={{ width: "450px" }}>
 
                             <RichTextEditor
@@ -1078,44 +1113,15 @@ const Education = () => {
                                 onChange={handleEditorChange}
                                 readOnly={!editMode}
                                 placeholder="Enter Your Work Experience"
-                                required
-
+                                height='800px'
                             />
-                            {
-                                resumePath ?
-                                    <div className='d-flex justify-content-between align-items-center my-3'>
-                                        <div>
-                                            {/* {getFileExtension(resumePath) === 'pdf' ?
-                                                <PDFViewer pdfUrl={`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`} />
-                                                : <img height={80} width={80} src={`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`} alt="resume" />} */}
-                                            <h6>Resume Uploaded <IoIosCheckmarkCircle color='green' size='20' /> </h6>
-                                            <p className='text-primary text-decoration-underline cursor-pointer'
-                                                onClick={() =>
-                                                    window.open(`${process.env.REACT_APP_BASE_URL}/uploads/${resumePath}`, '_blank')}>
-                                                See uploaded Resume</p>
-                                        </div>
-                                        <Button className='btn-sm btn-primary' handleClick={() => set_resumePath(null)}>
-                                            Upload new resume
-                                        </Button>
-                                    </div> :
-                                    <div className="form-outline my-3">
-                                        <h6 className='border-bottom'>Upload your Resume</h6>
-                                        <input
-                                            type="file"
-                                            accept=".pdf, .jpeg, .png, .jpg"
-                                            id="degreeFile"
-                                            name="degreeFile"
-                                            disabled={!editMode}
-                                            className="form-control m-0"
-                                            onChange={handleResumeFileUpload}
-                                        />
-                                    </div>
-                            }
+
                         </div>
                     </div>
 
                     <Actions
                         editDisabled={editMode}
+                        saveDisabled={!editMode}
                         onEdit={handleEditClick}
                         unSavedChanges={unSavedChanges} />
                 </form>

@@ -24,6 +24,7 @@ import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, UK_STATES, US_STATES
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import { unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
 import ReactDatePicker from "react-datepicker";
+import { Link } from "react-router-dom";
 
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -71,10 +72,10 @@ const TutorSetup = () => {
     { grade: "12th grade" },
     { grade: "Academic" },
   ]
-
   let [tutorGrades, setTutorGrades] = useState([]);
   const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
+  console.log(user, 'loggedin user')
   const [email, set_email] = useState(user[0].email);
   const [unSavedChanges, setUnsavedChanges] = useState(false);
   let [countryList, setCountryList] = useState("");
@@ -89,13 +90,14 @@ const TutorSetup = () => {
   const [savingRecord, setSavingRecord] = useState(false);
 
   const [vacation_mode, set_vacation_mode] = useState(false)
-  const [start, setStart] = useState(moment().toDate());
-  const [end, setEnd] = useState(null)
+  const [start, setStart] = useState(moment(new Date()).toDate());
+  const [end, setEnd] = useState((moment(new Date()).endOf('day')).toDate())
 
   const [dbCountry, setDBCountry] = useState(null)
 
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
+  const [nameFieldsDisabled, setNameFieldsDisabled] = useState(true);
 
   const options = {
     "Australia": AUST_STATES,
@@ -103,6 +105,17 @@ const TutorSetup = () => {
     "Canada": CAN_STATES,
     "UnitedKingdom": UK_STATES
   }
+
+  useEffect(() => {
+    if (!tutor.AcademyId) {
+      setEditMode(true)
+      setNameFieldsDisabled(false)
+    }
+  }, [tutor])
+
+  useEffect(() => {
+    set_email(user[0].email)
+  }, [user])
 
   useEffect(() => {
     if (country !== dbCountry) {
@@ -134,15 +147,11 @@ const TutorSetup = () => {
     const postImage = async () => {
       if (uploadPhotoClicked && userExist) {
         setPicUploading(true)
-        const { data } = await post_tutor_setup({ photo, fname, lname, mname, userId })
+        await post_tutor_setup({ photo, fname, lname, mname, userId })
         setPicUploading(false)
 
-        console.log()
         setUploadPhotoClicked(false)
-        // set_photo(data[0].Photo)
         dispatch(setTutor())
-
-        console.log(data, 'upk9ad photo')
       }
     }
     postImage()
@@ -169,7 +178,7 @@ const TutorSetup = () => {
 
   useEffect(() => {
     const fetchTutorSetup = async () => {
-      if (tutor) {
+      if (tutor.AcademyId) {
         let data = tutor;
 
         setUserId(tutor.userId)
@@ -253,13 +262,13 @@ const TutorSetup = () => {
     setSavingRecord(true)
     let response = await saver();
     setSavingRecord(false)
-
     if (response.status === 200) {
       dispatch(setTutor())
       window.localStorage.setItem(
         "tutor_screen_name",
         response.data[0]?.TutorScreenname
       );
+      localStorage.setItem('tutor_user_id', response.data[0]?.AcademyId)
       dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
       setEditMode(false);
       toast.success("Data saved successfully");
@@ -289,8 +298,8 @@ const TutorSetup = () => {
       tutorGrades,
       userId: tutor.userId ? tutor.userId : user[0].SID,
       grades: tutorGrades,
-      start,
-      end,
+      start: vacation_mode ? start : moment().toDate(),
+      end: vacation_mode ? end : moment().endOf().toDate(),
       vacation_mode
     });
     return response;
@@ -414,7 +423,6 @@ const TutorSetup = () => {
 
   let handleImage = () => {
     setUploadPhotoClicked(true)
-    // let frame = document.querySelector(".tutor-tab-photo-frame");
 
     let f = document.querySelector("#photo");
 
@@ -513,6 +521,12 @@ const TutorSetup = () => {
       return date;
     }
   }
+  useEffect(() => {
+    if (vacation_mode) {
+      setStart(moment().toDate())
+      setEnd(moment().endOf('day').toDate())
+    }
+  }, [vacation_mode])
 
   const gmtInInt = parseInt(tutor.GMT)
   // for reactdatepicker because it opertae on new Date() not on moment.
@@ -569,6 +583,7 @@ const TutorSetup = () => {
               </label>
               <input
                 required
+                disabled={nameFieldsDisabled}
                 onChange={(e) => set_fname(e.target.value)}
                 placeholder="First Name"
                 value={fname}
@@ -593,12 +608,12 @@ const TutorSetup = () => {
                 Middle
               </label>
               <input
+                disabled={nameFieldsDisabled}
                 onInput={(e) => set_mname(e.target.value)}
-                placeholder="Middle Name"
+                placeholder="Optional"
                 value={mname}
                 className="form-control m-0"
                 type="text"
-                // disabled
                 id="mname"
               />
             </div>
@@ -619,12 +634,12 @@ const TutorSetup = () => {
               </label>
               <input
                 required
+                disabled={nameFieldsDisabled}
                 onInput={(e) => set_sname(e.target.value)}
                 placeholder="Last Name"
                 value={lname}
                 type="text"
                 id="lname"
-                // disabled
                 className="form-control m-0"
               />
             </div>
@@ -646,13 +661,9 @@ const TutorSetup = () => {
               </label>
               <input
                 className="form-control m-0"
-                required
-
                 placeholder="Email"
                 value={email}
                 type="text"
-                id="email"
-                readonly
                 disabled
               />
             </div>
@@ -677,7 +688,7 @@ const TutorSetup = () => {
                 value={cell}
                 onChange={(cell) => set_cell(cell)}
                 required
-                disabled={!editMode}
+                disabled={nameFieldsDisabled}
                 style={{ width: "66%" }}
               />
 
@@ -899,7 +910,7 @@ const TutorSetup = () => {
               />
             </div>
 
-            <div
+            {(!!timeZone) && <div
               style={{
                 display: "flex",
                 width: "100%",
@@ -918,7 +929,7 @@ const TutorSetup = () => {
                 disabled
                 value={typeof dateTime === "object" ? "" : dateTime}
               />
-            </div>
+            </div>}
 
           </div>
 
@@ -941,7 +952,16 @@ const TutorSetup = () => {
               </div>
             ) :
               <div className="tutor-tab-video-frame p-2 card">
-                <div style={{ textAlign: "justify", fontSize: "13px" }}> Providing your video, is mandatory. Your registration is at the stage of 'pending' until you upload it. An introduction video is a great way to showcase your personality, skills and teaching style for potential students. It can help you stand out from other tutors and attract more atudents. Creating your video, briefly introduce yourself, your experience and your approach to tutoring. Mention what subjects and levels you can teach, and how you can help students achieve their goals. You should speak clearly, and confidently. A good introduction video can make a lasting impression and increase your chances of getting hired.
+                <div style={{ textAlign: "justify", fontSize: "12px" }}> Providing your video, is mandatory. Your registration is at the stage of 'pending' until you upload it.
+                  An introduction video is a great way to showcase your personality, skills and teaching
+                  style for potential students. It can help you stand out from other tutors and
+                  attract more atudents. Creating your video, briefly introduce yourself, your
+                  experience and your approach to tutoring. Mention what subjects and levels you can
+                  teach, and how you can help students achieve their goals. You should speak clearly,
+                  and confidently. A good introduction video can make a lasting impression and increase
+                  your chances of getting hired. View samples; <br />
+                  <Link to='https://www.youtube.com/watch?v=tZ3ndrKQXN8'>Sample1 Intro Video</Link> <br />
+                  <Link to='https://www.youtube.com/watch?v=sxa2C6UmrNQ'>Sample2 Intro Video</Link>
                 </div>
               </div>
             }
@@ -1098,7 +1118,7 @@ const TutorSetup = () => {
                   <div className="d-flex align-items-center" style={{ gap: '10px' }}>
                     <ReactDatePicker
                       disabled={!editMode}
-                      selected={new Date(moment(start).toDate().getTime() + (gmtInInt + getLocalGMT) * 60 * 60 * 1000)}
+                      selected={new Date(moment(!start ? new Date() : start).toDate().getTime() + (gmtInInt + getLocalGMT) * 60 * 60 * 1000)}
                       onChange={date => {
                         date.setHours(0);
                         date.setMinutes(0);
@@ -1116,7 +1136,7 @@ const TutorSetup = () => {
                     <h6 className="m-0">and</h6>
                     <ReactDatePicker
                       disabled={!editMode}
-                      selected={moment(end).toDate()}
+                      selected={moment(!end ? new Date() : end).toDate()}
                       onChange={date => {
                         date.setHours(0);
                         date.setMinutes(0)
@@ -1128,7 +1148,6 @@ const TutorSetup = () => {
                       className="form-control"
                     />
                   </div>
-                  {/* <h6 className="text-start m-0 text-primary">You have selected vacation from {showDate(start) }</h6> */}
                 </div>
               }
             </div>

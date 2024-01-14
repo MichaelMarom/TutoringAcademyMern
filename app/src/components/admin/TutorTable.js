@@ -61,7 +61,7 @@ const TutorTable = () => {
     if (fetching || updatingStatus)
         return <Loading />
     return (
-        <div className="tables" style={{ height: '100%', width: '100%', overflow: 'auto', padding: '5px' }}>
+        <div className="tables" style={{ height: '90vh', width: '100%', overflowX: 'hidden', overflowY: 'auto', padding: '5px' }}>
             {
                 data.length > 0 ? <table style={{ position: 'relative' }}>
                     <thead >

@@ -80,7 +80,6 @@ export const unsavedChangesHelper = (fieldValues, tutor) => {
 }
 
 export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
-  console.log(tutor.DegreeYear, fieldValues.graduagteYr3)
   return (
 
     tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
@@ -105,8 +104,8 @@ export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
     (tutor.DegreeYear !== undefined && fieldValues.graduagteYr3 !== undefined && tutor.DegreeYear !== fieldValues.graduagteYr3) ||
     (tutor.DoctorateGradYr !== undefined && fieldValues.doctorateGraduateYear !== undefined && tutor.DoctorateGradYr !== fieldValues.doctorateGraduateYear) ||
     (tutor.CertificateExpiration !== undefined && fieldValues.expiration !== undefined && tutor.CertificateExpiration !== fieldValues.expiration) ||
-    (tutor.WorkExperience !== undefined && fieldValues.workExperience !== undefined && tutor.WorkExperience !== fieldValues.workExperience)
-    // (tutor.DoctorateGradYr !== undefined && fieldValues.graduagteYr3 !== undefined && tutor.DoctorateGradYr !== fieldValues.graduagteYr3)
+    (tutor.WorkExperience !== undefined && fieldValues.workExperience !== undefined && tutor.WorkExperience !== fieldValues.workExperience) ||
+    (tutor.Resume !== undefined && fieldValues.resumePath !== undefined && tutor.Resume !== fieldValues.resumePath)
   );
 }
 

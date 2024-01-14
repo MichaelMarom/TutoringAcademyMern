@@ -677,3 +677,14 @@ export const get_tutor_profile = async (tutorId, studentId) => {
         return err
     }
 }
+
+export const post_tutor_ad = async (body) => {
+    try {
+        const { data } = await apiClient.post(`/tutor/market-place`, body)
+        return data;
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}

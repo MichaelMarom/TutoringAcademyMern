@@ -22,10 +22,7 @@ const StudentMarketPlace = () => {
             />
 
             {activeTab}
-            <Actions
-                saveDisabled={true}
-                editDisabled={true}
-            />
+           
         </>
     );
 }

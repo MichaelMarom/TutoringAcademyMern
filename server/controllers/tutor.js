@@ -6,6 +6,7 @@ const { insert, updateById, getAll, find, findByAnyIdColumn, update, parameterie
 
 const multer = require('multer');
 const path = require('path');
+const sql = require('mssql');
 const COMMISSION_DATA = require('../constants/tutor');
 
 
@@ -1549,9 +1550,23 @@ const get_tutor_profile_data = async (req, res) => {
     })
 }
 
+const post_tutor_ad = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            const result = await poolConnection.request().query(insert('TutorAds', req.body))
+            res.status(200).send(result.recordset[0]);
+        }
+        catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+}
+
 module.exports = {
     get_tutor_profile_data,
     getSessionsDetails,
+    post_tutor_ad,
     remove_subject_rates,
     subject_already_exist,
     last_pay_day,

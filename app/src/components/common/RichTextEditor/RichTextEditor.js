@@ -9,7 +9,7 @@ import './styles.css'
 Quill.register('modules/imageResize', ImageResize);
 // Quill.register('modules/imageDropAndPaste', ImageDropAndPaste)
 
-const RichTextEditor = ({ value, onChange, readOnly, placeholder, height='92vh' }) => {
+const RichTextEditor = ({ value, onChange, readOnly, placeholder, height='92vh', ...rest }) => {
   const image = () => {
     console.log("image")
   }
@@ -59,6 +59,7 @@ const RichTextEditor = ({ value, onChange, readOnly, placeholder, height='92vh' 
         style={{ height, backgroundColor: readOnly ? "#e9ecef" : "", }}
         onChange={(value) => onChange(value)}
         readOnly={readOnly}
+        {...rest}
       />
     </div>
   );

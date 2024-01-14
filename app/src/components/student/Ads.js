@@ -81,7 +81,7 @@ const Ads = () => {
                 <div className="student-market-place-report-ad">
                     <input style={{width: '20px', height: '20px', margin: '0'}} type="checkbox" name="" id="reportAd" />
                     &nbsp;
-                    <label htmlFor="reportAd"><b>Repeat This Ad</b></label>
+                    <label htmlFor="reportAd"><b>Publish This Ad</b></label>
                 </div>
 
            

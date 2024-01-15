@@ -688,3 +688,35 @@ export const post_tutor_ad = async (body) => {
         return err
     }
 }
+
+
+export const fetch_tutor_ads = async (id) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/market-place/list/${id}`)
+        return data;
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
+}
+
+export const fetch_ad = async (id) => {
+    try {
+        const {data} = await apiClient.get(`/tutor/ad/${id}`)
+        return data
+    }
+    catch (err) {
+        return err
+    }
+}
+
+export const put_ad = async (id, body) => {
+    try {
+        const {data} = await apiClient.put(`/tutor/ad/${id}`, body)
+        return data
+    }
+    catch (err) {
+        return err
+    }
+}

@@ -1129,8 +1129,13 @@ const post_tutor_setup = (req, res) => {
 
                     const request = poolConnection.request();
                     Object.keys(req.body).map((key) => {
+                        if (key === 'VacationMode')
+                            return request.input('VacationMode', sql.Bit, req.body.VacationMode);
+                        if (key === 'StartVacation' || key === 'EndVacation')
+                            return request.input(key, sql.NVarChar(sql.MAX), `${req.body[key]}`);
                         request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
                     })
+
                     const { query } = parameterizedInsertQuery('TutorSetup', req.body)
                     const result = await request.query(query);
 
@@ -1563,10 +1568,54 @@ const post_tutor_ad = async (req, res) => {
     })
 }
 
+const get_tutor_ads = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            const result = await poolConnection.request().query(find('TutorAds', req.params))
+            res.status(200).send(result.recordset);
+        }
+        catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+}
+
+const get_ad = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            const result = await poolConnection.request().
+                query(findByAnyIdColumn('TutorAds', req.params))
+            res.status(200).send(result.recordset[0]);
+        }
+        catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+}
+
+const put_ad = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            const result = await poolConnection.request().
+                query(update('TutorAds', req.body, req.params))
+            res.status(200).send(result.recordset[0]);
+        }
+        catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+}
+
 module.exports = {
     get_tutor_profile_data,
     getSessionsDetails,
     post_tutor_ad,
+    get_ad,
+    put_ad,
+    get_tutor_ads,
     remove_subject_rates,
     subject_already_exist,
     last_pay_day,

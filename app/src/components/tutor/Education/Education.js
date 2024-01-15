@@ -15,6 +15,7 @@ import { getFileExtension, unsavedEducationChangesHelper } from '../../../helper
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
 import PDFViewer from './PDFViewer'
 import Button from '../../common/Button';
+import UserRichTextEditor from '../../common/RichTextEditor/UserRichTextEditor';
 
 const languageOptions = languages.map((language) => ({
     value: language,
@@ -937,7 +938,7 @@ const Education = () => {
                                     <select
                                         id="certificate"
                                         name="certificate"
-                                        className="form-control m-0"
+                                        className="form-select m-0"
                                         onChange={certified}
                                         placeholder='Select Certificate'
                                         required
@@ -1108,7 +1109,7 @@ const Education = () => {
                         <div className='fs-5 text-center w-100 mb-4' style={{ fontWeight: "bold" }}>OR</div>
                         <div style={{ width: "450px" }}>
 
-                            <RichTextEditor
+                            <UserRichTextEditor
                                 value={workExperience}
                                 onChange={handleEditorChange}
                                 readOnly={!editMode}

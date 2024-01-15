@@ -7,7 +7,7 @@ import Subjects from "../pages/tutor/Subjects";
 import MyStudents from "../pages/tutor/MyStudents";
 import Scheduling from "../pages/tutor/Scheduling";
 import TermOfUse from "../pages/tutor/TermOfUse";
-import MarketPlace from "../pages/tutor/MarketPlace";
+import Classified from "../pages/tutor/Add/Classified";
 import TutorProfile from "../pages/tutor/TutorProfile";
 
 import StudentSetup from "../pages/student/StudentSetup";
@@ -34,6 +34,11 @@ import { SingleTutorFeedbacks } from "../pages/student/SingleTutorFeedbacks";
 
 import TOS from '../pages/Admin/TOS'
 import PlatformIntro from "../pages/Admin/PlatformIntro";
+import Edit from "../pages/tutor/Add/Edit";
+import Create from "../pages/tutor/Add/Create";
+import Bid from "../pages/tutor/Add/Bid";
+import List from "../pages/tutor/Add/List";
+
 const rolePermissions = {
   tutor: [
     { path: "/tutor/intro", component: <Intro /> },
@@ -45,7 +50,14 @@ const rolePermissions = {
     { path: "/tutor/my-students", component: <MyStudents /> },
     { path: "/tutor/scheduling", component: <Scheduling /> },
     { path: "/tutor/term-of-use", component: <TermOfUse /> },
-    { path: "/tutor/market-place", component: <MarketPlace /> },
+    { path: "/tutor/market-place/classified", component: <Classified /> },
+    { path: "/tutor/market-place/:id", component: <Edit /> },
+    { path: "/tutor/market-place/bid", component: <Bid /> },
+    { path: "/tutor/market-place", component: <Create /> },
+    { path: "/tutor/market-place/list", component: <List /> },
+
+
+
     { path: "/tutor/collaboration", component: <TutorClass /> },
     { path: '/tutor/chat', component: <Chat /> },
     { path: '/tutor/chat/:id', component: <Chat /> }

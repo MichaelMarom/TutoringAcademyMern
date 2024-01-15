@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { get_tutor_market_data, post_tutor_ad } from "../../axios/tutor";
+import { get_tutor_market_data, post_tutor_ad } from "../../../axios/tutor";
 import { useSelector } from "react-redux";
-import { capitalizeFirstLetter } from "../../helperFunctions/generalHelperFunctions";
+import { capitalizeFirstLetter } from "../../../helperFunctions/generalHelperFunctions";
 import { FaEye } from "react-icons/fa";
-import Pill from '../common/Pill'
-import Loading from "../common/Loading";
+import Pill from '../../common/Pill'
+import Loading from "../../common/Loading";
 import { RxCross2 } from "react-icons/rx";
 import { FaTrashCan } from "react-icons/fa6";
 import { GoPlus } from "react-icons/go";
-import RichTextEditor from '../common/RichTextEditor/RichTextEditor'
-import Actions from "../common/Actions";
+import Actions from "../../common/Actions";
 import { toast } from "react-toastify";
+import UserRichTextEditor from "../../common/RichTextEditor/UserRichTextEditor";
 
 
-const Ads = () => {
+const CreateComponent = ({ setActiveTab }) => {
     const { tutor } = useSelector(state => state.tutor);
     let [education, set_education] = useState({})
     const [subjects, set_subjects] = useState([])
@@ -23,7 +23,7 @@ const Ads = () => {
     const [header, setHeader] = useState('');
     const AcademyId = localStorage.getItem('tutor_user_id');
 
-    const [addText, setAddText] = useState(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, I teach ${subject.length ? subject : "......"}. I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
+    const [addText, setAddText] = useState(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
     There you can look at my calendar-scheduling for availability, and book your lesson.
 `)
 
@@ -44,10 +44,10 @@ const Ads = () => {
     }, [])
 
     useEffect(() => {
-        setAddText(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, and I teach ${!!subject.length ? subject : '.....'}. I hold ${education ? education?.EducationalLevel : '....'} with experience of ${education ? education?.EducationalLevelExperience : '.....'}.
+        setAddText(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, and I teach ${!!subject.length ? subject : '.....'} for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. I hold ${education ? education?.EducationalLevel : '....'} with experience of ${education ? education?.EducationalLevelExperience : '.....'}.
     I live in ${tutor.Country}, time zone ${tutor.GMT}. Click <a href="${process.env.REACT_APP_BASE_URL}/tutor-profile/${tutor.AcademyId}">here</a> to view my profile for my work experience, certificates, and Diploma.
     There you can look at my calendar-scheduling for availability, and book your Introduction lesson.`)
-    }, [subject, tutor, education])
+    }, [subject, tutor, education, grades])
 
     const handleClickPill = (grade) => {
         const gradeExist = grades.find(item => item === grade)
@@ -60,7 +60,7 @@ const Ads = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         if (!grades.length) return toast.warning('Please select atleast one grade!')
-        const data = await post_tutor_ad({
+        await post_tutor_ad({
             AcademyId,
             AdText: addText,
             AdHeader: header,
@@ -73,12 +73,12 @@ const Ads = () => {
             Languages: education.NativeLang,
             Grades: grades
         })
-        console.log(data)
+        toast.success('Data Saved Successfully');
     }
 
     if (fetching || !tutor.AcademyId)
         return <Loading />
-    if (!education.EducationalLevel)
+    if (!education?.EducationalLevel)
         return <div className="text-danger fs-5ٖ">please fill education tab to generate Ads</div>
     return (
         <div style={{ height: "78vh", overflowY: "auto" }}>
@@ -92,10 +92,7 @@ const Ads = () => {
                             <label htmlFor="reportAd"><b>Publish This Ad</b></label>
                         </div>
                         <div className="highlight w-75" >
-
                             This is the place where you can promote yourself by publishing your private ad for all students to watch. If you tutor multi subjects, you can select one subject at the time by changing the header.
-                            The ad's message is generated automatically, however, you can use the editor to change the text to fit your personality.
-                            The ad will appear for 7 days, then you can renew it as needed.
                         </div>
 
                     </div>
@@ -216,11 +213,14 @@ const Ads = () => {
                         </div>
                     </div>
 
-                    <div className="p-4 border rounded  shadow-lg mt-4">
-                        <RichTextEditor
+                    <div className="p-4 border rounded  shadow-lg my-4">
+                        <div className="highlight">
+                            Ad's text here
+                        </div>
+                        <UserRichTextEditor
                             required
-                            className="w-100  fs-5 "
-                            height={"300px"} value={addText}
+                            className="w-100  fs-5 mb-4 "
+                            height={"200px"} value={addText}
                             onChange={(value) => setAddText(value)}
                             placeholder={'Write You\'r Add here '} />
                     </div>
@@ -229,9 +229,8 @@ const Ads = () => {
 
                 <Actions />
             </form>
-
         </div >
     );
 }
 
-export default Ads;
+export default CreateComponent;

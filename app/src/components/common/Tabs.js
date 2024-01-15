@@ -1,10 +1,16 @@
 import React, { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const Tabs = ({ links, activeTab, setActiveTab }) => {
-    const [activeTabIndex, setActiveTabIndex] = useState(0)
+const Tabs = ({ links, activeTab, setActiveTab, activeTabIndex, setActiveTabIndex, }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const handleTabClick = (index, component) => {
+        if (links[index].link)
+            return navigate(links[index].link)
         setActiveTab(component);
-        setActiveTabIndex(index)
+        setActiveTabIndex(index);
+
     };
 
     return (
@@ -15,14 +21,14 @@ const Tabs = ({ links, activeTab, setActiveTab }) => {
                 justifyContent: 'left', marginTop: '5px'
             }}
         >
-            
+
             <ul id="tutor-header-menus" className="header">
                 {links.map((tab, index) => (
                     <li
-                        id={`${activeTabIndex === index ? 'tutor-acct-tab-menu-list-active' : ""}`}
+                        id={`${location.pathname === tab.link ? 'tutor-acct-tab-menu-list-active' : ""}`}
                         key={index}
                         onClick={() => handleTabClick(index, tab.component)}
-                        className={index === activeTab ? 'active' : ''}
+                        className={location.pathname === tab.link ? 'active' : ''}
                     >
                         <a>{tab.label}</a>
                     </li>

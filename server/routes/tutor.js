@@ -33,7 +33,10 @@ const { subjects,
     get_tutor_profile_data,
     post_edu_form,
     remove_subject_rates,
-    post_tutor_ad } = require('../controllers/tutor');
+    post_tutor_ad,
+    get_tutor_ads,
+    get_ad,
+    put_ad } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -83,7 +86,10 @@ TUTOR_ROUTES.get('/tutor/market-data', get_tutor_market_data)
 TUTOR_ROUTES.get('/tutor/get_students/:academyId', get_tutor_students)
 TUTOR_ROUTES.get('/tutor/session/:tutorId', getSessionsDetails)
 TUTOR_ROUTES.get('/profile/:tutorId/:studentId', get_tutor_profile_data)
-TUTOR_ROUTES.post('/tutor/market-place', post_tutor_ad)
+TUTOR_ROUTES.post('/tutor/market-place', parser, post_tutor_ad)
+TUTOR_ROUTES.get('/tutor/market-place/list/:AcademyId', get_tutor_ads)
+TUTOR_ROUTES.get('/tutor/ad/:Id', get_ad)
+TUTOR_ROUTES.put('/tutor/ad/:Id', parser, put_ad)
 
 
 module.exports = {

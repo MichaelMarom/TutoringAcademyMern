@@ -221,14 +221,13 @@ let post_edu_form = async (req, res) => {
         countryForMast,
         countryForCert,
         countryForDoc,
-        countryForAssociate, resume, cert_file_name, deg_file_name } = req.body;
+        countryForAssociate, resume, cert_file_name, deg_file_name, references } = req.body;
 
 
     let duplicate = await connecteToDB.then(async (poolConnection) => {
         return await poolConnection.request().query(`SELECT * From Education 
          WHERE CONVERT(VARCHAR, AcademyId) =  '${user_id}'`)
             .then((result) => {
-
                 return result.recordset
             })
             .catch(err => console.log(err))
@@ -241,6 +240,8 @@ let post_edu_form = async (req, res) => {
             var poolConnection = await sql.connect(config);
             const request = poolConnection.request();
             request.input('WorkExperience', sql.NVarChar(sql.MAX), workExperience);
+            request.input('ThingsReferences', sql.NVarChar(sql.MAX), references);
+
             if (poolConnection) {
 
                 var resultSet = request.query(
@@ -249,7 +250,8 @@ let post_edu_form = async (req, res) => {
                             DoctorateCollege, DoctorateState, DoctorateGradYr, Degree,DegreeFile, DegreeState, 
                             DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, 
                             NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId,DegCountry,
-                            MastCountry,CertCountry, DocCountry, BachCountry,Resume,CertFileName, DegFileName)
+                            MastCountry,CertCountry, DocCountry, BachCountry,Resume,CertFileName, 
+                            DegFileName, ThingsReferences)
                         VALUES ('${level}', '${experience}', '${university1}',
                         '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
                         '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}','${state4}',
@@ -257,7 +259,7 @@ let post_edu_form = async (req, res) => {
                         '${language}','${state6}','${otherang}',@WorkExperience, '${user_id}',
                         '${countryForDeg}','${countryForMast}',
                         '${countryForCert}','${countryForDoc}','${countryForAssociate}','${resume}', 
-                        '${cert_file_name}','${deg_file_name}') `
+                        '${cert_file_name}','${deg_file_name}', @ThingsReferences) `
                 )
 
                 resultSet.then((result) => {
@@ -285,6 +287,8 @@ let post_edu_form = async (req, res) => {
             var poolConnection = await sql.connect(config);
             const request = poolConnection.request();
             request.input('WorkExperience', sql.NVarChar(sql.MAX), workExperience);
+            request.input('ThingsReferences', sql.NVarChar(sql.MAX), references);
+
             if (poolConnection) {
                 var resultSet = request.query(
                     `
@@ -301,7 +305,8 @@ let post_edu_form = async (req, res) => {
                          CertCountry= '${countryForCert}',
                           DocCountry='${countryForDoc}',
                           BachCountry='${countryForAssociate}',
-                          Resume='${resume}', CertFileName= '${cert_file_name}',DegFileName= '${deg_file_name}'
+                          Resume='${resume}', CertFileName= '${cert_file_name}',DegFileName= '${deg_file_name}',
+                          ThingsReferences=@ThingsReferences
                           WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
                         `
                 )
@@ -899,7 +904,7 @@ let faculties = (req, res) => {
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-            // .catch(err => console.log(err))
+                .catch(err => console.log(err))
 
         }
 

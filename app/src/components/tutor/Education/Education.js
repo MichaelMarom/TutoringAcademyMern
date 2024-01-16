@@ -16,6 +16,7 @@ import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
 import PDFViewer from './PDFViewer'
 import Button from '../../common/Button';
 import UserRichTextEditor from '../../common/RichTextEditor/UserRichTextEditor';
+import Tooltip from '../../common/ToolTip';
 
 const languageOptions = languages.map((language) => ({
     value: language,
@@ -96,6 +97,9 @@ const Education = () => {
     const [fetchingEdu, setFetchingEdu] = useState(false);
     const [deg_file_name, set_deg_file_name] = useState('');
     const [cert_file_name, set_cert_file_name] = useState('');
+    const [addReference, setAddReference] = useState(false)
+    const [references, setReferences] = useState(false)
+
 
     const options = {
         "Australia": AUST_STATES,
@@ -169,7 +173,8 @@ const Education = () => {
             countryForAssociate,
             resumePath,
             cert_file_name,
-            deg_file_name
+            deg_file_name,
+            references
         )
         return response;
     }
@@ -298,6 +303,8 @@ const Education = () => {
                     set_doctorateState(data.DoctorateState)
 
                     setDoctorateGraduateYear(data.DoctorateGradYr)
+                    setReferences(data.ThingsReferences)
+                    setAddReference(data.ThingsReferences.length)
 
                     set_doctorateState(data.DoctorateState)
 
@@ -514,8 +521,8 @@ const Education = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        if ((!resumePath || resumePath === 'null') && !workExperience.length)
-            return toast.error('Please either upload Resume or Type Work Experience!')
+        console.log(workExperience.length)
+        if (workExperience.length < 12) return toast.warning('Work Experiece in Required!')
         let res = await saver()
         if (res) {
             handleUploadDegreeToServer()
@@ -836,7 +843,10 @@ const Education = () => {
                                     <h6 className='border-bottom'>Degree Document</h6>
                                     <div className='d-flex justify-content-between'>
                                         <div className="col-md-3">
-                                            <label className="text-secondary" htmlFor="degree">Upload Highest Degree Diploma:</label>
+                                            <div className='d-flex'>
+                                                <label className="text-secondary text-start" htmlFor="degree">Upload Highest Degree Diploma:</label>
+                                                <Tooltip text="hightes degree" />
+                                            </div>
                                             <div className='d-flex align-items-center'>
 
                                                 {(degreeFileContent && degreeFileContent.length) ? (
@@ -934,8 +944,10 @@ const Education = () => {
                             <h6 className='border-bottom'>Certification</h6>
                             <div className='d-flex justify-content-between'>
                                 <div className="col-md-3">
-                                    <label className="text-secondary" htmlFor="certificate">Upload Certificate:</label>
-                                    <select
+                                    <div className='d-flex justify-content-between'>
+                                        <label className="text-secondary text-start" htmlFor="degree">Certification</label>
+                                        <Tooltip text="certification" />
+                                    </div> <select
                                         id="certificate"
                                         name="certificate"
                                         className="form-select m-0"
@@ -1076,37 +1088,26 @@ const Education = () => {
                             />
 
                         </div>
+                        <div>
+                            <Button className='btn-sm btn-primary'
+                                disabled={!editMode}
+                                handleClick={() => setAddReference(true)}>
+                                Add References
+                            </Button>
+                        </div>
                         {
-                            (resumePath && resumePath !== 'null') ?
-                                <div className='d-flex justify-content-between align-items-center my-3'>
-                                    <div>
-                                        {/* {getFileExtension(resumePath) === 'pdf' ?
-                                                <PDFViewer pdfUrl={`${process.env.REACT_APP_SERVER_URL}/uploads/${resumePath}`} />
-                                                : <img height={80} width={80} src={`${process.env.REACT_APP_SERVER_URL}/uploads/${resumePath}`} alt="resume" />} */}
-                                        <h6>Resume Uploaded <IoIosCheckmarkCircle color='green' size='20' /> </h6>
-                                        {/* <p className='text-primary text-decoration-underline cursor-pointer'
-                                            onClick={() =>
-                                                window.open(`${process.env.REACT_APP_SERVER_URL}/uploads/${resumePath}`, '_blank')}>
-                                            See uploaded Resume</p> */}
-                                    </div>
-                                    <Button className='btn-sm btn-primary' handleClick={() => set_resumePath(null)}>
-                                        Upload new resume
-                                    </Button>
-                                </div> :
-                                <div className="form-outline my-3">
-                                    <h6 className='border-bottom'>Upload your Resume</h6>
-                                    <input
-                                        type="file"
-                                        accept=".pdf, .jpeg, .png, .jpg"
-                                        id="degreeFile"
-                                        name="degreeFile"
-                                        disabled={!editMode}
-                                        className="form-control m-0"
-                                        onChange={handleResumeFileUpload}
-                                    />
-                                </div>
+                            addReference &&
+                            <div className="form-outline my-3" style={{ width: "450px" }}>
+                                <RichTextEditor
+                                    value={references}
+                                    onChange={(value) => setReferences(value)}
+                                    readOnly={!editMode}
+                                    placeholder="Enter Refrences material for students, like, where to get
+                                     Notes, What is most important Book for certain certification/degree!"
+                                    height='400px'
+                                />
+                            </div>
                         }
-                        <div className='fs-5 text-center w-100 mb-4' style={{ fontWeight: "bold" }}>OR</div>
                         <div style={{ width: "450px" }}>
 
                             <UserRichTextEditor

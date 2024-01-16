@@ -9,8 +9,6 @@ import { useLocation } from 'react-router-dom'
 const Layout = ({ children }) => {
     let [activeTab, setActiveTab] = useState('')
     const [activeTabIndex, setActiveTabIndex] = useState(1);
-    const location = useLocation()
-
 
     useEffect(() => {
         setActiveTab(<List
@@ -18,10 +16,9 @@ const Layout = ({ children }) => {
             setActiveTabIndex={setActiveTabIndex} />)
     }, [])
 
-    const [link, setLink] = useState('')
 
     const tabs = [
-        { label: `Classified`, component: <Classified />, link: '/tutor/market-place/classified' },
+        { label: `Students' Classified`, component: <Classified />, link: '/tutor/market-place/classified' },
         {
             label: 'Saved Ads', component: <List
                 setActiveTab={setActiveTab}

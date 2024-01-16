@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { BsCameraVideo, BsCloudUpload, BsTrash } from "react-icons/bs";
 import { moment } from "../../config/moment";
@@ -22,7 +22,7 @@ import Actions from '../common/Actions'
 import { uploadVideo } from "../../redux/tutor_store/video";
 import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, UK_STATES, US_STATES } from "../../constants/constants";
 import { setTutor } from "../../redux/tutor_store/tutorData";
-import { unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
+import { capitalizeFirstLetter, unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
 import ReactDatePicker from "react-datepicker";
 import { Link } from "react-router-dom";
 
@@ -55,6 +55,7 @@ const TutorSetup = () => {
   let [motivation, set_motivation] = useState("");
   let [headline, set_headline] = useState("");
   let [photo, set_photo] = useState("");
+  const lastNameInputRef = useRef(null);
   let [video, set_video] = useState("");
 
   let grades = [
@@ -75,7 +76,6 @@ const TutorSetup = () => {
   let [tutorGrades, setTutorGrades] = useState([]);
   const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
-  console.log(user, 'loggedin user')
   const [email, set_email] = useState(user[0].email);
   const [unSavedChanges, setUnsavedChanges] = useState(false);
   let [countryList, setCountryList] = useState("");
@@ -97,7 +97,7 @@ const TutorSetup = () => {
 
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
-  const [nameFieldsDisabled, setNameFieldsDisabled] = useState(true);
+  const [nameFieldsDisabled, setNameFieldsDisabled] = useState(false);
 
   const options = {
     "Australia": AUST_STATES,
@@ -107,7 +107,11 @@ const TutorSetup = () => {
   }
 
   useEffect(() => {
-    if (!tutor.AcademyId) {
+    if (tutor.AcademyId) {
+      setEditMode(false)
+      setNameFieldsDisabled(true)
+    }
+    else {
       setEditMode(true)
       setNameFieldsDisabled(false)
     }
@@ -641,6 +645,16 @@ const TutorSetup = () => {
                 type="text"
                 id="lname"
                 className="form-control m-0"
+                onBlur={() => {
+                  if (fname.length && lname.length) {
+                    const screenName = `${capitalizeFirstLetter(fname)} ${mname.length ? `${capitalizeFirstLetter(mname[0])}.` : ``} ${capitalizeFirstLetter(lname[0])}.`
+                    toast(`We will not disclose your private Information! You screen name ${screenName}`, {
+                      closeButton: true,
+                      autoClose: false,
+                    })
+                  }
+                }}
+                ref={lastNameInputRef}
               />
             </div>
 
@@ -691,8 +705,6 @@ const TutorSetup = () => {
                 disabled={nameFieldsDisabled}
                 style={{ width: "66%" }}
               />
-
-
 
             </div>
 
@@ -772,10 +784,8 @@ const TutorSetup = () => {
               </label>
               <input
                 className="form-control m-0"
-                required
-
                 onInput={(e) => set_add1(e.target.value)}
-                placeholder="Address 1"
+                placeholder="Optional"
                 value={add1}
                 type="text"
                 id="add1"
@@ -824,9 +834,9 @@ const TutorSetup = () => {
               </label>
               <input
                 className="form-control m-0"
-                required
+
                 onInput={(e) => set_city(e.target.value)}
-                placeholder="City/Town"
+                placeholder="Optional"
                 type="text"
                 value={city}
                 id="city"
@@ -844,7 +854,7 @@ const TutorSetup = () => {
                 id="country"
                 value={country}
                 disabled={!editMode}
-                required
+
               >
                 {countryList}
               </select>
@@ -870,7 +880,6 @@ const TutorSetup = () => {
                 {(options[country] ?? [])?.length ?
                   <select
                     className="form-select "
-                    required
                     onInput={(e) => set_state(e.target.value)}
                     id="state"
                     disabled={!editMode}
@@ -900,11 +909,10 @@ const TutorSetup = () => {
               </span>
               <input
                 className="form-control m-0"
-                required
                 onInput={(e) => set_zipCode(e.target.value)}
                 value={zipCode}
                 disabled={!editMode}
-                placeholder="Zip-Code"
+                placeholder="Optional"
                 type="text"
                 id="zip"
               />

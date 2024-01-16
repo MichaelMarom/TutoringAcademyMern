@@ -7,6 +7,7 @@ import { get_sessions_details } from '../../../axios/tutor';
 const Accounting = () => {
     const [sessions, setSessions] = useState([])
     let [activeTab, setActiveTab] = useState(<TutorAccSetup sessions={sessions} />);
+    const [activeTabIndex, setActiveTabIndex] = useState(0);
     const AcademyId = localStorage.getItem('tutor_user_id')
 
     useEffect(() => { setActiveTab(<TutorAccSetup sessions={sessions} />) }, [sessions])
@@ -26,7 +27,12 @@ const Accounting = () => {
 
     return (
         <>
-            <Tabs links={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Tabs links={tabs}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                setActiveTabIndex={setActiveTabIndex}
+                activeTabIndex={activeTabIndex}
+            />
             <div >
                 {activeTab}
             </div>

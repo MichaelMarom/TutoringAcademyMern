@@ -116,7 +116,7 @@ const Header = () => {
                             key={tab.url}
                             data-url={tab.url}
                             onClick={handleTabClick}
-                            id={tab.url === activeTab ? 'tutor-tab-header-list-active' : ''}
+                            id={activeTab.includes(tab.url) ? 'tutor-tab-header-list-active' : ''}
                         >
                             <a>{tab.name}</a>
                         </li>

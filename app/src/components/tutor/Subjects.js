@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
 import {
+    get_faculty,
     get_rates, new_subj_request_exist,
     upload_new_subject
 } from '../../axios/tutor';
@@ -46,15 +47,17 @@ const Subjects = () => {
             .catch((err) => console.log(err))
     }, [selectedFaculty])
 
-    const getFacultiesOption = () => {
-        let list = FACULTIES.map(item => {
+    const getFacultiesOption = async () => {
+        let list = await get_faculty()
+        console.log(list)
+        const selectOptions = list.map((item) => {
             return (
                 <option data-id={item.Id} value={`${item.Faculty}-${item.Id}`}
                     selected={newSubjectFacultyData === `${item.Faculty}-${item.Id}`} >{item.Faculty}</option>
             )
         })
-        set_faculty(FACULTIES)
-        setNewSubjectFaculty(list)
+        set_faculty(list)
+        setNewSubjectFaculty(selectOptions)
     }
     useEffect(() => { getFacultiesOption() }, [newSubjectFacultyData])
 

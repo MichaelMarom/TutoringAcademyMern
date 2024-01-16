@@ -122,7 +122,6 @@ const Rates = () => {
   };
 
   const compareStates = () => {
-    console.log(dbState, 'dbState')
     if (!(Object.keys(dbState).length)) return setChangesMade(false)
     for (const key in currentState) {
       if (currentState[key] !== dbState?.[key]) {

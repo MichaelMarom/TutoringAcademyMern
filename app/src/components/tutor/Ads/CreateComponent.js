@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { get_tutor_market_data, post_tutor_ad } from "../../../axios/tutor";
+import { fetch_tutor_ads, get_tutor_market_data, post_tutor_ad } from "../../../axios/tutor";
 import { useSelector } from "react-redux";
 import { capitalizeFirstLetter } from "../../../helperFunctions/generalHelperFunctions";
 import { FaEye } from "react-icons/fa";
@@ -21,6 +21,8 @@ const CreateComponent = ({ setActiveTab }) => {
     const [subject, setSubject] = useState('');
     const [grades, setGrades] = useState([])
     const [header, setHeader] = useState('');
+    const [error, setErrors] = useState({})
+    const [loading, setLoading] = useState(false)
     const AcademyId = localStorage.getItem('tutor_user_id');
 
     const [addText, setAddText] = useState(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
@@ -60,6 +62,10 @@ const CreateComponent = ({ setActiveTab }) => {
     const handleSave = async (e) => {
         e.preventDefault();
         if (!grades.length) return toast.warning('Please select atleast one grade!')
+        setLoading(true)
+        const ads = await fetch_tutor_ads(AcademyId)
+        setLoading(false)
+        if (ads.find(ad => ad.Subject === subject)) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published!')
         await post_tutor_ad({
             AcademyId,
             AdText: addText,
@@ -88,8 +94,13 @@ const CreateComponent = ({ setActiveTab }) => {
                         <div className="form-switch form-check w-25" style={{ marginBottom: "-10px" }}>
                             <input className="form-check-input"
                                 type="checkbox"
-                                role="switch" />
-                            <label htmlFor="reportAd"><b>Publish This Ad</b></label>
+                                role="switch"
+                                disabled
+                            />
+                            <label htmlFor="reportAd"
+                                onClick={() => toast.warning('You can publish only if you saved the ad before!')}
+
+                            ><b>Publish This Ad</b></label>
                         </div>
                         <div className="highlight w-75" >
                             This is the place where you can promote yourself by publishing your private ad for all students to watch. If you tutor multi subjects, you can select one subject at the time by changing the header.
@@ -100,38 +111,38 @@ const CreateComponent = ({ setActiveTab }) => {
                     <div className="rounded border shadow p-2">
                         <div className=" d-flex w-100 justify-content-start align-items-center mb-4"
                             style={{ gap: "10px" }}>
-                            <div className="w-75 d-flex align-items-center" style={{ gap: "10px" }}>
-                                <label htmlFor="" className="fs-3  ">Ad's Header</label>
+                            <div className=" d-flex align-items-center"
+                                style={{ gap: "10px", width: "90%" }}>
+                                <label className="fs-3 ">Ad's Header</label>
                                 <input
-                                    className="form-control w-50 shadow m-0"
+                                    className="form-control  shadow m-0"
+                                    style={{ width: "60%" }}
                                     type="text"
                                     placeholder="Type here a catchy message promoting your subject"
                                     required
                                     value={header}
-                                    onChange={(e) => setHeader(e.target.value)} />
+                                    onChange={(e) => {
+                                        if (e.target.value.length < 121) {
+                                            delete error.header;
+                                            setErrors(error)
+                                            return setHeader(e.target.value)
+                                        }
+                                        setErrors({ ...error, header: "Max Limit 120 characters" })
+                                    }} />
+                                {error.header && <p className="text-sm text-danger m-0">{error.header} </p>}
                             </div>
-                            <div className="d-flex align-items-center w-25 justify-content-end" style={{ gap: "20px" }}>
-                                <div className="click-effect-elem rounded-circle p-3 " style={{ cursor: "pointer", background: "lightGray" }}>
+                            <div className="d-flex align-items-center justify-content-end"
+                                style={{ width: "10%", gap: "20px" }}>
+                                <div className="click-effect-elem rounded-circle p-3"
+                                    style={{ cursor: "pointer", background: "lightGray" }}>
                                     <FaTrashCan size={32} />
-                                </div>
-                                <div className="click-effect-elem  rounded-circle p-3 " style={{ cursor: "pointer", background: "lightGray" }}>
-                                    <FaEye size={32} />
                                 </div>
                             </div>
                         </div>
-                        <div className="d-flex flex-wrap justify-content-start" style={{ gap: "10px" }}>
-
+                        <div className="d-flex flex-wrap justify-content-start"
+                            style={{ gap: "10px" }}>
                             <div style={{ width: "100%" }}
-                                className=" mb-2 d-flex flex-column justify-content-start border p-2">
-                                {/* {!!grades.length && <div className="rounded border d-flex w-100 m-2 ">
-                                {grades.map(grade =>
-                                    <div className="" style={{ width: "auto" }} onClick={() => handleClickPill(grade)}>
-                                        <Pill label={grade}
-                                            hasIcon={true} icon={<RxCross2 />}
-                                            color="danger"
-                                        />
-                                    </div>)}
-                            </div>} */}
+                                className=" mb-2 d-flex flex-column justify-content-between border p-2">
                                 <label htmlFor="">Tutor Teaching Grade</label>
                                 <div className="w-100 d-flex justify-content-between">
 
@@ -227,7 +238,9 @@ const CreateComponent = ({ setActiveTab }) => {
 
                 </div>
 
-                <Actions />
+                <Actions
+                    loading={loading}
+                />
             </form>
         </div >
     );

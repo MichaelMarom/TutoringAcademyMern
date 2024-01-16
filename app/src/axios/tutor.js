@@ -224,9 +224,9 @@ export let upload_edu_form = (level, university1, university2, university3, degr
     countryForMast,
     countryForCert,
     countryForDoc,
-    countryForAssociate, resume, cert_file_name, deg_file_name) => {
-    return new Promise((resolve, reject) => {
+    countryForAssociate, resume, cert_file_name, deg_file_name, references) => {
 
+    return new Promise((resolve, reject) => {
         apiClient.post('/tutor/edu', {
             level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
             state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
@@ -234,7 +234,7 @@ export let upload_edu_form = (level, university1, university2, university3, degr
             countryForMast,
             countryForCert,
             countryForDoc,
-            countryForAssociate, resume, cert_file_name, deg_file_name
+            countryForAssociate, resume, cert_file_name, deg_file_name, references
         })
             .then((result) => {
                 resolve(result.data)
@@ -703,7 +703,7 @@ export const fetch_tutor_ads = async (id) => {
 
 export const fetch_ad = async (id) => {
     try {
-        const {data} = await apiClient.get(`/tutor/ad/${id}`)
+        const { data } = await apiClient.get(`/tutor/ad/${id}`)
         return data
     }
     catch (err) {
@@ -713,7 +713,7 @@ export const fetch_ad = async (id) => {
 
 export const put_ad = async (id, body) => {
     try {
-        const {data} = await apiClient.put(`/tutor/ad/${id}`, body)
+        const { data } = await apiClient.put(`/tutor/ad/${id}`, body)
         return data
     }
     catch (err) {

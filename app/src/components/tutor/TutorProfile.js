@@ -16,6 +16,7 @@ import { IoTime } from "react-icons/io5";
 import GradePills from './GradePills';
 import ToolTip from '../common/ToolTip'
 import { FaFilePdf } from "react-icons/fa6";
+import { toast } from 'react-toastify';
 
 const TutorProfile = () => {
     const params = useParams();
@@ -55,6 +56,7 @@ const TutorProfile = () => {
     }
 
     const handleScheduleClick = () => {
+        if (!studentId) return toast.error("You need to selct 1 student from students-list!")
         navigate(`/student/short-list`)
     }
 
@@ -62,6 +64,7 @@ const TutorProfile = () => {
         if (data.ChatID) {
             navigate(`/student/chat/${data.ChatID}`)
         }
+        if (!studentId) return toast.error("You need  to select 1 student from student list!")
         else {
             const result = await create_chat({ User1ID: studentId, User2ID: data.AcademyId });
             navigate(`/student/chat/${result[0].ChatID}`)
@@ -106,12 +109,6 @@ const TutorProfile = () => {
 
                                         <h2 className='m-0'>
                                             {capitalizeFirstLetter(data.TutorScreenname)}</h2>
-                                        {data.Resume && data.Resume.length &&
-                                            <Button className='btn-sm btn-success'
-                                                onClick={() =>
-                                                    window.open(`${process.env.REACT_APP_FILES_BASE_PATH}/${data.Resume}`, '_blank')}
-                                            >Resume</Button>
-                                        }
                                     </div>
 
                                     <p className='m-0'>{data.HeadLine}</p>
@@ -137,8 +134,8 @@ const TutorProfile = () => {
                                 </div>
                                 <div className='m-2 '>
                                     <div className='d-flex '>
-                                        <Button className='btn-sm btn-primary' onClick={handleChatClick} disabled={userRole == 'tutor'}>Chat</Button>
-                                        <Button className='btn-sm btn-success' onClick={handleScheduleClick} disabled={userRole == 'tutor'}>See Schedule</Button>
+                                        <Button className='btn-sm btn-primary' onClick={handleChatClick} disabled={userRole === 'tutor'}>Chat</Button>
+                                        <Button className='btn-sm btn-success' onClick={handleScheduleClick} disabled={userRole === 'tutor'}>See Schedule</Button>
                                     </div>
                                 </div>
                             </div>
@@ -298,7 +295,8 @@ const TutorProfile = () => {
                                         Work Experience (Total Experience - {data.EducationLevelExp})
                                     </h5>
                                     <div className='border p-2' dangerouslySetInnerHTML={{ __html: data.WorkExperience }} />
-                                </div>}
+                                </div>
+                                }
                                 <div className='mt-4'>
                                     <h5 className=''>
                                         Education

@@ -537,7 +537,7 @@ const TutorSetup = () => {
   // getting getLocalGMT and then multiple it with -1 to add (-5:00) or subtract (+5:00)
   const getLocalGMT = parseInt((offset => (offset < 0 ? '+' : '-') + ('00' + Math.abs(offset / 60 | 0)).slice(-2) + ':' + ('00' + Math.abs(offset % 60)).slice(-2))(new Date().getTimezoneOffset())) * -1;
 
-  if (tutorDataLoading || savingRecord)
+  if (tutorDataLoading)
     return <Loading height="80vh" />
   return (
     <form onSubmit={saveTutorSetup} className="pt-4">
@@ -648,10 +648,14 @@ const TutorSetup = () => {
                 onBlur={() => {
                   if (fname.length && lname.length) {
                     const screenName = `${capitalizeFirstLetter(fname)} ${mname.length ? `${capitalizeFirstLetter(mname[0])}.` : ``} ${capitalizeFirstLetter(lname[0])}.`
-                    toast(`We will not disclose your private Information! You screen name ${screenName}`, {
-                      closeButton: true,
-                      autoClose: false,
-                    })
+                    toast(`You screen name is; ${screenName} which we use online. We do not disclose your private information online. 
+                    We use your cellphone only for verification to withdraw your funds, or for events notifications like
+                    students booking/postponding/cancelling lessons, etc'. `,
+                      {
+                        closeButton: true,
+                        autoClose: false,
+                        className: "setup-private-info"
+                      })
                   }
                 }}
                 ref={lastNameInputRef}
@@ -849,12 +853,12 @@ const TutorSetup = () => {
                 Country
               </label>
               <select
+                required
                 className="form-select m-0"
                 onInput={(e) => set_country(e.target.value)}
                 id="country"
                 value={country}
                 disabled={!editMode}
-
               >
                 {countryList}
               </select>
@@ -1268,6 +1272,7 @@ const TutorSetup = () => {
       <Actions
         nextDisabled={!tutor.AcademyId}
         onEdit={handleEditClick}
+        saveDisabled={!editMode}
         editDisabled={editMode}
         unSavedChanges={unSavedChanges}
         loading={savingRecord}

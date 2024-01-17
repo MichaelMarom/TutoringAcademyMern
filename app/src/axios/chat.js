@@ -59,3 +59,15 @@ export const set_online_status = async (isOnline, id, role) => {
         return err
     }
 }
+
+export const recomendation = async (id) => {
+    try {
+        const { data } = await apiClient.get(`/chat/recomendation/${id}`)
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err;
+
+    }
+}

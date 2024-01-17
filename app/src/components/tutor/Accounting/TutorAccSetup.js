@@ -22,9 +22,11 @@ const TutorAccSetup = ({ sessions }) => {
     let [commission, set_commission] = useState(null)
     let [total_earning, set_total_earning] = useState(null)
     let [payment_option, set_payment_option] = useState(null)
+    const [saving, setSaving] = useState(false)
+    const emailRequiredPaymentMethods = ['Paypal', 'Payoneer', 'Wise', 'Zelle']
 
     useEffect(() => {
-        set_email(tutor.Email)
+        !email?.length && set_email(tutor.Email)
     }, [tutor])
 
     const commissionAccordingtoNumOfSession = (sr) => {
@@ -55,24 +57,25 @@ const TutorAccSetup = ({ sessions }) => {
 
         let user_id = window.localStorage.getItem('tutor_user_id');
         if (validate())
-            if (payment_option === 'Bank') {
+            setSaving(true);
+        if (payment_option === 'Bank') {
 
-                let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
-                if (response) {
-                    toast.success("Succesfully Saved The Bank Info.")
-                } else {
-                    toast.error("Error while Saving the Bank Info.")
-                }
-
+            let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
+            if (response) {
+                toast.success("Succesfully Saved The Bank Info.")
             } else {
-                document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
-                let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
-                if (response) {
-                    toast.success("Succesfully Saved The Bank Info.")
-                } else {
-                    toast.error("Error while Saving the Bank Info.")
-                }
+                toast.error("Error while Saving the Bank Info.")
             }
+
+        } else {
+            let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
+            if (response) {
+                toast.success("Succesfully Saved The Bank Info.")
+            } else {
+                toast.error("Error while Saving the Bank Info.")
+            }
+        }
+        setSaving(false);
     }
 
     useEffect(() => {
@@ -87,6 +90,7 @@ const TutorAccSetup = ({ sessions }) => {
                     set_acct_type(data.AccountType === "null" ? null : data.AccountType)
                     set_bank_name(data.BankName === "null" ? null : data.BankName)
                     set_acct(data.Account === "null" ? null : data.Account)
+                    set_email(data.Email)
                 }
             })
             .catch((err) => {
@@ -95,7 +99,6 @@ const TutorAccSetup = ({ sessions }) => {
     }, [])
 
     return (
-
         <div className="tutor-tab-accounting">
 
             <div className="tutor-tab-acct-start-day">
@@ -136,13 +139,41 @@ const TutorAccSetup = ({ sessions }) => {
                             <span className='m-0'>Paypal</span>
                         </div>
                         <div style={{ float: 'left' }}>
+                            <input required
+                                checked={payment_option === 'Wise'}
+                                style={{
+                                    float: 'left', width: '30px', cursor: 'pointer',
+                                    height: '20px',
+                                    fontSize: 'x-small'
+                                }}
+                                type="radio"
+                                onChange={(e) => set_payment_option(e.target.value)}
+                                className='m-0'
+                                value='Wise' name='p-method' />
+                            <span className='m-0'>Wise</span>
+                        </div>
+                        <div style={{ float: 'left' }}>
+                            <input required
+                                checked={payment_option === 'Payoneer'}
+                                style={{
+                                    float: 'left', width: '30px', cursor: 'pointer',
+                                    height: '20px',
+                                    fontSize: 'x-small'
+                                }}
+                                type="radio"
+                                onChange={(e) => set_payment_option(e.target.value)}
+                                className='m-0'
+                                value='Payoneer' name='p-method' />
+                            <span className='m-0'>Payoneer</span>
+                        </div>
+                        <div style={{ float: 'left' }}>
                             <input className='m-0'
-                                checked={payment_option === 'Zale'}
+                                checked={payment_option === 'Zelle'}
                                 style={{
                                     float: 'left', width: '30px', cursor: 'pointer', height: '20px',
                                     fontSize: 'x-small'
                                 }} type="radio"
-                                onChange={(e) => set_payment_option(e.target.value)} value='Zale' name='p-method' id="" />
+                                onChange={(e) => set_payment_option(e.target.value)} value='Zelle' name='p-method' id="" />
                             <span className='m-0'>Zelle</span>
                         </div>
                         <div className='m-0' style={{ float: 'left' }}>
@@ -194,7 +225,7 @@ const TutorAccSetup = ({ sessions }) => {
                             </div>
                         </div>
                     }
-                    {payment_option === "Paypal" &&
+                    {emailRequiredPaymentMethods.includes(payment_option) &&
 
                         <div className=' mt-4'>
                             <div className='d-flex align-items-center justify-content-between'>
@@ -246,10 +277,9 @@ const TutorAccSetup = ({ sessions }) => {
                             style={{ float: 'right', width: '50%' }} disabled />
                     </div>
                 </div>
-                <Actions />
+                <Actions loading={saving} />
             </form>
         </div>
-
     );
 }
 

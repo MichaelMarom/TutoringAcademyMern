@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { apiClient } from './config'
 import Subjects from '../pages/tutor/Subjects'
+import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions'
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
@@ -625,8 +626,9 @@ export const post_tutor_setup = async (data) => {
         if (data.vacation_mode !== undefined) dataObject.VacationMode = data.vacation_mode;
 
         dataObject.TutorScreenname = data.mname.length ?
-            `${data.fname}. ${data.mname[0]}. ${data.lname[0]}` :
-            `${data.fname}. ${data.lname[0]}`;
+            `${capitalizeFirstLetter(data.fname)}. ${capitalizeFirstLetter(data.mname[0])}. 
+            ${capitalizeFirstLetter(data.lname[0])}` :
+            `${capitalizeFirstLetter(data.fname)}. ${capitalizeFirstLetter(data.lname[0])}`;
 
         dataObject.AcademyId = uuidv4();
         return await apiClient.post('/tutor/setup', dataObject);

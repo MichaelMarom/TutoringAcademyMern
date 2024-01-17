@@ -71,7 +71,7 @@ const StudentShortList = () => {
             Header: 'Tutor Local Time (UTC).',
             width: "6%",
             tooltip: <Tooltip width="200px" color='white' direction='bottomleft'
-                text="The time show the local time (UTC) at the tutor's location." />
+                text="The time shown is the local time (UTC) at the tutor's location." />
         },
         {
             Header: "Be Aware Time Zone Diff",

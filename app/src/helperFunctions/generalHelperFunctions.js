@@ -50,7 +50,7 @@ function isArrayStringEqual(array, strArray) {
 }
 
 export const unsavedChangesHelper = (fieldValues, tutor) => {
-
+  console.log(tutor.ThingsReferences, fieldValues.references)
   return (
     tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
     tutor.Address1 !== undefined && fieldValues.add1 !== undefined && tutor.Address1 !== fieldValues.add1 ||
@@ -81,31 +81,31 @@ export const unsavedChangesHelper = (fieldValues, tutor) => {
 
 export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
   return (
-
-    tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
-    (tutor.EducationalLevel !== undefined && fieldValues.level !== undefined && tutor.EducationalLevel !== fieldValues.level) ||
-    (tutor.BachCountry !== undefined && fieldValues.countryForAssociate !== undefined && tutor.BachCountry !== fieldValues.countryForAssociate) ||
-    (tutor.CertCountry !== undefined && fieldValues.countryForCert !== undefined && tutor.CertCountry !== fieldValues.countryForCert) ||
-    (tutor.MastCountry !== undefined && fieldValues.countryForMast !== undefined && tutor.MastCountry !== fieldValues.countryForMast) ||
-    (tutor.DocCountry !== undefined && fieldValues.countryForDoc !== undefined && tutor.DocCountry !== fieldValues.countryForDoc) ||
-    (tutor.DegCountry !== undefined && fieldValues.countryForDeg !== undefined && tutor.DegCountry !== fieldValues.countryForDeg) ||
-    (tutor.College1 !== undefined && fieldValues.university1 !== undefined && tutor.College1 !== fieldValues.university1) ||
-    (tutor.College2 !== undefined && fieldValues.university2 !== undefined && tutor.College2 !== fieldValues.university2) ||
-    (tutor.DoctorateCollege !== undefined && fieldValues.university3 !== undefined && tutor.DoctorateCollege !== fieldValues.university3) ||
-    (tutor.College1State !== undefined && fieldValues.state2 !== undefined && tutor.College1State !== fieldValues.state2) ||
-    (tutor.College2State !== undefined && fieldValues.state3 !== undefined && tutor.College2State !== fieldValues.state3) ||
-    (tutor.DoctorateState !== undefined && fieldValues.doctorateState !== undefined && tutor.DoctorateState !== fieldValues.doctorateState) ||
-    (tutor.DegreeState !== undefined && fieldValues.state4 !== undefined && tutor.DegreeState !== fieldValues.state4) ||
-    (tutor.Certificate !== undefined && fieldValues.certificate !== undefined && tutor.Certificate !== fieldValues.certificate) ||
-    (tutor.CertificateState !== undefined && fieldValues.state5 !== undefined && tutor.CertificateState !== fieldValues.state5) ||
-    (tutor.EducationalLevelExperience !== undefined && fieldValues.experience !== undefined && tutor.EducationalLevelExperience !== fieldValues.experience) ||
-    (tutor.College1Year !== undefined && fieldValues.graduateYr1 !== undefined && tutor.College1Year !== fieldValues.graduateYr1) ||
-    (tutor.College2StateYear !== undefined && fieldValues.graduateYr2 !== undefined && tutor.College2StateYear !== fieldValues.graduateYr2) ||
-    (tutor.DegreeYear !== undefined && fieldValues.graduagteYr3 !== undefined && tutor.DegreeYear !== fieldValues.graduagteYr3) ||
-    (tutor.DoctorateGradYr !== undefined && fieldValues.doctorateGraduateYear !== undefined && tutor.DoctorateGradYr !== fieldValues.doctorateGraduateYear) ||
-    (tutor.CertificateExpiration !== undefined && fieldValues.expiration !== undefined && tutor.CertificateExpiration !== fieldValues.expiration) ||
-    (tutor.WorkExperience !== undefined && fieldValues.workExperience !== undefined && tutor.WorkExperience !== fieldValues.workExperience) ||
-    (tutor.Resume !== undefined && fieldValues.resumePath !== undefined && tutor.Resume !== fieldValues.resumePath)
+    // tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
+    (tutor?.EducationalLevel !== undefined && fieldValues.level !== undefined && tutor?.EducationalLevel !== fieldValues.level) ||
+    (tutor?.BachCountry !== undefined && fieldValues.countryForAssociate !== undefined && tutor?.BachCountry !== fieldValues.countryForAssociate) ||
+    (tutor?.CertCountry !== undefined && fieldValues.countryForCert !== undefined && tutor?.CertCountry !== fieldValues.countryForCert) ||
+    (tutor?.MastCountry !== undefined && fieldValues.countryForMast !== undefined && tutor?.MastCountry !== fieldValues.countryForMast) ||
+    (tutor?.DocCountry !== undefined && fieldValues.countryForDoc !== undefined && tutor?.DocCountry !== fieldValues.countryForDoc) ||
+    (tutor?.DegCountry !== undefined && fieldValues.countryForDeg !== undefined && tutor?.DegCountry !== fieldValues.countryForDeg) ||
+    (tutor?.College1 !== undefined && fieldValues.university1 !== undefined && tutor?.College1 !== fieldValues.university1) ||
+    (tutor?.College2 !== undefined && fieldValues.university2 !== undefined && tutor?.College2 !== fieldValues.university2) ||
+    (tutor?.DoctorateCollege !== undefined && fieldValues.university3 !== undefined && tutor?.DoctorateCollege !== fieldValues.university3) ||
+    (tutor?.College1State !== undefined && fieldValues.state2 !== undefined && tutor?.College1State !== fieldValues.state2) ||
+    (tutor?.College2State !== undefined && fieldValues.state3 !== undefined && tutor?.College2State !== fieldValues.state3) ||
+    (tutor?.DoctorateState !== undefined && fieldValues.doctorateState !== undefined && tutor?.DoctorateState !== fieldValues.doctorateState) ||
+    (tutor?.DegreeState !== undefined && fieldValues.state4 !== undefined && tutor?.DegreeState !== fieldValues.state4) ||
+    (tutor?.Certificate !== undefined && fieldValues.certificate !== undefined && tutor?.Certificate !== fieldValues.certificate) ||
+    (tutor?.CertificateState !== undefined && fieldValues.state5 !== undefined && tutor?.CertificateState !== fieldValues.state5) ||
+    (tutor?.EducationalLevelExperience !== undefined && fieldValues.experience !== undefined && tutor?.EducationalLevelExperience !== fieldValues.experience) ||
+    (tutor?.College1Year !== undefined && fieldValues.graduateYr1 !== undefined && tutor?.College1Year !== fieldValues.graduateYr1) ||
+    (tutor?.College2StateYear !== undefined && fieldValues.graduateYr2 !== undefined && tutor?.College2StateYear !== fieldValues.graduateYr2) ||
+    (tutor?.DegreeYear !== undefined && fieldValues.graduagteYr3 !== undefined && tutor?.DegreeYear !== fieldValues.graduagteYr3) ||
+    (tutor?.DoctorateGradYr !== undefined && fieldValues.doctorateGraduateYear !== undefined && tutor?.DoctorateGradYr !== fieldValues.doctorateGraduateYear) ||
+    (tutor?.CertificateExpiration !== undefined && fieldValues.expiration !== undefined && tutor?.CertificateExpiration !== fieldValues.expiration) ||
+    (tutor?.WorkExperience !== undefined && fieldValues.workExperience !== undefined && tutor?.WorkExperience !== fieldValues.workExperience) ||
+    tutor?.ThingsReferences !== undefined && fieldValues.references !== undefined && tutor?.ThingsReferences !== fieldValues.references ||
+    (tutor?.Resume !== undefined && fieldValues.resumePath !== undefined && tutor?.Resume !== fieldValues.resumePath)
   );
 }
 

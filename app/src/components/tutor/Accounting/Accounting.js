@@ -33,7 +33,7 @@ const Accounting = () => {
                 setActiveTabIndex={setActiveTabIndex}
                 activeTabIndex={activeTabIndex}
             />
-            <div >
+            <div>
                 {activeTab}
             </div>
         </>

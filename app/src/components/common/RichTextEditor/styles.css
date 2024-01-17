@@ -1,7 +1,16 @@
-.ql-container {
+.references .ql-container,
+.work-exp .ql-container {
     height: 60% !important;
 }
 
 .ql-toolbar.ql-snow {
     /* height: 20% !important; */
+}
+
+.references .ql-toolbar {
+    background-color: rgb(195, 233, 245) !important;
+}
+
+.work-exp .ql-toolbar {
+    background-color: rgb(192, 244, 192) !important;
 }

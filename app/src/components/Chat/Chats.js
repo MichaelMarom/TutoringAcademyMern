@@ -1,5 +1,6 @@
 import React from 'react';
 import Avatar from '../common/Avatar';
+import Loading from '../common/Loading';
 
 function DiscussionItem({ fetchingMessages, online, setSelectedChat, selectedChat, name, datetime, message, avatarSrc, unread, groupAmount, id }) {
     return (
@@ -62,19 +63,21 @@ function SearchBar() {
     );
 }
 
-export default function Chats({ fetchingMessages, setSelectedChat, selectedChat, discussionData }) {
+export default function Chats({ isLoading, fetchingMessages, setSelectedChat, selectedChat, discussionData }) {
     return (
         <div className="ks-discussions">
             <SearchBar />
-          {(!!discussionData.length) ?  <DiscussionList
+            {(!!discussionData.length) ? <DiscussionList
                 setSelectedChat={setSelectedChat}
                 discussions={discussionData}
                 fetchingMessages={fetchingMessages}
                 selectedChat={selectedChat}
-            />:
-            <div className='border rounded-pill shadow px-4 m-2'> Students will contact you. Then Chat will apear here. </div>
-        
-        }
+            /> :
+                <div className='border rounded-pill shadow px-4 m-2'>
+                    Students will contact you. Then Chat will apear here.
+                </div>
+
+            }
         </div>
     );
 }

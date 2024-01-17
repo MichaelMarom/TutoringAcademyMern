@@ -83,7 +83,7 @@ const Education = () => {
     let [d_list, set_d_list] = useState([])
 
     let [data, set_data] = useState(false);
-    let [files, set_files] = useState('');
+    let [files, set_files] = useState({});
 
     const [degreeFile, setDegreeFile] = useState(null);
     const [resumeFile, setResumeFile] = useState(null);
@@ -98,7 +98,8 @@ const Education = () => {
     const [deg_file_name, set_deg_file_name] = useState('');
     const [cert_file_name, set_cert_file_name] = useState('');
     const [addReference, setAddReference] = useState(false)
-    const [references, setReferences] = useState(false)
+    const [references, setReferences] = useState('')
+    const [saving, setSaving] = useState(false);
 
 
     const options = {
@@ -187,8 +188,9 @@ const Education = () => {
         set_workExperience(value);
     };
 
+    //comparing DB, Local
     useEffect(() => {
-        if (files?.AcademyId !== undefined) {
+        if (true) {
             let fieldValues = {
                 level,
                 university1,
@@ -228,8 +230,10 @@ const Education = () => {
                 db_edu_level,
                 db_edu_cert,
                 fetchingEdu,
-                resumePath
+                resumePath,
+                references
             }
+            console.log(files, fieldValues)
             setUnsavedChanges(unsavedEducationChangesHelper(fieldValues, files))
         }
     }, [
@@ -267,7 +271,8 @@ const Education = () => {
         db_edu_cert,
         fetchingEdu,
         files,
-        resumePath
+        resumePath,
+        references
     ])
 
     //fetching DB
@@ -327,7 +332,31 @@ const Education = () => {
 
                     setDataFetched(true)
                 } else {
-                    set_files(null)
+                    set_files({
+                        EducationalLevel: level,
+                        College1: university1,
+                        College2: university2,
+                        DoctorateCollege: university3,
+                        Certificate: certificate,
+                        BachCountry: countryForAssociate,
+                        CertCountry: countryForCert,
+                        MastCountry: countryForMast,
+                        DocCountry: countryForDoc,
+                        DegCountry: countryForDeg,
+                        College1State: state2,
+                        College2State: state3,
+                        DegreeState: state4,
+                        CertificateState: state5,
+                        DoctorateState: doctorateState,
+                        EducationalLevelExperience: experience,
+                        College1Year: graduateYr1,
+                        College2StateYear: graduateYr2,
+                        DegreeYear: graduagteYr3,
+                        DoctorateGradYr: doctorateGraduateYear,
+                        CertificateExpiration: expiration,
+                        WorkExperience: workExperience,
+                        ThingsReferences: references
+                    })
                 }
 
             })
@@ -457,8 +486,6 @@ const Education = () => {
             } catch (error) {
                 console.error('Error uploading file:', error);
             }
-        } else {
-            console.warn('Please select a file before uploading.');
         }
     };
 
@@ -480,7 +507,7 @@ const Education = () => {
                 console.error('Error uploading file:', error);
             }
         } else {
-            console.warn('Please select a file before uploading.');
+            console.log('Please select a file before uploading.');
         }
     };
 
@@ -488,17 +515,11 @@ const Education = () => {
         if (certificateFile) {
             const formData = new FormData();
             formData.append('file', certificateFile);
-
             try {
-
-                const response = await upload_file(formData, cert_file_name)
-
-                console.log(response.data.filePath);
+                await upload_file(formData, cert_file_name)
             } catch (error) {
                 console.error('Error uploading file:', error);
             }
-        } else {
-            console.warn('Please select a file before uploading.');
         }
     };
 
@@ -523,17 +544,19 @@ const Education = () => {
         e.preventDefault();
         console.log(workExperience.length)
         if (workExperience.length < 12) return toast.warning('Work Experiece in Required!')
-        let res = await saver()
+        setSaving(true)
+        let res = await saver();
+        setSaving(false)
         if (res) {
             handleUploadDegreeToServer()
             handleUploadCertificateToServer()
-            handleUploadResumeToServer();
-            setEditMode(false);
+            // handleUploadResumeToServer();
             toast.success('Education record saved Successfully');
         }
         else {
             toast.error('Failed to save Record')
         }
+        setEditMode(false)
     }
 
     if (fetchingEdu)
@@ -557,11 +580,14 @@ const Education = () => {
                             <h6 className='border-bottom'>Experience</h6>
                             <div className='d-flex justify-content-between'>
 
-                                <div className="col-md-3">
-                                    <label className="text-secondary" htmlFor="level">Education Level:</label>
+                                <div className="col-md-4">
+                                    <div className='d-flex justify-content-between'>
+                                        <label className="text-secondary text-start" htmlFor="level">Education Level:</label>
+                                        <Tooltip text=" educaton level " />
+                                    </div>
                                     <select
                                         id="level"
-                                        className="form-control m-0"
+                                        className="form-select m-0"
                                         onChange={edu_level}
                                         value={level}
                                         required
@@ -572,11 +598,11 @@ const Education = () => {
                                     </select>
                                 </div>
 
-                                <div className="col-md-3">
+                                <div className="col-md-4">
                                     <label className="text-secondary" htmlFor="experience">Experience:</label>
                                     <select
                                         id="experience"
-                                        className="form-control m-0"
+                                        className="form-select m-0"
                                         onChange={(e) => set_experience(e.target.value)}
                                         value={experience}
                                         required
@@ -599,7 +625,7 @@ const Education = () => {
                                         </h6>
                                     }
                                     <div className='d-flex justify-content-between'>
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                             <label className="text-secondary" htmlFor="university1">{(level === 'Associate Degree' ||
                                                 level === 'Undergraduate Student') ?
                                                 'College Name' : 'Bachelor Degree Institute:'}</label>
@@ -656,23 +682,24 @@ const Education = () => {
 
                                         </div>
 
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                             <label className="text-secondary" htmlFor="yr1">Graduation Year:</label>
-                                            {level === 'Undergraduate Student' ? <div>{graduateYr1}</div> : <select
-                                                id="yr1"
-                                                className="form-control m-0 w-100"
-                                                onChange={(e) => set_graduateYr1(e.target.value)}
-                                                value={graduateYr1}
-                                                required
-                                                disabled={!editMode}
-                                            >
-                                                <option value="">Select Year</option>
-                                                {d_list.map((item) => (
-                                                    <option key={item} value={item}>
-                                                        {item}
-                                                    </option>
-                                                ))}
-                                            </select>}
+                                            {level === 'Undergraduate Student' ? <div>{graduateYr1}</div> :
+                                                <select
+                                                    id="yr1"
+                                                    className="form-select m-0 w-100"
+                                                    onChange={(e) => set_graduateYr1(e.target.value)}
+                                                    value={graduateYr1}
+                                                    required
+                                                    disabled={!editMode}
+                                                >
+                                                    <option value="">Select Year</option>
+                                                    {d_list.map((item) => (
+                                                        <option key={item} value={item}>
+                                                            {item}
+                                                        </option>
+                                                    ))}
+                                                </select>}
                                         </div>
                                     </div>
 
@@ -682,7 +709,7 @@ const Education = () => {
                                         <div className="row mt-3 border p-3 shadow ">
                                             <h6 className='border-bottom'>Master Degree</h6>
                                             <div className='d-flex justify-content-between'>
-                                                <div className="col-md-3">
+                                                <div className="col-md-4">
                                                     <label className="text-secondary" htmlFor="university2">Master Degree University:</label>
                                                     <input
                                                         type="text"
@@ -736,11 +763,11 @@ const Education = () => {
                                                     }
                                                 </div>
 
-                                                <div className="col-md-3">
+                                                <div className="col-md-4">
                                                     <label className="text-secondary" htmlFor="yr2">Graduation Year:</label>
                                                     <select
                                                         id="yr2"
-                                                        className="form-control m-0 w-100"
+                                                        className="form-select m-0 w-100"
                                                         onChange={(e) => set_graduateYr2(e.target.value)}
                                                         value={graduateYr2}
                                                         required
@@ -764,7 +791,7 @@ const Education = () => {
                                         <div className="row mt-3 border p-3 shadow ">
                                             <h6 className='border-bottom'>Doctorate Degree</h6>
                                             <div className='d-flex justify-content-between'>
-                                                <div className="col-md-3">
+                                                <div className="col-md-4">
                                                     <label className="text-secondary" htmlFor="university2"> Doctorate Degree university </label>
                                                     <input
                                                         type="text"
@@ -799,7 +826,7 @@ const Education = () => {
                                                             <label className="text-secondary" htmlFor="state1">State/Province:</label>
                                                             <select
                                                                 id="state1"
-                                                                className="form-control m-0 w-100"
+                                                                className="form-select m-0 w-100"
                                                                 onChange={(e) => set_doctorateState(e.target.value)}
                                                                 value={doctorateState}
                                                                 required
@@ -816,11 +843,11 @@ const Education = () => {
                                                     }
                                                 </div>
 
-                                                <div className="col-md-3">
+                                                <div className="col-md-4">
                                                     <label className="text-secondary" htmlFor="yr2">Graduation Year:</label>
                                                     <select
                                                         id="yr2"
-                                                        className="form-control m-0 w-100"
+                                                        className="form-select m-0 w-100"
                                                         onChange={(e) => setDoctorateGraduateYear(e.target.value)}
                                                         value={doctorateGraduateYear}
                                                         required
@@ -842,10 +869,11 @@ const Education = () => {
                                 <div className="row mt-3 border p-3 shadow ">
                                     <h6 className='border-bottom'>Degree Document</h6>
                                     <div className='d-flex justify-content-between'>
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                             <div className='d-flex'>
                                                 <label className="text-secondary text-start" htmlFor="degree">Upload Highest Degree Diploma:</label>
-                                                <Tooltip text="hightes degree" />
+                                                <Tooltip width="200px" text="We use your document only to verify your status. we do not publish it to the public.
+                                                               Upon verification, we mark your profile by the academic verification symbol" />
                                             </div>
                                             <div className='d-flex align-items-center'>
 
@@ -894,7 +922,7 @@ const Education = () => {
                                                     <label className="text-secondary" htmlFor="state1">State/Province:</label>
                                                     <select
                                                         id="state1"
-                                                        className="form-control m-0 w-100"
+                                                        className="form-select m-0 w-100"
                                                         onChange={(e) => set_state4(e.target.value)}
                                                         value={state4}
                                                         required
@@ -912,11 +940,11 @@ const Education = () => {
                                             }
                                         </div>
 
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                             <label className="text-secondary" htmlFor="yr3">Diploma earned Year:</label>
                                             <select
                                                 id="yr3"
-                                                className="form-control m-0 w-100"
+                                                className="form-select m-0 w-100"
                                                 onChange={(e) => set_graduagteYr3(e.target.value)}
                                                 value={graduagteYr3}
                                                 required
@@ -943,10 +971,11 @@ const Education = () => {
                         <div className="row mt-3 align-items-start border p-3 shadow ">
                             <h6 className='border-bottom'>Certification</h6>
                             <div className='d-flex justify-content-between'>
-                                <div className="col-md-3">
+                                <div className="col-md-4">
                                     <div className='d-flex justify-content-between'>
                                         <label className="text-secondary text-start" htmlFor="degree">Certification</label>
-                                        <Tooltip text="certification" />
+                                        <Tooltip width="200px" text="We use your document only to verify your certification. We do not publish it to the public.
+                                                               Upon verification, we mark your profile by the Diploma verification symbol" />
                                     </div> <select
                                         id="certificate"
                                         name="certificate"
@@ -1008,7 +1037,7 @@ const Education = () => {
                                                 <div>
                                                     <label className="text-secondary" htmlFor="state1">State/Province:</label>
                                                     <select
-                                                        className="form-control m-0 w-100"
+                                                        className="form-select m-0 w-100"
                                                         onChange={(e) => set_state5(e.target.value)}
                                                         value={state5}
                                                         required
@@ -1025,7 +1054,7 @@ const Education = () => {
                                             }
 
                                         </div>
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                             <label className="text-secondary" htmlFor="expiration">Certificate Expiration:</label>
                                             <input
                                                 type="date"
@@ -1099,11 +1128,13 @@ const Education = () => {
                             addReference &&
                             <div className="form-outline my-3" style={{ width: "450px" }}>
                                 <RichTextEditor
+                                    className="references"
                                     value={references}
                                     onChange={(value) => setReferences(value)}
                                     readOnly={!editMode}
-                                    placeholder="Enter Refrences material for students, like, where to get
-                                     Notes, What is most important Book for certain certification/degree!"
+                                    placeholder={`Tutoring academy recommends using a digital pen for the collaboration tab whiteboard. Made by WACOM, basic models are CTL-4100, 6100. You can find more information on their official website www.wacom.com
+                                    Cost: $50 or less
+                                    `}
                                     height='400px'
                                 />
                             </div>
@@ -1111,6 +1142,7 @@ const Education = () => {
                         <div style={{ width: "450px" }}>
 
                             <UserRichTextEditor
+                                className="work-exp"
                                 value={workExperience}
                                 onChange={handleEditorChange}
                                 readOnly={!editMode}
@@ -1125,7 +1157,9 @@ const Education = () => {
                         editDisabled={editMode}
                         saveDisabled={!editMode}
                         onEdit={handleEditClick}
-                        unSavedChanges={unSavedChanges} />
+                        unSavedChanges={unSavedChanges}
+                        loading={saving}
+                    />
                 </form>
             </div>
         </div>

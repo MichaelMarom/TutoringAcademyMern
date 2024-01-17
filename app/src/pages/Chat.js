@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Chats from '../components/Chat/Chats';
 import Messages from '../components/Chat/Messages';
 import '../styles/chat.css'
@@ -9,10 +9,12 @@ import CommonLayout from '../layouts/CommonLayout';
 import { NoChatSelectedScreen } from '../components/Chat/NoChatSelectedScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_chat_message, post_message, set_online_status } from '../axios/chat';
-import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
+import { capitalizeFirstLetter, convertTutorIdToName } from '../helperFunctions/generalHelperFunctions';
 import { socket } from '../config/socket'
 import { setChats } from '../redux/chat/chat';
 import Actions from '../components/common/Actions';
+import Loading from '../components/common/Loading';
+import Recomendation from '../components/Chat/Recomendation';
 
 function Chat() {
     const [selectedChat, setSelectedChat] = useState({});
@@ -24,7 +26,7 @@ function Chat() {
     const { tutor } = useSelector(state => state.tutor);
     const studentLoggedIn = location.pathname.split('/')[1] === 'student';
     const loggedInUserDetail = studentLoggedIn ? student : tutor;
-    const { chats } = useSelector(state => state.chat)
+    const { chats, isLoading } = useSelector(state => state.chat);
     const [messages, setMessages] = useState([])
     const [arrivalMsg, setArrivalMsg] = useState(null);
     const [fetchingMessages, setFetchingMessages] = useState(false)
@@ -107,8 +109,6 @@ function Chat() {
         }
     }, []);
 
-    console.log(chats)
-
     useEffect(() => {
         setFetchingMessages(true);
         const getMessages = async () => {
@@ -136,6 +136,8 @@ function Chat() {
 
     }, [params.id, shortlist, chats]);
 
+    if (isLoading)
+        return <Loading height='100vh' loadingText='Fetching Chats' />
     return (
         <CommonLayout role={loggedInRole}
             showLegacyFooter={false}>
@@ -144,19 +146,28 @@ function Chat() {
                     <div className="ks-page-content-body h-100">
                         <div className="border ks-messenger shadow">
                             <Chats
+                                isLoading={isLoading}
                                 setSelectedChat={setSelectedChat}
                                 fetchingMessages={fetchingMessages}
                                 discussionData={chats}
                                 selectedChat={selectedChat}
                             />
                             <div className="ks-messages  ks-messenger__messages">
-                                {!params.id && <NoChatSelectedScreen />}
-                                {params.id && <Header selectedChat={selectedChat} />}
-                                {params.id && <Messages selectedChat={selectedChat} messages={messages}
-                                    fetchingMessages={fetchingMessages} />}
-                                {params.id && <SendMessage selectedChat={selectedChat}
-                                    messages={messages} setMessages={setMessages} sendMessage={sendMessage} />}
+                                {!params.id ? <NoChatSelectedScreen /> :
+                                    <>
+                                        <Header selectedChat={selectedChat} />
+                                        <Messages selectedChat={selectedChat} messages={messages}
+                                            fetchingMessages={fetchingMessages} />
+                                        <SendMessage selectedChat={selectedChat}
+                                            messages={messages} setMessages={setMessages} sendMessage={sendMessage} />
+
+                                    </>
+                                }
+
                             </div>
+                            {(params.id && loggedInRole === 'student') &&
+                                <Recomendation AcademyId={selectedChat.AcademyId} />
+                            }
                         </div>
                     </div>
                 </div>

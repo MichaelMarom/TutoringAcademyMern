@@ -5,7 +5,7 @@ const slice = createSlice({
     name: "chat",
     initialState: {
         chats: [],
-        isLoading: false,
+        isLoading: true,
         error: null,
     },
     reducers: {
@@ -29,6 +29,7 @@ export default slice.reducer;
 
 export function setChats(userId, role) {
     return async (dispatch) => {
+        dispatch(slice.actions.isLoading())
         const result = await get_chats(userId, role)
         dispatch(slice.actions.setChats(result));
         return result;

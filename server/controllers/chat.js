@@ -1,5 +1,5 @@
 const { marom_db } = require('../db');
-const { getAll, insert, find, update, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
+const { getAll, insert, find, update, parameterizedInsertQuery, findByAnyIdColumn } = require('../helperfunctions/crud_queries');
 
 function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -166,10 +166,34 @@ const set_status = async (req, res) => {
     })
 }
 
+const get_recomendation = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+
+            if (poolConnection) {
+                const data = await poolConnection.request().query(
+                    findByAnyIdColumn('Education', { AcademyId: req.params.id },
+                        "varchar")
+                );
+                const formattedData = {
+                    recomendation: data.recordset[0].ThingsReferences
+                }
+                res.status(200).send(formattedData)
+            }
+        } catch (err) {
+            console.log(err);
+            res.status(400).send({ message: err.message });
+        }
+    })
+}
+
 module.exports = {
     fetch_chats,
     fetch_chat_messages,
     post_message,
     create_chat,
-    set_status
+    set_status,
+    get_recomendation
 }

@@ -6,23 +6,24 @@ import Actions from '../../common/Actions'
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux'
 import { COMMISSION_DATA } from '../../../constants/constants';
+import { compareStates } from '../../../helperFunctions/generalHelperFunctions';
 
 const TutorAccSetup = ({ sessions }) => {
     const { tutor } = useSelector(state => state.tutor)
-    let date = new Date().toDateString();
     const [email, set_email] = useState(tutor.Email);
-    let [start_day, set_start_day] = useState(date)
     let [acct_name, set_acct_name] = useState(null)
     let [acct_type, set_acct_type] = useState(null)
     let [bank_name, set_bank_name] = useState(null)
     let [acct, set_acct] = useState(null)
     let [routing, set_routing] = useState(null)
     let [ssh, set_ssh] = useState(null)
-    let [accumulated_hrs, set_accumulated_hrs] = useState(null)
-    let [commission, set_commission] = useState(null)
-    let [total_earning, set_total_earning] = useState(null)
     let [payment_option, set_payment_option] = useState(null)
     const [saving, setSaving] = useState(false)
+    const [dbValues, setDBValues] = useState({});
+    const [editMode, setEditMode] = useState(false);
+    const [unSavedChanges, setUnSavedChanges] = useState(false)
+
+
     const emailRequiredPaymentMethods = ['Paypal', 'Payoneer', 'Wise', 'Zelle']
 
     useEffect(() => {
@@ -60,7 +61,7 @@ const TutorAccSetup = ({ sessions }) => {
             setSaving(true);
         if (payment_option === 'Bank') {
 
-            let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
+            let response = await upload_form_four(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
             if (response) {
                 toast.success("Succesfully Saved The Bank Info.")
             } else {
@@ -68,7 +69,7 @@ const TutorAccSetup = ({ sessions }) => {
             }
 
         } else {
-            let response = await upload_form_four(email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, user_id);
+            let response = await upload_form_four(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
             if (response) {
                 toast.success("Succesfully Saved The Bank Info.")
             } else {
@@ -77,12 +78,23 @@ const TutorAccSetup = ({ sessions }) => {
         }
         setSaving(false);
     }
-
+    //fetching
     useEffect(() => {
         get_bank_details(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
                 if (result[0]) {
                     const data = result[0]
+                    setDBValues({
+                        AcademyId: data.AcademyId,
+                        PaymentOption: data.PaymentOption,
+                        SSH: data.SSH === "null" ? null : data.SSH,
+                        Routing: data.Routing === "null" ? null : data.Routing,
+                        AccountName: data.AccountName === 'null' ? null : data.AccountName,
+                        AccountType: data.AccountType === "null" ? null : data.AccountType,
+                        BankName: data.BankName === "null" ? null : data.BankName,
+                        Account: data.Account === "null" ? null : data.Account,
+                        Email: data.Email,
+                    })
                     set_payment_option(data.PaymentOption);
                     set_routing(data.Routing === "null" ? null : data.Routing)
                     set_ssh(data.SSH === "null" ? null : data.SSH)
@@ -97,6 +109,35 @@ const TutorAccSetup = ({ sessions }) => {
                 console.log(err)
             })
     }, [])
+
+    //compare db and local
+    useEffect(() => {
+        let localState;
+        if (!dbValues.AcademyId) localState = {
+            Email: dbValues.Email ? dbValues.Email : tutor.Email,
+            AccountName: null,
+            AccountType:
+                null,
+            BankName: null,
+            Account: null,
+            Routing: null,
+            SSH: null,
+            PaymentOption: null,
+        }
+        else {
+            localState = {
+                Email: email,
+                AccountName: acct_name,
+                AccountType: acct_type,
+                BankName: bank_name,
+                Account: acct,
+                Routing: routing,
+                SSH: ssh,
+                PaymentOption: payment_option,
+            }
+        }
+        setUnSavedChanges(compareStates(dbValues, localState))
+    }, [dbValues, acct_name, acct_type, acct, bank_name, ssh, email, routing, payment_option])
 
     return (
         <div className="tutor-tab-accounting">
@@ -126,7 +167,7 @@ const TutorAccSetup = ({ sessions }) => {
                     <div className='d-flex align-items-center justify-content-between '>
 
                         <div style={{ float: 'left' }}>
-                            <input required
+                            <input disabled={!editMode} required
                                 checked={payment_option === 'Paypal'}
                                 style={{
                                     float: 'left', width: '30px', cursor: 'pointer', height: '20px',
@@ -139,7 +180,7 @@ const TutorAccSetup = ({ sessions }) => {
                             <span className='m-0'>Paypal</span>
                         </div>
                         <div style={{ float: 'left' }}>
-                            <input required
+                            <input disabled={!editMode} required
                                 checked={payment_option === 'Wise'}
                                 style={{
                                     float: 'left', width: '30px', cursor: 'pointer',
@@ -153,7 +194,7 @@ const TutorAccSetup = ({ sessions }) => {
                             <span className='m-0'>Wise</span>
                         </div>
                         <div style={{ float: 'left' }}>
-                            <input required
+                            <input disabled={!editMode} required
                                 checked={payment_option === 'Payoneer'}
                                 style={{
                                     float: 'left', width: '30px', cursor: 'pointer',
@@ -167,7 +208,7 @@ const TutorAccSetup = ({ sessions }) => {
                             <span className='m-0'>Payoneer</span>
                         </div>
                         <div style={{ float: 'left' }}>
-                            <input className='m-0'
+                            <input disabled={!editMode} className='m-0'
                                 checked={payment_option === 'Zelle'}
                                 style={{
                                     float: 'left', width: '30px', cursor: 'pointer', height: '20px',
@@ -177,14 +218,14 @@ const TutorAccSetup = ({ sessions }) => {
                             <span className='m-0'>Zelle</span>
                         </div>
                         <div className='m-0' style={{ float: 'left' }}>
-                            <input className='m-0'
+                            <input disabled={!editMode} className='m-0'
                                 checked={payment_option === 'Bank'}
                                 style={{
                                     float: 'left', width: '30px', cursor: 'pointer', height: '20px',
                                     fontSize: 'x-small'
                                 }} type="radio" value='Bank'
                                 onChange={(e) => set_payment_option(e.target.value)} name='p-method' id="" />
-                            <span className='m-0'>Bank account (PCH)</span>
+                            <span className='m-0'>Bank account (ACH)</span>
                         </div>
 
                     </div>
@@ -195,9 +236,8 @@ const TutorAccSetup = ({ sessions }) => {
 
                             <div className='d-flex align-items-center justify-content-between'>
                                 <label htmlFor="acct-name">Account Name</label>
-                                <input required type="text" className='form-control' onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
+                                <input disabled={!editMode} required type="text" className='form-control' onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
                             </div>
-
 
                             <div className='d-flex align-items-center justify-content-between'>
                                 <label htmlFor="acct-type">Account Type</label>
@@ -211,17 +251,17 @@ const TutorAccSetup = ({ sessions }) => {
 
                             <div className='d-flex align-items-center justify-content-between'>
                                 <label htmlFor="bank-name">Bank Name</label>
-                                <input className='form-control' required type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
+                                <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
                             </div>
 
                             <div className='d-flex align-items-center justify-content-between'>
                                 <label htmlFor="acct">Account #</label>
-                                <input className='form-control' required type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
+                                <input disabled={!editMode} className='form-control' required type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
                             </div>
 
                             <div className='d-flex align-items-center justify-content-between'>
                                 <label htmlFor="routing">Routing #</label>
-                                <input className='form-control' required type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
+                                <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
                             </div>
                         </div>
                     }
@@ -230,7 +270,7 @@ const TutorAccSetup = ({ sessions }) => {
                         <div className=' mt-4'>
                             <div className='d-flex align-items-center justify-content-between'>
                                 <label htmlFor="acct-name">Email</label>
-                                <input required type="email" className='form-control'
+                                <input disabled={!editMode} required type="email" className='form-control'
                                     onInput={e => { set_email(e.target.value) }}
                                     id="acct-name" value={email}
                                     style={{ float: 'right', width: '60%' }} />
@@ -242,7 +282,7 @@ const TutorAccSetup = ({ sessions }) => {
 
                 <div className="tutor-tab-acct-time-range">
                     <label htmlFor="">SS# (Social Security Number) &nbsp;</label>
-                    <input className='form-control'
+                    <input disabled={!editMode} className='form-control'
                         required={totalNet > 600}
                         onInput={e => set_ssh(e.target.value)}
                         defaultValue={ssh} type="text"
@@ -255,29 +295,33 @@ const TutorAccSetup = ({ sessions }) => {
 
                     <div className='d-flex align-items-center mb-2 justify-content-between'>
                         <label htmlFor="accumulated-hrs">Accumulated Hours</label>
-                        <input className='form-control m-0' type="text"
+                        <input disabled={!editMode} className='form-control m-0' type="text"
                             value={`${sessions.length}:00`}
                             style={{ float: 'right', width: '50%' }} disabled />
                     </div>
 
                     <div className='d-flex align-items-center mb-2 justify-content-between'>
-                        <label htmlFor="commission">Service charge %</label>
-                        <input className='form-control m-0' type="text"
+                        <label >Service charge %</label>
+                        <input disabled className='form-control m-0' type="text"
                             value={`${commissionAccordingtoNumOfSession(sessions.length)} %`}
-                            id="commission"
-                            style={{ float: 'right', width: '50%' }} disabled
+                            style={{ float: 'right', width: '50%' }}
                         />
                     </div>
 
                     <div className='d-flex align-items-center mb-2 justify-content-between'>
                         <label htmlFor="total-earning">Total Earning This year.</label>
-                        <input className='form-control m-0' type="text"
+                        <input disabled={!editMode} className='form-control m-0' type="text"
                             value={totalNet.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             id="total-earning"
                             style={{ float: 'right', width: '50%' }} disabled />
                     </div>
                 </div>
-                <Actions loading={saving} />
+                <Actions
+                    loading={saving}
+                    unSavedChanges={unSavedChanges}
+                    onEdit={() => setEditMode(true)}
+                    editDisabled={editMode}
+                />
             </form>
         </div>
     );

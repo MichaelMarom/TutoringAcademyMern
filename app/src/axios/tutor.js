@@ -341,7 +341,6 @@ export let get_user_data = (user_id) => {
 
 export let upload_tutor_rates = async (rate, grades, id, faculty, subject) => {
     try {
-        console.log(id, faculty, subject)
         const { data } = await apiClient.post(`/tutor/rates/${faculty}/${subject}/${id}`, {
             grades,
             rate
@@ -458,11 +457,11 @@ export let get_tutor_rates = (AcademyId) => {
     })
 }
 
-export let upload_form_four = (email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId) => {
+export let upload_form_four = (email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, AcademyId) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/payment', {
-            email, start_day, acct_name, acct_type, bank_name, acct, routing, ssh, accumulated_hrs, commission, total_earning, payment_option, AcademyId
+            email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, AcademyId
         })
             .then((result) => {
                 resolve(result.data)

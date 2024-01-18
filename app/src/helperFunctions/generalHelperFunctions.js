@@ -38,24 +38,22 @@ export const convertTutorIdToName = (academyId) => {
 
 function isArrayStringEqual(array, strArray) {
   try {
-    // Parse the string representation into an array
+    console.log(array, strArray)
     const parsedArray = JSON.parse(strArray);
 
-    // Check if the parsed array is equal to the original array
     return JSON.stringify(array.sort()) === JSON.stringify(parsedArray.sort());
   } catch (error) {
-    console.error('Error parsing JSON:', error);
+    console.log('Error parsing JSON:', error);
     return false;
   }
 }
 
 export const unsavedChangesHelper = (fieldValues, tutor) => {
-  console.log(tutor.ThingsReferences, fieldValues.references)
+  console.log(fieldValues, tutor)
   return (
-    tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
+    // tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
     tutor.Address1 !== undefined && fieldValues.add1 !== undefined && tutor.Address1 !== fieldValues.add1 ||
     tutor.Address2 !== undefined && fieldValues.add2 !== undefined && tutor.Address2 !== fieldValues.add2 ||
-    tutor.BackgroundVerified !== undefined && fieldValues.backgroundVerified !== undefined && tutor.BackgroundVerified !== fieldValues.backgroundVerified ||
     tutor.CellPhone !== undefined && fieldValues.cell !== undefined && tutor.CellPhone !== fieldValues.cell ||
     tutor.CityTown !== undefined && fieldValues.city !== undefined && tutor.CityTown !== fieldValues.city ||
     tutor.Country !== undefined && fieldValues.country !== undefined && tutor.Country !== fieldValues.country ||
@@ -68,10 +66,8 @@ export const unsavedChangesHelper = (fieldValues, tutor) => {
     tutor.LastName !== undefined && fieldValues.lname !== undefined && tutor.LastName !== fieldValues.lname ||
     tutor.MiddleName !== undefined && fieldValues.mname !== undefined && tutor.MiddleName !== fieldValues.mname ||
     tutor.Motivate !== undefined && fieldValues.motivation !== undefined && tutor.Motivate !== fieldValues.motivation ||
-    tutor.Photo !== undefined && fieldValues.photo !== undefined && tutor.Photo !== fieldValues.photo ||
     tutor.ResponseHrs !== undefined && fieldValues.response_zone !== undefined && tutor.ResponseHrs !== fieldValues.response_zone ||
     tutor.StateProvince !== undefined && fieldValues.state !== undefined && tutor.StateProvince !== fieldValues.state ||
-    tutor.Video !== undefined && fieldValues.video !== undefined && tutor.Video !== fieldValues.video ||
     tutor.ZipCode !== undefined && fieldValues.zipCode !== undefined && tutor.ZipCode !== fieldValues.zipCode ||
     // tutor.StartVacation !== undefined && fieldValues.start !== undefined && tutor.StartVacation !== fieldValues.start ||
     // tutor.EndVacation !== undefined && fieldValues.end !== undefined && tutor.EndVacation !== fieldValues.end ||
@@ -117,3 +113,20 @@ export const capitalizeFirstLetter = (name) => {
 export function getFileExtension(filename) {
   return filename.split('.').pop();
 }
+
+/**
+ * 
+ * @param {{}} dbState Db Values
+ * @param {{}} currentState LocalCurrent Values
+ * @returns Boolean - if dbValues = localValues
+ */
+export const compareStates = (dbState, currentState) => {
+  console.log(dbState, currentState)
+  if (!(Object.keys(dbState).length)) return false
+  for (const key in currentState) {
+    if (currentState[key] !== dbState?.[key]) {
+      return true;
+    }
+  }
+  return false
+};

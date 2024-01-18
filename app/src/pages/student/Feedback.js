@@ -275,7 +275,7 @@ export const Feedback = () => {
                                     handleEmojiClick={handleEmojiClick}
                                 />
                                 <div className="form-group">
-                                    <label for="exampleTextarea">
+                                    <label htmlFor="exampleTextarea">
                                         Please write a short description of your impression about this lesson</label>
 
                                     <textarea className="form-control" id="exampleTextarea" rows="4"

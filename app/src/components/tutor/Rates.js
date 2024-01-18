@@ -37,7 +37,7 @@ const Rates = () => {
 
   const [changesMade, setChangesMade] = useState(false);
   const [selectedCancellationPolicy, setSelectedCancPolicy] = useState('')
-  const [ConsentRecordingLesson, setConsentRecordingLesson] = useState(false)
+  const [ConsentRecordingLesson, setConsentRecordingLesson] = useState(true)
   const [IntroSessionDiscount, setIntroSessionDiscount] = useState(true)
   const [dbState, setDbState] = useState({});
 
@@ -357,7 +357,7 @@ const Rates = () => {
                     onChange={() => setIntroSessionDiscount(!IntroSessionDiscount)}
                     checked={IntroSessionDiscount}
                   />
-                  <label className="form-check-label mr-3" for="flexSwitchCheckChecked">
+                  <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked">
                     50% Intro Session
                   </label>
                   <Tooltip text="The academy mandate an |intro| sessions for new student as a prerequisite to book further sessions with the tutor. Your 50% discount motivate student to select you. "
@@ -373,7 +373,7 @@ const Rates = () => {
                     onChange={() => setConsentRecordingLesson(!ConsentRecordingLesson)}
                     checked={ConsentRecordingLesson}
                   />
-                  <label className="form-check-label" for="flexSwitchCheckChecked">
+                  <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
                     Consent Recording Session
                   </label>
                   <Tooltip text="For learning purpose (or complains), you consent to the recording of the lesson with the student. The recording be saved for 30 days, then be deleted.">
@@ -399,7 +399,7 @@ const Rates = () => {
                   onChange={() => setDiscountEnabled(!discountEnabled)}
                   checked={discountEnabled}
                 />
-                <label className="form-check-label" for="flexSwitchCheckChecked">
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
                   My Student's code
                 </label>
 
@@ -458,7 +458,7 @@ const Rates = () => {
                   onChange={() => setClassTeaching(!classTeaching)}
                   checked={classTeaching}
                 />
-                <label className="form-check-label" for="flexSwitchCheckChecked">
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
                   My hourly Charge for teaching a public or private school class (up to 30 students).
                   Only tutors that fill up this field are being shown to schools.
                 </label>

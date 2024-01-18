@@ -451,7 +451,7 @@ const StudentSetup = () => {
                                     onChange={() => { set_parentConsent(!parentConsent) }}
                                     checked={parentConsent === "true" || parentConsent === true}
                                 />
-                                <label className="form-check-label mr-3" for="flexSwitchCheckChecked" >
+                                <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked" >
                                     Parent(s) consent to record lesson.
                                 </label>
                                 <Tooltip text="Enable this switch to consent video recording for ensuring quality of service. The video clip stored for 30 days, then be deleted from The academy servers." width="200px">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_edu_form, upload_form_two } from '../../../axios/tutor';
@@ -100,7 +100,24 @@ const Education = () => {
     const [addReference, setAddReference] = useState(false)
     const [references, setReferences] = useState('')
     const [saving, setSaving] = useState(false);
+    const [recordFetched, setRecordFetched] = useState(false);
 
+    let toastId = useRef();
+    useEffect(() => {
+        console.log(toastId, toastId.current)
+        toastId.current = !toastId.current && recordFetched && !files.EducationalLevel?.length &&
+            !(cert_file_name || deg_file_name) &&
+            toast('Private info protected, like documents.', {
+                closeButton: true,
+                autoClose: false,
+                className: "setup-private-info edu"
+            })
+        console.log(toastId)
+
+        if (toastId && (cert_file_name || deg_file_name)) {
+            toast.dismiss()
+        }
+    }, [recordFetched, files, cert_file_name, deg_file_name])
 
     const options = {
         "Australia": AUST_STATES,
@@ -365,6 +382,7 @@ const Education = () => {
             })
             .finally(() => {
                 setFetchingEdu(false)
+                setRecordFetched(true)
                 set_data(true)
             })
     }, [editMode])
@@ -438,7 +456,7 @@ const Education = () => {
             .catch((err) => {
                 console.log(err)
             })
-    }, [data, certificate, degree, experience, level])
+    }, [certificate, degree, experience, level])
 
     let edu_level = e => {
         set_level(e.target.value)
@@ -543,7 +561,7 @@ const Education = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         console.log(workExperience.length)
-        if (workExperience.length < 12) return toast.warning('Work Experiece in Required!')
+        if (workExperience.length === 11) return toast.warning('Work Experiece in Required!')
         setSaving(true)
         let res = await saver();
         setSaving(false)
@@ -583,7 +601,7 @@ const Education = () => {
                                 <div className="col-md-4">
                                     <div className='d-flex justify-content-between'>
                                         <label className="text-secondary text-start" htmlFor="level">Education Level:</label>
-                                        <Tooltip text=" educaton level " />
+                                        <Tooltip width="200px" text=" Please select the highest education level that you eraned diploma, (could be even high school). If you selected higher education level, but cannot provide a proof in a form of diploma, we would have to decline your application." />
                                     </div>
                                     <select
                                         id="level"
@@ -892,7 +910,6 @@ const Education = () => {
                                                             disabled={!editMode}
                                                             className="form-control m-0"
                                                             onChange={handleDegFileUpload}
-                                                            required
                                                         />
                                                     </div>
                                                         <div className="cross-icon"><FaRegTimesCircle size={20} color='red' /></div>
@@ -1005,7 +1022,6 @@ const Education = () => {
                                                             name="certificateFile"
                                                             className="form-control m-0 mr-2"
                                                             onChange={handleCertUpload}
-                                                            required
                                                             disabled={!editMode}
 
                                                         />
@@ -1148,6 +1164,7 @@ const Education = () => {
                                 readOnly={!editMode}
                                 placeholder="Enter Your Work Experience"
                                 height='800px'
+                                required
                             />
 
                         </div>

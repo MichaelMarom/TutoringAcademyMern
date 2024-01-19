@@ -44,14 +44,14 @@ const Education = () => {
     const [editMode, setEditMode] = useState(false);
     const [unSavedChanges, setUnsavedChanges] = useState(false);
 
-    let [level, set_level] = useState([]);
+    let [level, set_level] = useState('');
 
-    let [university1, set_university1] = useState([]);
-    let [university2, set_university2] = useState([]);
-    let [university3, set_university3] = useState([]);
+    let [university1, set_university1] = useState('');
+    let [university2, set_university2] = useState('');
+    let [university3, set_university3] = useState('');
 
     let [degree, set_degree] = useState([]);
-    let [certificate, set_certificate] = useState([]);
+    let [certificate, set_certificate] = useState('');
     let [language, set_language] = useState([]);
 
     const [countryForAssociate, setCountryForAssoc] = useState('');
@@ -61,23 +61,23 @@ const Education = () => {
     const [countryForDeg, setCountryForDeg] = useState('')
 
 
-    let [state2, set_state2] = useState([]);
-    let [state3, set_state3] = useState([]);
-    let [state4, set_state4] = useState([]);
-    let [state5, set_state5] = useState([]);
-    let [doctorateState, set_doctorateState] = useState([])
+    let [state2, set_state2] = useState('');
+    let [state3, set_state3] = useState('');
+    let [state4, set_state4] = useState('');
+    let [state5, set_state5] = useState('');
+    let [doctorateState, set_doctorateState] = useState('')
 
     let [experience, set_experience] = useState('');
     let [graduateYr1, set_graduateYr1] = useState('');
     let [graduateYr2, set_graduateYr2] = useState('');
-    let [graduagteYr3, set_graduagteYr3] = useState('');
+    let [graduateYr3, set_graduateYr3] = useState('');
     let [doctorateGraduateYear, setDoctorateGraduateYear] = useState('')
 
     let [expiration, set_expiration] = useState('');
     let [othelang, set_othelang] = useState([]);
     let [workExperience, set_workExperience] = useState('');
 
-    let [exp, set_exp] = useState();
+    let [exp, set_exp] = useState('');
     let [level_list, set_level_list] = useState('')
     let [certificate_list, set_certificate_list] = useState('')
     let [d_list, set_d_list] = useState([])
@@ -104,7 +104,6 @@ const Education = () => {
 
     let toastId = useRef();
     useEffect(() => {
-        console.log(toastId, toastId.current)
         toastId.current = !toastId.current && recordFetched && !files.EducationalLevel?.length &&
             !(cert_file_name || deg_file_name) &&
             toast('Private info protected, like documents.', {
@@ -118,6 +117,35 @@ const Education = () => {
             toast.dismiss()
         }
     }, [recordFetched, files, cert_file_name, deg_file_name])
+
+
+    useEffect(() => {
+        if (dataFetched && db_edu_level !== level) {
+            setCountryForAssoc('')
+            setCountryForDeg('')
+            setCountryForDoc('')
+            setCountryForMast('')
+            setDoctorateGraduateYear('')
+            set_graduateYr3('')
+            set_university1('')
+            set_university2('')
+            set_university3('')
+            set_state2('')
+            set_state3('')
+            set_doctorateState('')
+            set_state4('')
+            set_deg_file_name('')
+        }
+    }, [level, db_edu_level])
+
+    useEffect(() => {
+        if (dataFetched && db_edu_cert !== certificate) {
+            setCountryForCert('')
+            set_state5('')
+            set_expiration('')
+            set_cert_file_name('')
+        }
+    }, [certificate, db_edu_cert])
 
     const options = {
         "Australia": AUST_STATES,
@@ -178,7 +206,7 @@ const Education = () => {
             experience,
             graduateYr1,
             graduateYr2,
-            graduagteYr3,
+            graduateYr3,
             doctorateGraduateYear,
             expiration,
             JSON.stringify(othelang),
@@ -229,7 +257,7 @@ const Education = () => {
                 experience,
                 graduateYr1,
                 graduateYr2,
-                graduagteYr3,
+                graduateYr3,
                 doctorateGraduateYear,
                 expiration,
                 othelang,
@@ -274,7 +302,7 @@ const Education = () => {
         experience,
         graduateYr1,
         graduateYr2,
-        graduagteYr3,
+        graduateYr3,
         doctorateGraduateYear,
         expiration,
         othelang,
@@ -298,7 +326,7 @@ const Education = () => {
 
         get_my_edu(window.localStorage.getItem('tutor_user_id'))
             .then((result) => {
-                if (result.length > 0) {
+                if (result?.length) {
                     let data = result[0];
                     set_files(data)
                     set_workExperience(data.WorkExperience)
@@ -311,7 +339,7 @@ const Education = () => {
 
                     set_graduateYr1(data.College1Year)
                     set_graduateYr2(data.College2StateYear)
-                    set_graduagteYr3(data.DegreeYear)
+                    set_graduateYr3(data.DegreeYear)
 
                     setCountryForAssoc(data.BachCountry)
                     setCountryForCert(data.CertCountry)
@@ -326,7 +354,7 @@ const Education = () => {
 
                     setDoctorateGraduateYear(data.DoctorateGradYr)
                     setReferences(data.ThingsReferences)
-                    setAddReference(data.ThingsReferences.length)
+                    setAddReference(data.ThingsReferences?.length)
 
                     set_doctorateState(data.DoctorateState)
 
@@ -368,7 +396,7 @@ const Education = () => {
                         EducationalLevelExperience: experience,
                         College1Year: graduateYr1,
                         College2StateYear: graduateYr2,
-                        DegreeYear: graduagteYr3,
+                        DegreeYear: graduateYr3,
                         DoctorateGradYr: doctorateGraduateYear,
                         CertificateExpiration: expiration,
                         WorkExperience: workExperience,
@@ -392,9 +420,9 @@ const Education = () => {
         get_experience()
             .then((data) => {
                 let list = data.recordset.map((item) =>
-                    <option key={item.TutorExperience} selected={item.TutorExperience === experience ? 'selected' : ''} className={item.TutorExperience} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.TutorExperience}>{item.TutorExperience}</option>
+                    <option key={item.TutorExperience} className={item.TutorExperience} value={item.TutorExperience}>{item.TutorExperience}</option>
                 );
-                let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>TutorExperience</option>
+                let head = <option value=''>TutorExperience</option>
 
                 list.unshift(head);
                 set_exp(list)
@@ -415,7 +443,7 @@ const Education = () => {
         get_degree()
             .then((data) => {
                 let list = data.recordset.map((item) =>
-                    <option key={item.Degree} selected={item.Degree === degree ? 'selected' : ''}
+                    <option key={item.Degree}
                         className={item.Degree} style={{
                             height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
                             borderRadius: '0'
@@ -436,7 +464,7 @@ const Education = () => {
         get_level()
             .then((data) => {
                 let list = data.recordset.map((item) =>
-                    <option key={item.Level} className={item.Level} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} selected={item.Level === level ? 'selected' : ''} value={item.Level}>{item.Level}</option>
+                    <option key={item.Level} className={item.Level} value={item.Level}>{item.Level} {level}</option>
                 );
                 set_level_list(list)
 
@@ -448,7 +476,7 @@ const Education = () => {
         get_certificates()
             .then((data) => {
                 let list = data.recordset.map((item) =>
-                    <option key={item.CertificateType} className={item.CertificateType} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 5x 0 5x', borderRadius: '0' }} selected={item.CertificateType === certificate ? 'selected' : ''} value={item.CertificateType}>{item.CertificateType}</option>
+                    <option key={item.CertificateType} className={item.CertificateType} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 5x 0 5x', borderRadius: '0' }} value={item.CertificateType}>{item.CertificateType}</option>
                 );
                 set_certificate_list(list)
 
@@ -457,10 +485,6 @@ const Education = () => {
                 console.log(err)
             })
     }, [certificate, degree, experience, level])
-
-    let edu_level = e => {
-        set_level(e.target.value)
-    }
 
     let certified = e => {
         set_certificate(e.target.value)
@@ -560,7 +584,6 @@ const Education = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        console.log(workExperience.length)
         if (workExperience.length === 11) return toast.warning('Work Experiece in Required!')
         setSaving(true)
         let res = await saver();
@@ -606,7 +629,7 @@ const Education = () => {
                                     <select
                                         id="level"
                                         className="form-select m-0"
-                                        onChange={edu_level}
+                                        onChange={(e) => set_level(e.target.value)}
                                         value={level}
                                         required
                                         disabled={!editMode}
@@ -664,15 +687,13 @@ const Education = () => {
                                                 <label className="text-secondary">Country for {`${level === 'Associate Degree' ?
                                                     "Associate degree" : "Bachelor"}`}</label>
                                                 <select className='form-select'
-                                                    onClick={(e) => setCountryForAssoc(e.target.value)
-                                                    }
+                                                    onChange={(e) => setCountryForAssoc(e.target.value)}
+                                                    value={countryForAssociate}
                                                     disabled={!editMode}
                                                 >
-                                                    <option value={''} disabled selected>Select Country</option>
+                                                    <option value={''} disabled>Select Country</option>
                                                     {Countries.map((option) =>
                                                         <option value={option.Country}
-
-                                                            selected={option.Country === countryForAssociate ? "selected" : ""}
                                                         >{option.Country}</option>
                                                     )}
                                                 </select>
@@ -746,14 +767,13 @@ const Education = () => {
                                                     <div>
                                                         <label className="text-secondary">Country for Master.</label>
                                                         <select className='form-select'
-                                                            onClick={(e) => setCountryForMast(e.target.value)}
+                                                            onChange={(e) => setCountryForMast(e.target.value)}
                                                             disabled={!editMode}
+                                                            value={countryForMast}
                                                         >
-                                                            <option value={''} disabled selected>Select Country</option>
+                                                            <option value={''} disabled>Select Country</option>
                                                             {Countries.map((option) =>
                                                                 <option value={option.Country}
-
-                                                                    selected={option.Country === countryForMast ? "selected" : ""}
                                                                 >{option.Country}</option>
                                                             )}
                                                         </select>
@@ -827,14 +847,13 @@ const Education = () => {
                                                     <div>
                                                         <label className="text-secondary">Country For Doctorate</label>
                                                         <select className='form-select'
-                                                            onClick={(e) => setCountryForDoc(e.target.value)}
+                                                            onChange={(e) => setCountryForDoc(e.target.value)}
                                                             disabled={!editMode}
+                                                            value={countryForDoc}
                                                         >
-                                                            <option value={''} disabled selected>Select Country</option>
+                                                            <option value={''} disabled>Select Country</option>
                                                             {Countries.map((option) =>
                                                                 <option value={option.Country}
-
-                                                                    selected={option.Country === countryForDoc ? "selected" : ""}
                                                                 >{option.Country}</option>
                                                             )}
                                                         </select>
@@ -895,7 +914,7 @@ const Education = () => {
                                             </div>
                                             <div className='d-flex align-items-center'>
 
-                                                {(degreeFileContent && degreeFileContent.length) ? (
+                                                {(deg_file_name && deg_file_name.length) ? (
                                                     <div className='d-flex w-100 justify-content-between border rounded p-2'>
                                                         <div>Degree uploaded</div>
                                                         <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
@@ -924,12 +943,11 @@ const Education = () => {
                                                 <label className="text-secondary">Country For Degree</label>
                                                 <select className='form-select'
                                                     disabled={!editMode}
-                                                    onClick={(e) => setCountryForDeg(e.target.value)}>
-                                                    <option value={''} disabled selected>Select Country</option>
+                                                    value={countryForDeg}
+                                                    onChange={(e) => setCountryForDeg(e.target.value)}>
+                                                    <option value={''} disabled>Select Country</option>
                                                     {Countries.map((option) =>
                                                         <option value={option.Country}
-
-                                                            selected={option.Country === countryForDeg ? "selected" : ""}
                                                         >{option.Country}</option>
                                                     )}
                                                 </select>
@@ -962,17 +980,16 @@ const Education = () => {
                                             <select
                                                 id="yr3"
                                                 className="form-select m-0 w-100"
-                                                onChange={(e) => set_graduagteYr3(e.target.value)}
-                                                value={graduagteYr3}
+                                                onChange={(e) => set_graduateYr3(e.target.value)}
+                                                value={graduateYr3}
                                                 required
                                                 disabled={!editMode}
                                             >
-                                                <option value="">Select Year</option>
+                                                <option value="" disabled>Select Year</option>
                                                 {d_list.map((item) => (
                                                     <option
                                                         key={item}
                                                         value={item}
-                                                        selected={item === files?.DegreeYear}
                                                     >
                                                         {item}
                                                     </option>
@@ -1008,9 +1025,9 @@ const Education = () => {
                                     {(certificate.length && certificate !== 'Not Certified') ? (
                                         <div className='d-flex justify-content-center align-items-center'>
 
-                                            {(certFileContent?.length) ? (
+                                            {(cert_file_name?.length) ? (
                                                 <div className='d-flex w-100 justify-content-between border rounded p-2'>
-                                                    <div>Certificate uploaded</div>
+                                                    <div>Certificate Uploaded</div>
                                                     <div className="tick-icon"><IoIosCheckmarkCircle size={20} color='green' /></div>
                                                 </div>) : (
                                                 <>
@@ -1039,12 +1056,12 @@ const Education = () => {
                                                 <label className="text-secondary">Country For Certification</label>
                                                 <select className='form-select'
                                                     disabled={!editMode}
-                                                    onClick={(e) => setCountryForCert(e.target.value)}>
-                                                    <option value={''} disabled selected>Select Country</option>
+                                                    onChange={(e) => setCountryForCert(e.target.value)}
+                                                    value={countryForCert}
+                                                >
+                                                    <option value={''} disabled>Select Country</option>
                                                     {Countries.map((option) =>
                                                         <option value={option.Country}
-
-                                                            selected={option.Country === countryForCert ? "selected" : ""}
                                                         >{option.Country}</option>
                                                     )}
                                                 </select>

@@ -6,22 +6,27 @@ import { get_sessions_details } from '../../../axios/tutor';
 
 const Accounting = () => {
     const [sessions, setSessions] = useState([])
-    let [activeTab, setActiveTab] = useState(<TutorAccSetup sessions={sessions} />);
+    const [currentYearEarning, setCurrentYearEarning] = useState(0);
+    const [currentYearHrs, setCurrentYearHrs] = useState(0);
+
+    let [activeTab, setActiveTab] = useState(<TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} />);
     const [activeTabIndex, setActiveTabIndex] = useState(0);
     const AcademyId = localStorage.getItem('tutor_user_id')
 
-    useEffect(() => { setActiveTab(<TutorAccSetup sessions={sessions} />) }, [sessions])
+    useEffect(() => { setActiveTab(<TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} />) }, [sessions])
 
     useEffect(() => {
         const fetchSessionDetails = async () => {
             const data = await get_sessions_details(AcademyId);
-            setSessions(data)
+            setSessions(data.sessions)
+            setCurrentYearHrs(data.currentYearAccHours)
+            setCurrentYearEarning(data.currentYearEarning)
         }
         fetchSessionDetails()
     }, [])
 
     const tabs = [
-        { label: 'Account Settings', component: <TutorAccSetup sessions={sessions} /> },
+        { label: 'Account Settings', component: <TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} /> },
         { label: 'Tutor Account Details', component: <AccDetails sessions={sessions} /> },
     ];
 

@@ -1337,16 +1337,6 @@ let getSessionsDetails = async (req, res) => {
                     sr: uniqueIdsSessions.length - index,
                 }));
 
-                const today = moment();
-                const lastFriday = today.day(-2);
-                const olderThanLastFridaySession = arrayWithSerialNumber.filter((session) => {
-                    const sessionDate = moment(session.start);
-                    if (sessionDate.isSameOrBefore(lastFriday, 'day')) {
-                        return true;
-                    }
-                    return false
-                })
-
                 const commissionAccordingtoNumOfSession = (sr) => {
                     const commissionEntry = COMMISSION_DATA.find(entry => {
                         if (!entry.higher) {
@@ -1366,14 +1356,36 @@ let getSessionsDetails = async (req, res) => {
                     return netAmount
                 }
 
-                const sessionWithCommision = olderThanLastFridaySession.map((session) => ({
+                const sessionWithCommision = arrayWithSerialNumber.map((session) => ({
                     ...session,
                     comm: commissionAccordingtoNumOfSession(session.sr),
                     net: calcNet(session.rate, commissionAccordingtoNumOfSession(session.sr))
                 }))
 
+                const today = moment(); // Get today's date
+                let latestPayday = moment('2024-01-18T17:21:42.727Z', 'YYYY-MM-DD');
 
-                res.status(200).send(sessionWithCommision);
+                while (latestPayday.isBefore(today)) {
+                    latestPayday.add(14, 'days');
+
+                    if (latestPayday.isAfter(today)) {
+                        latestPayday = moment(latestPayday).subtract(14, 'days');
+                        break;
+                    }
+                }
+
+                const currentYear = moment().year();
+                const sessionsWithinPayDay = sessionWithCommision.filter(session => moment(session.start).isBefore(latestPayday))
+                // Filter sessions for the current year
+                const currentYearFullfilledSessions = sessionsWithinPayDay.filter((session) =>
+                    moment(session.start).year() === currentYear && session.request !== 'delete'
+                );
+                const currentYearEarning = currentYearFullfilledSessions.reduce((total, session) =>
+                    total + session.net, 0);
+                const currentYearAccHours = currentYearFullfilledSessions.length;
+
+
+                res.status(200).send({ currentYearEarning, currentYearAccHours, sessions: sessionWithCommision });
             }
         } catch (err) {
             console.log(err);
@@ -1394,7 +1406,26 @@ let last_pay_day = async (req, res) => {
                   FROM Plateform_Payments
                   ORDER BY payday DESC`
                 );
-                res.status(200).send(result.recordset[0])
+
+                const today = moment(); // Get today's date
+                let latestPayday = moment(result.recordset[0].Payday, 'YYYY-MM-DD');
+
+                while (latestPayday.isBefore(today)) {
+                    latestPayday.add(14, 'days');
+
+                    if (latestPayday.isAfter(today)) {
+                        latestPayday = moment(latestPayday).subtract(14, 'days');
+                        break;
+                    }
+                }
+                const formattedResult = {
+                    AdminId: result.recordset[0].AcademyId,
+                    Payday: latestPayday,
+                    SID: result.recordset[0].SID,
+                    Status: result.recordset[0].Status,
+                }
+
+                res.status(200).send(formattedResult)
             }
         }
         catch (err) {

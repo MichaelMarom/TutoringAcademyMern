@@ -620,14 +620,9 @@ body {
     }
 
     .tutor-tab-acct-pay-option {
-        position: relative;
         height: 100%;
         width: 37.5%;
-        text-align: center;
-        padding: 50px;
-        overflow: auto;
-
-        float: left;
+        overflow-y: auto;
         border: 1px solid #efefef;
     }
 
@@ -642,13 +637,10 @@ body {
     }
 
     .tutor-tab-acct-time-range {
-        position: relative;
         height: 100%;
         text-align: center;
-        padding: 50px;
         width: 37.5%;
-        overflow: auto;
-        float: left;
+        overflow-y: auto;
         border: 1px solid #efefef;
     }
 

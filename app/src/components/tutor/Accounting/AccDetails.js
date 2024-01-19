@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { IoChevronBackCircle, IoChevronForwardCircle } from "react-icons/io5";
-import { COMMISSION_DATA, wholeDateFormat } from "../../../constants/constants";
+import { wholeDateFormat } from "../../../constants/constants";
 import { showDate } from "../../../helperFunctions/timeHelperFunctions";
 import Button from "../../common/Button";
 import { moment } from '../../../config/moment'
@@ -9,16 +9,12 @@ import ReactDatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector } from 'react-redux'
 import { get_last_pay_day } from "../../../axios/tutor";
-import { Navigate } from "react-big-calendar";
-import { useNavigate } from "react-router-dom";
-import { create_chat } from "../../../axios/chat";
-import { toast } from "react-toastify";
 import Loading from "../../common/Loading";
+import { toast } from "react-toastify";
 
 const AccDetails = ({ sessions }) => {
     const today = moment();
     const lastFriday = today.day(-2)
-    const navigate = useNavigate()
     const { tutor } = useSelector((state) => state.tutor)
     const [startDate, setStartDate] = useState(null);
     const [selectedWeekSession, setSelectedWeekSession] = useState([]);
@@ -31,7 +27,6 @@ const AccDetails = ({ sessions }) => {
 
     useEffect(() => {
         if (lastpayDay) {
-            console.log(lastpayDay)
             const initialStartDate = moment(lastpayDay).toDate()
             initialStartDate.setDate(initialStartDate.getDate() - 14);
             setStartDate(initialStartDate);
@@ -91,13 +86,6 @@ const AccDetails = ({ sessions }) => {
         setEndDate(newEndDate);
     };
 
-    const handleNavigateChat = async (chatId, tutorId, studentId) => {
-        if (chatId) return navigate(`/tutor/chat/${chatId}`)
-        const data = await create_chat({ User1ID: studentId, User2ID: tutorId })
-        if (data[0]?.ChatID) return navigate(`/tutor/chat/${data[0].ChatID}`)
-        toast.warning('This Student does not exist!')
-    }
-
     const totalAmount = sessions
         .filter((row) => {
             if (!start || !end) return true;
@@ -105,10 +93,10 @@ const AccDetails = ({ sessions }) => {
             const nextDayEndDate = originalEndDate.clone().add(1, 'days');
             const startOfNextDate = nextDayEndDate.startOf('day').toDate();
 
-            const startDate = new Date(start);
+            const startDate = moment(new Date(start)).subtract(1, 'days').toDate();
 
-            return convertToDate(row.start) >= startDate &&
-                convertToDate(row.start) <= startOfNextDate;
+            return convertToDate(row.start).getTime() >= startDate.getTime() &&
+                convertToDate(row.start) <= startOfNextDate && row.request !== 'delete';
         })
         .reduce((total, row) => total + row.net, 0)
         .toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -117,8 +105,12 @@ const AccDetails = ({ sessions }) => {
         (moment(endDate).toDate()).getMonth() >= (moment(lastpayDay).toDate()).getMonth() &&
         (moment(endDate).toDate()).getFullYear() >= (moment(lastpayDay).toDate()).getFullYear();
 
-    const formatUTC = (dateInt, addOffset = false) => {
+    const formatUTC = (dateInt, addOffset = false, start = true) => {
         let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
+        if (date.isAfter(lastpayDay) && !start) {
+            toast.warning('Cannot select date after last pay day date!')
+            return end
+        }
 
         if (tutor.timeZone) {
             date = date.tz(tutor.timeZone).toDate();
@@ -126,7 +118,7 @@ const AccDetails = ({ sessions }) => {
 
         return date;
     }
-    
+
     if (loading)
         return <Loading />
     return (
@@ -136,7 +128,7 @@ const AccDetails = ({ sessions }) => {
                     <h6 className="text-start m-0">
                         Bi-Weekly Account Details</h6>
                     <IoChevronBackCircle
-                        style={{ cursoe: "pointer" }}
+                        style={{ cursor: "pointer" }}
                         size={32} color="green" onClick={handleBack} />
                     <div className="rounded-pill border p-2">
                         from &nbsp;
@@ -148,7 +140,7 @@ const AccDetails = ({ sessions }) => {
                         size={32}
                         color={isNextDisabled ? "gray" : "green"}
                         onClick={() => !isNextDisabled && handleNext()}
-                        style={{ cursoe: "pointer" }}
+                        style={{ cursor: "pointer" }}
                     />
                 </div>
             </div>
@@ -167,23 +159,22 @@ const AccDetails = ({ sessions }) => {
                         <th>Invoice #</th>
 
                         <th>Lesson Video</th>
-                        <th>Chat</th>
                     </thead>
                     <tbody>
                         {selectedWeekSession.map((session) =>
-                            <tr>
+                            <tr className={session.request === 'delete' ? `text-danger` : ''}>
                                 <td>{session.sr}</td>
                                 <td>{session.subject}</td>
                                 <td>{session.studentName}</td>
                                 <td className="col-2">{showDate(session.start, wholeDateFormat)}</td>
                                 <td>{session.rate}</td>
-                                <td>-</td>
-                                <td>-</td>
+                                <td> - </td>
+                                <td> - </td>
                                 <td>{session.comm}%</td>
                                 <td>{session.net.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                 <td>{session.invoiceNum}</td>
-                                <td><Button className="btn-sm btn-primary"> View Video</Button></td>
-                                <td><Button className="btn-sm btn-success" onClick={() => handleNavigateChat(session.chatId, session.tutorId, session.studentId)}> Chat with Student</Button></td>
+                                <td><Button className={`btn-sm ${session.request === 'delete' ? 'btn-danger' : 'btn-primary'}`}>
+                                    {session.request === 'delete' ? "Cancelled" : 'View Video'}</Button></td>
                             </tr>
                         )}
                     </tbody>
@@ -204,8 +195,8 @@ const AccDetails = ({ sessions }) => {
 
                     <h6 className="m-0">and</h6>
                     <ReactDatePicker
-                        selected={formatUTC(end, true)}
-                        onChange={date => setEnd(formatUTC(date))}
+                        selected={formatUTC(end, true, false)}
+                        onChange={date => setEnd(formatUTC(date, false, false))}
                         dateFormat="MMM d, yyyy"
                         className="form-control m-2 w-80"
                     />

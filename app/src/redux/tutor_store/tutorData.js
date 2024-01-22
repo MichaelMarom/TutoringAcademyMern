@@ -40,7 +40,6 @@ export function setTutor(data) {
         else {
             result = await tutorApis.get_tutor_setup_by_acaId(localStorage.getItem('tutor_user_id'))
         }
-        console.log(result, 'tutorrecord')
         if (result[0]?.userId) {
             const selectedUserId = await get_user_detail(result[0]?.userId);
             dispatch(slice.actions.setTutor({ ...result[0], email: selectedUserId.email }));

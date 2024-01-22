@@ -40,8 +40,9 @@ const Rates = () => {
   const [ConsentRecordingLesson, setConsentRecordingLesson] = useState(true)
   const [IntroSessionDiscount, setIntroSessionDiscount] = useState(true)
   const [dbState, setDbState] = useState({});
+  const [editMode, setEditMode] = useState(false)
 
-  const fetchDataFromApi = () => {
+  const fetchTutorRateRecord = () => {
     get_tutor_rates(window.localStorage.getItem("tutor_user_id"))
       .then((result) => {
         if (result.length) {
@@ -105,7 +106,13 @@ const Rates = () => {
   }
 
   useEffect(() => {
-    fetchDataFromApi()
+    if (!dbState.AcademyId) {
+      setEditMode(true)
+    }
+  }, [dbState])
+
+  useEffect(() => {
+    fetchTutorRateRecord()
     // eslint-disable-next-line
   }, []);
 
@@ -187,8 +194,9 @@ const Rates = () => {
     let res = await saver()
     if (res.bool) {
       setChangesMade(false)
-      fetchDataFromApi()
+      fetchTutorRateRecord()
       toast.success(res.mssg)
+      setEditMode(false)
     }
     else {
       toast.error("Failed to save record")
@@ -204,10 +212,6 @@ const Rates = () => {
 
   return (
     <>
-      <div className="tutor-popin"></div>
-      <div className="save-overlay">
-        <span className="save_loader"></span>
-      </div>
       {changesMade && (
         <div className="green-bar w-100 bg-success text-white fs-5 text-decoration-underline d-flex justify-content-center m-0">
           <p className="m-2">You have made changes. Save them before moving to the next tab.</p>
@@ -229,7 +233,7 @@ const Rates = () => {
                   margin: "auto",
                 }}
               >
-                <input
+                <input disabled={!editMode}
                   type="checkbox"
                   onChange={(e) =>
                     setActivateSubscriptionOption(e.target.checked ? true : false)
@@ -276,7 +280,7 @@ const Rates = () => {
                       <tr key={index}>
                         <td>{item.hours}</td>
                         <td>
-                          <input
+                          <input disabled={!editMode}
                             onInput={(e) => { setSubscriptionPlan(e.target.value) }}
                             type="radio"
                             value={item.hours}
@@ -299,9 +303,10 @@ const Rates = () => {
               </div>
 
               <div className="">
-                <div className="dropdown">
+                <div className="dropdown" >
                   <label>Tutor Cancellation Policy</label>
                   <button
+                    style={{ pointerEvents: editMode ? "auto" : "none" }}
                     className="btn btn-success dropdown-toggle my-0 mx-3"
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
@@ -350,7 +355,7 @@ const Rates = () => {
                   </Tooltip>
                 </div>
                 <div className="form-check form-switch d-flex gap-3">
-                  <input
+                  <input disabled={!editMode}
                     className="form-check-input "
                     type="checkbox"
                     role="switch"
@@ -360,13 +365,15 @@ const Rates = () => {
                   <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked">
                     50% Intro Session
                   </label>
-                  <Tooltip text="The academy mandate an |intro| sessions for new student as a prerequisite to book further sessions with the tutor. Your 50% discount motivate student to select you. "
+                  <Tooltip text="The academy mandate an |intro| sessions for new student as a 
+                  prerequisite to book further sessions with the tutor. The 50% discount should motivate 
+                  the student to select you."
                     width="200px">
                     <FaInfoCircle size={20} color="#0096ff" />
                   </Tooltip>
                 </div>
                 <div className="form-check form-switch d-flex gap-3">
-                  <input
+                  <input disabled={!editMode}
                     className="form-check-input "
                     type="checkbox"
                     role="switch"
@@ -376,7 +383,9 @@ const Rates = () => {
                   <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
                     Consent Recording Session
                   </label>
-                  <Tooltip text="For learning purpose (or complains), you consent to the recording of the lesson with the student. The recording be saved for 30 days, then be deleted.">
+                  <Tooltip width="200px"
+                    text="We record the lesson for learning purpose (or complains).
+                     Students or parents can view the recorded lesson. You consent to the recording of the lesson with the student. The recording be saved on the academy servers for 30 days, then be deleted.">
                     <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
                   </Tooltip>
                 </div>
@@ -386,12 +395,13 @@ const Rates = () => {
             <div className="p-4 w-50 float-end">
               <h6>Tutor's Own Students</h6>
               <div className="highlight">
-                To tutor your own current students on plateform, forward the Code below to your students to be used with thier registration.
-                That will reduce our service fee for these students by 10%. You need to generate new code for each of your students.
+                In order for you tutoring your own current students on this plateform,
+                forward the Code below to your students to be used with thier registration.
+                You need to generate new code for each one of your students.
 
               </div>
               <div className="form-check form-switch d-flex align-items-center gap-2">
-                <input
+                <input disabled={!editMode}
                   className="form-check-input "
                   type="checkbox"
                   role="switch"
@@ -403,7 +413,7 @@ const Rates = () => {
                   My Student's code
                 </label>
 
-                <Tooltip text="Provide the code below to be used by your student for this platform.You must generate new code for each of your students" width="200px">
+                <Tooltip width="200px" text="Provide the code below to be used by your student for this platform. The code will pair your student to your profile upon the setup of student's account. You must generate new code for each one of your students">
                   <FaInfoCircle size={20} color="#0096ff" />
                 </Tooltip>
               </div>
@@ -419,7 +429,7 @@ const Rates = () => {
                     />
                   </Tooltip>
                   <div className="input-group w-50">
-                    <input
+                    <input disabled={!editMode}
                       type="text"
                       className="form-control m-0 h-100 p-2"
                       value={discountCode}
@@ -450,7 +460,7 @@ const Rates = () => {
                 The American public schools are suffering from accute shortage of teachers. if you hold teacher's certificate, and willing to teach full class of students, you are able to post your ad on the portal message board. and charge higher rate for your skills. Similarly, a school in a need for a substitute teacher, can find your account which is flagged accordingly.
               </div>
               <div className="form-check form-switch d-flex align-items-center gap-2 mt-4">
-                <input
+                <input disabled={!editMode}
                   className="form-check-input "
                   type="checkbox"
                   role="switch"
@@ -466,7 +476,7 @@ const Rates = () => {
 
 
                 <Tooltip
-                  text="Fill in your hourly amount for teaching a public 0r private school class (up to 30 students)."
+                  width="200px" text="Fill in your hourly amount for teaching a public 0r private school class (up to 30 students)."
                   direction="left"
                 >
                   <FaInfoCircle size={20} color="#0096ff" />
@@ -477,7 +487,7 @@ const Rates = () => {
                 <>
                   <div className="input-group  w-50">
                     <span className="input-group-text">$</span>
-                    <input
+                    <input disabled={!editMode}
                       type="text"
                       required
                       className="form-control m-0 py-4"
@@ -496,10 +506,14 @@ const Rates = () => {
             </div>
             <Actions
               unSavedChanges={changesMade}
-              loading={loading} />
+              loading={loading}
+              onEdit={() => setEditMode(true)}
+              editDisabled={editMode}
+              saveDisabled={!editMode}
+            />
           </form>
-        </div>
-      </div>
+        </div >
+      </div >
     </>
   );
 };

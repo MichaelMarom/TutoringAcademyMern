@@ -986,8 +986,10 @@ const TutorSetup = () => {
                   teach, and how you can help students achieve their goals. You should speak clearly,
                   and confidently. A good introduction video can make a lasting impression and increase
                   your chances of getting hired. View samples; <br />
-                  <Link to='https://www.youtube.com/watch?v=tZ3ndrKQXN8'>Sample1 Intro Video</Link> <br />
-                  <Link to='https://www.youtube.com/watch?v=sxa2C6UmrNQ'>Sample2 How to make an Introduction Video</Link>
+                  <Link to='https://www.youtube.com/watch?v=tZ3ndrKQXN8'>Sample 1: Intro Video</Link> <br />
+                  <Link to='https://www.youtube.com/watch?v=sxa2C6UmrNQ'>Sample 2: How to make an Introduction Video</Link> <br />
+                  <Link to='https://www.heygen.com'>Sample 3: Create your free AI Introduction Video, in 3 minutes or less.</Link>
+
                 </div>
               </div>
             }

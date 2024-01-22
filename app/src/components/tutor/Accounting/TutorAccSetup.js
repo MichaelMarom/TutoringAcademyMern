@@ -57,16 +57,16 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
         if (validate())
             setSaving(true);
         if (payment_option === 'Bank') {
-
             let response = await upload_form_four(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
+            fetchingTutorBankRecord();
             if (response) {
                 toast.success("Succesfully Saved The Bank Info.")
             } else {
                 toast.error("Error while Saving the Bank Info.")
             }
-
         } else {
             let response = await upload_form_four(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
+            fetchingTutorBankRecord();
             if (response) {
                 toast.success("Succesfully Saved The Bank Info.")
             } else {
@@ -75,36 +75,36 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
         }
         setSaving(false);
     }
+
+    const fetchingTutorBankRecord = async () => {
+        const result = await get_bank_details(window.localStorage.getItem('tutor_user_id'));
+        if (result[0]) {
+            const data = result[0]
+            setDBValues({
+                AcademyId: data.AcademyId,
+                PaymentOption: data.PaymentOption,
+                SSH: data.SSH === "null" ? null : data.SSH,
+                Routing: data.Routing === "null" ? null : data.Routing,
+                AccountName: data.AccountName === 'null' ? null : data.AccountName,
+                AccountType: data.AccountType === "null" ? null : data.AccountType,
+                BankName: data.BankName === "null" ? null : data.BankName,
+                Account: data.Account === "null" ? null : data.Account,
+                Email: data.Email,
+            })
+            set_payment_option(data.PaymentOption);
+            set_routing(data.Routing === "null" ? null : data.Routing)
+            set_ssh(data.SSH === "null" ? null : data.SSH)
+            set_acct_name(data.AccountName === "null" ? null : data.AccountName)
+            set_acct_type(data.AccountType === "null" ? null : data.AccountType)
+            set_bank_name(data.BankName === "null" ? null : data.BankName)
+            set_acct(data.Account === "null" ? null : data.Account)
+            set_email(data.Email)
+        }
+    }
+
     //fetching
     useEffect(() => {
-        get_bank_details(window.localStorage.getItem('tutor_user_id'))
-            .then((result) => {
-                if (result[0]) {
-                    const data = result[0]
-                    setDBValues({
-                        AcademyId: data.AcademyId,
-                        PaymentOption: data.PaymentOption,
-                        SSH: data.SSH === "null" ? null : data.SSH,
-                        Routing: data.Routing === "null" ? null : data.Routing,
-                        AccountName: data.AccountName === 'null' ? null : data.AccountName,
-                        AccountType: data.AccountType === "null" ? null : data.AccountType,
-                        BankName: data.BankName === "null" ? null : data.BankName,
-                        Account: data.Account === "null" ? null : data.Account,
-                        Email: data.Email,
-                    })
-                    set_payment_option(data.PaymentOption);
-                    set_routing(data.Routing === "null" ? null : data.Routing)
-                    set_ssh(data.SSH === "null" ? null : data.SSH)
-                    set_acct_name(data.AccountName === "null" ? null : data.AccountName)
-                    set_acct_type(data.AccountType === "null" ? null : data.AccountType)
-                    set_bank_name(data.BankName === "null" ? null : data.BankName)
-                    set_acct(data.Account === "null" ? null : data.Account)
-                    set_email(data.Email)
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        fetchingTutorBankRecord()
     }, [])
 
     //compare db and local
@@ -139,7 +139,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
     return (
         <div className="d-flex" style={{ height: "80vh" }}>
 
-            <div className="d-flex col-md-4 border h-100">
+            <div className="d-flex col-md-3 border h-100 p-2">
 
                 <div className="d-flex flex-column">
                     <div className="highlight m-0" style={{ height: '150px' }}>
@@ -147,8 +147,11 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
                         Your hours starts counting from your first conducted lesson each year.
                     </div>
                     <div className='p-3'>
-                        <h6>Tutor's Start Day (First tutoring lesson)</h6>
-                        <p className="border px-4  py-2 rounded m-2">{showDate(sessions?.[sessions.length - 1]?.start)}</p>
+                        <div className='d-flex align-items-center mb-2 justify-content-between'>
+                            <h6 className='m-0 text-start'>Tutor's Start Day (First tutoring lesson)</h6>
+                            <p className="border px-4  py-2 rounded m-2">{showDate(sessions?.[sessions.length - 1]?.start)}</p>
+                        </div>
+
 
                         <Acad_Commission />
                     </div>
@@ -156,11 +159,11 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
                 </div>
             </div>
             <form onSubmit={saver} className='d-flex h-100'>
-                <div className="col-md-6 border h-100">
+                <div className="col-md-7 border h-100 p-2">
                     <div className="highlight" style={{ height: '150px' }}>
                         Tutoring academy pays every 2nd Friday for the lessons performed up to the previous Friday midnight (GMT-5), Please select below the form of payment you prefer. Keep in mind that it can takes 1-3 days until the funds in your account
                     </div>
-                    <div className='p-3'>
+                    <div className='p-3 '>
 
                         <h6 className='mb-3'>How do you want to be paid?</h6>
 
@@ -225,76 +228,80 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
                                         fontSize: 'x-small'
                                     }} type="radio" value='Bank'
                                     onChange={(e) => set_payment_option(e.target.value)} name='p-method' id="" />
-                                <span className='m-0'>Bank account (ACH)</span>
+                                <span className='m-0'>Direct Deposit Bank account (ACH)</span>
                             </div>
 
                         </div>
 
+                        <div className='border shadow m-5 p-3'>
 
-                        {payment_option === "Bank" &&
-                            <div className=' mt-4'>
+                            {payment_option === "Bank" &&
+                                <div className=' mt-4'>
 
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <label htmlFor="acct-name">Account Name</label>
-                                    <input disabled={!editMode} required type="text" className='form-control' onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
+                                    <div className='d-flex align-items-center justify-content-between'>
+                                        <label htmlFor="acct-name">Account Name</label>
+                                        <input disabled={!editMode} required type="text" className='form-control' onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
+                                    </div>
+
+                                    <div className='d-flex align-items-center justify-content-between'>
+                                        <label htmlFor="acct-type">Account Type</label>
+
+                                        <select className='form-select' dname="" id="" onInput={e => set_acct_type(e.target.value)} style={{ float: 'right', width: '60%', margin: '0  0 10px 0', padding: '0 8px 0 8px', cursor: 'pointer' }}>
+                                            <option selected={acct_type === '' ? 'selected' : ''} value="null">Select Account Type</option>
+                                            <option selected={acct_type === 'savings' ? 'selected' : ''} value="savings">Savings</option>
+                                            <option selected={acct_type === 'checking' ? 'selected' : ''} value="checking">Checking</option>
+                                        </select>
+                                    </div>
+
+                                    <div className='d-flex align-items-center justify-content-between'>
+                                        <label htmlFor="bank-name">Bank Name</label>
+                                        <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
+                                    </div>
+
+                                    <div className='d-flex align-items-center justify-content-between'>
+                                        <label htmlFor="acct">Account #</label>
+                                        <input disabled={!editMode} className='form-control' required type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
+                                    </div>
+
+                                    <div className='d-flex align-items-center justify-content-between'>
+                                        <label htmlFor="routing">Routing #</label>
+                                        <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
+                                    </div>
                                 </div>
+                            }
+                            {emailRequiredPaymentMethods.includes(payment_option) &&
 
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <label htmlFor="acct-type">Account Type</label>
+                                <div className=' mt-4'>
+                                    <div className='d-flex align-items-center justify-content-between'>
+                                        <label htmlFor="acct-name">Email</label>
+                                        <input disabled={!editMode} required type="email" className='form-control'
+                                            onInput={e => { set_email(e.target.value) }}
+                                            id="acct-name" value={email}
+                                            style={{ float: 'right', width: '60%' }} />
+                                    </div>
 
-                                    <select className='form-select' dname="" id="" onInput={e => set_acct_type(e.target.value)} style={{ float: 'right', width: '60%', margin: '0  0 10px 0', padding: '0 8px 0 8px', cursor: 'pointer' }}>
-                                        <option selected={acct_type === '' ? 'selected' : ''} value="null">Select Account Type</option>
-                                        <option selected={acct_type === 'savings' ? 'selected' : ''} value="savings">Savings</option>
-                                        <option selected={acct_type === 'checking' ? 'selected' : ''} value="checking">Checking</option>
-                                    </select>
-                                </div>
-
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <label htmlFor="bank-name">Bank Name</label>
-                                    <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
-                                </div>
-
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <label htmlFor="acct">Account #</label>
-                                    <input disabled={!editMode} className='form-control' required type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
-                                </div>
-
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <label htmlFor="routing">Routing #</label>
-                                    <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
-                                </div>
-                            </div>
-                        }
-                        {emailRequiredPaymentMethods.includes(payment_option) &&
-
-                            <div className=' mt-4'>
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <label htmlFor="acct-name">Email</label>
-                                    <input disabled={!editMode} required type="email" className='form-control'
-                                        onInput={e => { set_email(e.target.value) }}
-                                        id="acct-name" value={email}
-                                        style={{ float: 'right', width: '60%' }} />
-                                </div>
-
-                            </div>}
+                                </div>}
+                        </div>
                     </div>
 
                 </div>
 
-                <div className="col-md-6 border h-100">
+                <div className="col-md-5 border h-100 p-2">
 
                     <div className="highlight" style={{ height: '150px' }}>
                         Social security needs to be provided only from US residents for annual EARNING over $600. Form 1099 to be issued by the academy.
                     </div>
                     <div className='p-3'>
 
-                        <label htmlFor="">SS# (Social Security Number) &nbsp;</label>
-                        <input disabled={!editMode} className='form-control'
-                            required={currentYearEarning > 600}
-                            onInput={e => set_ssh(e.target.value)}
-                            defaultValue={ssh} type="text"
-                            placeholder='XXX-XX-XXXX'
-                        />
+                        <div className='d-flex align-items-center mb-2 justify-content-between'>
+                            <label htmlFor="">SS# (Social Security Number) &nbsp;</label>
+                            <input disabled={!editMode} className='form-control m-0 w-50'
+                                required={currentYearEarning > 600}
+                                onInput={e => set_ssh(e.target.value)}
+                                defaultValue={ssh} type="text"
+                                placeholder='XXX-XX-XXXX'
+                            />
+                        </div>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
                             <label htmlFor="accumulated-hrs">Accumulated Hours</label>

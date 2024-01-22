@@ -1154,6 +1154,22 @@ const post_tutor_setup = (req, res) => {
     })
 }
 
+const set_agreements_date_null_for_all = (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(`Update TutorSetup set AgreementDate = null`)
+                res.status(200).send(result.rowsAffected ? true : false)
+            }
+        }
+        catch (err) {
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 let get_tutor_market_data = async (req, res) => {
 
     let { id } = req.query;
@@ -1385,7 +1401,7 @@ let getSessionsDetails = async (req, res) => {
                 const currentYearAccHours = currentYearFullfilledSessions.length;
 
 
-                res.status(200).send({ currentYearEarning, currentYearAccHours, sessions: sessionWithCommision });
+                res.status(200).send({ currentYearEarning, currentYearAccHours, sessions: sessionsWithinPayDay });
             }
         } catch (err) {
             console.log(err);
@@ -1649,6 +1665,7 @@ module.exports = {
     get_tutor_profile_data,
     getSessionsDetails,
     post_tutor_ad,
+    set_agreements_date_null_for_all,
     get_ad,
     put_ad,
     get_tutor_ads,

@@ -89,16 +89,13 @@ const AccDetails = ({ sessions }) => {
     const totalAmount = sessions
         .filter((row) => {
             if (!start || !end) return true;
-            const originalEndDate = moment(end);
-            const nextDayEndDate = originalEndDate.clone().add(1, 'days');
-            const startOfNextDate = nextDayEndDate.startOf('day').toDate();
+            const sessionDate = moment(convertToDate(row.start))
 
-            const startDate = moment(new Date(start)).subtract(1, 'days').toDate();
 
-            return convertToDate(row.start).getTime() >= startDate.getTime() &&
-                convertToDate(row.start) <= startOfNextDate && row.request !== 'delete';
+            return sessionDate.isSameOrAfter(start) && sessionDate.isSameOrBefore(end)
+                && row.request !== 'delete';
         })
-        .reduce((total, row) => total + row.net, 0)
+        .reduce((total, row) => { console.log(row.sr, total); return total + row.net }, 0)
         .toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
     const isNextDisabled = (moment(endDate).toDate()).getDate() >= (moment(lastpayDay).toDate()).getDate() &&
@@ -108,7 +105,6 @@ const AccDetails = ({ sessions }) => {
     const formatUTC = (dateInt, addOffset = false, start = true) => {
         let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
         if (date.isAfter(lastpayDay) && !start) {
-            toast.warning('Cannot select date after last pay day date!')
             return end
         }
 
@@ -119,12 +115,51 @@ const AccDetails = ({ sessions }) => {
         return date;
     }
 
+    const gmtInInt = tutor.GMT ? parseInt(tutor.GMT) : 0;
+    // for reactdatepicker because it opertae on new Date() not on moment.
+    // getting getLocalGMT and then multiple it with -1 to add (-5:00) or subtract (+5:00)
+    const getLocalGMT = parseInt((offset => (offset < 0 ? '+' : '-') + ('00' + Math.abs(offset / 60 | 0)).slice(-2) + ':' + ('00' + Math.abs(offset % 60)).slice(-2))(new Date().getTimezoneOffset())) * -1;
+
+
     if (loading)
         return <Loading />
     return (
         <div className="d-flex flex-column w-100 mt-4 container">
-            <div className="d-flex justify-content-end">
-                <div className="d-flex w-50 align-items-center" style={{ gap: "10px" }}>
+            <div className="w-100 d-flex justify-content-between">
+                <div className="d-flex w-50 justify-content-end align-items-center" style={{ gap: "10px" }}>
+                    <h6 className="text-start m-0">Total Earning between </h6>
+                    <ReactDatePicker
+                        selected={new Date(start ? moment.tz(start, tutor.timeZone) :
+                            moment().toDate().getTime() + (gmtInInt + getLocalGMT) * 60 * 60 * 1000)}
+                        onChange={date => {
+                            date.setHours(0);
+                            date.setMinutes(0);
+                            date.setSeconds(0);
+                            const originalMoment = moment(date);
+                            setStart(originalMoment)
+                        }}
+                        dateFormat="MMM d, yyyy"
+                        className="form-control m-2"
+                    />
+
+                    <h6 className="m-0">and</h6>
+                    <ReactDatePicker
+                        selected={moment.tz(end ? end : new Date(), tutor.timeZone).toDate()}
+                        onChange={date => {
+                            console.log(date.getDate(), date.getHours(), date.getMinutes())
+                            date.setHours(23);
+                            date.setMinutes(59)
+                            date.setSeconds(59)
+                            const originalMoment = moment(date)
+                            setEnd(originalMoment)
+                        }}
+                        dateFormat="MMM d, yyyy"
+                        className="form-control m-2"
+                    />
+
+                    <h6 className="text-start m-0 rounded border p-2">{totalAmount}</h6>
+                </div>
+                <div className="d-flex w-50 align-items-center justify-content-end" style={{ gap: "10px" }}>
                     <h6 className="text-start m-0">
                         Bi-Weekly Account Details</h6>
                     <IoChevronBackCircle
@@ -143,6 +178,7 @@ const AccDetails = ({ sessions }) => {
                         style={{ cursor: "pointer" }}
                     />
                 </div>
+
             </div>
             <div className="mt-4" style={{ height: "70vh", overflowY: "auto" }}>
                 {selectedWeekSession.length ? <table>
@@ -181,28 +217,6 @@ const AccDetails = ({ sessions }) => {
                 </table> :
                     <div className="text-danger">No records found for that bi-week</div>
                 }
-            </div>
-            <div className="d-flex justify-content-end mt-4">
-
-                <div className="d-flex w-75 justify-content-end align-items-center" style={{ gap: "10px" }}>
-                    <h6 className="text-start m-0">Total Earning between </h6>
-                    <ReactDatePicker
-                        selected={formatUTC(start, true)}
-                        onChange={date => setStart(formatUTC(date))}
-                        dateFormat="MMM d, yyyy"
-                        className="form-control m-2 w-80"
-                    />
-
-                    <h6 className="m-0">and</h6>
-                    <ReactDatePicker
-                        selected={formatUTC(end, true, false)}
-                        onChange={date => setEnd(formatUTC(date, false, false))}
-                        dateFormat="MMM d, yyyy"
-                        className="form-control m-2 w-80"
-                    />
-
-                    <h6 className="text-start m-0 rounded border p-2">{totalAmount}</h6>
-                </div>
             </div>
         </div>
     );

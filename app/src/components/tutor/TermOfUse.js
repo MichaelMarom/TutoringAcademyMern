@@ -1,96 +1,30 @@
-// import { useEffect } from "react";
-
-// const TermOfUse = () => {
-//     useEffect(() => {
-//         let next = document.querySelector('.tutor-next')
-
-//         if (next && next.hasAttribute('id')) {
-//             next?.removeAttribute('id');
-//         }
-//     }, [])
-//     return (
-
-//         <>
-//             <div className="form-term-of-use">
-
-//                 <div className="term-of-use-cnt">
-//                     TUTORING ACADEMY TERMS OF USE.
-//                     CHECKING THE BOX BELOW, CONSTITUTES YOUR ACCEPTANCE OF THIS TERMS OF USE;
-//                     1.  Eligibility: The tutor must be at least 18 years old and have a valid government-issued ID.
-//                     2. Background check: The tutor must undergo a background check before joining the academy.
-//                     3. Qualifications: The tutor must have the necessary qualifications and experience to teach the subject(s) they are applying for.
-
-//                     4. Code of conduct: I. The tutor must agree to abide by the academy’s code of conduct, which includes but is not limited to:
-//                     II. Maintaining a professional demeanor at all times.
-//                     III.Not engaging in any inappropriate behavior or communication with the students.
-//                     IV. Not sharing any personal information with the students.
-//                     V. Not discriminating against any student based on their race, gender, religion, or any other characteristic.
-//                     VI. Confidentiality: The tutor must agree to maintain the confidentiality of the students’ personal information and academic records.
-//                     VII. Payment: The tutor will be paid a fixed hourly rate for their services.
-//                     VIII. Termination: The academy reserves the right to terminate the tutor’s contract at any time if they violate any of the terms of use.
-
-//                     Tutoring Academy maintains copyrights protection in all matrials within the website "www.tutoring-academy.com". The academy consents to downloading, copying,
-//                     and distribution for the materials for non comercial purposes. You are not allowed.....................
-//                 </div>
-
-//                 <div className="agreement" style={{ display: 'block', position: 'relative', padding: '45px' }}>
-
-
-//                     <div style={{ display: 'flex', margin: '0 0 5px 0', width: '300px', whiteSpace: 'nowrap' }}>
-//                         <input type="checkbox" id="e-level" style={{ float: 'left' }} />
-
-//                         <span style={{ margin: ' 0 10px 15px 10px' }} htmlFor="e-level">By selecting this box i have agreed to the terms and conditions of use</span>
-//                     </div>
-
-//                     <div style={{ display: 'flex', margin: '0 0 5px 0', width: '300px', whiteSpace: 'nowrap' }}>
-//                         <input type="checkbox" id="e-level" style={{ float: 'left' }} />
-
-//                         <span style={{ margin: ' 0 10px 15px 10px' }} htmlFor="e-level">I will provide my social security number when my account accummulates $50 (For American Citizens Only)</span>
-//                     </div>
-
-//                     <div style={{ display: 'flex', margin: '0 0 5px 0', width: '300px', whiteSpace: 'nowrap' }}>
-//                         <input type="checkbox" id="e-level" style={{ float: 'left' }} />
-
-//                         <span style={{ margin: ' 0 10px 15px 10px' }} htmlFor="e-level">Tutoring academy will issue me IRS form 1099 when my account will exceed $600 (For American Citizens Only)</span>
-//                     </div>
-
-//                 </div>
-
-//             </div>
-//         </>
-//     );
-// }
-
-// export default TermOfUse;
 import { useEffect, useState } from "react";
 import RichTextEditor from "../common/RichTextEditor/RichTextEditor";
 import Actions from "../common/Actions";
 import { get_adminConstants, post_termsOfUse } from "../../axios/admin";
 import Loading from "../common/Loading";
+import { setTutor } from "../../redux/tutor_store/tutorData";
+import { post_tutor_setup, setAgreementDateToNullForAll } from "../../axios/tutor";
+import { useDispatch, useSelector } from "react-redux";
+import { showDate } from "../../helperFunctions/timeHelperFunctions";
+import { convertToDate } from "../common/Calendar/Calendar";
 
 const TermOfUse = () => {
-    useEffect(() => {
-        let next = document.querySelector('.tutor-next')
-
-        if (next && next.hasAttribute('id')) {
-            next?.removeAttribute('id');
-        }
-    }, [])
-    const [unSavedChanges, setUnsavedChanges] = useState(false);
-
+    const [unSavedChanges, setUnSavedChanges] = useState(false);
     const [terms, set_terms] = useState('');
     const [db_terms, set_db_terms] = useState('');
     const [userRole, setUserRole] = useState('');
     const [editMode, setEditMode] = useState(false);
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true)
+    const [agreed, setAgreed] = useState(false)
+    const { tutor } = useSelector(state => state.tutor)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-
                 const storedUserRole = localStorage.getItem('user_role');
-                // const storedUserRole = 'notadmin';
                 const result = await get_adminConstants();
                 set_terms(result.data[0].TermContent);
                 set_db_terms(result.data[0].TermContent);
@@ -106,101 +40,89 @@ const TermOfUse = () => {
     }, []);
 
     useEffect(() => {
-        if (terms !== undefined && db_terms !== undefined && terms !== db_terms) {
-            console.log(terms, "terms", db_terms, "db_terms");
-            setUnsavedChanges(true);
-        } else {
-            setUnsavedChanges(false);
-        }
+        if (tutor.AgreementDate)
+            setAgreed(true)
+    }, [tutor])
 
-    }, [terms, db_terms])
+    useEffect(() => {
+        if ((terms !== undefined && db_terms !== undefined && terms !== db_terms) ||
+            (!tutor.AgreementDate && agreed)) {
+            setUnSavedChanges(true);
+        } else {
+            setUnSavedChanges(false);
+        }
+    }, [terms, db_terms, agreed, tutor])
 
     const handleEditorChange = (value) => {
         set_terms(value);
     };
 
-    const handleEditClick = () => {
-        setEditMode(true);
-    };
-
-    const handleSave = async (e) => {
+    const handleSaveTerms = async (e) => {
         e.preventDefault();
         setLoading(true)
         const response = await post_termsOfUse({ TermContent: terms });
+        await setAgreementDateToNullForAll()
         set_db_terms(response.data.TermContent);
         setEditMode(false);
         setLoading(false)
     };
 
+    const handleSaveAgreement = async (e) => {
+        e.preventDefault()
+        setLoading(true)
+
+        await post_tutor_setup({
+            userId: tutor.userId, AgreementDate: new Date(),
+            fname: tutor.FirstName, lname: tutor.LastName, mname: tutor.MiddleName
+        })
+        setLoading(false)
+
+        dispatch(setTutor());
+    }
+
     if (fetching)
         return <Loading />
     return (
         <div className="form-term-of-use">
-            <form onSubmit={handleSave}>
+            <form onSubmit={userRole === 'admin' ? handleSaveTerms : handleSaveAgreement}>
                 <div className='px-4'>
                     <RichTextEditor
                         value={terms}
                         onChange={handleEditorChange}
-                        readOnly={!editMode}
-                        placeholder="Enter Your Work Experience"
-                    // required
+                        readOnly={!editMode || userRole !== 'admin' || !editMode}
+                        placeholder="Enter Term Of  Service"
+                        height="60vh"
+                        className='mb-5'
                     />
                 </div>
+                <div className="d-block p-5">
+                    <div className="form-check " >
+                        <input className="form-check-input" style={{ width: "30px", height: "30px", marginRight: '10px' }} type="checkbox" checked={agreed} onChange={() => setAgreed(true)}
+                            disabled={tutor.AgreementDate || userRole !== 'tutor' || !editMode}
+                            required={userRole === 'tutor'}
+                        />
+                        <label className="form-check-label fs-6">
+                            By checking the box you agree with the terms of the tutoring academy service.
+                        </label>
+                    </div>{
+                        tutor.AgreementDate &&
+                        <div className="text-success">
+                            Agreed on -  {showDate(convertToDate(tutor.AgreementDate))}
+                        </div>
+                    }
+                </div>
+
                 <Actions
                     loading={loading}
-                    saveDisabled={!userRole || userRole !== 'admin'} // Disable save if user role is not admin
-                    editDisabled={!userRole || userRole !== 'admin'} // Disable edit if user role is not admin
-                    onEdit={handleEditClick}
+                    saveDisabled={!editMode}
+                    editDisabled={editMode}
+                    onEdit={() => setEditMode(true)}
                     unSavedChanges={unSavedChanges}
+                    nextDisabled={!tutor.AgreementDate}
                 />
             </form>
-            <div className="d-none">
-                <div className="term-of-use-cnt">
-                    TUTORING ACADEMY TERMS OF USE.
-                    CHECKING THE BOX BELOW, CONSTITUTES YOUR ACCEPTANCE OF THIS TERMS OF USE;
-                    1.  Eligibility: The tutor must be at least 18 years old and have a valid government-issued ID.
-                    2. Background check: The tutor must undergo a background check before joining the academy.
-                    3. Qualifications: The tutor must have the necessary qualifications and experience to teach the subject(s) they are applying for.
 
-                    4. Code of conduct: I. The tutor must agree to abide by the academy’s code of conduct, which includes but is not limited to:
-                    II. Maintaining a professional demeanor at all times.
-                    III.Not engaging in any inappropriate behavior or communication with the students.
-                    IV. Not sharing any personal information with the students.
-                    V. Not discriminating against any student based on their race, gender, religion, or any other characteristic.
-                    VI. Confidentiality: The tutor must agree to maintain the confidentiality of the students’ personal information and academic records.
-                    VII. Payment: The tutor will be paid a fixed hourly rate for their services.
-                    VIII. Termination: The academy reserves the right to terminate the tutor’s contract at any time if they violate any of the terms of use.
-
-                    Tutoring Academy maintains copyrights protection in all matrials within the website "www.tutoring-academy.com". The academy consents to downloading, copying,
-                    and distribution for the materials for non comercial purposes. You are not allowed.....................
-                </div>
-
-                <div className="agreement" style={{ display: 'block', position: 'relative', padding: '45px' }}>
-
-
-                    <div style={{ display: 'flex', margin: '0 0 5px 0', width: '300px', whiteSpace: 'nowrap' }}>
-                        <input type="checkbox" id="e-level" style={{ float: 'left' }} />
-
-                        <span style={{ margin: ' 0 10px 15px 10px' }} htmlFor="e-level">By selecting this box i have agreed to the terms and conditions of use</span>
-                    </div>
-
-                    <div style={{ display: 'flex', margin: '0 0 5px 0', width: '300px', whiteSpace: 'nowrap' }}>
-                        <input type="checkbox" id="e-level" style={{ float: 'left' }} />
-
-                        <span style={{ margin: ' 0 10px 15px 10px' }} htmlFor="e-level">I will provide my social security number when my account accummulates $50 (For American Citizens Only)</span>
-                    </div>
-
-                    <div style={{ display: 'flex', margin: '0 0 5px 0', width: '300px', whiteSpace: 'nowrap' }}>
-                        <input type="checkbox" id="e-level" style={{ float: 'left' }} />
-
-                        <span style={{ margin: ' 0 10px 15px 10px' }} htmlFor="e-level">Tutoring academy will issue me IRS form 1099 when my account will exceed $600 (For American Citizens Only)</span>
-                    </div>
-
-                </div>
-
-            </div>
         </div>
-
     );
 }
 

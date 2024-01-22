@@ -464,7 +464,7 @@ const Education = () => {
         get_level()
             .then((data) => {
                 let list = data.recordset.map((item) =>
-                    <option key={item.Level} className={item.Level} value={item.Level}>{item.Level} {level}</option>
+                    <option key={item.Level} className={item.Level} value={item.Level}>{item.Level}</option>
                 );
                 set_level_list(list)
 
@@ -624,7 +624,7 @@ const Education = () => {
                                 <div className="col-md-4">
                                     <div className='d-flex justify-content-between'>
                                         <label className="text-secondary text-start" htmlFor="level">Education Level:</label>
-                                        <Tooltip width="200px" text=" Please select the highest education level that you eraned diploma, (could be even high school). If you selected higher education level, but cannot provide a proof in a form of diploma, we would have to decline your application." />
+                                        <Tooltip width="250px" text=" Please select the highest education level that you have earned diploma from (could be high school). If you selected academic education level, but cannot provide a proof in a form of diploma, we would have to decline your application." />
                                     </div>
                                     <select
                                         id="level"
@@ -1154,7 +1154,7 @@ const Education = () => {
                             <Button className='btn-sm btn-primary'
                                 disabled={!editMode}
                                 handleClick={() => setAddReference(true)}>
-                                Add References
+                                Add Ressorces
                             </Button>
                         </div>
                         {

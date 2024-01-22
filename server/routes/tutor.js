@@ -36,7 +36,8 @@ const { subjects,
     post_tutor_ad,
     get_tutor_ads,
     get_ad,
-    put_ad } = require('../controllers/tutor');
+    put_ad,
+    set_agreements_date_null_for_all } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -81,6 +82,7 @@ TUTOR_ROUTES.post("/api/store-event", parser, storeEvents);
 TUTOR_ROUTES.get("/api/bookings/:tutorId", fetchStudentsBookings)
 TUTOR_ROUTES.put("/tutor/update/:id", parser, storeCalenderTutorRecord);
 TUTOR_ROUTES.post('/tutor/setup', parser, post_tutor_setup)
+TUTOR_ROUTES.put('/tutor/agreement-updated', parser, set_agreements_date_null_for_all)
 TUTOR_ROUTES.get('/tutor/market-data', get_tutor_market_data)
 
 TUTOR_ROUTES.get('/tutor/get_students/:academyId', get_tutor_students)

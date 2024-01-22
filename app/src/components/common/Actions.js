@@ -71,7 +71,7 @@ const Actions = ({
     const onBack = () => {
         navigate(`/${currentUser}/${currentTabInfo.back}`)
     }
-
+    console.log(nextDisabled)
     return (
         <div style={actionsStyle}>
             <div className="container">
@@ -91,7 +91,8 @@ const Actions = ({
                         </Button>
                     </div>
                     <div className="col-1">
-                        <button onClick={onNext} disabled={!saveDisabled && (unSavedChanges || loading || nextDisabled || !isNextTabExist)}
+                        <button onClick={onNext}
+                            disabled={(!saveDisabled && (unSavedChanges || loading || !isNextTabExist)) || nextDisabled}
                             type='button' className="btn btn-success">Next</button>
                     </div>
                 </div>

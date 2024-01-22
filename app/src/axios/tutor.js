@@ -623,6 +623,7 @@ export const post_tutor_setup = async (data) => {
         if (data.start !== undefined) dataObject.StartVacation = data.start;
         if (data.end !== undefined) dataObject.EndVacation = data.end;
         if (data.vacation_mode !== undefined) dataObject.VacationMode = data.vacation_mode;
+        if (data.AgreementDate !== undefined) dataObject.AgreementDate = data.AgreementDate
 
         dataObject.TutorScreenname = data.mname.length ?
             `${capitalizeFirstLetter(data.fname)}. ${capitalizeFirstLetter(data.mname[0])}. 
@@ -637,6 +638,15 @@ export const post_tutor_setup = async (data) => {
     }
 }
 
+export const setAgreementDateToNullForAll = async () => {
+    try {
+        const data = apiClient.put('/tutor/agreement-updated')
+        return data
+    }
+    catch (err) {
+        return err
+    }
+}
 export const get_tutor_students = async (AcademyId) => {
     try {
         const { data } = await apiClient.get(`/tutor/get_students/${AcademyId}`);
@@ -689,7 +699,6 @@ export const post_tutor_ad = async (body) => {
         return err
     }
 }
-
 
 export const fetch_tutor_ads = async (id) => {
     try {

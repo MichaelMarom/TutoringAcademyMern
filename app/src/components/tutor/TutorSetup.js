@@ -7,6 +7,7 @@ import 'react-international-phone/style.css';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 
 import { toast } from 'react-toastify'
+import { RiRobot2Fill } from "react-icons/ri";
 
 import {
   post_tutor_setup,
@@ -25,6 +26,7 @@ import { setTutor } from "../../redux/tutor_store/tutorData";
 import { capitalizeFirstLetter, unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
 import ReactDatePicker from "react-datepicker";
 import { Link } from "react-router-dom";
+import Button from "../common/Button";
 
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -578,8 +580,8 @@ const TutorSetup = () => {
               }
             </div>
 
-            <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto" }} 
-            type="label" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
+            <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto" }}
+              type="label" disabled={!editMode} htmlFor="photo" className="btn btn-success mt-2">
               Upload
             </label>
           </div>
@@ -948,7 +950,8 @@ const TutorSetup = () => {
               }}
             >
               <label className="input-group-text w-50" htmlFor="">
-                <ToolTip width="200px" text={"Coordinated Universal Time or 'UTC' is the primary time standard by which the world regulate local time. "} /> UTC
+                <ToolTip width="200px"
+                  text={"Coordinated Universal Time or 'UTC' is the primary time standard by which the world regulate local time. "} /> UTC
               </label>
               <input
                 className="form-control m-0"
@@ -996,8 +999,16 @@ const TutorSetup = () => {
 
             <div className=" mt-2">
               <div className="row justify-content-center align-items-center">
-                <div className="col-md-3">
-                  <div className="text-center">
+                <div className="col-md-4">
+                  <div className="">
+
+                    <Button className="btn-primary btn-sm " style={{ fontSize: "12px" }} disabled={!editMode}>
+                      <RiRobot2Fill size={18} /> <br /> Create AI intro
+                    </Button>
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="">
                     <button
                       type="button"
                       className={`btn btn-primary small ${selectedVideoOption === "record" ? "active" : ""
@@ -1015,8 +1026,8 @@ const TutorSetup = () => {
                     </button>
                   </div>
                 </div>
-                <div className="col-md-3">
-                  <div className="text-center">
+                <div className="col-md-4">
+                  <div className="">
                     <input
                       data-type="file"
                       defaultValue={''}
@@ -1040,13 +1051,14 @@ const TutorSetup = () => {
                     </label>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
 
-        <div className="container mt-5">
-          <div className="d-flex justify-content-center" style={{ gap: "10px" }}>
+        <div className="mt-4 ">
+          <div className="d-flex justify-content-center" style={{ gap: "10px", width: "86%" }}>
             <div
               className="border rounded p-2 shadow d-flex flex-column justify-content-between"
               style={{
@@ -1162,51 +1174,54 @@ const TutorSetup = () => {
             </div>
           </div>
 
-          <div className="mt-2"
-            style={{
-              fontWeight: "bold",
-              margin: "auto",
-              textAlign: "center",
-              width: "60%",
-            }}
-          >
-            <label htmlFor="headline">
-              Headline
-            </label>
-            <br />
-            <input
-              className="form-control m-0 shadow w-100"
-              value={headline}
-              required
-              spellCheck="true"
-              disabled={!editMode}
-              placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
-              onChange={(e) =>
-                counter(e.target.value, e.target, set_headline, 80)
-              }
-              type="text"
-            />
-            <div className="inputValidator">
-              Your have reached the max limit of 80 characters.
-            </div>
-          </div>
+          <div style={{ width: "86%" }}>
 
-          <div className="tutor-setup-bottom-field d-flex justify-content-between"
-            style={{ gap: "20px" }}>
-            <div
-              className="profile-headline"
-              style={{ textAlign: "center", float: "left" }}
+            <div className="mt-2"
+              style={{
+                fontWeight: "bold",
+                margin: "auto",
+
+                textAlign: "center",
+                width: "60%",
+              }}
             >
-              <label style={{ fontWeight: "bold" }} htmlFor="intro">
-                Introduction
+              <label htmlFor="headline">
+                Headline
               </label>
               <br />
-              <textarea
-                className="form-control m-0 shadow"
-                value={intro}
-                maxLength={500}
+              <input
+                className="form-control m-0 shadow w-100"
+                value={headline}
                 required
-                placeholder="The Academy mandates the tutor uploading a self introductionary video. 
+                spellCheck="true"
+                disabled={!editMode}
+                placeholder="Write A Catchy Headline.. Example: 21 years experienced nuclear science professor."
+                onChange={(e) =>
+                  counter(e.target.value, e.target, set_headline, 80)
+                }
+                type="text"
+              />
+              <div className="inputValidator">
+                Your have reached the max limit of 80 characters.
+              </div>
+            </div>
+
+            <div className="tutor-setup-bottom-field d-flex justify-content-between"
+              style={{ gap: "20px" }}>
+              <div
+                className="profile-headline"
+                style={{ textAlign: "center", float: "left" }}
+              >
+                <label style={{ fontWeight: "bold" }} htmlFor="intro">
+                  Introduction
+                </label>
+                <br />
+                <textarea
+                  className="form-control m-0 shadow"
+                  value={intro}
+                  maxLength={500}
+                  required
+                  placeholder="The Academy mandates the tutor uploading a self introductionary video. 
                     It's important for the student to check if the tutor accent is clear for him.
                     A self-introduction video is a great way to showcase your personality and teaching style to potential students. 
                     Here are some tips on how to create a self-introduction video of tutor to students.
@@ -1220,49 +1235,50 @@ const TutorSetup = () => {
                     - Record your video in a quiet and well-lit place, with a neutral background and good audio quality.
                     - Review your video before uploading it and make sure it is error-free and reflects your best self.
                     "
-                onInput={(e) =>
-                  counter(e.target.value, e.target, set_intro, 500)
-                }
-                style={{ width: "100%", padding: "10px", height: "160px" }}
-                name=""
-                spellCheck="true"
-                disabled={!editMode}
-                id=""
-              ></textarea>
-              <div className="inputValidator">
-                Your have reached the max limit of 1500 characters.
+                  onInput={(e) =>
+                    counter(e.target.value, e.target, set_intro, 500)
+                  }
+                  style={{ width: "100%", padding: "10px", height: "160px" }}
+                  name=""
+                  spellCheck="true"
+                  disabled={!editMode}
+                  id=""
+                ></textarea>
+                <div className="inputValidator">
+                  Your have reached the max limit of 1500 characters.
+                </div>
               </div>
-            </div>
 
-            <div
-              className="profile-motivation"
-              style={{ textAlign: "center", float: "right" }}
-            >
-              <label style={{ fontWeight: "bold" }} htmlFor="intro">
-                Motivate
-              </label>
-              <br />
-              <textarea
-                className="form-control m-0 shadow"
-                value={motivation}
-                disabled={!editMode}
-                maxLength={500}
-                required
-                placeholder='Write Something That will motivate Your Students. 
+              <div
+                className="profile-motivation"
+                style={{ textAlign: "center", float: "right" }}
+              >
+                <label style={{ fontWeight: "bold" }} htmlFor="intro">
+                  Motivate
+                </label>
+                <br />
+                <textarea
+                  className="form-control m-0 shadow"
+                  value={motivation}
+                  disabled={!editMode}
+                  maxLength={500}
+                  required
+                  placeholder='Write Something That will motivate Your Students. 
                 Use the "Motivate" tab to set up your promotions. 
                 Like up to 30 minutes introductionary session. Discount for multi students tutoring, or paid 
                 subscription for multi lessons...If you hold a teacher certificate, and wish to provide your
                  profession to a full class of students in a public school, you can charge the school a premium.'
-                onInput={(e) =>
-                  counter(e.target.value, e.target, set_motivation, 500)
-                }
-                spellCheck="true"
-                style={{ width: "100%", padding: "10px", height: "160px" }}
-                name=""
-                id=""
-              ></textarea>
-              <div className="inputValidator">
-                Your have reached the max limit of 500 characters.
+                  onInput={(e) =>
+                    counter(e.target.value, e.target, set_motivation, 500)
+                  }
+                  spellCheck="true"
+                  style={{ width: "100%", padding: "10px", height: "160px" }}
+                  name=""
+                  id=""
+                ></textarea>
+                <div className="inputValidator">
+                  Your have reached the max limit of 500 characters.
+                </div>
               </div>
             </div>
           </div>

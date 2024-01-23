@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { get_holidays_by_countryCode } from '../../api/holidayApi/requests';
 import { fetch_holidays } from '../../axios/holiday';
 import { hours, days } from '../../constants/constants';
+import BTN_ICON from '../../images/button__icon.png'
+
 
 function TutorCalenderSidebar({
     activeTab,
@@ -52,12 +53,12 @@ function TutorCalenderSidebar({
 
     return (
         <div className="tab-content card h-100" style={{ overflowY: "auto" }}>
-            <div className='highlight small p-2'> To view feedback, click on past due date lessons that has stars icon. 
-            To postpone, or cancel a lesson, click on a futor date session, and follow dialog.</div>
+            <div className='highlight small p-2'> To view feedback, click on past due date lessons that has stars icon.
+                To postpone, or cancel a lesson, click on a futor date session, and follow dialog.</div>
             <div className='d-flex'>
 
                 <button
-                    className={`btn btn-sm w-50 ${activeTab === 'month' ? 'btn-primary' : 'btn-success'
+                    className={`action-btn w-50 ${activeTab === 'month' ? 'motn-btn' : 'week-btn'
                         }`}
                     style={{
                         boxShadow: `${activeTab === 'month' ? "5px 5px 10px rgba(0, 0, 0, 0.5)" : ""}`
@@ -66,17 +67,27 @@ function TutorCalenderSidebar({
                     onClick={() => handleTabClick('month')}
 
                 >
-                    Blocked Week Days
+                    <div class="button__content">
+                        <div class="button__icon">
+                            <img src={BTN_ICON} alt={"btn__icon"} />
+                        </div>
+                        <p class="button__text">Blocked Week Days</p>
+                    </div>
                 </button>
                 <button
-                    className={`btn btn-sm w-50 ${activeTab === 'day' ? 'btn-primary' : 'btn-success'
+                    className={`action-btn w-50 ${activeTab === 'day' ? 'week-btn' : 'month-btn'
                         }`}
                     style={{
                         boxShadow: `${activeTab === 'day' ? "5px 5px 10px rgba(0, 0, 0, 0.5)" : ""}`
                     }}
                     onClick={() => handleTabClick('day')}
                 >
-                    Blocked Hours
+                    <div class="button__content">
+                        <div class="button__icon">
+                            <img src={BTN_ICON} alt={"btn__icon"} />
+                        </div>
+                        <p class="button__text">Blocked Hours</p>
+                    </div>
                 </button>
             </div>
             <div className={`h-100 tab-pane ${activeTab === 'month' ? 'active' : ''}`} id="months">

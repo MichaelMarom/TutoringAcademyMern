@@ -148,13 +148,15 @@ const Signup = () => {
                       {errors.role && <span className='small text-danger'>{errors.role}</span>}
                     </div>
 
-                    <button type="submit" className="btn btn-primary btn-block mb-4">
+                    <button type="submit" className="action-btn btn-block mb-4">
                       {loading ? (
                         <div className="spinner-border text-primary" role="status">
                           <span className="visually-hidden">Loading...</span>
                         </div>
                       ) : (
-                        ' Sign up'
+                        <div class="button__content">
+                          <p class="button__text">Sign up</p>
+                        </div>
                       )}
                     </button>
 

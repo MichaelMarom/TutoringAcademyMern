@@ -583,7 +583,7 @@ const Education = () => {
         if (workExperience.length === 11 || !workExperience.length) return toast.warning('Work Experiece in Required!')
 
         if (!cert_file_name || deg_file_name)
-            toast.warning('Since You did not uploaded certificate/Degree, your Profile will stay in Pending status, and can not be activated until you upload the missing items!')
+            toast.warning('Since You did not uploaded certificate/Degree, your Profile will stay in Pending status and can not be activated until you upload the missing documents!')
 
         setSaving(true)
         let res = await saver();
@@ -1167,10 +1167,12 @@ const Education = () => {
 
                         </div>
                         <div>
-                            <Button className='btn-sm btn-primary'
+                            <Button className='action-btn' style={{width:"40%"}}
                                 disabled={!editMode}
                                 handleClick={() => setAddReference(true)}>
-                                Add Ressorces
+                                <div class="button__content">
+                                    <p class="button__text">Add Resources</p>
+                                </div>
                             </Button>
                         </div>
                         {
@@ -1181,7 +1183,7 @@ const Education = () => {
                                     value={references}
                                     onChange={(value) => setReferences(value)}
                                     readOnly={!editMode}
-                                    placeholder={`Tutoring academy recommends using a digital pen made by Wacom for the collaboration tab whiteboard. Basic models are CTL-4100 & 6100. You can find more information on their official website www.wacom.com
+                                    placeholder={`Tutoring academy recommends using a digital pen made by Wacom for the collaboration tab whiteboard. Basic models are CTL-4100 & 6100. Check their official website www.wacom.com
                                     Cost: $50 or less
                                     `}
                                     height='400px'

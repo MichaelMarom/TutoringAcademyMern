@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { get_tutor_profile } from '../../axios/tutor';
 import { create_chat } from '../../axios/chat'
 import { IoIosCheckmarkCircle } from 'react-icons/io';
-import { FaRegTimesCircle } from 'react-icons/fa';
+import { FaCalendar, FaComment, FaDiscord, FaDiscourse, FaRegTimesCircle } from 'react-icons/fa';
 
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { useParams } from 'react-router';
@@ -134,8 +134,23 @@ const TutorProfile = () => {
                                 </div>
                                 <div className='m-2 '>
                                     <div className='d-flex '>
-                                        <Button className='btn-sm btn-primary' onClick={handleChatClick} disabled={userRole === 'tutor'}>Chat</Button>
-                                        <Button className='btn-sm btn-success' onClick={handleScheduleClick} disabled={userRole === 'tutor'}>See Schedule</Button>
+                                        <Button className='action-btn' onClick={handleChatClick} disabled={userRole === 'tutor'}>
+                                            <div class="button__content">
+                                                <div class="button__icon">
+                                                    <FaComment />
+                                                </div>
+                                                <p class="button__text">Chat</p>
+                                            </div>
+                                        </Button>
+                                        <Button className='action-btn' style={{ width: "50%" }} onClick={handleScheduleClick} disabled={userRole === 'tutor'}>
+                                            <div class="button__content">
+                                                <div class="button__icon">
+                                                    <FaCalendar />
+                                                </div>
+                                                <p class="button__text">See Schedule</p>
+                                            </div>
+
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

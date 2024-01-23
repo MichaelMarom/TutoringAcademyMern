@@ -25,7 +25,8 @@ const Recomendation = ({ AcademyId }) => {
                     <div className='' style={{ fontSize: "14px" }}
                         dangerouslySetInnerHTML={{
                             __html: ` <h6 style="margin:0; text-align:start">All students;</h6>
-                        <p style="margin:0">Tutoring Academy recommend using a digital pen for the collaboration tab whiteboard. Made by WACOM, basic models are CTL-4100, 6100. You can find more information on their official website <a class="product-link" href="https://www.wacom.com" target="_blank">www.wacom.com</a>.</p>
+                        <p style="margin:0">Tutoring Academy recommend using a digital pen for the collaboration tab whiteboard.
+                         Made by WACOM. Basic models are CTL-4100, 6100. You can find more information on their official website <a class="product-link" href="https://www.wacom.com" target="_blank">www.wacom.com</a>.</p>
                         <h6 style="margin:0; text-align:start">Digital Pen Models: <span class="product-link">CTL-4100</span>, <span class="product-link">6100</span></h6>
                         <p style="margin:0" class="product-info">Cost: $50 or less</p>` }} />
                 </div>

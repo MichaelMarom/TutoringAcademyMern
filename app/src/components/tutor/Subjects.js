@@ -12,6 +12,7 @@ import { FACULTIES } from '../../constants/constants';
 import SubjectCard from './SubjectCard';
 import Actions from '../common/Actions'
 import Loading from '../common/Loading';
+import { FaPlus } from 'react-icons/fa';
 
 
 const Subjects = () => {
@@ -163,8 +164,15 @@ const Subjects = () => {
                         <p>
                             Select your faculty above, then from the list below click on the 'Edit' button for each subject that you teach (you can select more than one). Type your rate, select the school grade(s) you tutor for this subject and SAVE. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking here:
                         </p>
-                        <Button className='btn-primary btn-small text-center' type="button"
-                            handleClick={() => setShowAddNewSubjModal(true)} > Search/Add New Subject</Button>
+                        <Button className='action-btn text-center w-25' type="button"
+                            handleClick={() => setShowAddNewSubjModal(true)} >
+                            <div class="button__content">
+                                <div class="button__icon">
+                                    <FaPlus />
+                                </div>
+                                <p class="button__text">Search/Add New Subject</p>
+                            </div>
+                        </Button>
 
                     </div>
 
@@ -201,7 +209,6 @@ const Subjects = () => {
 
             </div>
 
-
             <CenteredModal
                 show={showAddNewSubjModal}
                 handleClose={handleModalClose}
@@ -228,12 +235,17 @@ const Subjects = () => {
                             placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={handleModalClose}>
-                            {"Close"}
+                        <button type="button" className="action-btn" onClick={handleModalClose}>
+                            <div class="button__content">
+
+                                <p class="button__text">Close</p>
+                            </div>
                         </button>
-                        <Button type="submit" className="btn btn-primary" loading={newSubjRequestChecking}
+                        <Button type="submit" className="action-btn" loading={newSubjRequestChecking}
                             loadingText={' checking if request already sent...'}>
-                            {'Submit'}
+                            <div class="button__content">
+                                <p class="button__text">Submit   </p>
+                            </div>
                         </Button>
                     </div>
                 </form>

@@ -1,6 +1,8 @@
 import React from 'react';
 import Button from './Button';
+import BTN_ICON from '../../images/button__icon.png'
 import { useLocation, useNavigate } from 'react-router-dom';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const actionsStyle = {
     position: 'fixed',
@@ -71,29 +73,56 @@ const Actions = ({
     const onBack = () => {
         navigate(`/${currentUser}/${currentTabInfo.back}`)
     }
-    console.log(nextDisabled)
+
     return (
         <div style={actionsStyle}>
             <div className="container">
                 <div className="row justify-content-center">
-                    <div className="col-1">
-                        <button type='button' onClick={onBack} className="btn btn-secondary"
-                            disabled={unSavedChanges || loading || backDisabled || !isBackTabExist}>Back</button>
+                    <div className="" style={{ width: "10%" }}>
+                        <button type='button' onClick={onBack} className="back-btn action-btn"
+                            disabled={unSavedChanges || loading || backDisabled || !isBackTabExist}>
+                            <div class="button__content">
+                                <div class="button__icon">
+                                    <img src={BTN_ICON} alt={"btn__icon"} />
+                                </div>
+                                <p class="button__text"><FaChevronLeft />  Back</p>
+                            </div>
+                        </button>
                     </div>
-                    <div className="col-1">
-                        <button onClick={onEdit} type='button' className="btn btn-warning" disabled={editDisabled}>Edit</button>
+                    <div className="" style={{ width: "10%" }}>
+                        <button onClick={onEdit} type='button' className="edit-btn action-btn"
+                            disabled={editDisabled}>
+                            <div class="button__content">
+                                <div class="button__icon">
+                                    <img src={BTN_ICON} alt={"btn__icon"} />
+                                </div>
+                                <p class="button__text">Edit</p>
+                            </div>
+                        </button>
                     </div>
-                    <div className="col-1">
-                        <Button handleClick={onSave} className={`btn btn-primary 
+                    <div className="" style={{ width: "10%" }}>
+                        <Button handleClick={onSave} className={`save-btn action-btn 
                         ${(unSavedChanges && !saveDisabled) ? 'blinking-button' : ''}`} type="submit" loading={loading}
                             disabled={saveDisabled || loading} >
-                            Save
+                            <div class="button__content">
+                                <div class="button__icon">
+                                    <img src={BTN_ICON} alt={"btn__icon"} />
+                                </div>
+                                <p class="button__text">Save</p>
+                            </div>
                         </Button>
                     </div>
-                    <div className="col-1">
+                    <div className="" style={{ width: "10%" }}>
                         <button onClick={onNext}
                             disabled={(!saveDisabled && (unSavedChanges || loading || !isNextTabExist)) || nextDisabled}
-                            type='button' className="btn btn-success">Next</button>
+                            type='button' className="next-btn action-btn">
+                            <div class="button__content">
+                                <div class="button__icon">
+                                    <img src={BTN_ICON} alt={"btn__icon"} />
+                                </div>
+                                <p class="button__text">Next <FaChevronRight /> </p>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </div>

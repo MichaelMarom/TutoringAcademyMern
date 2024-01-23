@@ -87,20 +87,26 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
                 <div className='float-end'>
 
                     {!editable &&
-                        <Button className='btn-primary btn-sm' handleClick={() => setEditable(!editable)}>
-                            Edit
+                        <Button className='action-btn' handleClick={() => setEditable(!editable)}>
+                            <div class="button__content">
+                                <p class="button__text">Edit</p>
+                            </div>
                         </Button>
                     }
                     {(rate === '') && editable &&
-                        <Button type={"button"} className='btn-warning btn-sm' handleClick={() => removeFromSubjectRates()}
+                        <Button type={"button"} className='action-btn' handleClick={() => removeFromSubjectRates()}
                         >
-                            Revert
+                            <div class="button__content">
+                                <p class="button__text">Revert</p>
+                            </div>
                         </Button>
                     }
 
 
-                    <Button type='submit' className='btn-success btn-sm' disabled={!editable}>
-                        Save
+                    <Button type='submit' className='action-btn' disabled={!editable}>
+                        <div class="button__content">
+                            <p class="button__text">Save</p>
+                        </div>
                     </Button>
                 </div>
             </form>

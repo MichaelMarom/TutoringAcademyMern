@@ -4,6 +4,8 @@ import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, upload_edu_form, upload_form_two } from '../../../axios/tutor';
 import career from '../../../images/Experience-photo50.jpg';
 
+import { moment } from '../../../config/moment'
+
 import Select from 'react-select'
 import Actions from '../../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
@@ -17,6 +19,8 @@ import PDFViewer from './PDFViewer'
 import Button from '../../common/Button';
 import UserRichTextEditor from '../../common/RichTextEditor/UserRichTextEditor';
 import Tooltip from '../../common/ToolTip';
+import ReactDatePicker from 'react-datepicker';
+import { useSelector } from 'react-redux';
 
 const languageOptions = languages.map((language) => ({
     value: language,
@@ -24,22 +28,6 @@ const languageOptions = languages.map((language) => ({
 }));
 
 const Education = () => {
-
-    function getToday() {
-        const today = new Date();
-        return today.toISOString().split('T')[0];
-    }
-
-    function handleDateChange(e) {
-        const selectedValue = e.target.value;
-        set_expiration(selectedValue);
-    }
-
-    function handleBlur() {
-        if (expiration < getToday()) {
-            set_expiration(getToday());
-        }
-    }
 
     const [editMode, setEditMode] = useState(false);
     const [unSavedChanges, setUnsavedChanges] = useState(false);
@@ -59,7 +47,6 @@ const Education = () => {
     const [countryForMast, setCountryForMast] = useState('');
     const [countryForDoc, setCountryForDoc] = useState('');
     const [countryForDeg, setCountryForDeg] = useState('')
-
 
     let [state2, set_state2] = useState('');
     let [state3, set_state3] = useState('');
@@ -83,7 +70,7 @@ const Education = () => {
     let [d_list, set_d_list] = useState([])
 
     let [data, set_data] = useState(false);
-    let [files, set_files] = useState({});
+    let [dbValues, setDbValues] = useState({});
 
     const [degreeFile, setDegreeFile] = useState(null);
     const [resumeFile, setResumeFile] = useState(null);
@@ -101,12 +88,14 @@ const Education = () => {
     const [references, setReferences] = useState('')
     const [saving, setSaving] = useState(false);
     const [recordFetched, setRecordFetched] = useState(false);
+    const { tutor } = useSelector(state => state.tutor)
 
+    //private info protection notice
     let toastId = useRef();
     useEffect(() => {
-        toastId.current = !toastId.current && recordFetched && !files.EducationalLevel?.length &&
+        toastId.current = !toastId.current && recordFetched && !dbValues.EducationalLevel?.length &&
             !(cert_file_name || deg_file_name) &&
-            toast('Private info protected, like documents.', {
+            toast('Please upload the highest diploma you earned. The academy only verifies your credentials, and guard your privecy by not publishing it on the portal.', {
                 closeButton: true,
                 autoClose: false,
                 className: "setup-private-info edu"
@@ -116,8 +105,15 @@ const Education = () => {
         if (toastId && (cert_file_name || deg_file_name)) {
             toast.dismiss()
         }
-    }, [recordFetched, files, cert_file_name, deg_file_name])
+    }, [recordFetched, dbValues, cert_file_name, deg_file_name])
 
+    useEffect(() => {
+        if (dbValues.AcademyId) {
+            setEditMode(false)
+        } else {
+            setEditMode(true)
+        }
+    }, [dbValues])
 
     useEffect(() => {
         if (dataFetched && db_edu_level !== level) {
@@ -278,8 +274,8 @@ const Education = () => {
                 resumePath,
                 references
             }
-            console.log(files, fieldValues)
-            setUnsavedChanges(unsavedEducationChangesHelper(fieldValues, files))
+            console.log(dbValues, fieldValues)
+            setUnsavedChanges(unsavedEducationChangesHelper(fieldValues, dbValues))
         }
     }, [
         level,
@@ -315,7 +311,7 @@ const Education = () => {
         db_edu_level,
         db_edu_cert,
         fetchingEdu,
-        files,
+        dbValues,
         resumePath,
         references
     ])
@@ -328,7 +324,7 @@ const Education = () => {
             .then((result) => {
                 if (result?.length) {
                     let data = result[0];
-                    set_files(data)
+                    setDbValues(data)
                     set_workExperience(data.WorkExperience)
                     set_university1(data.College1)
                     set_university2(data.College2)
@@ -354,7 +350,7 @@ const Education = () => {
 
                     setDoctorateGraduateYear(data.DoctorateGradYr)
                     setReferences(data.ThingsReferences)
-                    setAddReference(data.ThingsReferences?.length)
+                    // setAddReference(data.ThingsReferences?.length)
 
                     set_doctorateState(data.DoctorateState)
 
@@ -377,7 +373,7 @@ const Education = () => {
 
                     setDataFetched(true)
                 } else {
-                    set_files({
+                    setDbValues({
                         EducationalLevel: level,
                         College1: university1,
                         College2: university2,
@@ -413,7 +409,7 @@ const Education = () => {
                 setRecordFetched(true)
                 set_data(true)
             })
-    }, [editMode])
+    }, [])
 
     useEffect(() => {
 
@@ -476,7 +472,7 @@ const Education = () => {
         get_certificates()
             .then((data) => {
                 let list = data.recordset.map((item) =>
-                    <option key={item.CertificateType} className={item.CertificateType} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 5x 0 5x', borderRadius: '0' }} value={item.CertificateType}>{item.CertificateType}</option>
+                    <option key={item.CertificateType} className={item.CertificateType} value={item.CertificateType}>{item.CertificateType}</option>
                 );
                 set_certificate_list(list)
 
@@ -584,7 +580,11 @@ const Education = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        if (workExperience.length === 11) return toast.warning('Work Experiece in Required!')
+        if (workExperience.length === 11 || !workExperience.length) return toast.warning('Work Experiece in Required!')
+
+        if (!cert_file_name || deg_file_name)
+            toast.warning('Since You did not uploaded certificate/Degree, your Profile will stay in Pending status, and can not be activated until you upload the missing items!')
+
         setSaving(true)
         let res = await saver();
         setSaving(false)
@@ -1016,6 +1016,7 @@ const Education = () => {
                                         className="form-select m-0"
                                         onChange={certified}
                                         placeholder='Select Certificate'
+                                        value={certificate}
                                         required
                                         disabled={!editMode}
                                     >
@@ -1089,7 +1090,22 @@ const Education = () => {
                                         </div>
                                         <div className="col-md-4">
                                             <label className="text-secondary" htmlFor="expiration">Certificate Expiration:</label>
-                                            <input
+                                            <ReactDatePicker
+                                                selected={moment.tz(expiration ? expiration : new Date(), tutor.timeZone).toDate()}
+                                                onChange={date => {
+                                                    date.setHours(23);
+                                                    date.setMinutes(59)
+                                                    date.setSeconds(59)
+                                                    const originalMoment = moment(date)
+                                                    set_expiration(originalMoment)
+                                                }}
+                                                minDate={new Date()}
+                                                dateFormat="MMM d, yyyy"
+                                                className="form-control m-2"
+                                                readOnly={!editMode}
+                                                placeholder="Expiration Date"
+                                            />
+                                            {/* <input
                                                 type="date"
                                                 min={new Date().toISOString().split('T')[0]}
                                                 id="expiration"
@@ -1099,7 +1115,7 @@ const Education = () => {
                                                 onChange={handleDateChange}
                                                 placeholder="Expiration"
                                                 disabled={!editMode}
-                                            />
+                                            /> */}
                                         </div>
                                     </>
                                 ) : null}
@@ -1158,14 +1174,14 @@ const Education = () => {
                             </Button>
                         </div>
                         {
-                            addReference &&
+                            !!data.ThingsReferences?.length || addReference &&
                             <div className="form-outline my-3" style={{ width: "450px" }}>
                                 <RichTextEditor
                                     className="references"
                                     value={references}
                                     onChange={(value) => setReferences(value)}
                                     readOnly={!editMode}
-                                    placeholder={`Tutoring academy recommends using a digital pen for the collaboration tab whiteboard. Made by WACOM, basic models are CTL-4100, 6100. You can find more information on their official website www.wacom.com
+                                    placeholder={`Tutoring academy recommends using a digital pen made by Wacom for the collaboration tab whiteboard. Basic models are CTL-4100 & 6100. You can find more information on their official website www.wacom.com
                                     Cost: $50 or less
                                     `}
                                     height='400px'
@@ -1182,6 +1198,7 @@ const Education = () => {
                                 placeholder="Enter Your Work Experience"
                                 height='800px'
                                 required
+
                             />
 
                         </div>

@@ -114,7 +114,7 @@ const TermOfUse = () => {
 
                 <Actions
                     loading={loading}
-                    saveDisabled={!editMode}
+                    saveDisabled={!editMode || (tutor.AgreementDate && userRole === 'tutor')}
                     editDisabled={editMode}
                     onEdit={() => setEditMode(true)}
                     unSavedChanges={unSavedChanges}

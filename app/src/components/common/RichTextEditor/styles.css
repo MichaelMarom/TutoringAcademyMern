@@ -14,3 +14,7 @@
 .work-exp .ql-toolbar {
     background-color: rgb(192, 244, 192) !important;
 }
+
+.work-exp .ql-container {
+    height: 80% !important
+}

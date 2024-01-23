@@ -681,7 +681,7 @@ let remove_subject_rates = (req, res) => {
     })
 }
 
-let upload_form_four = (req, res) => {
+let upload_tutor_bank = (req, res) => {
 
     let { start_day, acct_name, acct_type, bank_name, acct, routing, ssh,
         accumulated_hrs, commission, total_earning, payment_option, AcademyId, email } = req.body;
@@ -1396,12 +1396,18 @@ let getSessionsDetails = async (req, res) => {
                 const currentYearFullfilledSessions = sessionsWithinPayDay.filter((session) =>
                     moment(session.start).year() === currentYear && session.request !== 'delete'
                 );
+
+                const previousYearFullFilledSessions = sessionsWithinPayDay.filter((session) =>
+                    moment(session.start).year() === currentYear - 1 && session.request !== 'delete'
+                );
                 const currentYearEarning = currentYearFullfilledSessions.reduce((total, session) =>
+                    total + session.net, 0);
+                const previousYearEarning = previousYearFullFilledSessions.reduce((total, session) =>
                     total + session.net, 0);
                 const currentYearAccHours = currentYearFullfilledSessions.length;
 
 
-                res.status(200).send({ currentYearEarning, currentYearAccHours, sessions: sessionsWithinPayDay });
+                res.status(200).send({ currentYearEarning, previousYearEarning, currentYearAccHours, sessions: sessionsWithinPayDay });
             }
         } catch (err) {
             console.log(err);
@@ -1694,7 +1700,7 @@ module.exports = {
     get_my_data,
     get_my_edu,
     get_rates,
-    upload_form_four,
+    upload_tutor_bank,
     get_tutor_setup,
     get_tutor_rates,
     get_bank_details,

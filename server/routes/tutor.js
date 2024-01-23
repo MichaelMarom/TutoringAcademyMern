@@ -13,7 +13,7 @@ const { subjects,
     upload_tutor_rates,
     get_my_data,
     get_rates,
-    upload_form_four,
+    upload_tutor_bank,
     get_tutor_setup,
     post_form_three,
     get_my_edu,
@@ -67,7 +67,7 @@ TUTOR_ROUTES.get('/tutor/tutor-setup', parser, get_tutor_setup);
 
 
 
-TUTOR_ROUTES.post('/tutor/payment', parser, upload_form_four);
+TUTOR_ROUTES.post('/tutor/payment', parser, upload_tutor_bank);
 TUTOR_ROUTES.post('/tutor/rates/:faculty/:subject/:id', parser, upload_tutor_rates);
 TUTOR_ROUTES.delete('/subject-rate/:id', parser, remove_subject_rates);
 

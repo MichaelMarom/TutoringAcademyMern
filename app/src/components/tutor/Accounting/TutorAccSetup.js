@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { get_bank_details, upload_form_four } from '../../../axios/tutor';
+import { get_bank_details, upload_tutor_bank } from '../../../axios/tutor';
 import { showDate } from '../../../helperFunctions/timeHelperFunctions';
 import Acad_Commission from './Acad_Commission._Table';
 import Actions from '../../common/Actions'
@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import { COMMISSION_DATA } from '../../../constants/constants';
 import { compareStates } from '../../../helperFunctions/generalHelperFunctions';
 
-const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) => {
+const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, previousYearEarning }) => {
     const { tutor } = useSelector(state => state.tutor)
     const [email, set_email] = useState(tutor.Email);
     let [acct_name, set_acct_name] = useState(null)
@@ -57,18 +57,20 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
         if (validate())
             setSaving(true);
         if (payment_option === 'Bank') {
-            let response = await upload_form_four(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
+            let response = await upload_tutor_bank(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
             fetchingTutorBankRecord();
             if (response) {
                 toast.success("Succesfully Saved The Bank Info.")
+                setEditMode(false)
             } else {
                 toast.error("Error while Saving the Bank Info.")
             }
         } else {
-            let response = await upload_form_four(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
+            let response = await upload_tutor_bank(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
             fetchingTutorBankRecord();
             if (response) {
-                toast.success("Succesfully Saved The Bank Info.")
+                toast.success("Succesfully Saved The Bank Info.");
+                setEditMode(false)
             } else {
                 toast.error("Error while Saving the Bank Info.")
             }
@@ -328,7 +330,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
                             <label htmlFor="total-earning">Total Earning Previous Year.</label>
                             <input className='form-control m-0' type="text"
-                                value={0}
+                                value={previousYearEarning.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 id="total-earning"
                                 style={{ float: 'right', width: '50%' }} disabled />
                         </div>
@@ -340,6 +342,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning }) =>
                     unSavedChanges={unSavedChanges}
                     onEdit={() => setEditMode(true)}
                     editDisabled={editMode}
+                    saveDisabled={!editMode}
                 />
             </form>
         </div>

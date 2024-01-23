@@ -105,9 +105,12 @@ const Rates = () => {
       });
   }
 
+  console.log(dbState)
   useEffect(() => {
     if (!dbState.AcademyId) {
       setEditMode(true)
+    } else {
+      setEditMode(false)
     }
   }, [dbState])
 

@@ -10,7 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useSelector } from 'react-redux'
 import { get_last_pay_day } from "../../../axios/tutor";
 import Loading from "../../common/Loading";
-import { toast } from "react-toastify";
+import Actions from "../../common/Actions";
 
 const AccDetails = ({ sessions }) => {
     const today = moment();
@@ -102,18 +102,18 @@ const AccDetails = ({ sessions }) => {
         (moment(endDate).toDate()).getMonth() >= (moment(lastpayDay).toDate()).getMonth() &&
         (moment(endDate).toDate()).getFullYear() >= (moment(lastpayDay).toDate()).getFullYear();
 
-    const formatUTC = (dateInt, addOffset = false, start = true) => {
-        let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
-        if (date.isAfter(lastpayDay) && !start) {
-            return end
-        }
+    // const formatUTC = (dateInt, addOffset = false, start = true) => {
+    //     let date = (!dateInt || dateInt.length < 1) ? moment() : moment(dateInt);
+    //     if (date.isAfter(lastpayDay) && !start) {
+    //         return end
+    //     }
 
-        if (tutor.timeZone) {
-            date = date.tz(tutor.timeZone).toDate();
-        }
+    //     if (tutor.timeZone) {
+    //         date = date.tz(tutor.timeZone).toDate();
+    //     }
 
-        return date;
-    }
+    //     return date;
+    // }
 
     const gmtInInt = tutor.GMT ? parseInt(tutor.GMT) : 0;
     // for reactdatepicker because it opertae on new Date() not on moment.
@@ -146,7 +146,6 @@ const AccDetails = ({ sessions }) => {
                     <ReactDatePicker
                         selected={moment.tz(end ? end : new Date(), tutor.timeZone).toDate()}
                         onChange={date => {
-                            console.log(date.getDate(), date.getHours(), date.getMinutes())
                             date.setHours(23);
                             date.setMinutes(59)
                             date.setSeconds(59)
@@ -193,7 +192,6 @@ const AccDetails = ({ sessions }) => {
                         <th>% Com'</th>
                         <th>$ Net</th>
                         <th>Invoice #</th>
-
                         <th>Lesson Video</th>
                     </thead>
                     <tbody>
@@ -218,6 +216,8 @@ const AccDetails = ({ sessions }) => {
                     <div className="text-danger">No records found for that bi-week</div>
                 }
             </div>
+
+            <Actions saveDisabled={true} />
         </div>
     );
 }

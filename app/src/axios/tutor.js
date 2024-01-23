@@ -419,8 +419,6 @@ export let get_rates = (AcademyId, facultyId) => {
     })
 }
 
-
-
 export let get_bank_details = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
@@ -457,7 +455,7 @@ export let get_tutor_rates = (AcademyId) => {
     })
 }
 
-export let upload_form_four = (email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, AcademyId) => {
+export let upload_tutor_bank = (email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, AcademyId) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/payment', {
@@ -627,8 +625,8 @@ export const post_tutor_setup = async (data) => {
 
         dataObject.TutorScreenname = data.mname.length ?
             `${capitalizeFirstLetter(data.fname)}. ${capitalizeFirstLetter(data.mname[0])}. 
-            ${capitalizeFirstLetter(data.lname[0])}` :
-            `${capitalizeFirstLetter(data.fname)}. ${capitalizeFirstLetter(data.lname[0])}`;
+            ${capitalizeFirstLetter(data.lname[0])}.` :
+            `${capitalizeFirstLetter(data.fname)}. ${capitalizeFirstLetter(data.lname[0])}.`;
 
         dataObject.AcademyId = uuidv4();
         return await apiClient.post('/tutor/setup', dataObject);

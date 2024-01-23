@@ -7,13 +7,14 @@ import { get_sessions_details } from '../../../axios/tutor';
 const Accounting = () => {
     const [sessions, setSessions] = useState([])
     const [currentYearEarning, setCurrentYearEarning] = useState(0);
+    const [previousYearEarning, setPreviousYearEarnig] = useState(0);
     const [currentYearHrs, setCurrentYearHrs] = useState(0);
 
-    let [activeTab, setActiveTab] = useState(<TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} />);
+    let [activeTab, setActiveTab] = useState(<TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} previousYearEarning={previousYearEarning} />);
     const [activeTabIndex, setActiveTabIndex] = useState(0);
     const AcademyId = localStorage.getItem('tutor_user_id')
 
-    useEffect(() => { setActiveTab(<TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} />) }, [sessions])
+    useEffect(() => { setActiveTab(<TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} previousYearEarning={previousYearEarning} />) }, [sessions])
 
     useEffect(() => {
         const fetchSessionDetails = async () => {
@@ -21,13 +22,14 @@ const Accounting = () => {
             setSessions(data.sessions)
             setCurrentYearHrs(data.currentYearAccHours)
             setCurrentYearEarning(data.currentYearEarning)
+            setPreviousYearEarnig(data.previousYearEarning)
         }
         fetchSessionDetails()
     }, [])
 
     const tabs = [
-        { label: 'Account Settings', component: <TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} /> },
-        { label: 'Tutor Account Details', component: <AccDetails sessions={sessions} /> },
+        { label: 'Account Settings', component: <TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} previousYearEarning={previousYearEarning} /> },
+        { label: 'Lessons performed', component: <AccDetails sessions={sessions} /> },
     ];
 
     return (

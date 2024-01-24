@@ -162,15 +162,15 @@ function EventModal({
             </div>
           }
           <div className="form-group d-flex flex-column">
-            <button type="button" className={`action-btn btn-sm `}
+            <button type="button" className={`action-btn btn btn-sm `}
               disabled={clickedSlot.start}
               onClick={() => setSelectedType("intro")} >Mark as Intro Session</button>
-            <button type="button" className="action-btn btn-sm"
+            <button type="button" className="action-btn btn btn-sm"
               onClick={() => setSelectedType("booked")}>Mark as Booking Session</button>
             <button type="button" className="btn  btn-sm" style={{ background: "yellow" }}
               disabled={clickedSlot.start}
               onClick={() => setSelectedType("reserved")}>Mark as Reserved Session</button>
-            <button type="button" className="action-btn btn-sm"
+            <button type="button" className="action-btn btn btn-sm"
               onClick={() => setSelectedType("delete")}>Delete</button>
             {clickedSlot.request == 'postpone' &&
               <div className='d-flex justify-content-between align-items-center h-100'>
@@ -199,7 +199,7 @@ function EventModal({
 
               <button
                 type="button"
-                className="action-btn btn-sm float-end"
+                className="action-btn btn btn-sm float-end"
                 onClick={() => {
                   handleRemoveReservedSlot(reservedSlots.filter(slot => !isEqualTwoObjectsRoot(slot, clickedSlot)));
                   setClickedSlot({})
@@ -216,7 +216,7 @@ function EventModal({
           <div className="modal-footer">
             <button
               type="button"
-              className="action-btn btn-sm"
+              className="action-btn btn btn-sm"
               onClick={handleAccept}
             >
               Save

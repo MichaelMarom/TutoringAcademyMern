@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { get_tutor_rates, upload_form_three } from "../../axios/tutor";
+import { get_tutor_rates, post_tutor_setup, upload_form_three } from "../../axios/tutor";
 import { IoMdCopy, IoMdRefresh } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import Tooltip from "../common/ToolTip";
@@ -8,6 +8,8 @@ import { copyToClipboard } from "../../helperFunctions/generalHelperFunctions";
 import Actions from "../common/Actions";
 import '../../styles/common.css'
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { setTutor } from "../../redux/tutor_store/tutorData";
 
 const generateDiscountCode = () => {
   const length = 8;
@@ -22,6 +24,7 @@ const generateDiscountCode = () => {
 };
 
 const Rates = () => {
+  const { tutor } = useSelector(state => state.tutor);
   let [MultiStudentHourlyRate, setMultiStudentHourlyRate] = useState("");
   let [FreeDemoLesson, setFreeDemoLesson] = useState("");
   let [ActivateSubscriptionOption, setActivateSubscriptionOption] =
@@ -41,6 +44,7 @@ const Rates = () => {
   const [IntroSessionDiscount, setIntroSessionDiscount] = useState(true)
   const [dbState, setDbState] = useState({});
   const [editMode, setEditMode] = useState(false)
+  const dispatch = useDispatch();
 
   const fetchTutorRateRecord = () => {
     get_tutor_rates(window.localStorage.getItem("tutor_user_id"))
@@ -105,7 +109,6 @@ const Rates = () => {
       });
   }
 
-  console.log(dbState)
   useEffect(() => {
     if (!dbState.AcademyId) {
       setEditMode(true)
@@ -189,12 +192,20 @@ const Rates = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!selectedCancellationPolicy.length) {
-      toast.warning('Please select Tutor Cancellation Policy')
-      return
-    }
+    if (!selectedCancellationPolicy.length) return toast.warning('Please select Tutor Cancellation Policy');
+
+    let Step = null;
+    if (!dbState.AcademyId) Step = 4;
     setLoading(true)
+
     let res = await saver()
+    if (Step) {
+      await post_tutor_setup({
+        Step, fname: tutor.FirstName,
+        lname: tutor.LastName, mname: tutor.MiddleName, userId: tutor.userId
+      })
+      dispatch(setTutor())
+    }
     if (res.bool) {
       setChangesMade(false)
       fetchTutorRateRecord()

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { get_tutor_profile } from '../../axios/tutor';
 import { create_chat } from '../../axios/chat'
 import { IoIosCheckmarkCircle } from 'react-icons/io';
-import { FaCalendar, FaComment, FaDiscord, FaDiscourse, FaRegTimesCircle } from 'react-icons/fa';
+import { FaCalendar, FaComment, FaRegTimesCircle } from 'react-icons/fa';
 
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { useParams } from 'react-router';
@@ -17,16 +17,20 @@ import GradePills from './GradePills';
 import ToolTip from '../common/ToolTip'
 import { FaFilePdf } from "react-icons/fa6";
 import { toast } from 'react-toastify';
+import Actions from '../common/Actions';
 
 const TutorProfile = () => {
     const params = useParams();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const location = useLocation();
     const studentId = localStorage.getItem('student_user_id');
     const [data, setProfileData] = useState({})
     const [fetching, setFetching] = useState(true)
     const [activeTab, setActiveTab] = useState('bach')
     const userRole = localStorage.getItem('user_role')
     const [sortedGrades, setSortedGrades] = useState([]);
+    const isStudentLoggedIn = location.pathname.split('/')[1] === 'student';
+
     const customSort = (a, b) => {
         if (a === "Academic") {
             return -1;
@@ -67,7 +71,7 @@ const TutorProfile = () => {
         if (!studentId) return toast.error("You need  to select 1 student from student list!")
         else {
             const result = await create_chat({ User1ID: studentId, User2ID: data.AcademyId });
-            navigate(`/student/chat/${result[0].ChatID}`)
+            navigate(`/student/chat/${result[0]?.ChatID}`)
         }
     }
 
@@ -96,7 +100,6 @@ const TutorProfile = () => {
         <div style={{ background: "lightGray", height: "93vh", overflowY: "auto" }}>
             <div className='container'>
                 <div className=''>
-
                     <div className='d-flex align-items-start justify-content-between w-100 mt-4 rounded  bg-white '
                     >
                         <div className='d-flex align-items-start ' style={{ width: "40%" }}>
@@ -134,20 +137,20 @@ const TutorProfile = () => {
                                 </div>
                                 <div className='m-2 '>
                                     <div className='d-flex '>
-                                        <Button className='action-btn' onClick={handleChatClick} disabled={userRole === 'tutor'}>
-                                            <div class="button__content">
-                                                <div class="button__icon">
+                                        <Button className='action-btn btn' onClick={handleChatClick} disabled={userRole === 'tutor'}>
+                                            <div className="button__content">
+                                                <div className="button__icon">
                                                     <FaComment />
                                                 </div>
-                                                <p class="button__text">Chat</p>
+                                                <p className="button__text">Chat</p>
                                             </div>
                                         </Button>
-                                        <Button className='action-btn' style={{ width: "50%" }} onClick={handleScheduleClick} disabled={userRole === 'tutor'}>
-                                            <div class="button__content">
-                                                <div class="button__icon">
+                                        <Button className='action-btn btn' style={{ width: "50%" }} onClick={handleScheduleClick} disabled={userRole === 'tutor'}>
+                                            <div className="button__content">
+                                                <div className="button__icon">
                                                     <FaCalendar />
                                                 </div>
-                                                <p class="button__text">See Schedule</p>
+                                                <p className="button__text">See Schedule</p>
                                             </div>
 
                                         </Button>
@@ -219,8 +222,8 @@ const TutorProfile = () => {
 
                             </div>
                             <div className='d-flex align-items-center' style={{ gap: "5px" }}>
-                                <ToolTip width='300px' text={`Tutor Certificate is uploaded to the academy servers. 
-                                The student can view the Certificate by clicking on the PDF symbol below.`} />
+                                <ToolTip width='300px' text={`Tutor Certificate was uploaded to the academy 
+                                servers for verification. Due to privecy concern, the certificate is not published to the public. `} />
 
 
                                 <div className='text-primary' style={{ fontSize: "16px", fontWeight: "bold" }}>
@@ -317,33 +320,33 @@ const TutorProfile = () => {
                                         Education
                                     </h5>
                                     <div className='border p-2 d-flex '>
-                                        <ul class="nav flex-column p-0 align-items-start"
+                                        <ul className="nav flex-column p-0 align-items-start"
                                             style={{ width: "20%", borderRight: "1px solid lightblue" }}>
-                                            <li class="nav-item w-100 p-0">
+                                            <li className="nav-item w-100 p-0">
                                                 <p class={`nav-link m-0 ${activeTab === 'bach' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('bach')}
                                                 >Bachelor</p>
                                             </li>
-                                            <li class="nav-item w-100 p-0">
+                                            <li className="nav-item w-100 p-0">
                                                 <p class={`nav-link m-0 ${activeTab === 'mast' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('mast')}
                                                 >Master</p>
                                             </li>
-                                            <li class="nav-item w-100 p-0">
+                                            <li className="nav-item w-100 p-0">
                                                 <p class={`nav-link m-0 ${activeTab === 'doc' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('doc')}
                                                 >Doctorate</p>
                                             </li>
-                                            <li class="nav-item w-100 p-0">
+                                            <li className="nav-item w-100 p-0">
                                                 <p class={`nav-link m-0 ${activeTab === 'cert' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('cert')}
                                                 >Certificate</p>
                                             </li>
-                                            <li class="nav-item w-100 p-0">
+                                            <li className="nav-item w-100 p-0">
                                                 <p class={`nav-link m-0 m-0 ${activeTab === 'deg' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('deg')}
@@ -513,7 +516,7 @@ const TutorProfile = () => {
                                                                 </div>
                                                                 <h6 className='m-0'>{data.CertificateExpiration}</h6>
                                                             </div></> :
-                                                        <h5 className='text-danger'> No Certificate record found!</h5>
+                                                        <h5 className='text-danger'> Certificate is on record, was verified but not shown to public!</h5>
                                                     }
 
                                                 </div>
@@ -560,7 +563,7 @@ const TutorProfile = () => {
                                                                 </div>
                                                                 <h6 className='m-0'>{data.DegYr}</h6>
                                                             </div></> :
-                                                        <h5 className='text-danger'> No Degree record found!</h5>
+                                                        <h5 className='text-danger'> Diploma is on record, was verified but not shown to public!</h5>
                                                     }
                                                 </div>
                                             }
@@ -590,9 +593,12 @@ const TutorProfile = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
+            {!isStudentLoggedIn && <Actions
+                saveDisabled={true}
+                editDisabled={true}
+            />}
         </div >
     );
 }

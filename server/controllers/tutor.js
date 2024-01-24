@@ -1103,11 +1103,14 @@ const post_tutor_setup = (req, res) => {
                     request.input('AcademyId', sql.NVarChar(sql.MAX),
                         findtutorSetup.recordset[0].AcademyId);
 
+
                     Object.keys(req.body).map((key) => {
                         if (key === 'VacationMode')
                             return request.input('VacationMode', sql.Bit, req.body.VacationMode);
                         if (key === 'StartVacation' || key === 'EndVacation')
                             return request.input(key, sql.NVarChar(sql.MAX), `${req.body[key]}`);
+                        if (key === 'Step')
+                            return request.input(key, sql.Int, req.body.Step);
                         request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
                     })
 
@@ -1138,6 +1141,8 @@ const post_tutor_setup = (req, res) => {
                             return request.input('VacationMode', sql.Bit, req.body.VacationMode);
                         if (key === 'StartVacation' || key === 'EndVacation')
                             return request.input(key, sql.NVarChar(sql.MAX), `${req.body[key]}`);
+                        if (key === 'Step')
+                            return request.input(key, sql.Int, req.body.Step);
                         request.input(key, sql.NVarChar(sql.MAX), req.body[key]);
                     })
 

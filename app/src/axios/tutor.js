@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
 import { apiClient } from './config'
-import Subjects from '../pages/tutor/Subjects'
 import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions'
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
@@ -219,7 +218,7 @@ export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, a
 }
 
 
-export let upload_edu_form = (level, university1, university2, university3, degree, degreeFile, certificate,
+export let upload_edu_form = async (level, university1, university2, university3, degree, degreeFile, certificate,
     certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1,
     graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
     countryForMast,
@@ -227,24 +226,18 @@ export let upload_edu_form = (level, university1, university2, university3, degr
     countryForDoc,
     countryForAssociate, resume, cert_file_name, deg_file_name, references) => {
 
-    return new Promise((resolve, reject) => {
-        apiClient.post('/tutor/edu', {
-            level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
-            state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
-            doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
-            countryForMast,
-            countryForCert,
-            countryForDoc,
-            countryForAssociate, resume, cert_file_name, deg_file_name, references
-        })
-            .then((result) => {
-                resolve(result.data)
-            })
-            .catch((err) => {
-                reject(err)
-            })
-
+    const result = await apiClient.post('/tutor/edu', {
+        level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
+        state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
+        doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
+        countryForMast,
+        countryForCert,
+        countryForDoc,
+        countryForAssociate, resume, cert_file_name, deg_file_name, references
     })
+
+    return result.data
+
 }
 
 //not using
@@ -622,6 +615,8 @@ export const post_tutor_setup = async (data) => {
         if (data.end !== undefined) dataObject.EndVacation = data.end;
         if (data.vacation_mode !== undefined) dataObject.VacationMode = data.vacation_mode;
         if (data.AgreementDate !== undefined) dataObject.AgreementDate = data.AgreementDate
+        if (data.Step !== undefined) dataObject.Step = data.Step;
+        if (data.Status !== undefined) dataObject.Status = data.Status
 
         dataObject.TutorScreenname = data.mname.length ?
             `${capitalizeFirstLetter(data.fname)}. ${capitalizeFirstLetter(data.mname[0])}. 

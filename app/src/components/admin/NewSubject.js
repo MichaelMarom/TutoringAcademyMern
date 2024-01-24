@@ -109,16 +109,16 @@ const TutorTable = () => {
                                                 <>
                                                     <button
                                                         onClick={() => acceptNewSubject(item.facultyId, item.subject, item.AcademyId[0])}
-                                                        className='action-btn btn-sm'>
-                                                        <div class="button__content">
-                                                            <p class="button__text">Accept   </p>
+                                                        className='action-btn btn btn-sm'>
+                                                        <div className="button__content">
+                                                            <p className="button__text">Accept   </p>
                                                         </div>
                                                     </button>
                                                     <button
                                                         onClick={() => declineNewSubject(item.subject, item.AcademyId[0])}
-                                                        className='action-btn btn-sm' disabled={item.IsRejected}>
-                                                        <div class="button__content">
-                                                            <p class="button__text">Decline   </p>
+                                                        className='action-btn btn btn-sm' disabled={item.IsRejected}>
+                                                        <div className="button__content">
+                                                            <p className="button__text">Decline   </p>
                                                         </div>
                                                     </button>
                                                 </>

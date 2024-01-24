@@ -34,7 +34,7 @@ const Header = () => {
         { url: '/tutor/chat', name: 'Message Board' },
         { url: '/tutor/market-place', name: 'Market place' },
         { url: '/tutor/collaboration', name: 'Collaboration' },
-        { url: `/tutor-profile/${localStorage.getItem("tutor_user_id")}`, name: 'Profile' },
+        { url: `/tutor/tutor-profile/${localStorage.getItem("tutor_user_id")}`, name: 'Profile' },
 
     ];
 

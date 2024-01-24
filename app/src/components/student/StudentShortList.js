@@ -114,7 +114,7 @@ const StudentShortList = () => {
     ]
 
     let redirect_to_tutor_profile = (id) => {
-        navigate(`/tutor-profile/${id}`)
+        navigate(`/student/tutor-profile/${id}`)
     }
 
     const calculateTimeDifference = (tutorGMT) => {

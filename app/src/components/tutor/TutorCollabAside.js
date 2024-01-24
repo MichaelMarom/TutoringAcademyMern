@@ -40,8 +40,6 @@ const TutorAside = () => {
 
     }
 
-
-
     let handleVideoResize = e => {
         let element = document.querySelector('.TutorAsideVideoCnt');
         if (element.hasAttribute('id')) {
@@ -54,50 +52,28 @@ const TutorAside = () => {
         }
     }
 
-
-
     let handleVidActions = e => {
-
         visuals.getVideoTracks()[0].enabled =
             !(visuals.getVideoTracks()[0].enabled);
-        /*navigator.mediaDevices.getUserMedia()
-        .then((mediaStream) => {
-            mediaStream.getVideoTracks()[0].enabled =
-            !(mediaStream.getVideoTracks()[0].enabled);
-        })*/
-
         if (e.target.hasAttribute('id')) {
             e.target?.removeAttribute('id')
         } else {
             e.target?.setAttribute('id', 'collab-action')
         }
-
-
     }
 
     let handleAudioActions = e => {
-
         visuals.getAudioTracks()[0].enabled =
             !(visuals.getAudioTracks()[0].enabled);
-        /*navigator.mediaDevices.getUserMedia()
-        .then((mediaStream) => {
-            mediaStream.getVideoTracks()[0].enabled =
-            !(mediaStream.getVideoTracks()[0].enabled);
-        })*/
 
         if (e.target.hasAttribute('id')) {
             e.target?.removeAttribute('id')
         } else {
             e.target?.setAttribute('id', 'collab-action')
         }
-
     }
 
-
-
     useEffect(() => {
-
-
         let myVideo = document.querySelector('.tutor-video-tab');
         let room_id = '1234567890asdfghjkl';
 
@@ -114,12 +90,9 @@ const TutorAside = () => {
             audio: true
         })
             .then(stream => {
-
                 setVisuals(stream)
                 addVideoStream(myVideo, stream);
                 peer.on('call', call => {
-
-
                     setVideoLoader('Connecting...')
                     call.answer(stream);
                     call.on('stream', userVideoStream => {
@@ -151,7 +124,6 @@ const TutorAside = () => {
         })
 
         function connectToNewUser(userId, stream) {
-
             const call = peer.call(userId, stream);
             setVideoLoader('Connecting...')
             call.on('stream', userVideoStream => {
@@ -187,8 +159,10 @@ const TutorAside = () => {
                     <video className='tutor-video-tab'>
                     </video>
                     <ul>
-                        <li className="video-size" style={{ background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px' }} onClick={handleVideoResize}>
-                            <img src={screenType} style={{ height: '20px', width: '20px' }} alt="..." />
+                        <li className="video-size" 
+                        style={{ background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px' }} onClick={handleVideoResize}>
+                            <img src={screenType} 
+                            style={{ height: '20px', width: '20px' }} alt="..." />
                         </li>
                         <li className="disable-visuals" onClick={e => handleVidActions(e)}>
                             <img src={DiableVideoImage} style={{ height: '25px', width: '25px' }} alt="..." />
@@ -214,11 +188,13 @@ const TutorAside = () => {
                     <div className="TutorAsideChatControl" style={{ background: '#fff' }}>
                         <span style={{ width: '80%', height: '80%', float: 'left', background: '#fff' }}>
 
-                            <textarea type="text" id='TutorChatTextarea' style={{ width: '100%', borderRadius: '5px', border: 'none', display: 'flex', alignItems: 'center', background: '#f9f9f9', height: '40px', padding: '10px 5px 5px 5px', fontFamily: 'serif', fontSize: 'medium', outline: 'none', resize: 'none' }} onInput={e => setMssg(e.target.value)} placeholder='Type Your Message Here'></textarea>
+                            <textarea type="text" id='TutorChatTextarea' 
+                            style={{ width: '100%', borderRadius: '5px', border: 'none', display: 'flex', alignItems: 'center', background: '#f9f9f9', height: '40px', padding: '10px 5px 5px 5px', fontFamily: 'serif', fontSize: 'medium', outline: 'none', resize: 'none' }} onInput={e => setMssg(e.target.value)} placeholder='Type Your Message Here'></textarea>
 
                         </span>
                         <span style={{ width: '20%', height: '70%', float: 'right', background: '#fff' }}>
-                            <button style={{ height: '40px', width: '90%' }} onClick={handleChat}>
+                            <button className="m-0" 
+                            style={{ height: '40px', width: '90%' }} onClick={handleChat}>
                                 send
                             </button>
                         </span>

@@ -58,7 +58,7 @@ function TutorCalenderSidebar({
             <div className='d-flex'>
 
                 <button
-                    className={`action-btn w-50 ${activeTab === 'month' ? 'motn-btn' : 'week-btn'
+                    className={`action-btn btn w-50 ${activeTab === 'month' ? 'motn-btn' : 'week-btn'
                         }`}
                     style={{
                         boxShadow: `${activeTab === 'month' ? "5px 5px 10px rgba(0, 0, 0, 0.5)" : ""}`
@@ -67,26 +67,26 @@ function TutorCalenderSidebar({
                     onClick={() => handleTabClick('month')}
 
                 >
-                    <div class="button__content">
-                        <div class="button__icon">
+                    <div className="button__content">
+                        <div className="button__icon">
                             <img src={BTN_ICON} alt={"btn__icon"} />
                         </div>
-                        <p class="button__text">Blocked Week Days</p>
+                        <p className="button__text">Blocked Week Days</p>
                     </div>
                 </button>
                 <button
-                    className={`action-btn w-50 ${activeTab === 'day' ? 'week-btn' : 'month-btn'
+                    className={`action-btn btn w-50 ${activeTab === 'day' ? 'week-btn' : 'month-btn'
                         }`}
                     style={{
                         boxShadow: `${activeTab === 'day' ? "5px 5px 10px rgba(0, 0, 0, 0.5)" : ""}`
                     }}
                     onClick={() => handleTabClick('day')}
                 >
-                    <div class="button__content">
-                        <div class="button__icon">
+                    <div className="button__content">
+                        <div className="button__icon">
                             <img src={BTN_ICON} alt={"btn__icon"} />
                         </div>
-                        <p class="button__text">Blocked Hours</p>
+                        <p className="button__text">Blocked Hours</p>
                     </div>
                 </button>
             </div>

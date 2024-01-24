@@ -8,6 +8,7 @@ import { post_tutor_setup, setAgreementDateToNullForAll } from "../../axios/tuto
 import { useDispatch, useSelector } from "react-redux";
 import { showDate } from "../../helperFunctions/timeHelperFunctions";
 import { convertToDate } from "../common/Calendar/Calendar";
+import { PROFILE_STATUS } from "../../constants/constants";
 
 const TermOfUse = () => {
     const [unSavedChanges, setUnSavedChanges] = useState(false);
@@ -70,11 +71,13 @@ const TermOfUse = () => {
     const handleSaveAgreement = async (e) => {
         e.preventDefault()
         setLoading(true)
-
-        await post_tutor_setup({
+        let body = {
             userId: tutor.userId, AgreementDate: new Date(),
             fname: tutor.FirstName, lname: tutor.LastName, mname: tutor.MiddleName
-        })
+        }
+        console.log(tutor.Status === PROFILE_STATUS.PENDING)
+        if (tutor.Step === 5 && tutor.Status === PROFILE_STATUS.PENDING) body.Status = PROFILE_STATUS.UNDER_REVIEW
+        await post_tutor_setup(body)
         setLoading(false)
 
         dispatch(setTutor());

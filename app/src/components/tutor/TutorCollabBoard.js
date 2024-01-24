@@ -1,29 +1,19 @@
-import { useState } from "react";
 import TutorAside from "./TutorCollabAside";
 import '../../styles/canvas.css'
+import Actions from "../common/Actions";
 const TutorCollabBoard = () => {
-    let [shapesCnt, setShapesCnt] = useState('')
-    let [penStyle, setPenStyle] = useState('')
-    let [thickness, setthickness] = useState('');
 
-    
-
-    
-    return ( 
-        <>
-            <div className="TutorCollabBoard">
-
-
-                <TutorAside />
-
-                
-
-                <canvas id="drawPlace" className="drawPlace" style={{border:'1px solid #eee'}}>
-            
-                </canvas>
-            </div>
-        </>
-     );
+    return (
+        <div className="TutorCollabBoard">
+            <TutorAside />
+            <canvas id="drawPlace" className="drawPlace" style={{ border: '1px solid #eee' }}>
+            </canvas>
+            <Actions
+                editDisabled={true}
+                saveDisabled={true}
+            />
+        </div>
+    );
 }
- 
+
 export default TutorCollabBoard;

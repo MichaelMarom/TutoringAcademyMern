@@ -164,13 +164,13 @@ const Subjects = () => {
                         <p>
                             Select your faculty above, then from the list below click on the 'Edit' button for each subject that you teach (you can select more than one). Type your rate, select the school grade(s) you tutor for this subject and SAVE. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking here:
                         </p>
-                        <Button className='action-btn text-center w-25' type="button"
+                        <Button className='action-btn btn text-center w-25' type="button"
                             handleClick={() => setShowAddNewSubjModal(true)} >
-                            <div class="button__content">
-                                <div class="button__icon">
+                            <div className="button__content">
+                                <div className="button__icon">
                                     <FaPlus />
                                 </div>
-                                <p class="button__text">Search/Add New Subject</p>
+                                <p className="button__text">Search/Add New Subject</p>
                             </div>
                         </Button>
 
@@ -235,16 +235,16 @@ const Subjects = () => {
                             placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="action-btn" onClick={handleModalClose}>
-                            <div class="button__content">
+                        <button type="button" className="action-btn btn" onClick={handleModalClose}>
+                            <div className="button__content">
 
-                                <p class="button__text">Close</p>
+                                <p className="button__text">Close</p>
                             </div>
                         </button>
-                        <Button type="submit" className="action-btn" loading={newSubjRequestChecking}
+                        <Button type="submit" className="action-btn btn" loading={newSubjRequestChecking}
                             loadingText={' checking if request already sent...'}>
-                            <div class="button__content">
-                                <p class="button__text">Submit   </p>
+                            <div className="button__content">
+                                <p className="button__text">Submit   </p>
                             </div>
                         </Button>
                     </div>

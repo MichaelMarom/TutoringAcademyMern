@@ -509,7 +509,7 @@
     }
 
     .TutorAside{
-        height: calc(100% - 250px);
+        height: calc(100% - 300px);
         width: 300px;
         position: absolute;
         top: 50%;
@@ -524,7 +524,6 @@
     #TutorAside{
         right: -100%;
         transition: .4s;
-
     }
 
     .TutorCollabFooter{
@@ -532,7 +531,7 @@
         width: 100%;
         position: fixed;
         right: 0px;
-        bottom: 55px;
+        bottom: 92px;
         padding: 0;
         background-color: #e6e6e6;
         border-radius: 5px;
@@ -603,14 +602,11 @@
     }
 
     .TutorAsideChatControl button{
-        padding: 12px;
         height: 45px;
-        border-radius: 5px;
         font-weight: 'bold';
         border: none;
         cursor: pointer;
         outline: none;
-        margin: 0 5px 0 5px;
     }
 
 

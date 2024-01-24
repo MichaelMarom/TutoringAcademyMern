@@ -1,39 +1,37 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import home from '../../images/home-vector-svgrepo-com.svg';
 import del from '../../images/delete-svgrepo-com.svg';
-import { useLocation, useNavigate } from "react-router-dom";
 import TutorCollabTools from "./TutorCollabTools";
-import Countdown from 'react-countdown';
 import { useTimer } from 'react-timer-hook';
-
-
 
 function MyTimer({ expiryTimestamp }) {
     const {
-      totalSeconds,
-      seconds,
-      minutes,
-      hours,
-      days,
-      isRunning,
-      start,
-      pause,
-      resume,
-      restart,
-    } = useTimer({ expiryTimestamp, onExpire: () => {
-        // alert('This lesson was ended. You are directed now to the feedback screen.This lesson is marked by green blinking frame. Please rate this lesson.');
-        window.location.href = '/student/feedback'
-    } });
-  
+        totalSeconds,
+        seconds,
+        minutes,
+        hours,
+        days,
+        isRunning,
+        start,
+        pause,
+        resume,
+        restart,
+    } = useTimer({
+        expiryTimestamp, onExpire: () => {
+            // alert('This lesson was ended. You are directed now to the feedback screen.This lesson is marked by green blinking frame. Please rate this lesson.');
+            window.location.href = '/student/feedback'
+        }
+    });
+
     return (
-      <div style={{textAlign: 'right'}}>
-        {/* <h1>react-timer-hook </h1>
+        <div style={{ textAlign: 'right' }}>
+            {/* <h1>react-timer-hook </h1>
         <p>Timer Demo</p> */}
-        <div style={{fontSize: 'large', color: '#fff'}}>
-          {/* <span>{days}</span>:<span>{hours}</span>: */}
-          <span className="minute-timer">{minutes} Mins</span>:<span>&nbsp;{seconds} Sec</span>
-        </div>
-        {/* <p>{isRunning ? 'Running' : 'Not running'}</p>
+            <div style={{ fontSize: 'large', color: '#fff' }}>
+                {/* <span>{days}</span>:<span>{hours}</span>: */}
+                <span className="minute-timer">{minutes} Mins</span>:<span>&nbsp;{seconds} Sec</span>
+            </div>
+            {/* <p>{isRunning ? 'Running' : 'Not running'}</p>
         <button onClick={start}>Start</button>
         <button onClick={pause}>Pause</button>
         <button onClick={resume}>Resume</button>
@@ -43,56 +41,56 @@ function MyTimer({ expiryTimestamp }) {
           time.setSeconds(time.getSeconds() + 300);
           restart(time)
         }}>Restart</button> */}
-      </div>
+        </div>
     );
-  }
+}
 
-  
+
 const TutorCollabHeader = () => {
 
-    let [min,setMin] = useState(0);
+    let [min, setMin] = useState(0);
 
     let [PanelChangeMssg, setPanelChangeMssg] = useState(['Show Video', 'Hide Video'])
     let [PanelChangeBool, setPanelChangeBool] = useState(true)
 
-    
+
     let handleAsidePanel = e => {
         setPanelChangeBool(!PanelChangeBool)
         let tutorAsideElem = document.querySelector('.TutorAside');
-        if(tutorAsideElem.hasAttribute('id')){
+        if (tutorAsideElem.hasAttribute('id')) {
             tutorAsideElem?.removeAttribute('id')
-        }else{
+        } else {
             tutorAsideElem?.setAttribute('id', 'TutorAside')
         }
     }
     const time = new Date();
-    time.setSeconds(time.getSeconds() + 3000); 
+    time.setSeconds(time.getSeconds() + 3000);
 
 
-    
-    return ( 
+
+    return (
         <>
-            <div className="TutorCollabHeader" style={{marginTop: '5px'}}>
+            <div className="TutorCollabHeader" style={{ marginTop: '5px' }}>
                 <div className="left">
 
                     <button>
-                        <img src={home}  style={{height: '25px', width: '25px'}} alt="..." />
+                        <img src={home} style={{ height: '25px', width: '25px' }} alt="..." />
                     </button>
 
                     <button className="TutorCollabDeleteBtn">
-                        <img src={del}  style={{height: '25px', width: '25px'}} alt="..." />
+                        <img src={del} style={{ height: '25px', width: '25px' }} alt="..." />
                     </button>
 
-                    
-                    
+
+
                 </div>
 
                 <div>
 
                     <TutorCollabTools />
-                    
+
                 </div>
-                <div className="right" style={{float: 'right', display: 'flex', justifyContent: 'right'}}>
+                <div className="right" style={{ float: 'right', display: 'flex', justifyContent: 'right' }}>
                     <div>
                         {/* {<span className="digit" id="hr">
                             {hr}</span>
@@ -119,5 +117,5 @@ const TutorCollabHeader = () => {
         </>
     );
 }
- 
+
 export default TutorCollabHeader;

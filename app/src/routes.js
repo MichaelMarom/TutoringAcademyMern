@@ -51,16 +51,16 @@ const App = () => {
   }, [dispatch, storedUser]);
 
   useEffect(() => {
-    if (user[0]?.role === "tutor")
+    if (user?.[0]?.role === "tutor")
       window.localStorage.setItem("tutor_tab_index", 0);
 
-    if (user[0]?.role === "student")
+    if (user?.[0]?.role === "student")
       window.localStorage.setItem("student_tab_index", 0);
   }, [user]);
 
   useEffect(() => {
-    if (user[0] && user[0].role !== 'admin')
-      get_tutor_setup_by_userId(user[0].SID).then((result) => {
+    if (user?.[0] && user?.[0].role !== 'admin')
+      get_tutor_setup_by_userId(user?.[0].SID).then((result) => {
         localStorage.setItem("tutor_user_id", result[0]?.AcademyId || null);
       });
   }, [user]);
@@ -158,7 +158,7 @@ const App = () => {
   };
 
   useEffect(() => {
-    generateRoutes(user[0]?.role);
+    generateRoutes(user?.[0]?.role);
   }, [user])
 
   useEffect(() => {
@@ -175,8 +175,6 @@ const App = () => {
       path: "/signup",
       element: <Signup />,
     },
-    { path: "/tutor-profile/:id", element: <TutorProfile /> },
-
     ...activeRoutes,
     {
       path: "*",

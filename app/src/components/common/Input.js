@@ -9,7 +9,7 @@ const Input = ({ label, placeholder, vertical = true, inputGroup = false, inputG
             <input
                 style={{ height: "fit-content", fontSize: "12px" }}
                 onChange={e => onChange(e.target.value)} className='form-control m-0' value={rest.value} type="text" placeholder={placeholder} {...rest} />
-            {inputGroup && <span class="input-group-text p-1" style={{ height: "fit-content", fontSize: "12px" }}>.00</span>}
+            {inputGroup && <span className="input-group-text p-1" style={{ height: "fit-content", fontSize: "12px" }}>.00</span>}
         </div>
     )
 }

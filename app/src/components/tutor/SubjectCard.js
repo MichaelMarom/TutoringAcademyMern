@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import Input from '../common/Input'
 import GradePills from './GradePills'
 import Button from '../common/Button'
-import { remove_subject_rates, upload_tutor_rates } from '../../axios/tutor'
+import { post_tutor_setup, remove_subject_rates, upload_tutor_rates } from '../../axios/tutor'
 import { toast } from 'react-toastify'
+import { useSelector } from 'react-redux'
 
 const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
     const [rate, setRate] = useState(rateVal)
     const [grades, setGrades] = useState(gradesVal)
     const [editable, setEditable] = useState(false);
     const tutorId = localStorage.getItem('tutor_user_id')
+    const { tutor } = useSelector(state => state.tutor);
     const options = [
         {
             value: 'K-3',
@@ -55,11 +57,13 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
 
     const handleSave = async (e) => {
         e.preventDefault()
+        
         if (!grades.length) return toast.warning("Please select at least one range of school grades!")
         if (rate < 3) return toast.warning("Minimum rate is $3")
 
         setEditable(false);
         const data = await upload_tutor_rates(`$${rate}.00`, grades, tutorId, faculty, subject)
+       
         if (data?.response?.status === 400) {
             toast.error('Failed to Save Record')
         }
@@ -87,25 +91,25 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
                 <div className='float-end'>
 
                     {!editable &&
-                        <Button className='action-btn' handleClick={() => setEditable(!editable)}>
-                            <div class="button__content">
-                                <p class="button__text">Edit</p>
+                        <Button className='action-btn btn' handleClick={() => setEditable(!editable)}>
+                            <div className="button__content">
+                                <p className="button__text">Edit</p>
                             </div>
                         </Button>
                     }
                     {(rate === '') && editable &&
-                        <Button type={"button"} className='action-btn' handleClick={() => removeFromSubjectRates()}
+                        <Button type={"button"} className='action-btn btn' handleClick={() => removeFromSubjectRates()}
                         >
-                            <div class="button__content">
-                                <p class="button__text">Revert</p>
+                            <div className="button__content">
+                                <p className="button__text">Revert</p>
                             </div>
                         </Button>
                     }
 
 
-                    <Button type='submit' className='action-btn' disabled={!editable}>
-                        <div class="button__content">
-                            <p class="button__text">Save</p>
+                    <Button type='submit' className='action-btn btn' disabled={!editable}>
+                        <div className="button__content">
+                            <p className="button__text">Save</p>
                         </div>
                     </Button>
                 </div>

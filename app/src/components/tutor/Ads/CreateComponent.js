@@ -47,7 +47,7 @@ const CreateComponent = ({ setActiveTab }) => {
 
     useEffect(() => {
         setAddText(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, and I teach ${!!subject.length ? subject : '.....'} for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. I hold ${education ? education?.EducationalLevel : '....'} with experience of ${education ? education?.EducationalLevelExperience : '.....'}.
-    I live in ${tutor.Country}, time zone ${tutor.GMT}. Click <a href="${process.env.REACT_APP_BASE_URL}/tutor-profile/${tutor.AcademyId}">here</a> to view my profile for my work experience, certificates, and Diploma.
+    I live in ${tutor.Country}, time zone ${tutor.GMT}. Click <a href="${process.env.REACT_APP_BASE_URL}/tutor/tutor-profile/${tutor.AcademyId}">here</a> to view my profile for my work experience, certificates, and Diploma.
     There you can look at my calendar-scheduling for availability, and book your Introduction lesson.`)
     }, [subject, tutor, education, grades])
 

@@ -75,13 +75,13 @@ const Footer = () => {
 
             <div className="tutor-footer">
                 <ul>
-                    <li className="p-1"><button type="button" className="action-btn fs-4 m-0" onClick={back}>Back</button></li>
+                    <li className="p-1"><button type="button" className="action-btn btn fs-4 m-0" onClick={back}>Back</button></li>
 
                     <li id="tutor-edit" className="p-1"><button type="button" className="btn btn-secondary fs-4 m-0">Edit</button></li>
                     
                     <li id="tutor-save" className="p-1"><button type="button" className="btn btn-secondary fs-4 m-0" onClick={save}>Save</button></li>
 
-                    <li className="tutor-next p-1"><button type="button" className="action-btn fs-4 m-0" onClick={next}>Next</button></li>
+                    <li className="tutor-next p-1"><button type="button" className="action-btn btn fs-4 m-0" onClick={next}>Next</button></li>
                 </ul>
             </div>
         </>

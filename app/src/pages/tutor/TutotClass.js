@@ -4,7 +4,7 @@ import TutorCollabHeader from "../../components/tutor/TutorCollabHeader";
 import TutorLayout from "../../layouts/TutorLayout";
 const TutorClass = () => {
   return (
-    <TutorLayout>
+    <TutorLayout showLegacyFooter={false}>
     
       <TutorCollabHeader />
       <TutorCollabBoard />

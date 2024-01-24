@@ -3,6 +3,8 @@ import Button from './Button';
 import BTN_ICON from '../../images/button__icon.png'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import { STEPS } from '../../constants/constants';
 
 const actionsStyle = {
     position: 'fixed',
@@ -27,10 +29,10 @@ const Actions = ({
 
     const navigate = useNavigate();
     const location = useLocation();
+    const { tutor } = useSelector(state => state.tutor)
     const currentTab = location.pathname.split('/')[2];
     const currentUser = location.pathname.split('/')[1];
     const isStudentSide = currentUser === 'student'
-
 
     const tutorTabsNavigationInfo = [
         { next: "setup", current: "intro", back: null },
@@ -44,7 +46,8 @@ const Actions = ({
         { next: "chat", current: "term-of-use", back: "scheduling" },
         { next: "market-place", current: "chat", back: "term-of-use" },
         { next: "collaboration", current: "market-place", back: "chat" },
-        { next: null, current: "collaboration", back: "market-place" },
+        { next: `tutor-profile/${tutor.AcademyId}`, current: "collaboration", back: "market-place" },
+        { next: null, current: `tutor-profile`, back: "collaboration" },
     ]
 
     const studentTabsNavigationInfo = [
@@ -58,11 +61,13 @@ const Actions = ({
         { next: "term-of-use", current: "term-of-use", back: "calender" },
         { next: "market-place", current: "chat", back: "term-of-use" },
         { next: "collaboration", current: "market-place", back: "chat" },
-        { next: "profile", current: "collaboration", back: "market-place" },
+        { next: `profile`, current: "collaboration", back: "market-place" },
         { next: null, current: "profile", back: "collaboration" },
+        { next: null, current: `tutor-profile`, back: null },
     ]
 
     const currentTabInfo = (isStudentSide ? studentTabsNavigationInfo : tutorTabsNavigationInfo).find(tab => tab.current === currentTab)
+
     const isNextTabExist = currentTabInfo.next;
     const isBackTabExist = currentTabInfo.back;
 
@@ -73,54 +78,58 @@ const Actions = ({
     const onBack = () => {
         navigate(`/${currentUser}/${currentTabInfo.back}`)
     }
-
+    console.log(currentTab === STEPS[tutor.Step], tutor.Step, currentTab, !isStudentSide)
     return (
         <div style={actionsStyle}>
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="" style={{ width: "10%" }}>
-                        <button type='button' onClick={onBack} className="back-btn action-btn"
+                        <button type='button' onClick={onBack} className="back-btn action-btn btn"
                             disabled={unSavedChanges || loading || backDisabled || !isBackTabExist}>
-                            <div class="button__content">
-                                <div class="button__icon">
+                            <div className="button__content">
+                                <div className="button__icon">
                                     <img src={BTN_ICON} alt={"btn__icon"} />
                                 </div>
-                                <p class="button__text"><FaChevronLeft />  Back</p>
+                                <p className="button__text"><FaChevronLeft />  Back</p>
                             </div>
                         </button>
                     </div>
                     <div className="" style={{ width: "10%" }}>
-                        <button onClick={onEdit} type='button' className="edit-btn action-btn"
+                        <button onClick={onEdit} type='button' className="edit-btn action-btn btn"
                             disabled={editDisabled}>
-                            <div class="button__content">
-                                <div class="button__icon">
+                            <div className="button__content">
+                                <div className="button__icon">
                                     <img src={BTN_ICON} alt={"btn__icon"} />
                                 </div>
-                                <p class="button__text">Edit</p>
+                                <p className="button__text">Edit</p>
                             </div>
                         </button>
                     </div>
                     <div className="" style={{ width: "10%" }}>
-                        <Button handleClick={onSave} className={`save-btn action-btn 
+                        <Button handleClick={onSave} className={`save-btn action-btn btn 
                         ${(unSavedChanges && !saveDisabled) ? 'blinking-button' : ''}`} type="submit" loading={loading}
                             disabled={saveDisabled || loading} >
-                            <div class="button__content">
-                                <div class="button__icon">
-                                    <img src={BTN_ICON} alt={"btn__icon"} />
+                            <div className="button__content">
+                                <div className="button__icon">
+                                    <img src={BTN_ICON} alt={"btn__icon"} style={{
+                                        animation: loading ? "spin 2s linear infinite" : 'none',
+                                    }} />
                                 </div>
-                                <p class="button__text">Save</p>
+                                <p className="button__text">Save</p>
                             </div>
                         </Button>
                     </div>
                     <div className="" style={{ width: "10%" }}>
                         <button onClick={onNext}
-                            disabled={(!saveDisabled && (unSavedChanges || loading || !isNextTabExist)) || nextDisabled}
-                            type='button' className="next-btn action-btn">
-                            <div class="button__content">
-                                <div class="button__icon">
+                            disabled={(!saveDisabled && (unSavedChanges || loading))
+                                || !isNextTabExist || nextDisabled ||
+                                currentTab === STEPS[tutor.Step] && !isStudentSide}
+                            type='button' className="next-btn action-btn btn">
+                            <div className="button__content">
+                                <div className="button__icon">
                                     <img src={BTN_ICON} alt={"btn__icon"} />
                                 </div>
-                                <p class="button__text">Next <FaChevronRight /> </p>
+                                <p className="button__text">Next <FaChevronRight /> </p>
                             </div>
                         </button>
                     </div>

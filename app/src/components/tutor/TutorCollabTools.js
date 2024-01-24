@@ -1,5 +1,4 @@
 import p1 from '../../images/pencil-tip-svgrepo-com (1).svg';
-
 import sl from '../../images/line-straight-svgrepo-com.svg';
 import imageSvg from '../../images/image-file-svgrepo-com.svg';
 import fileSvg from '../../images/file-holder-svgrepo-com.svg';
@@ -21,7 +20,6 @@ import { setEraserWidthTo } from '../../redux/student_store/Eraser';
 const TutorCollabTools = () => {
 
     let location = useLocation();
-    let navigate = useNavigate();
     let dispatch = useDispatch()
 
     let {BoardAccess} = useSelector(state => state.BoardUser);

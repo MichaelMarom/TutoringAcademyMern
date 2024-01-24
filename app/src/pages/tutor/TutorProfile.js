@@ -1,11 +1,14 @@
+import { useLocation } from "react-router-dom";
 import TutorProfileComp from "../../components/tutor/TutorProfile";
-import TutorLayout from "../../layouts/TutorLayout";
+import CommonLayout from "../../layouts/CommonLayout";
 
 const TutorProfile = () => {
+  const location = useLocation();
+  const role = location.pathname.split('/')[1]
   return (
-    <TutorLayout showLegacyFooter={false}>
+    <CommonLayout showLegacyFooter={false} role={role}>
       <TutorProfileComp />
-    </TutorLayout>
+    </CommonLayout>
   );
 };
 

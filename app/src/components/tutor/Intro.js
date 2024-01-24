@@ -32,7 +32,6 @@ const Intro = () => {
     }, []);
 
     useEffect(() => {
-        console.log(intro, db_intro, intro !== db_intro)
         setUnsavedChanges(intro !== undefined && db_intro !== undefined &&
             intro !== db_intro)
     }, [intro, db_intro]);

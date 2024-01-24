@@ -5,7 +5,6 @@ const TutorCollabFooter = () => {
 
     let [accessState, setAccessState] = useState('Shift whiteboard to Student Emeka. ')
 
-
     useEffect(() => {
         socket.on('studentBoardAccessRequest', (name) => {
             setAccessState(`${name} requested access to the board`)
@@ -20,10 +19,6 @@ const TutorCollabFooter = () => {
             }
         })
     }, [])
-    
-
-
-
     
     return ( 
         <>

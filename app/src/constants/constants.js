@@ -1388,3 +1388,18 @@ export const languages = [
   'Welsh',
   'Xhosa',
 ];
+
+export const STEPS = ['',
+  'setup',
+  'education',
+  'rates',
+  'accounting',
+]
+
+export const PROFILE_STATUS = {
+  PENDING: "pending",
+  UNDER_REVIEW: "under-review",
+  ACTIVE: 'active',
+  SUSPENDED: "suspended",
+  DELETED: "deleted"
+}

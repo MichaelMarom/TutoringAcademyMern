@@ -311,7 +311,7 @@ const Profile = () => {
                                             {/* Add validation error handling for CityTown */}
                                         </div>
                                         {/*  */}
-                                        <button type="submit" className="action-btn btn-block mb-4">
+                                        <button type="submit" className="action-btn btn btn-block mb-4">
                                             {loading ? (
                                                 <div className="spinner-border text-primary" role="status">
                                                     <span className="visually-hidden">Loading...</span>

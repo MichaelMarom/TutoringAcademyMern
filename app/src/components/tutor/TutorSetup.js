@@ -274,7 +274,8 @@ const TutorSetup = () => {
       return toast.warning("please enter the correct phone number");
     }
     if (!video || !photo)
-      toast.warning('Since You did not uploaded your photo or Video, your Profile will stay in Pending status, and can not be activated until you upload the missing items!')
+      toast.warning(`Since You did not upload your photo or Video, 
+    your Profile will stay in Pending status, and can not be activated until you upload the missing items!`)
     if (!tutorGrades?.length > 0) {
       return toast.warning("Please select at least one grade");
     }
@@ -324,6 +325,7 @@ const TutorSetup = () => {
     }
     if (!tutor.FirstName) body.video = video;
     if (!tutor.FirstName) body.photo = photo;
+    if (!tutor.AcademyId) body.Step = 2;
 
     let response = await post_tutor_setup(body);
     return response;
@@ -583,12 +585,12 @@ const TutorSetup = () => {
             </div>
 
             <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto", width: "50%" }}
-              type="label" disabled={!editMode} htmlFor="photo" className="action-btn mt-4">
-              <div class="button__content">
-                <div class="button__icon">
+              type="label" disabled={!editMode} htmlFor="photo" className="action-btn btn mt-4">
+              <div className="button__content">
+                <div className="button__icon">
                   <IoPersonCircle size={20} />
                 </div>
-                <p class="button__text">Upload </p>
+                <p className="button__text">Upload </p>
               </div>
             </label>
           </div>
@@ -1009,13 +1011,13 @@ const TutorSetup = () => {
                 <div className="col-md-4">
                   <div className="">
 
-                    <Button className="action-btn btn-sm " style={{ width: "100%", fontSize: "12px" }} disabled={!editMode}
+                    <Button className="action-btn btn btn-sm " style={{ width: "100%", fontSize: "12px" }} disabled={!editMode}
                       onClick={() => window.open('https://www.heygen.com')}>
-                      <div class="button__content">
-                        <div class="button__icon">
+                      <div className="button__content">
+                        <div className="button__icon">
                           <RiRobot2Fill size={18} />
                         </div>
-                        <p class="button__text" > Create AI intro</p>
+                        <p className="button__text" > Create AI intro</p>
                       </div>
                     </Button>
                   </div>
@@ -1025,7 +1027,7 @@ const TutorSetup = () => {
                     <button
                       style={{ width: "100%", fontSize: "10px" }}
                       type="button"
-                      className={`action-btn small ${selectedVideoOption === "record" ? "active" : ""
+                      className={`action-btn btn small ${selectedVideoOption === "record" ? "active" : ""
                         }`}
                       disabled={!editMode}
                       onClick={() => {
@@ -1033,11 +1035,11 @@ const TutorSetup = () => {
                         handleOptionClick("record");
                       }}
                     >
-                      <div class="button__content">
-                        <div class="button__icon">
+                      <div className="button__content">
+                        <div className="button__icon">
                           <BsCameraVideo size={15} />
                         </div>
-                        <p class="button__text">Record Video   </p>
+                        <p className="button__text">Record Video   </p>
                       </div>
                     </button>
                   </div>
@@ -1058,16 +1060,16 @@ const TutorSetup = () => {
                       type="button"
                       htmlFor="video"
                       style={{ width: "100%", pointerEvents: !editMode ? "none" : "auto", fontSize: "10px" }}
-                      className={`action-btn ${selectedVideoOption === "upload" ? "active" : ""
+                      className={`action-btn btn ${selectedVideoOption === "upload" ? "active" : ""
                         }`}
                       onClick={() => handleOptionClick("upload")}
                     >
 
-                      <div class="button__content">
-                        <div class="button__icon">
+                      <div className="button__content">
+                        <div className="button__icon">
                           <BsCloudUpload size={15} /> <br />
                         </div>
-                        <p class="button__text"> Upload Video</p>
+                        <p className="button__text"> Upload Video</p>
                       </div>
                     </label>
                   </div>

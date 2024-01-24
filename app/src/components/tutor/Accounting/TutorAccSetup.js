@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
-import { get_bank_details, upload_tutor_bank } from '../../../axios/tutor';
+import { get_bank_details, post_tutor_setup, upload_tutor_bank } from '../../../axios/tutor';
 import { showDate } from '../../../helperFunctions/timeHelperFunctions';
 import Acad_Commission from './Acad_Commission._Table';
 import Actions from '../../common/Actions'
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { COMMISSION_DATA } from '../../../constants/constants';
 import { compareStates } from '../../../helperFunctions/generalHelperFunctions';
+import { setTutor } from '../../../redux/tutor_store/tutorData';
 
 const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, previousYearEarning }) => {
     const { tutor } = useSelector(state => state.tutor)
@@ -21,7 +22,8 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
     const [saving, setSaving] = useState(false)
     const [dbValues, setDBValues] = useState({});
     const [editMode, setEditMode] = useState(false);
-    const [unSavedChanges, setUnSavedChanges] = useState(false)
+    const [unSavedChanges, setUnSavedChanges] = useState(false);
+    const dispatch = useDispatch();
 
     const emailRequiredPaymentMethods = ['Paypal', 'Payoneer', 'Wise', 'Zelle']
 
@@ -54,11 +56,19 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
         e.preventDefault()
 
         let user_id = window.localStorage.getItem('tutor_user_id');
-        if (validate())
-            setSaving(true);
+        let Step = null;
+        if (!dbValues.AcademyId) Step = 5
+        if (validate()) setSaving(true);
         if (payment_option === 'Bank') {
             let response = await upload_tutor_bank(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
             fetchingTutorBankRecord();
+            if (Step) {
+                await post_tutor_setup({
+                    Step, fname: tutor.FirstName,
+                    lname: tutor.LastName, mname: tutor.MiddleName, userId: tutor.userId
+                })
+                dispatch(setTutor())
+            }
             if (response) {
                 toast.success("Succesfully Saved The Bank Info.")
                 setEditMode(false)

@@ -1032,7 +1032,7 @@ const Education = () => {
                                         onChange={certified}
                                         placeholder='Select Certificate'
                                         value={certificate}
-                                        required
+                                        // required
                                         disabled={!editMode}
                                     >
                                         <option value="" disabled>Select Certificate</option>

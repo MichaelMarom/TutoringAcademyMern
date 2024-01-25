@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { PROFILE_STATUS, statesColours } from "../../constants/constants";
 
 
 const Header = () => {
@@ -35,8 +36,16 @@ const Header = () => {
         { url: '/tutor/market-place', name: 'Market place' },
         { url: '/tutor/collaboration', name: 'Collaboration' },
         { url: `/tutor/tutor-profile/${localStorage.getItem("tutor_user_id")}`, name: 'Profile' },
-
     ];
+
+    const StatusValues = {
+        "under-review": "Under Review",
+        "pending": "Pending",
+        "suspended": "Suspended",
+        "active": "Active",
+        "disapproved": "Disapproved",
+        "closed": "Closed"
+    }
 
     useEffect(() => {
         set_screen_name(localStorage.getItem('tutor_screen_name'))
@@ -80,21 +89,19 @@ const Header = () => {
         scroll_elem.scrollLeft = -w
 
     }
-    const statesColours = {
-        'pending': "primary",
-        'active': "success",
-        "under-review": "warning",
-        "disapproved": "danger"
-    }
 
     return (
         <>
-            <div className={`screen-name btn-success rounded text-bg-${statesColours[tutorState]} p-2`}
+            <div className={`screen-name btn-success rounded  p-2 flex-column`}
                 style={{
                     display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
-                    top: '15px', zIndex: '999', fontWeight: 'bold', left: '45px',
+                    top: '2px', zIndex: '999', left: '45px',
+                    background: statesColours[tutorState]
                 }}>
-                {screen_name}
+                <div style={{ fontWeight: 'bold' }}>{screen_name}</div>
+                <div style={{ fontSize: "12px" }} >
+                    {StatusValues[tutor.Status]}
+                </div>
             </div>
 
             <div className="tutor-tab-header shadow-sm">
@@ -110,7 +117,10 @@ const Header = () => {
                     </div>
 
                 </div>
-                <ul id="tutor-header-menus" className="header">
+                <ul id="tutor-header-menus" className={` header`} style={{
+                    background: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? '#737476' : 'inherit',
+                    pointerEvents: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? 'none' : 'auto',
+                }}>
                     {tabs.map((tab) => (
                         <li
                             key={tab.url}

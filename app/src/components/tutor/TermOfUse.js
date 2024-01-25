@@ -46,7 +46,7 @@ const TermOfUse = () => {
     }, [tutor])
 
     useEffect(() => {
-        if ((terms !== undefined && db_terms !== undefined && terms !== db_terms) ||
+        if ((terms !== undefined && db_terms !== undefined && terms !== db_terms && editMode) ||
             (!tutor.AgreementDate && agreed)) {
             setUnSavedChanges(true);
         } else {

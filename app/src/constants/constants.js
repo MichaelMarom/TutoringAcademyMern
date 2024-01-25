@@ -42,7 +42,8 @@ export const days = [
 
 export const monthFormat = 'MMM D, YY';
 export const wholeDateFormat = 'ddd, MMM D, hh:mm a';
-export const slotPillDateFormat = 'MMM D, hh a'
+export const slotPillDateFormat = 'MMM D, hh a';
+export const monthFormatWithYYYY = 'MMM D, YYYY'
 
 export const loggedInStudent = {
   sid: 1,
@@ -1402,4 +1403,13 @@ export const PROFILE_STATUS = {
   ACTIVE: 'active',
   SUSPENDED: "suspended",
   DELETED: "deleted"
+}
+
+export const statesColours = {
+  'pending': "#e2e222",
+  'active': "#1fe010",
+  "under-review": "#d5a414",
+  "suspended": "#9210e0",
+  "disapproved": "#dd1919",
+  "closed": "#000",
 }

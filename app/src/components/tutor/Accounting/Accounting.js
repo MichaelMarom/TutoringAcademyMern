@@ -30,6 +30,8 @@ const Accounting = () => {
     const tabs = [
         { label: 'Account Settings', component: <TutorAccSetup sessions={sessions} currentYearAccHours={currentYearHrs} currentYearEarning={currentYearEarning} previousYearEarning={previousYearEarning} /> },
         { label: 'Lessons performed', component: <AccDetails sessions={sessions} /> },
+        { label: 'Tutor Academy Account', component: null },
+
     ];
 
     return (

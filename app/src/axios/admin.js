@@ -131,3 +131,16 @@ export const get_adminConstants = async (data) => {
         return error;
     }
 };
+
+export const send_sms = async () => {
+    try {
+        const data = await apiClient.post('/send-message')
+        return data
+    }
+    catch (err) {
+        return err
+    }
+
+}
+
+

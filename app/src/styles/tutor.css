@@ -110,9 +110,13 @@ ul {
 
 /* -----------------------------------------------tutor setup-----------------------------**/
 
-.grades-sec {}
-
 
 .react-international-phone-input {
     width: 100%;
+}
+
+
+/********************************************** Profile ------------------------*********************/
+ul.vertical-tabs .nav-link :hover {
+    background: aliceblue !important;
 }

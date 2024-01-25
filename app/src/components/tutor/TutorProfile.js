@@ -5,7 +5,7 @@ import { create_chat } from '../../axios/chat'
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { FaCalendar, FaComment, FaRegTimesCircle } from 'react-icons/fa';
 
-import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
+import { convertGMTOffsetToLocalString, showDate } from '../../helperFunctions/timeHelperFunctions';
 import { useParams } from 'react-router';
 import Avatar from '../common/Avatar';
 import { capitalizeFirstLetter } from '../../helperFunctions/generalHelperFunctions';
@@ -18,6 +18,7 @@ import ToolTip from '../common/ToolTip'
 import { FaFilePdf } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import Actions from '../common/Actions';
+import { monthFormatWithYYYY } from '../../constants/constants';
 
 const TutorProfile = () => {
     const params = useParams();
@@ -320,7 +321,7 @@ const TutorProfile = () => {
                                         Education
                                     </h5>
                                     <div className='border p-2 d-flex '>
-                                        <ul className="nav flex-column p-0 align-items-start"
+                                        <ul className="vertical-tabs flex-column p-0 align-items-start"
                                             style={{ width: "20%", borderRight: "1px solid lightblue" }}>
                                             <li className="nav-item w-100 p-0">
                                                 <p class={`nav-link m-0 ${activeTab === 'bach' ? "text-bg-primary" : ""} w-100`}
@@ -486,10 +487,10 @@ const TutorProfile = () => {
                                                 <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
                                                     <div className='d-flex justify-content-between  align-items-center'>
                                                         <h5 className=' text-center'>Certificate Info</h5>
-                                                        {data.CertFileName && <FaFilePdf size={32} color='red'
+                                                        {/* {data.CertFileName && <FaFilePdf size={32} color='red'
                                                             style={{ cursor: "pointer" }}
                                                             onClick={() => window.open(`${process.env.REACT_APP_FILES_BASE_PATH}/${data.CertFileName}`, '_blank')}
-                                                        />}
+                                                        />} */}
                                                     </div>
                                                     {data.CertCountry ?
                                                         <> <div className='d-flex align-items-center'
@@ -514,7 +515,7 @@ const TutorProfile = () => {
                                                                     style={{ fontSize: "16px", fontWeight: "bold" }}>
                                                                     Expiration Date -
                                                                 </div>
-                                                                <h6 className='m-0'>{data.CertificateExpiration}</h6>
+                                                                <h6 className='m-0'>{showDate(data.CertificateExpiration, monthFormatWithYYYY)}</h6>
                                                             </div></> :
                                                         <h5 className='text-danger'> Certificate is on record, was verified but not shown to public!</h5>
                                                     }
@@ -525,9 +526,9 @@ const TutorProfile = () => {
                                                 <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
                                                     <div className='d-flex justify-content-between align-items-center'>
                                                         <h5 className=' text-center'>Degree Info</h5>
-                                                        {data.DegFileName && < FaFilePdf size={32} color='red' style={{ cursor: "pointer" }}
+                                                        {/* {data.DegFileName && < FaFilePdf size={32} color='red' style={{ cursor: "pointer" }}
                                                             onClick={() => window.open(`${process.env.REACT_APP_FILES_BASE_PATH}/${data.DegFileName}`, '_blank')}
-                                                        />}
+                                                        />} */}
                                                     </div>
 
                                                     {data.DegCountry ?

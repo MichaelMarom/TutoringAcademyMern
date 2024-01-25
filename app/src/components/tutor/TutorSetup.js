@@ -125,6 +125,7 @@ const TutorSetup = () => {
     set_email(user[0].email)
   }, [user])
 
+  //reset state on country change
   useEffect(() => {
     if (country !== dbCountry) {
       set_state('')
@@ -913,6 +914,7 @@ const TutorSetup = () => {
                     id="state"
                     disabled={!editMode}
                     value={state}
+                    required
                   >
                     <option value='' disabled>Select State</option>
                     {(options[country] ?? []).map((item) => <option key={item} value={item}>{item}</option>)}

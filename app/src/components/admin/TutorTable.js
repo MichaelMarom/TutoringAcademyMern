@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { get_tutor_data, set_tutor_status } from '../../axios/admin';
+import { get_tutor_data, send_sms, set_tutor_status } from '../../axios/admin';
 import { COLUMNS } from '../../Tables/Admin/column';
 import 'react-loading-skeleton/dist/skeleton.css'
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
@@ -10,6 +10,7 @@ import Pill from '../common/Pill';
 import { FcApprove } from "react-icons/fc";
 import { FcDisapprove } from "react-icons/fc";
 import { toast } from 'react-toastify'
+import { statesColours } from '../../constants/constants';
 
 const TutorTable = () => {
     let [data, set_data] = useState([]);
@@ -17,12 +18,6 @@ const TutorTable = () => {
     const [fetching, setFetching] = useState(true);
     const [updatingStatus, setUpdatingStatus] = useState(false)
 
-    const statesColours = {
-        'pending': "primary",
-        'active': "success",
-        "under-review": "warning",
-        "disapproved": "danger"
-    }
     useEffect(() => {
         get_tutor_data()
             .then((result) => {
@@ -35,6 +30,7 @@ const TutorTable = () => {
     }, [])
 
     let handleStatusChange = async (id, status, currentStatus) => {
+        await send_sms();
         if (currentStatus === 'pending')
             return toast.warning('You can only change  Status of "Under-Review" Tutors!')
         if (currentStatus === status) return toast.warning(`You already on "${status}" Status`)
@@ -76,7 +72,7 @@ const TutorTable = () => {
                             <tr key={item.SID}>
                                 <td data-src={null} className='col-1'>
                                     <div className="col-10 m-auto">
-                                        <Pill label={item.Status} color={statesColours[item.Status]} hasIcon={false} />
+                                        <Pill customColor={true} label={item.Status} color={statesColours[item.Status]} hasIcon={false} />
                                     </div>
                                 </td>
 

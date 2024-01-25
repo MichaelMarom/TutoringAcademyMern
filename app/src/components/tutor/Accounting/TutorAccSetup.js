@@ -5,9 +5,10 @@ import Acad_Commission from './Acad_Commission._Table';
 import Actions from '../../common/Actions'
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux'
-import { COMMISSION_DATA } from '../../../constants/constants';
+import { COMMISSION_DATA, monthFormatWithYYYY } from '../../../constants/constants';
 import { compareStates } from '../../../helperFunctions/generalHelperFunctions';
 import { setTutor } from '../../../redux/tutor_store/tutorData';
+import Tooltip from '../../common/ToolTip';
 
 const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, previousYearEarning }) => {
     const { tutor } = useSelector(state => state.tutor)
@@ -30,6 +31,11 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
     useEffect(() => {
         !email?.length && set_email(tutor.Email)
     }, [tutor])
+
+    useEffect(() => {
+        if (!dbValues.AcademyId) setEditMode(true)
+        else setEditMode(false)
+    }, [dbValues])
 
     const commissionAccordingtoNumOfSession = (sr) => {
         const commissionEntry = COMMISSION_DATA.find(entry => {
@@ -59,6 +65,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
         let Step = null;
         if (!dbValues.AcademyId) Step = 5
         if (validate()) setSaving(true);
+
         if (payment_option === 'Bank') {
             let response = await upload_tutor_bank(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
             fetchingTutorBankRecord();
@@ -78,6 +85,13 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
         } else {
             let response = await upload_tutor_bank(email, acct_name, acct_type, bank_name, acct, routing, ssh, payment_option, user_id);
             fetchingTutorBankRecord();
+            if (Step) {
+                await post_tutor_setup({
+                    Step, fname: tutor.FirstName,
+                    lname: tutor.LastName, mname: tutor.MiddleName, userId: tutor.userId
+                })
+                dispatch(setTutor())
+            }
             if (response) {
                 toast.success("Succesfully Saved The Bank Info.");
                 setEditMode(false)
@@ -160,10 +174,9 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                     </div>
                     <div className='p-3'>
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <h6 className='m-0 text-start'>Tutor's Start Day (First tutoring lesson)</h6>
-                            <p className="border px-4  py-2 rounded m-2">{showDate(sessions?.[sessions.length - 1]?.start)}</p>
+                            <h6 className='m-0 text-start '>Tutor's Start Day (First tutoring lesson)</h6>
+                            <p className="border px-4  py-2 rounded m-2 col-4">{showDate(sessions?.[sessions.length - 1]?.start, monthFormatWithYYYY)}</p>
                         </div>
-
 
                         <Acad_Commission />
                     </div>
@@ -173,7 +186,8 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
             <form onSubmit={saver} className='d-flex h-100'>
                 <div className="col-md-7 border h-100 p-2">
                     <div className="highlight" style={{ height: '150px' }}>
-                        Tutoring academy pays every 2nd Friday for the lessons performed up to the previous Friday midnight (GMT-5), Please select below the form of payment you prefer. Keep in mind that it can takes 1-3 days until the funds in your account
+                        Tutoring academy pays every 2nd Friday for the lessons performed up to the
+                        previous Friday midnight (GMT-5), Please select below the form of payment you prefer. Keep in mind that it can takes 1-3 days until the funds in your account
                     </div>
                     <div className='p-3 '>
 
@@ -232,7 +246,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                                     onChange={(e) => set_payment_option(e.target.value)} value='Zelle' name='p-method' id="" />
                                 <span className='m-0'>Zelle</span>
                             </div>
-                            <div className='m-0' style={{ float: 'left' }}>
+                            {tutor.Country === 'USA' && <div className='m-0' style={{ float: 'left' }}>
                                 <input disabled={!editMode} className='m-0'
                                     checked={payment_option === 'Bank'}
                                     style={{
@@ -241,72 +255,74 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                                     }} type="radio" value='Bank'
                                     onChange={(e) => set_payment_option(e.target.value)} name='p-method' id="" />
                                 <span className='m-0'>Direct Deposit Bank account (ACH)</span>
+                            </div>}
+
+                        </div>
+
+                        {!!payment_option &&
+                            <div className='border shadow m-5 p-3'>
+
+                                {payment_option === "Bank" &&
+                                    <div className=' mt-4'>
+
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <label htmlFor="acct-name">Account Name</label>
+                                            <input disabled={!editMode} required type="text" className='form-control' onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
+                                        </div>
+
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <label htmlFor="acct-type">Account Type</label>
+
+                                            <select className='form-select' dname="" id="" onInput={e => set_acct_type(e.target.value)} style={{ float: 'right', width: '60%', margin: '0  0 10px 0', padding: '0 8px 0 8px', cursor: 'pointer' }}>
+                                                <option selected={acct_type === '' ? 'selected' : ''} value="null">Select Account Type</option>
+                                                <option selected={acct_type === 'savings' ? 'selected' : ''} value="savings">Savings</option>
+                                                <option selected={acct_type === 'checking' ? 'selected' : ''} value="checking">Checking</option>
+                                            </select>
+                                        </div>
+
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <label htmlFor="bank-name">Bank Name</label>
+                                            <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
+                                        </div>
+
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <label htmlFor="acct">Account #</label>
+                                            <input disabled={!editMode} className='form-control' required type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
+                                        </div>
+
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <label htmlFor="routing">Routing #</label>
+                                            <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
+                                        </div>
+                                    </div>
+                                }
+                                {emailRequiredPaymentMethods.includes(payment_option) &&
+
+                                    <div className=' mt-4'>
+                                        <div className='d-flex align-items-center justify-content-between'>
+                                            <label htmlFor="acct-name">Email</label>
+                                            <input disabled={!editMode} required type="email" className='form-control'
+                                                onInput={e => { set_email(e.target.value) }}
+                                                id="acct-name" value={email}
+                                                style={{ float: 'right', width: '60%' }} />
+                                        </div>
+
+                                    </div>}
                             </div>
-
-                        </div>
-
-                        <div className='border shadow m-5 p-3'>
-
-                            {payment_option === "Bank" &&
-                                <div className=' mt-4'>
-
-                                    <div className='d-flex align-items-center justify-content-between'>
-                                        <label htmlFor="acct-name">Account Name</label>
-                                        <input disabled={!editMode} required type="text" className='form-control' onInput={e => set_acct_name(e.target.value)} id="acct-name" defaultValue={acct_name} style={{ float: 'right', width: '60%' }} />
-                                    </div>
-
-                                    <div className='d-flex align-items-center justify-content-between'>
-                                        <label htmlFor="acct-type">Account Type</label>
-
-                                        <select className='form-select' dname="" id="" onInput={e => set_acct_type(e.target.value)} style={{ float: 'right', width: '60%', margin: '0  0 10px 0', padding: '0 8px 0 8px', cursor: 'pointer' }}>
-                                            <option selected={acct_type === '' ? 'selected' : ''} value="null">Select Account Type</option>
-                                            <option selected={acct_type === 'savings' ? 'selected' : ''} value="savings">Savings</option>
-                                            <option selected={acct_type === 'checking' ? 'selected' : ''} value="checking">Checking</option>
-                                        </select>
-                                    </div>
-
-                                    <div className='d-flex align-items-center justify-content-between'>
-                                        <label htmlFor="bank-name">Bank Name</label>
-                                        <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_bank_name(e.target.value)} defaultValue={bank_name} id="bank-name" style={{ float: 'right', width: '60%' }} />
-                                    </div>
-
-                                    <div className='d-flex align-items-center justify-content-between'>
-                                        <label htmlFor="acct">Account #</label>
-                                        <input disabled={!editMode} className='form-control' required type="number" onInput={e => set_acct(e.target.value)} defaultValue={acct} id="acct" style={{ float: 'right', width: '60%' }} />
-                                    </div>
-
-                                    <div className='d-flex align-items-center justify-content-between'>
-                                        <label htmlFor="routing">Routing #</label>
-                                        <input disabled={!editMode} className='form-control' required type="text" onInput={e => set_routing(e.target.value)} defaultValue={routing} id="routing" style={{ float: 'right', width: '60%' }} />
-                                    </div>
-                                </div>
-                            }
-                            {emailRequiredPaymentMethods.includes(payment_option) &&
-
-                                <div className=' mt-4'>
-                                    <div className='d-flex align-items-center justify-content-between'>
-                                        <label htmlFor="acct-name">Email</label>
-                                        <input disabled={!editMode} required type="email" className='form-control'
-                                            onInput={e => { set_email(e.target.value) }}
-                                            id="acct-name" value={email}
-                                            style={{ float: 'right', width: '60%' }} />
-                                    </div>
-
-                                </div>}
-                        </div>
+                        }
                     </div>
 
                 </div>
 
                 <div className="col-md-5 border h-100 p-2">
-
                     <div className="highlight" style={{ height: '150px' }}>
-                        Social security needs to be provided only from US residents for annual EARNING over $600. Form 1099 to be issued by the academy.
+                        Social security needs to be provided only from US residents for annual EARNING over $600.
+                        Form 1099 to be issued by the academy.
                     </div>
                     <div className='p-3'>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="">SS# (Social Security Number) &nbsp;</label>
+                            <label htmlFor="">SS# (Social Security Number) &nbsp; <Tooltip text="text" /> </label>
                             <input disabled={!editMode} className='form-control m-0 w-50'
                                 required={currentYearEarning > 600}
                                 onInput={e => set_ssh(e.target.value)}
@@ -316,14 +332,14 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                         </div>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="accumulated-hrs">Accumulated Hours</label>
+                            <label htmlFor="accumulated-hrs">Accumulated Hours <Tooltip text="text" /></label>
                             <input className='form-control m-0' type="text"
                                 value={`${currentYearAccHours}:00`}
                                 style={{ float: 'right', width: '50%' }} disabled />
                         </div>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label >Service charge %</label>
+                            <label >Service charge % <Tooltip text="text" /></label>
                             <input disabled className='form-control m-0' type="text"
                                 value={`${commissionAccordingtoNumOfSession(currentYearAccHours)} %`}
                                 style={{ float: 'right', width: '50%' }}
@@ -331,14 +347,14 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                         </div>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="total-earning">Total Earning {(new Date()).getFullYear()}.</label>
+                            <label htmlFor="total-earning">Total Earning {(new Date()).getFullYear()}. <Tooltip text="text" /></label>
                             <input className='form-control m-0' type="text"
                                 value={currentYearEarning.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 id="total-earning"
                                 style={{ float: 'right', width: '50%' }} disabled />
                         </div>
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="total-earning">Total Earning Previous Year.</label>
+                            <label htmlFor="total-earning">Total Earning Previous Year. <Tooltip text="text" /></label>
                             <input className='form-control m-0' type="text"
                                 value={previousYearEarning.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 id="total-earning"

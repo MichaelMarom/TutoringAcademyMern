@@ -25,7 +25,7 @@ import StudentIntro from "../pages/student/StudentIntro";
 
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
-import TutorClass from "../pages/tutor/TutotClass";
+import TutorClass from "../pages/tutor/TutorClass";
 import StudentClass from "../pages/student/StudentClass";
 import { Feedback } from "../pages/student/Feedback";
 import Chat from "../pages/Chat";

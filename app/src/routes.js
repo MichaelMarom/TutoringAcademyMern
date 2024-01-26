@@ -24,12 +24,15 @@ import { setChats } from "./redux/chat/chat";
 import { socket } from "./config/socket";
 import { moment } from './config/moment';
 import TutorProfile from "./pages/tutor/TutorProfile";
+import { useClerk } from '@clerk/clerk-react';
+import { SignIn, SignUp, useAuth, useUser } from "@clerk/clerk-react";
 
 const App = () => {
   let location = useLocation();
   let navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const { getToken, isLoaded, isSignedIn, userId, actor } = useAuth();
+  const { user: signinUser } = useUser()
   const { user } = useSelector((state) => state.user);
   const { student } = useSelector((state => state.student))
   const { tutor } = useSelector((state => state.tutor))
@@ -42,7 +45,22 @@ const App = () => {
   const loggedInUserDetail = studentLoggedIn ? student : tutor;
   const role = studentLoggedIn ? 'student' : 'tutor';
   const { shortlist, isLoading } = useSelector(state => state.shortlist)
-  const nullValues = ['undefined', 'null']
+  const nullValues = ['undefined', 'null'];
+  const clerk = useClerk();
+
+  const successSignUpCallback = () => {
+    console.log('hehe')
+  }
+
+  useEffect(() => {
+    clerk.openSignUp({
+      onSuccess: successSignUpCallback, // Optional: A callback function that is called after successful sign-up
+    });
+
+    return () => {
+      clerk.closeSignUp();
+    };
+  }, [clerk]);
 
 
   //ids
@@ -163,17 +181,28 @@ const App = () => {
 
   useEffect(() => {
     if (location.pathname === '/')
-      navigate('/login')
+      navigate('/tutor/setup')
   }, [location, navigate])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        console.log(await getToken(), isLoaded, isSignedIn, userId, signinUser, actor);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const routes = useRoutes([
     {
       path: "/login",
-      element: <Login />,
+      element: <SignIn />,
     },
     {
       path: "/signup",
-      element: <Signup />,
+      element: <SignUp />,
     },
     ...activeRoutes,
     {

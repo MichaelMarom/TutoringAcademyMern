@@ -7,6 +7,8 @@ import { setUser } from '../redux/auth_state/auth';
 import { ForgetPasswordModal } from '../components/auth/ForgetPasswordModal';
 import '../styles/auth.css'
 import Button from '../components/common/Button';
+import { useSignUp, useAuth, SignUp, SignIn } from "@clerk/clerk-react";
+
 
 const LoginPage = () => {
     const navigate = useNavigate()
@@ -76,7 +78,8 @@ const LoginPage = () => {
                         </div>
 
                         <div className="col-lg-6 mb-5 mb-lg-0">
-                            <div className="card">
+                            <SignIn redirectUrl='/tutor/setup' signUpUrl="/signup" />
+                            {/* <div className="card">
                                 <div className="card-body py-5 px-md-5">
                                     <form onSubmit={handleLogin}>
                                         <div className="form-outline mb-4">
@@ -122,7 +125,7 @@ const LoginPage = () => {
                                     setOpenModel={setOpenModel}
                                     modalOpen={modalOpen}
                                 />
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>

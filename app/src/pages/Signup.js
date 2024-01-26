@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle, FaTwitter, FaGithub } from 'react-icons/fa';
 import { signup } from '../axios/auth';
 import { toast } from 'react-toastify';
+import { useSignUp, useAuth, SignUp, SignIn } from "@clerk/clerk-react";
 
 const Signup = () => {
   const [signupFormValues, setSignupFormValues] = useState({
@@ -13,6 +14,8 @@ const Signup = () => {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const { getToken } = useAuth();
 
   const handleValidation = () => {
     const newErrors = {};
@@ -59,6 +62,18 @@ const Signup = () => {
     if (handleValidation()) {
       setLoading(true)
       const result = await signup(signupFormValues);
+      ///******/
+      // await signUp.create({
+      //   emailAddress: signupFormValues.email,
+      //   password: signupFormValues.password,
+      //   unsafeMetadata: {
+      //     account_type: values.accountType,
+      //   },
+      // });
+      // await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      // setPendingVerification(true);
+      /****** */
+
       if (result.status === 200) {
         setSignupFormValues({ role: '', email: '', password: '' })
         toast.success("Registration SuccessFull")
@@ -99,9 +114,9 @@ const Signup = () => {
                 veritatis? Dicta facilis sint aliquid ipsum atque?
               </p>
             </div>
-
             <div className="col-lg-6 mb-5 mb-lg-0">
-              <div className="card">
+              <SignUp redirectUrl='/tutor/setup' signInUrl="/login" />
+              {/* <div className="card">
                 <div className="card-body py-5 px-md-5">
                   <form onSubmit={handleSignup}>
 
@@ -185,7 +200,7 @@ const Signup = () => {
                     </div>
                   </form>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

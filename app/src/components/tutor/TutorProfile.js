@@ -19,6 +19,8 @@ import { FaFilePdf } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import Actions from '../common/Actions';
 import { monthFormatWithYYYY } from '../../constants/constants';
+import { SignOutButton, UserButton, useClerk } from '@clerk/clerk-react';
+import BTN_ICON from '../../images/button__icon.png'
 
 const TutorProfile = () => {
     const params = useParams();
@@ -31,6 +33,7 @@ const TutorProfile = () => {
     const userRole = localStorage.getItem('user_role')
     const [sortedGrades, setSortedGrades] = useState([]);
     const isStudentLoggedIn = location.pathname.split('/')[1] === 'student';
+    const { signOut } = useClerk();
 
     const customSort = (a, b) => {
         if (a === "Academic") {
@@ -180,7 +183,7 @@ const TutorProfile = () => {
                                     Cancellation Policy -
                                 </div>
                                 <h6 className='m-0'>
-                                    {data.CancellationPolicy ? data.CancellationPolicy :
+                                    {data.CancellationPolicy ? `${data.CancellationPolicy} Hour` :
                                         <span className='text-danger'>not set</span>}
                                 </h6>
                             </div>
@@ -294,6 +297,25 @@ const TutorProfile = () => {
                                         {data.Introduction}
                                     </p>
                                 </div>
+
+                                <div>
+                                    <SignOutButton signOutCallback={() => {
+                                        signOut();
+                                        navigate('/login')
+                                    }} />
+
+                                    <UserButton />
+                                    {/* <Button> <div className="button__content">
+                                            <div className="button__icon">
+                                                <img src={BTN_ICON} alt={"btn__icon"} style={{
+                                                    animation: false ? "spin 2s linear infinite" : 'none',
+                                                }} />
+                                            </div>
+                                            <p className="button__text">Sign out</p>
+                                        </div>
+                                        </Button> */}
+                                    {/* </SignOutButton> */}
+                                </div>
                             </div>
                         </div>
                         <div className='w-75'>
@@ -357,7 +379,6 @@ const TutorProfile = () => {
 
                                         <div className='px-2 w-75 d-flex justify-content-end'>
                                             {activeTab === 'bach' &&
-
                                                 <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
                                                     <h5 className=' text-center'>Bachelor Info</h5>
 

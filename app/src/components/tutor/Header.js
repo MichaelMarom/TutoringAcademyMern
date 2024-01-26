@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PROFILE_STATUS, statesColours } from "../../constants/constants";
+import { IoLogOut } from "react-icons/io5";
 
 
 const Header = () => {
@@ -132,7 +133,7 @@ const Header = () => {
                         </li>
                     ))}
                 </ul>
-
+               
                 <div className="scroller-right" onClick={handle_scroll_right}></div>
                 <div style={{
                     margin: '0 0 0 0', background: '#efefef', display

@@ -3,7 +3,6 @@ import TutorCollabFooter from "../../components/tutor/TutorCollabFooter";
 import TutorCollabHeader from "../../components/tutor/TutorCollabHeader";
 import TutorLayout from "../../layouts/TutorLayout";
 import { Tldraw } from '@tldraw/tldraw'
-// import '@tldraw/tldraw/tldraw.css'
 
 const TutorClass = () => {
   return (

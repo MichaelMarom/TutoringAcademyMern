@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useRoutes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate, useRoutes } from "react-router-dom";
 
 import React from "react";
 
@@ -24,13 +24,14 @@ import { setChats } from "./redux/chat/chat";
 import { socket } from "./config/socket";
 import { moment } from './config/moment';
 import TutorProfile from "./pages/tutor/TutorProfile";
-import { useClerk } from '@clerk/clerk-react';
-import { SignIn, SignUp, useAuth, useUser } from "@clerk/clerk-react";
+import { useClerk, useSignIn, useSignUp, SignIn, SignUp, useAuth, useUser, SignedIn, SignedOut } from '@clerk/clerk-react';
 
 const App = () => {
   let location = useLocation();
   let navigate = useNavigate();
   const dispatch = useDispatch();
+  const { signIn } = useSignIn()
+  const { signUp } = useSignUp();
   const { getToken, isLoaded, isSignedIn, userId, actor } = useAuth();
   const { user: signinUser } = useUser()
   const { user } = useSelector((state) => state.user);
@@ -47,21 +48,6 @@ const App = () => {
   const { shortlist, isLoading } = useSelector(state => state.shortlist)
   const nullValues = ['undefined', 'null'];
   const clerk = useClerk();
-
-  const successSignUpCallback = () => {
-    console.log('hehe')
-  }
-
-  useEffect(() => {
-    clerk.openSignUp({
-      onSuccess: successSignUpCallback, // Optional: A callback function that is called after successful sign-up
-    });
-
-    return () => {
-      clerk.closeSignUp();
-    };
-  }, [clerk]);
-
 
   //ids
   useEffect(() => {
@@ -93,7 +79,7 @@ const App = () => {
       moment.tz.setDefault(tutor.timeZone);
     }
   }, [tutor, student])
-  console.log(typeof (studentUserId), 'typeof studentuserId', studentUserId)
+
   useEffect(() => {
     dispatch(setShortlist())
     const getStudentDetails = async () => {
@@ -195,14 +181,41 @@ const App = () => {
     fetchData();
   }, []);
 
+  const routes12 = (
+    <>
+      <SignedIn>
+        {useRoutes([
+          ...activeRoutes
+        ])}
+      </SignedIn>
+
+      <SignedOut>
+        {useRoutes([
+          {
+            path: '/login',
+            element: <Login />,
+          },
+          {
+            path: '/signup',
+            element: <Signup />,
+          },
+          {
+            path: '*',
+            element: <UnAuthorizeRoute />,
+          },
+        ])}
+      </SignedOut>
+    </>
+  );
+
   const routes = useRoutes([
     {
       path: "/login",
-      element: <SignIn />,
+      element: <SignedOut> <Login /></SignedOut>,
     },
     {
       path: "/signup",
-      element: <SignUp />,
+      element: <SignedOut> <Signup /> </SignedOut>,
     },
     ...activeRoutes,
     {
@@ -211,7 +224,15 @@ const App = () => {
     },
   ]);
 
-  return routes;
+  return (
+    <Routes>
+      <Route path="/login" element={<SignedOut><Login /></SignedOut>} />
+      <Route path="/signup" element={<SignedOut><Signup /></SignedOut>} />
+      {activeRoutes.map((route) => (
+        <Route key={route.path} path={route.path} element={<SignedIn>{route.component}</SignedIn>} />
+      ))}
+      <Route path="*" element={<UnAuthorizeRoute />} />
+    </Routes>);
 };
 
 export default App;

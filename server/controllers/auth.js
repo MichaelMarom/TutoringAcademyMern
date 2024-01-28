@@ -4,17 +4,18 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const signup = async (req, res) => {
-    const { password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const { password } = req.body;
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
     marom_db(async (config) => {
         try {
             const sql = require('mssql');
             const poolConnection = await sql.connect(config);
+            console.log(req.body)
 
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    insert('Users', { ...req.body, password: hashedPassword })
+                    insert('Users1', req.body)
                 );
                 res.status(200).send(result.recordset);
             }
@@ -33,7 +34,6 @@ const login = async (req, res) => {
         try {
             const sql = require('mssql');
             const poolConnection = await sql.connect(config);
-
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     find('Users', { email: req.body.email })

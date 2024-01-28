@@ -7,11 +7,12 @@ import { setUser } from '../redux/auth_state/auth';
 import { ForgetPasswordModal } from '../components/auth/ForgetPasswordModal';
 import '../styles/auth.css'
 import Button from '../components/common/Button';
-import { useSignUp, useAuth, SignUp, SignIn } from "@clerk/clerk-react";
+import { useSignUp, useAuth, SignUp, SignIn, useSignIn } from "@clerk/clerk-react";
 
 
 const LoginPage = () => {
     const navigate = useNavigate()
+    const { signIn } = useSignIn()
     const [modalOpen, setOpenModel] = useState(false)
     const [loginForm, setLoginForm] = useState({
         email: '',
@@ -23,34 +24,44 @@ const LoginPage = () => {
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true)
-        const result = await login(loginForm);
+        try {
+            const result = await signIn.create({
+                identifier: loginForm.email,
+                password: loginForm.password,
+            });
+            console.log(result);
+        }
+        catch (err) {
+            console.log(err.errors[0].message)
+            toast.error(err.errors[0].message)
+        }
+        // const result = await login(loginForm);
         localStorage.setItem('tutor_user_id', null)
         localStorage.setItem('student_user_id', null)
         localStorage.setItem('student_screen_name', null)
         localStorage.setItem('tutor_screen_name', null)
         localStorage.setItem('user', null)
         localStorage.setItem('user_role', null)
-        localStorage.setItem('logged_user', null)
+        localStorage.setItem('logged_user', null);
 
+        // if (result.status === 200) {
+        //     toast.success("Login Successfull!");
+        //     setLoginForm({});
+        //     localStorage.setItem('user', JSON.stringify(result.data));
+        //     localStorage.setItem('user_role', result.data[0].role)
 
-        if (result.status === 200) {
-            toast.success("Login Successfull!");
-            setLoginForm({});
-            localStorage.setItem('user', JSON.stringify(result.data));
-            localStorage.setItem('user_role', result.data[0].role)
+        //     const getUserSetup = await get_user_setup_detail(result.data[0].role, result.data[0].SID);
+        //     dispatch(setUser(result.data))
+        //     if (result.data[0].role === 'admin') {
+        //         return navigate(`/${result.data[0].role}/tutor-data`);
 
-            const getUserSetup = await get_user_setup_detail(result.data[0].role, result.data[0].SID);
-            dispatch(setUser(result.data))
-            if (result.data[0].role === 'admin') {
-                return navigate(`/${result.data[0].role}/tutor-data`);
-
-            }
-            localStorage.setItem(`${result.data[0].role}_user_id`, getUserSetup.AcademyId)
-            navigate(`/${result.data[0].role}/intro`);
-        }
-        else {
-            toast.warning(result.message)
-        }
+        //     }
+        //     localStorage.setItem(`${result.data[0].role}_user_id`, getUserSetup.AcademyId)
+        //     navigate(`/${result.data[0].role}/intro`);
+        // }
+        // else {
+        //     toast.warning(result.message)
+        // }
         setLoading(false)
     };
 
@@ -78,8 +89,7 @@ const LoginPage = () => {
                         </div>
 
                         <div className="col-lg-6 mb-5 mb-lg-0">
-                            <SignIn redirectUrl='/tutor/setup' signUpUrl="/signup" />
-                            {/* <div className="card">
+                            <div className="card">
                                 <div className="card-body py-5 px-md-5">
                                     <form onSubmit={handleLogin}>
                                         <div className="form-outline mb-4">
@@ -125,7 +135,7 @@ const LoginPage = () => {
                                     setOpenModel={setOpenModel}
                                     modalOpen={modalOpen}
                                 />
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                 </div>

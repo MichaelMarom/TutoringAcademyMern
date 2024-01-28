@@ -266,11 +266,10 @@ const Rates = () => {
               <div className="highlight">
                 You must check the box above to activate this option. Your student
                 will select one option from the table below when he/she want to
-                save by paying upfront on multi sessions. The Academy will forward
-                you 50% from the discounted amount upfront. For example; student
+                save by paying upfront for multi sessions. The Academy will forward
+                you 50% from the discounted amount upfront, and the balance upon completion. For example; student
                 selects the 12 hours option, and you charge $45.00/hr, then $45.00
-                X 12 = $540 -12% = $475.20 From this amount the academy will forward
-                you 50% upfront, and the balance upon completion.
+                X 12 = $540 -12% = $475.20 .
               </div>
 
               <div

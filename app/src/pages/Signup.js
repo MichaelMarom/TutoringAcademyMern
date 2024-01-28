@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle, FaTwitter, FaGithub } from 'react-icons/fa';
 import { signup } from '../axios/auth';
 import { toast } from 'react-toastify';
-import { useSignUp, useAuth, SignUp, SignIn } from "@clerk/clerk-react";
+import { useSignUp, useAuth, SignUp, SignIn, useUser } from "@clerk/clerk-react";
+import Button from '../components/common/Button';
 
 const Signup = () => {
   const [signupFormValues, setSignupFormValues] = useState({
@@ -15,7 +16,12 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
   const { isLoaded, signUp, setActive } = useSignUp();
+  const { user } = useUser();
+  const { userId } = useAuth()
+
   const { getToken } = useAuth();
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [code, setCode] = useState("");
 
   const handleValidation = () => {
     const newErrors = {};
@@ -59,30 +65,63 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (handleValidation()) {
-      setLoading(true)
-      const result = await signup(signupFormValues);
-      ///******/
-      // await signUp.create({
-      //   emailAddress: signupFormValues.email,
-      //   password: signupFormValues.password,
-      //   unsafeMetadata: {
-      //     account_type: values.accountType,
-      //   },
-      // });
-      // await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-      // setPendingVerification(true);
-      /****** */
+    setLoading(true);
+    try {
+      await signUp.create({
+        emailAddress: signupFormValues.email,
+        password: signupFormValues.password,
+        unsafeMetadata: {
+          role: signupFormValues.role,
+        },
+      });
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      setPendingVerification(true);
+    }
+    catch (err) {
+      console.log(err.errors.long_message)
+      toast.error(err.errors.long_message)
+    }
+    setLoading(false)
+  };
 
-      if (result.status === 200) {
-        setSignupFormValues({ role: '', email: '', password: '' })
-        toast.success("Registration SuccessFull")
-        navigate(`/login`)
+  const handleVerification = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    if (!isLoaded) {
+      return;
+    }
+    try {
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
+        code,
+      });
+      if (completeSignUp.status === "complete") {
+        await setActive({ session: completeSignUp.createdSessionId });
+        const token = await getToken();
+        if (token !== null) {
+          localStorage.setItem("access_token", token);
+          const result = await signup({
+            email: signupFormValues.email,
+            SID: completeSignUp.createdUserId,
+            role: signupFormValues.role
+          })
+          if (result.status === 200) {
+            setSignupFormValues({ role: '', email: '', password: '' })
+            toast.success('Registration Succesfull')
+          }
+          else {
+            toast.error("Error: Please contact support!");
+          }
+        } else {
+          toast.error("Could not retrieve token from clerk");
+        }
+      } else {
+        toast.error("Unable to complete sign up. Please contact support");
       }
-      else {
-        toast.error(result.response.data.message)
-      }
-      setLoading(false)
+    } catch (err) {
+      // setErrors(err.errors);
+    } finally {
+      setLoading(false);
+      setPendingVerification(false);
     }
   };
 
@@ -115,8 +154,8 @@ const Signup = () => {
               </p>
             </div>
             <div className="col-lg-6 mb-5 mb-lg-0">
-              <SignUp redirectUrl='/tutor/setup' signInUrl="/login" />
-              {/* <div className="card">
+              {/* <SignUp path="/signup" routing="path" signInUrl="/login" /> */}
+              <div className="card">
                 <div className="card-body py-5 px-md-5">
                   <form onSubmit={handleSignup}>
 
@@ -175,7 +214,6 @@ const Signup = () => {
                       )}
                     </button>
 
-
                     <div className="text-center">
                       <p>Already have an account? <Link to="/login">Login</Link></p>
                     </div>
@@ -199,8 +237,18 @@ const Signup = () => {
                       </button>
                     </div>
                   </form>
+                  {pendingVerification && (
+                    <div>
+                      <form>
+                        <input type='text' onBlur={() => { }} onChange={(e) => setCode(e.target.value)} />
+                        <Button handleClick={handleVerification}>
+                          Verify Email
+                        </Button>
+                      </form>
+                    </div>
+                  )}
                 </div>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

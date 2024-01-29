@@ -78,8 +78,8 @@ const Signup = () => {
       setPendingVerification(true);
     }
     catch (err) {
-      console.log(err.errors.long_message)
-      toast.error(err.errors.long_message)
+      console.log(err.errors[0].message)
+      toast.error(err.errors[0].message)
     }
     setLoading(false)
   };

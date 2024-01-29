@@ -33,9 +33,12 @@ export function setTutor(data) {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading());
         let result;
-        if (localStorage.getItem('tutor_user_id') === "undefined") {
+        const nullValues = ['null', 'undefined']
+        if (nullValues.includes(localStorage.getItem('tutor_user_id'))) {
             const user = JSON.parse(localStorage.getItem('user'))
-            result = await tutorApis.get_tutor_setup_by_userId(user[0].SID)
+            console.log('enteredddddڈ', user)
+            if (!user?.SID) return {}
+            result = await tutorApis.get_tutor_setup_by_userId(user?.SID)
         }
         else {
             result = await tutorApis.get_tutor_setup_by_acaId(localStorage.getItem('tutor_user_id'))
@@ -44,6 +47,8 @@ export function setTutor(data) {
             const selectedUserId = await get_user_detail(result[0]?.userId);
             dispatch(slice.actions.setTutor({ ...result[0], email: selectedUserId.email }));
             localStorage.setItem('tutor_screen_name', result[0].TutorScreenname)
+            localStorage.setItem('tutor_user_id', result[0].AcademyId)
+
             return data;
         }
         else {

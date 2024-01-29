@@ -20,12 +20,13 @@ const TermOfUse = () => {
     const [fetching, setFetching] = useState(true)
     const [agreed, setAgreed] = useState(false)
     const { tutor } = useSelector(state => state.tutor)
+    const { user } = useSelector(state => state.user)
     const dispatch = useDispatch()
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const storedUserRole = localStorage.getItem('user_role');
+                const storedUserRole =user.role;
                 const result = await get_adminConstants();
                 set_terms(result.data[0].TermContent);
                 set_db_terms(result.data[0].TermContent);

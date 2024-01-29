@@ -69,7 +69,7 @@ const get_user_detail = async (req, res) => {
 
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    findByAnyIdColumn('Users', req.params)
+                    findByAnyIdColumn('Users1', req.params)
                 );
 
                 res.status(200).send(result.recordset[0]);

@@ -80,7 +80,7 @@ const TutorSetup = () => {
   let [tutorGrades, setTutorGrades] = useState([]);
   const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
-  const [email, set_email] = useState(user[0].email);
+  const [email, set_email] = useState(user?.email);
   const [unSavedChanges, setUnsavedChanges] = useState(false);
   let [countryList, setCountryList] = useState("");
   let [GMTList, setGMTList] = useState("");
@@ -89,7 +89,7 @@ const TutorSetup = () => {
   let [userExist, setUserExist] = useState(false);
   const [uploadPhotoClicked, setUploadPhotoClicked] = useState(false)
   const [uploadVideoClicked, setUploadVideoClicked] = useState(false)
-  const [userId, setUserId] = useState(JSON.parse(localStorage.getItem("user"))[0].SID)
+  const [userId, setUserId] = useState(user.SID)
   const [picUploading, setPicUploading] = useState(false);
   const [savingRecord, setSavingRecord] = useState(false);
 
@@ -122,7 +122,7 @@ const TutorSetup = () => {
   }, [tutor])
 
   useEffect(() => {
-    set_email(user[0].email)
+    set_email(user?.email)
   }, [user])
 
   //reset state on country change
@@ -288,10 +288,10 @@ const TutorSetup = () => {
       dispatch(setTutor())
       window.localStorage.setItem(
         "tutor_screen_name",
-        response.data[0]?.TutorScreenname
+        response.data?.[0]?.TutorScreenname
       );
-      localStorage.setItem('tutor_user_id', response.data[0]?.AcademyId)
-      dispatch(setscreenNameTo(response.data[0]?.TutorScreenname));
+      localStorage.setItem('tutor_user_id', response.data?.[0]?.AcademyId)
+      dispatch(setscreenNameTo(response.data?.[0]?.TutorScreenname));
       setEditMode(false);
       toast.success("Data saved successfully");
     }
@@ -318,7 +318,7 @@ const TutorSetup = () => {
       motivation,
       headline,
       tutorGrades,
-      userId: tutor.userId ? tutor.userId : user[0].SID,
+      userId: tutor.userId ? tutor.userId : user?.SID,
       grades: tutorGrades,
       start: vacation_mode ? start : moment().toDate(),
       end: vacation_mode ? end : moment().endOf().toDate(),
@@ -449,9 +449,9 @@ const TutorSetup = () => {
 
     let f = document.querySelector("#photo");
 
-    let type = [...f.files][0].type;
+    let type = [...f.files]?.[0]?.type;
 
-    if (type.split("/")[0] !== "image") {
+    if (type.split("/")?.[0] !== "image") {
       alert("Only Image Can Be Uploaded To This Field");
     } else {
       // frame.innerHTML = "";
@@ -465,16 +465,16 @@ const TutorSetup = () => {
 
         // frame?.insertAdjacentHTML("afterbegin", img);
       };
-      reader.readAsDataURL([...f.files][0]);
+      reader.readAsDataURL([...f.files]?.[0]);
     }
   };
 
   let handleVideo = () => {
     let f = document.querySelector("#video");
 
-    let type = [...f.files][0].type;
+    let type = [...f.files]?.[0]?.type;
 
-    if (type.split("/")[0] !== "video") {
+    if (type.split("/")?.[0] !== "video") {
       alert("Only Video Can Be Uploaded To This Field");
     } else {
       let reader = new FileReader({});
@@ -482,7 +482,7 @@ const TutorSetup = () => {
       reader.onload = (result) => {
         set_video(reader.result);
       };
-      reader.readAsDataURL([...f.files][0]);
+      reader.readAsDataURL([...f.files]?.[0]);
     }
   };
 
@@ -673,7 +673,7 @@ const TutorSetup = () => {
                 className="form-control m-0"
                 onBlur={() => {
                   if (fname.length && lname.length) {
-                    const screenName = `${capitalizeFirstLetter(fname)} ${mname.length ? `${capitalizeFirstLetter(mname[0])}.` : ``} ${capitalizeFirstLetter(lname[0])}.`
+                    const screenName = `${capitalizeFirstLetter(fname)} ${mname.length ? `${capitalizeFirstLetter(mname?.[0])}.` : ``} ${capitalizeFirstLetter(lname?.[0])}.`
                     toast(`You screen name is; ${screenName} which we use online. We do not disclose your private information online. 
                     We use your cellphone only for verification to withdraw your funds, or for events notifications like
                     students booking/postponding/cancelling lessons, etc'. `,

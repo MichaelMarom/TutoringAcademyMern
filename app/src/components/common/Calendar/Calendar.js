@@ -49,7 +49,7 @@ const ShowCalendar = ({
 
   // Extract student information from the URL
   const isStudentRoute = (location.pathname.split('/'))[1] === 'student';
-  const isStudentLoggedIn = user[0].role === 'student' ? true : user[0].role === 'admin' && isStudentRoute ? true : false;
+  const isStudentLoggedIn = user.role === 'student' ? true : user.role === 'admin' && isStudentRoute ? true : false;
   const [timeZone, setTimeZone] = useState();
 
   const [enabledDays, setEnabledDays] = useState([]);

@@ -101,7 +101,7 @@ const TutorProfile = () => {
     else if (!Object.keys(data).length)
         return <h5 className='text-danger p-5'>In order to view your profile, Please first must to complete uploading your Photo, Video, Diploma or Certification!</h5>
     return (
-        <div style={{ background: "lightGray", height: "93vh", overflowY: "auto" }}>
+        <div style={{ background: "lightGray", height: "83vh", overflowY: "auto" }}>
             <div className='container'>
                 <div className=''>
                     <div className='d-flex align-items-start justify-content-between w-100 mt-4 rounded  bg-white '
@@ -298,24 +298,6 @@ const TutorProfile = () => {
                                     </p>
                                 </div>
 
-                                <div>
-                                    <SignOutButton signOutCallback={() => {
-                                        signOut();
-                                        navigate('/login')
-                                    }} />
-
-                                    <UserButton />
-                                    {/* <Button> <div className="button__content">
-                                            <div className="button__icon">
-                                                <img src={BTN_ICON} alt={"btn__icon"} style={{
-                                                    animation: false ? "spin 2s linear infinite" : 'none',
-                                                }} />
-                                            </div>
-                                            <p className="button__text">Sign out</p>
-                                        </div>
-                                        </Button> */}
-                                    {/* </SignOutButton> */}
-                                </div>
                             </div>
                         </div>
                         <div className='w-75'>

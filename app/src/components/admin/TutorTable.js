@@ -10,7 +10,7 @@ import Pill from '../common/Pill';
 import { FcApprove } from "react-icons/fc";
 import { FcDisapprove } from "react-icons/fc";
 import { toast } from 'react-toastify'
-import { statesColours } from '../../constants/constants';
+import { PROFILE_STATUS, statesColours } from '../../constants/constants';
 
 const TutorTable = () => {
     let [data, set_data] = useState([]);
@@ -76,9 +76,12 @@ const TutorTable = () => {
                                     </div>
                                 </td>
 
-                                <td data-src={null} className='col-1' onDoubleClick={() =>
-                                    redirect_to_tutor_setup(item.AcademyId, item.TutorScreenname)
-                                }>
+                                <td data-src={null} className='col-1' onDoubleClick={() => {
+                                    console.log(item)
+                                    item.Status === PROFILE_STATUS.CLOSED ?
+                                        toast.warning('You cannot view Closed tutor Profile!') :
+                                        redirect_to_tutor_setup(item.AcademyId, item.TutorScreenname)
+                                }}>
                                     <img src={item.Photo}
                                         style={{ height: '80px', width: '100px' }} />
                                 </td>

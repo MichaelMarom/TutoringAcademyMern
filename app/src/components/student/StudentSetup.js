@@ -55,10 +55,10 @@ const StudentSetup = () => {
 
     let saver = async () => {
 
-        let response = await upload_form_one(fname, mname, sname, user[0].role === 'student' ? user[0].email : email, lang, is_18,
+        let response = await upload_form_one(fname, mname, sname, user.role === 'student' ? user.email : email, lang, is_18,
             pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone,
             parent_fname, parent_lname, parent_email, photo, acadId, parentConsent,
-            user[0].role === 'student' ? user[0].SID : userId)
+            user.role === 'student' ? user.SID : userId)
         const res = await get_my_data(localStorage.getItem('student_user_id'));
         console.log(res[1][0][0])
         dispatch(setStudent(res[1][0][0]))
@@ -67,8 +67,7 @@ const StudentSetup = () => {
 
     useEffect(() => {
         const fetchStudentSetup = async () => {
-            if (user[0].role === 'student' || user[0].role === 'admin') {
-                console.log(student, 'hehe')
+            if (user.role === 'student' || user.role === 'admin') {
                 if (Object.keys(student)) {
                     let data = student
                     set_fname(data.FirstName)
@@ -386,7 +385,7 @@ const StudentSetup = () => {
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
                             <input
                                 placeholder='Email'
-                                value={user[0].role === 'student' ? user[0].email : email}
+                                value={user.role === 'student' ? user.email : email}
                                 type="text" id="email"
                                 style={{ float: 'right' }} readonly />
 

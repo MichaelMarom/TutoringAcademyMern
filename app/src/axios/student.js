@@ -42,11 +42,11 @@ export let get_student_setup = (AcademyId) => {
     })
 }
 
-export const get_student_setup_by_userId = async (AcademyId) => {
+export const get_student_setup_by_userId = async (userId) => {
     try {
         const { data } = await apiClient.get('/student/setup', {
             params: {
-                AcademyId
+                userId
             }
         })
         return data

@@ -1,10 +1,13 @@
 import React from 'react'
 import StudentLayout from '../../layouts/StudentLayout'
+import StudentMarketPlaceComp from '../../components/student/StudentMarketPlace'
 
-export const StudentMarketPlace = () => {
+const StudentMarketPlace = () => {
   return (
-   <StudentLayout>
-       market place
-   </StudentLayout>
+    <StudentLayout>
+      <StudentMarketPlaceComp />
+    </StudentLayout>
   )
 }
+
+export default StudentMarketPlace

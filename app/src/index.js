@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, useNavigate } from "react-router-dom";
 import store from './redux/store';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,18 +17,27 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key")
 }
 
+const ClerkWithRoutes = ({ children }) => {
+  const navigate = useNavigate();
+  return (
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY} navigate={(to) => navigate(to)} >
+      {children}
+    </ClerkProvider>
+  )
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
     <ToastContainer position="bottom-center"
       className="custom-toast-container" />
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-      <Provider store={store}>
-        <Router>
+    <Provider store={store}>
+      <Router>
+        <ClerkWithRoutes>
           <App />
-        </Router>
-      </Provider>
-    </ClerkProvider>
+        </ClerkWithRoutes>
+      </Router>
+    </Provider>
   </>
 );
 

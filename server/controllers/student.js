@@ -140,23 +140,23 @@ let upload_form_one = (req, res) => {
 
 }
 
-
 let get_student_setup = (req, res) => {
     let { AcademyId = null, userId = null } = req.query;
-    console.log(AcademyId, userId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
         if (poolConnection) {
             poolConnection.request().query(
-                findByAnyIdColumn('StudentSetup', req.query, 'varchar')
+                findByAnyIdColumn('StudentSetup', req.query)
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-            //   .catch(err => console.log(err))
-
+                .catch(err => {
+                    console.log(err);
+                    res.status(400).send({ message: "Failed to fetch student record!" })
+                })
         }
 
     })
@@ -403,7 +403,7 @@ let get_my_data = async (req, res) => {
             let record = result.recordset[0] || {}
             if (record.userId) {
                 const { recordset } = await poolConnection.request().query(
-                    findByAnyIdColumn('Users', { SID: record.userId })
+                    findByAnyIdColumn('Users1', { SID: record.userId })
                 )
                 record = { ...record, Email: recordset[0].email }
             }
@@ -890,7 +890,8 @@ function getBookedSlot(req, res) {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `
-                    SELECT bookedSlots From StudentBookings WHERE CONVERT(VARCHAR, studentId) = '${AcademyId}'
+                    SELECT bookedSlots From StudentBookings 
+                    WHERE CONVERT(VARCHAR, studentId) = '${AcademyId}'
                 `
                 )
                 res.status(200).send(result.recordset)

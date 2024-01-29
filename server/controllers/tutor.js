@@ -933,7 +933,6 @@ let get_bank_details = (req, res) => {
     })
 }
 
-
 let get_tutor_setup = (req, res) => {
     marom_db(async (config) => {
         try {
@@ -947,7 +946,7 @@ let get_tutor_setup = (req, res) => {
                 let record = result.recordset?.[0] || {}
                 if (record.userId) {
                     const { recordset } = await poolConnection.request().query(
-                        findByAnyIdColumn('Users', { SID: record.userId })
+                        findByAnyIdColumn('Users1', { SID: record.userId })
                     )
                     record = { ...record, Email: recordset[0].email }
                 }
@@ -963,9 +962,8 @@ let get_tutor_setup = (req, res) => {
         }
         catch (err) {
             console.log(err)
-            res.status(400).send({ message: err.messageF })
+            res.status(400).send({ message: err.message })
         }
-
     })
 }
 

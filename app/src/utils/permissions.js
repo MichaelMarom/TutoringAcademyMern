@@ -18,7 +18,7 @@ import TutorTable from "../pages/Admin/Tutor";
 import StudentTable from "../pages/Admin/Student";
 import StudentScheduling from "../pages/student/StudentScheduling";
 import StudentTermOfUse from "../pages/student/TermOfUse";
-import StudentMarketPlace from "../components/student/StudentMarketPlace";
+import StudentMarketPlace from "../pages/student/StudentMarketPlace";
 import TutorNewSubject from "../pages/Admin/NewSubject";
 import StudentProfile from "../pages/student/StudentProfile";
 import StudentIntro from "../pages/student/StudentIntro";

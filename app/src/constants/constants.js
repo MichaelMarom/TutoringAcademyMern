@@ -1402,7 +1402,8 @@ export const PROFILE_STATUS = {
   UNDER_REVIEW: "under-review",
   ACTIVE: 'active',
   SUSPENDED: "suspended",
-  DELETED: "deleted"
+  CLOSED: "closed",
+  DISAPPROVED:'disapproved'
 }
 
 export const statesColours = {

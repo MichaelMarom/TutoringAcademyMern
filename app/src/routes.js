@@ -16,7 +16,7 @@ import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
 import { setShortlist } from "./redux/student_store/shortlist";
-import { get_my_data } from "./axios/student";
+import { get_my_data, get_student_setup_by_userId } from "./axios/student";
 
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
@@ -24,15 +24,14 @@ import { setChats } from "./redux/chat/chat";
 import { socket } from "./config/socket";
 import { moment } from './config/moment';
 import TutorProfile from "./pages/tutor/TutorProfile";
-import { useClerk, useSignIn, useSignUp, SignIn, SignUp, useAuth, useUser, SignedIn, SignedOut } from '@clerk/clerk-react';
+import { useClerk, useSignIn, useSignUp, SignIn, SignUp, useAuth, useUser, SignedIn, SignedOut, RedirectToSignIn, useSession } from '@clerk/clerk-react';
+import { get_user_detail } from "./axios/auth";
 
 const App = () => {
   let location = useLocation();
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const { signIn } = useSignIn()
-  const { signUp } = useSignUp();
-  const { getToken, isLoaded, isSignedIn, userId, actor } = useAuth();
+  const { getToken, isLoaded, isSignedIn, userId, actor, sessionId } = useAuth();
   const { user: signinUser } = useUser()
   const { user } = useSelector((state) => state.user);
   const { student } = useSelector((state => state.student))
@@ -42,29 +41,44 @@ const App = () => {
   const storedUser = localStorage.getItem("user");
   const studentUserId = localStorage.getItem('student_user_id')
   const tutorUserId = localStorage.getItem('tutor_user_id')
-  const studentLoggedIn = location.pathname.split('/')[1] === 'student';
+  const studentLoggedIn = user.role === 'student';
   const loggedInUserDetail = studentLoggedIn ? student : tutor;
   const role = studentLoggedIn ? 'student' : 'tutor';
   const { shortlist, isLoading } = useSelector(state => state.shortlist)
   const nullValues = ['undefined', 'null'];
-  const clerk = useClerk();
-
-  //ids
-  useEffect(() => {
-    dispatch(setUser(storedUser ? JSON.parse(storedUser) : {}));
-  }, [dispatch, storedUser]);
 
   useEffect(() => {
-    if (user?.[0]?.role === "tutor")
-      window.localStorage.setItem("tutor_tab_index", 0);
+    if (userId) {
+      const fetch = async () => {
+        const data = await get_user_detail(userId);
+        dispatch(setUser(data));
+        localStorage.setItem('user', JSON.stringify(data));
+        console.log(', data', data.SID && data.role === 'tutor')
 
-    if (user?.[0]?.role === "student")
-      window.localStorage.setItem("student_tab_index", 0);
-  }, [user]);
+        data.SID && data.role === 'tutor' && dispatch(setTutor())
+        if (data.SID && data.role === 'student') {
+          dispatch(setShortlist())
+          console.log(', data', data)
+          const result = await get_student_setup_by_userId(data.SID);
+          dispatch(setStudent(result[0]))
+          localStorage.setItem('student_user_id', result[0].AcademyId);
+        }
+      }
+      fetch()
+    }
+  }, [userId])
+
+  // useEffect(() => {
+  //   if (user?.[0]?.role === "tutor")
+  //     window.localStorage.setItem("tutor_tab_index", 0);
+
+  //   if (user?.[0]?.role === "student")
+  //     window.localStorage.setItem("student_tab_index", 0);
+  // }, [user]);
 
   useEffect(() => {
-    if (user?.[0] && user?.[0].role !== 'admin')
-      get_tutor_setup_by_userId(user?.[0].SID).then((result) => {
+    if (user && user.role !== 'admin')
+      get_tutor_setup_by_userId(user.SID).then((result) => {
         localStorage.setItem("tutor_user_id", result[0]?.AcademyId || null);
       });
   }, [user]);
@@ -80,15 +94,15 @@ const App = () => {
     }
   }, [tutor, student])
 
-  useEffect(() => {
-    dispatch(setShortlist())
-    const getStudentDetails = async () => {
-      if (nullValues.includes(studentUserId)) {
-        return dispatch(setStudent({}));
-      }
-      const res = await get_my_data(studentUserId)
-      dispatch(setStudent(res[1][0][0]));
+  const getStudentDetails = async () => {
+    if (nullValues.includes(studentUserId)) {
+      return dispatch(setStudent({}));
     }
+    const res = await get_my_data(studentUserId)
+    dispatch(setStudent(res[1][0][0]));
+  }
+
+  useEffect(() => {
     getStudentDetails()
   }, [dispatch, studentUserId])
 
@@ -140,6 +154,8 @@ const App = () => {
 
   //routes
   const generateRoutes = (role) => {
+    console.log('enterdede', role)
+
     if (role && rolePermissions[role]) {
       if (role === 'admin') {
         const allRoutes = Object.keys(rolePermissions).map((key) => rolePermissions[key]).flat();
@@ -149,6 +165,7 @@ const App = () => {
             element: route.component,
           })))
       } else {
+        console.log('enterdede', role)
         setActiveRoutes(
           rolePermissions[role].map((route) => ({
             path: route.path,
@@ -161,8 +178,10 @@ const App = () => {
     }
   };
 
+  console.log(activeRoutes, student)
+
   useEffect(() => {
-    generateRoutes(user?.[0]?.role);
+    generateRoutes(user?.role);
   }, [user])
 
   useEffect(() => {
@@ -223,13 +242,13 @@ const App = () => {
       element: <UnAuthorizeRoute />,
     },
   ]);
-
+  console.log(activeRoutes)
   return (
     <Routes>
-      <Route path="/login" element={<SignedOut><Login /></SignedOut>} />
-      <Route path="/signup" element={<SignedOut><Signup /></SignedOut>} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
       {activeRoutes.map((route) => (
-        <Route key={route.path} path={route.path} element={<SignedIn>{route.component}</SignedIn>} />
+        <Route key={route.path} path={route.path} element={<SignedIn>{route.element}</SignedIn>} />
       ))}
       <Route path="*" element={<UnAuthorizeRoute />} />
     </Routes>);

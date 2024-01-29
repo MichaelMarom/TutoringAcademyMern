@@ -20,7 +20,6 @@ const StudentFaculties = () => {
     useEffect(() => {
         const fetchTutorSubject = async () => {
             const result = await get_tutor_subject('1')
-            console.log(result, 123)
             result.sort(function (a, b) {
                 if (a[0].subject < b[0].subject) {
                     return -1;
@@ -50,11 +49,6 @@ const StudentFaculties = () => {
             }
             return 0;
         });
-        // let clickedElem = e.currentTarget;
-        // let deactivedElem = [...clickedElem?.parentElement.children ? clickedElem?.parentElement.children : []].filter(item => item.hasAttribute('id'))[0];
-
-        // deactivedElem?.removeAttribute('id');
-        // clickedElem?.setAttribute('id', 'form-subject-data-tabs-list-active')
     }
 
     let handle_scroll_right = () => {
@@ -77,7 +71,6 @@ const StudentFaculties = () => {
 
     const getShortlist = async () => {
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
-        console.log(result, 'shortlists')
         result.sort(function (a, b) {
             if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
                 return -1;
@@ -91,7 +84,6 @@ const StudentFaculties = () => {
     }
 
     useEffect(() => {
-        // document.querySelector('#student-save').onclick = () => {
         if (checkBoxClicked.type?.length) {
             document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
             let list = [...document.querySelectorAll('#student-tutor')];
@@ -136,7 +128,6 @@ const StudentFaculties = () => {
                 }
             }
         }
-        // }
     }, [checkBoxClicked])
 
     useEffect(() => {
@@ -332,12 +323,8 @@ const StudentFaculties = () => {
                                                     <td style={{ width: multi_student_cols[9].width }}>{faculty.responseTime.replace("Hours", 'Hrs')} </td>
 
                                                 </tr>
-                                            }
-                                            )
-
+                                            })
                                         }
-
-
                                     </tbody>
                                     :
                                     <div style={{ position: 'absolute', width: '100%', textAlign: 'center', fontSize: 'large', paddingTop: '20px', fontWeight: 'bold' }}>We Are Sorry, There Are No Tutor(s) Available For This Faculty. Please check later. New tutors register every day.</div>

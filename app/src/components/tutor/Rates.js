@@ -226,96 +226,298 @@ const Rates = () => {
 
   return (
     <>
-      {changesMade && (
+      {/* {changesMade && (
         <div className="green-bar w-100 bg-success text-white fs-5 text-decoration-underline d-flex justify-content-center m-0">
           <p className="m-2">You have made changes. Save them before moving to the next tab.</p>
         </div>
-      )}
-      <div className="tutor-tab-rates container">
-        <div className="tutor-tab-rate-section">
-          <form onSubmit={handleSubmit}>
+      )} */}
+      <div className="tutor-tab-rates">
+        <div className="tutor-tab-rate-section" style={{ height: "80vh", overflowY: "auto" }}>
+          <form onSubmit={handleSubmit} className="d-flex" style={{ width: "100%", gap: "2%" }}>
+            <div className="d-flex flex-column" style={{ width: "30%" }}>
+              <div className=" border m-2 shadow rounded p-4" >
+                <h6>Subscription Plan</h6>
 
-            <div className="tutor-tab-rate-box" style={{ height: "80vh" }}>
-              <h6>Subscription Plan</h6>
+                <div
+                  style={{
+                    height: "50px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "auto",
+                  }}
+                >
+                  <input disabled={!editMode}
+                    type="checkbox"
+                    onChange={(e) =>
+                      setActivateSubscriptionOption(e.target.checked ? true : false)
+                    }
+                    checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
+                    style={{ cursor: "pointer", height: "20px", width: "20px" }}
+                    name="subscription-plan"
+                    id="subscription-plan"
+                  />{" "}
+                  &nbsp;
+                  <label htmlFor="subscription-plan">
+                    <h6>Activate subscription option</h6>
+                  </label>
+                </div>
 
-              <div
-                style={{
-                  height: "50px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "auto",
-                }}
-              >
-                <input disabled={!editMode}
-                  type="checkbox"
-                  onChange={(e) =>
-                    setActivateSubscriptionOption(e.target.checked ? true : false)
-                  }
-                  checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
-                  style={{ cursor: "pointer", height: "20px", width: "20px" }}
-                  name="subscription-plan"
-                  id="subscription-plan"
-                />{" "}
-                &nbsp;
-                <label htmlFor="subscription-plan">
-                  <h6>Activate subscription option</h6>
-                </label>
-              </div>
+                <div className="highlight">
+                  You must check the box above to activate this option. Your student
+                  will select one option from the table below when he/she want to
+                  save by paying upfront for multi sessions. The Academy will forward
+                  you 50% from the discounted amount upfront, and the balance upon completion. For example; student
+                  selects the 12 hours option, and you charge $45.00/hr, then $45.00
+                  X 12 = $540 -12% = $475.20 .
+                </div>
 
-              <div className="highlight">
-                You must check the box above to activate this option. Your student
-                will select one option from the table below when he/she want to
-                save by paying upfront for multi sessions. The Academy will forward
-                you 50% from the discounted amount upfront, and the balance upon completion. For example; student
-                selects the 12 hours option, and you charge $45.00/hr, then $45.00
-                X 12 = $540 -12% = $475.20 .
-              </div>
-
-              <div
-                className="rate-table"
-                style={{
-                  pointerEvents: ActivateSubscriptionOption === "true"
-                    || ActivateSubscriptionOption === true ? "auto" : "none",
-                  opacity: "0.5",
-                }}
-              >
-                <table>
-                  <thead>
-                    <tr>
-                      {subscription_cols.map((item) => (
-                        <th key={item.Header}>{item.Header}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {subscription_discount.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.hours}</td>
-                        <td>
-                          <input disabled={!editMode}
-                            onInput={(e) => { setSubscriptionPlan(e.target.value) }}
-                            type="radio"
-                            value={item.hours}
-                            checked={item.hours === "1-5"}
-                            name="student-subscription"
-                            id="student-subscription"
-                            style={{
-                              height: '20px',
-                              width: '20px',
-                            }}
-                          />
-
-                        </td>
-
-                        <td>{item.discount}</td>
+                <div
+                  className="rate-table"
+                  style={{
+                    pointerEvents: ActivateSubscriptionOption === "true"
+                      || ActivateSubscriptionOption === true ? "auto" : "none",
+                    opacity: "0.5",
+                  }}
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        {subscription_cols.map((item) => (
+                          <th key={item.Header}>{item.Header}</th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {subscription_discount.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.hours}</td>
+                          <td>
+                            <input disabled={!editMode}
+                              onInput={(e) => { setSubscriptionPlan(e.target.value) }}
+                              type="radio"
+                              value={item.hours}
+                              checked={item.hours === "1-5"}
+                              name="student-subscription"
+                              id="student-subscription"
+                              style={{
+                                height: '20px',
+                                width: '20px',
+                              }}
+                            />
+
+                          </td>
+
+                          <td>{item.discount}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
               </div>
 
-              <div className="">
+            </div>
+            <div className="d-flex flex-column" style={{ width: "30%" }}>
+              <div className="p-4  float-end rounded shadow border m-2 ">
+                <h6>Tutor's Own Students</h6>
+                <div className="highlight">
+                  In order for you tutoring your own current students on this plateform,
+                  forward the Code below to your students to be used with thier registration.
+                  You need to generate new code for each one of your students.
+
+                </div>
+                <div className="form-check form-switch d-flex align-items-center gap-2">
+                  <input disabled={!editMode}
+                    className="form-check-input "
+                    type="checkbox"
+                    role="switch"
+                    id="flexSwitchCheckChecked"
+                    onChange={() => setDiscountEnabled(!discountEnabled)}
+                    checked={discountEnabled}
+                  />
+                  <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
+                    My Student's code
+                  </label>
+
+                  <Tooltip width="200px" text="Provide the code below to be used by your student for this platform. The code will pair your student to your profile upon the setup of student's account. You must generate new code for each one of your students">
+                    <FaInfoCircle size={20} color="#0096ff" />
+                  </Tooltip>
+                </div>
+                {
+                  discountEnabled &&
+                  <div>
+                    <h6 className="mt-4 d-inline">Your Student's new code</h6>
+                    <Tooltip text="Generate New Code">
+                      <IoMdRefresh
+                        size={20}
+                        className="d-inline"
+                        onClick={() => setDiscountCode(generateDiscountCode())}
+                      />
+                    </Tooltip>
+                    <div className="input-group w-50">
+                      <input disabled={!editMode}
+                        type="text"
+                        className="form-control m-0 h-100 p-2"
+                        value={discountCode}
+                        readOnly
+                      />
+
+                      <label
+                        className="m-0 input-group-text"
+                        type="button"
+                        id="inputGroupFileAddon04"
+                      >
+                        <IoMdCopy
+                          size={20}
+                          color="#0096ff"
+                          onClick={() => {
+                            copyToClipboard(discountCode);
+                            setCopied(true);
+                          }}
+                        />
+                      </label>
+                    </div>
+                    {copied && (
+                      <p className="text-success d-block">Code copied to clipboard!</p>
+                    )}
+                  </div>}
+              </div>
+              <div className="rounded shadow border m-2 p-4">
+                <h6>Multi Student</h6>
+
+                <div className="p-2 mt-4 highlight">
+
+                  The American public schools are suffering from accute shortage of teachers. if you hold teacher's certificate, and willing to teach full class of students, you are able to post your ad on the portal message board. and charge higher rate for your skills. Similarly, a school in a need for a substitute teacher, can find your account which is flagged accordingly.
+                </div>
+                <div className="form-check form-switch d-flex align-items-center gap-2 mt-4">
+                  <input disabled={!editMode}
+                    className="form-check-input "
+                    type="checkbox"
+                    role="switch"
+                    id="flexSwitchCheckChecked"
+                    onChange={() => setClassTeaching(!classTeaching)}
+                    checked={classTeaching}
+                  />
+                  <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
+                    My hourly Charge for teaching a public or private school class (up to 30 students).
+                    Only tutors that fill up this field are being shown to schools.
+                  </label>
+
+
+
+                  <Tooltip
+                    width="200px" text="Fill in your hourly amount for teaching a public 0r private school class (up to 30 students)."
+                    direction="left"
+                  >
+                    <FaInfoCircle size={20} color="#0096ff" />
+                  </Tooltip>
+                </div>
+                {
+                  classTeaching &&
+                  <>
+                    <div className="input-group  w-50">
+                      <span className="input-group-text">$</span>
+                      <input disabled={!editMode}
+                        type="text"
+                        required
+                        className="form-control m-0 py-4"
+                        aria-label="Amount (to the nearest dollar)"
+                        value={MultiStudentHourlyRate}
+                        onChange={(e) => {
+                          if (e.target.value < 1000)
+                            setMultiStudentHourlyRate(e.target.value)
+                        }}
+                      />
+                      <span className="input-group-text">.00</span>
+                    </div>
+                    <span className="small text-secondary">Amount should be less than $999 </span>
+                  </>
+                }
+              </div>
+            </div>
+            <div className="d-flex flex-column" style={{ width: "30%" }}>
+              <div className=" border m-2 shadow rounded p-4" >
+                <div
+                  style={{
+                    height: "50px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "auto",
+                  }}
+                >
+                  <input disabled={!editMode}
+                    type="checkbox"
+                    // onChange={(e) =>
+                    //   setActivateSubscriptionOption(e.target.checked ? true : false)
+                    // }
+                    // checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
+                    style={{ cursor: "pointer", height: "20px", width: "20px" }}
+                    name="subscription-plan"
+                    id="subscription-plan"
+                  />{" "}
+                  &nbsp;
+                  <label htmlFor="subscription-plan">
+                    <h6>Activate multi student option</h6>
+                  </label>
+                </div>
+
+                <div className="highlight">
+                  You must check the box above to activate this option. Your student
+                  will select one option from the table below when he/she want to
+                  save by paying upfront for multi sessions. The Academy will forward
+                  you 50% from the discounted amount upfront, and the balance upon completion. For example; student
+                  selects the 12 hours option, and you charge $45.00/hr, then $45.00
+                  X 12 = $540 -12% = $475.20 .
+                </div>
+
+                <h6>Multi Student hourly rate</h6>
+                <div
+                  className="rate-table"
+                  style={{
+                    pointerEvents: ActivateSubscriptionOption === "true"
+                      || ActivateSubscriptionOption === true ? "auto" : "none",
+                    opacity: "0.5",
+                  }}
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        {subscription_cols.map((item) => (
+                          <th key={item.Header}>{item.Header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {subscription_discount.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.hours}</td>
+                          <td>
+                            <input disabled={!editMode}
+                              onInput={(e) => { setSubscriptionPlan(e.target.value) }}
+                              type="radio"
+                              value={item.hours}
+                              checked={item.hours === "1-5"}
+                              name="student-subscription"
+                              id="student-subscription"
+                              style={{
+                                height: '20px',
+                                width: '20px',
+                              }}
+                            />
+
+                          </td>
+
+                          <td>{item.discount}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+              <div className="rounded shadow border m-2 p-4" >
                 <div className="dropdown" >
                   <label>Tutor Cancellation Policy</label>
                   <button
@@ -403,119 +605,6 @@ const Rates = () => {
                   </Tooltip>
                 </div>
               </div>
-            </div>
-
-            <div className="p-4 w-50 float-end">
-              <h6>Tutor's Own Students</h6>
-              <div className="highlight">
-                In order for you tutoring your own current students on this plateform,
-                forward the Code below to your students to be used with thier registration.
-                You need to generate new code for each one of your students.
-
-              </div>
-              <div className="form-check form-switch d-flex align-items-center gap-2">
-                <input disabled={!editMode}
-                  className="form-check-input "
-                  type="checkbox"
-                  role="switch"
-                  id="flexSwitchCheckChecked"
-                  onChange={() => setDiscountEnabled(!discountEnabled)}
-                  checked={discountEnabled}
-                />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
-                  My Student's code
-                </label>
-
-                <Tooltip width="200px" text="Provide the code below to be used by your student for this platform. The code will pair your student to your profile upon the setup of student's account. You must generate new code for each one of your students">
-                  <FaInfoCircle size={20} color="#0096ff" />
-                </Tooltip>
-              </div>
-              {
-                discountEnabled &&
-                <div>
-                  <h6 className="mt-4 d-inline">Your Student's new code</h6>
-                  <Tooltip text="Generate New Code">
-                    <IoMdRefresh
-                      size={20}
-                      className="d-inline"
-                      onClick={() => setDiscountCode(generateDiscountCode())}
-                    />
-                  </Tooltip>
-                  <div className="input-group w-50">
-                    <input disabled={!editMode}
-                      type="text"
-                      className="form-control m-0 h-100 p-2"
-                      value={discountCode}
-                      readOnly
-                    />
-
-                    <label
-                      className="m-0 input-group-text"
-                      type="button"
-                      id="inputGroupFileAddon04"
-                    >
-                      <IoMdCopy
-                        size={20}
-                        color="#0096ff"
-                        onClick={() => {
-                          copyToClipboard(discountCode);
-                          setCopied(true);
-                        }}
-                      />
-                    </label>
-                  </div>
-                  {copied && (
-                    <p className="text-success d-block">Code copied to clipboard!</p>
-                  )}
-                </div>}
-              <div className="p-2 mt-4 highlight">
-
-                The American public schools are suffering from accute shortage of teachers. if you hold teacher's certificate, and willing to teach full class of students, you are able to post your ad on the portal message board. and charge higher rate for your skills. Similarly, a school in a need for a substitute teacher, can find your account which is flagged accordingly.
-              </div>
-              <div className="form-check form-switch d-flex align-items-center gap-2 mt-4">
-                <input disabled={!editMode}
-                  className="form-check-input "
-                  type="checkbox"
-                  role="switch"
-                  id="flexSwitchCheckChecked"
-                  onChange={() => setClassTeaching(!classTeaching)}
-                  checked={classTeaching}
-                />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
-                  My hourly Charge for teaching a public or private school class (up to 30 students).
-                  Only tutors that fill up this field are being shown to schools.
-                </label>
-
-
-
-                <Tooltip
-                  width="200px" text="Fill in your hourly amount for teaching a public 0r private school class (up to 30 students)."
-                  direction="left"
-                >
-                  <FaInfoCircle size={20} color="#0096ff" />
-                </Tooltip>
-              </div>
-              {
-                classTeaching &&
-                <>
-                  <div className="input-group  w-50">
-                    <span className="input-group-text">$</span>
-                    <input disabled={!editMode}
-                      type="text"
-                      required
-                      className="form-control m-0 py-4"
-                      aria-label="Amount (to the nearest dollar)"
-                      value={MultiStudentHourlyRate}
-                      onChange={(e) => {
-                        if (e.target.value < 1000)
-                          setMultiStudentHourlyRate(e.target.value)
-                      }}
-                    />
-                    <span className="input-group-text">.00</span>
-                  </div>
-                  <span className="small text-secondary">Amount should be less than $999 </span>
-                </>
-              }
             </div>
             <Actions
               unSavedChanges={changesMade}

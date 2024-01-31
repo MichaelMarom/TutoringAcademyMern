@@ -39,10 +39,53 @@ const { subjects,
     put_ad,
     set_agreements_date_null_for_all } = require('../controllers/tutor');
 
+const Cookies = require("cookies");
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
 
 const TUTOR_ROUTES = express.Router();
+
+const verifyToken = async (req, res, next) => {
+    const publicKey = process.env.JWT_SECRET || `-----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7hBgNQubOaYJf8/le9+v
+    HzAQ7Jd1pcdDFxHRV4aSDQDMrwpR4q6OZA8XVaKDAS5YgxM01t/Dq2ooQV7MxrXt
+    qYD+FKmF9hBXmMpAZEijdrW7JdMyEN/qeWtM9g6qjRsIf/eh/fKY0r3EYcknxRZE
+    z3nEI49DzV1RwJn6oF0R2GSDCI+whs2cfEPTjYUaNcS2M+DawyCRGqIxdA0ZnRy4
+    z9BezsT3pgcD/RhNkMMoCcF5dO9WSzRIRlU72aaFuOZUmfMxdqGcSjDnWzR19mqt
+    boLdNuHclpzYT3iEbDs7GjRBj9sexq0m0w/aC1RAHIJjqUfMf5GY5hdkJ8/cT+yF
+    2wIDAQAB
+    -----END PUBLIC KEY-----`;
+    const cookies = new Cookies(req, res);
+    const sessToken = cookies.get("__session");
+    const token = req.headers.authorization.replace('Bearer ', "");
+
+    if (sessToken === undefined && token === undefined) {
+        res.status(401).json({ message: "not signed in" });
+        return;
+    }
+
+    try {
+        let decoded = "";
+
+        if (token) {
+            decoded = jwt.verify(token, publicKey);
+            res.status(200).json({ sessToken: decoded });
+            next()
+        } else {
+            decoded = jwt.decode(sessToken, publicKey);
+            res.status(200).json({ sessToken: decoded });
+            next()
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            message: error.message,
+        });
+        return;
+    }
+};
+
+// TUTOR_ROUTES.use(verifyToken);
 
 TUTOR_ROUTES.get('/tutor/tutor-status', get_tutor_status)
 TUTOR_ROUTES.get('/tutor/subjects', subjects)

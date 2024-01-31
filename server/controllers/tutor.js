@@ -78,17 +78,29 @@ const subject_already_exist = async (req, res) => {
 
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    find('NewTutorSubject', req.params, 'And', { subject: 'varchar' })
+                    // find('NewTutorSubject', req.params, 'And', { subject: 'varchar' })
+                    `SELECT *
+                    FROM NewTutorSubject
+                    WHERE LOWER(cast(subject as varchar)) = LOWER('${req.params.subject}');`
                 );
+
                 if (result.recordset.length) {
-                    throw new Error('Subject Request Already Sent!')
+                    return res.status(200).send({ message: "request exist", faculties: result.recordset.map(subject => subject.faculty) })
+
                 } else {
                     const result = await poolConnection.request().query(
-                        find('Subjects', { SubjectName: req.params.subject }, 'AND', { SubjectName: 'varchar' })
+                        // find('Subjects', { SubjectName: req.params.subject }, 'AND', { SubjectName: 'varchar' })
+                        `SELECT *
+                        FROM Subjects as s join Faculty as f on
+                        s.FacultyId = f.id
+                        WHERE LOWER(cast(SubjectName as varchar)) = LOWER('${req.params.subject}');`
                     );
-                    if (result.recordset.length) { throw new Error('Subject already exist in this Faculty') }
+                    console.log(result.recordset)
+                    if (result.recordset.length) {
+                        return res.status(200).send({ message: "subject exist", faculties: result.recordset.map(subject => subject.Faculty) })
+                    }
                     else {
-                        res.status(200).send({ subjectExist: false })
+                        res.status(200).send({ subjectExist: false, faculties:[] })
                     }
                 }
             }

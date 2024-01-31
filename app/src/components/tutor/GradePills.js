@@ -4,7 +4,6 @@ import { BsPlus, BsX } from 'react-icons/bs';
 
 const GradePills = ({ grade, editable, setGrades, grades, hasIcon = true }) => {
     const [selected, setSelected] = useState(false);
-    console.log(hasIcon, ';deff')
     const handleToggle = () => {
         setSelected(!selected);
         const filteredGrades = grades.filter(item => item !== grade)
@@ -13,7 +12,6 @@ const GradePills = ({ grade, editable, setGrades, grades, hasIcon = true }) => {
         } else
             setGrades([...grades, grade])
     };
-    console.log(grades)
 
     return (
         <div style={{

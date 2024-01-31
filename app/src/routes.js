@@ -26,6 +26,7 @@ import { moment } from './config/moment';
 import TutorProfile from "./pages/tutor/TutorProfile";
 import { useClerk, useSignIn, useSignUp, SignIn, SignUp, useAuth, useUser, SignedIn, SignedOut, RedirectToSignIn, useSession } from '@clerk/clerk-react';
 import { get_user_detail } from "./axios/auth";
+import { redirect_to_login } from "./helperFunctions/auth";
 
 const App = () => {
   let location = useLocation();
@@ -33,6 +34,7 @@ const App = () => {
   const dispatch = useDispatch();
   const { getToken, isLoaded, isSignedIn, userId, actor, sessionId } = useAuth();
   const { user: signinUser } = useUser()
+  const { signOut } = useClerk();
   const { user } = useSelector((state) => state.user);
   const { student } = useSelector((state => state.student))
   const { tutor } = useSelector((state => state.tutor))
@@ -48,9 +50,14 @@ const App = () => {
   const nullValues = ['undefined', 'null'];
 
   useEffect(() => {
+    console.log(userId,isSignedIn, 'lololllllll')
     if (userId) {
       const fetch = async () => {
         const data = await get_user_detail(userId);
+        console.log(data, data?.response?.data?.message, data?.response?.data?.message?.includes('expired'))
+        if (data?.response?.data?.message?.includes('expired') ||
+          data?.response?.data?.message?.includes('malformed')) { return redirect_to_login(navigate, signOut) }
+
         dispatch(setUser(data));
         localStorage.setItem('user', JSON.stringify(data));
         console.log(', data', data.SID && data.role === 'tutor')
@@ -99,6 +106,8 @@ const App = () => {
       return dispatch(setStudent({}));
     }
     const res = await get_my_data(studentUserId)
+    console.log(res, res?.response?.data?.message, res?.response?.data?.message?.includes('expired'))
+    if (res?.response?.data?.message?.includes('expired')) { return redirect_to_login(navigate, signOut) }
     dispatch(setStudent(res[1][0][0]));
   }
 

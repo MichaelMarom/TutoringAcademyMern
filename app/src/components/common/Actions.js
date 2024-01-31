@@ -78,8 +78,7 @@ const Actions = ({
     const onBack = () => {
         navigate(`/${currentUser}/${currentTabInfo.back}`)
     }
-    console.log(currentTab === STEPS[tutor.Step], tutor.Step, currentTab, !isStudentSide)
-    console.log(unSavedChanges, loading, backDisabled, !isBackTabExist)
+
     return (
         <div style={actionsStyle}>
             <div className="container">

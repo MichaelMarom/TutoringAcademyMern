@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { get_user_setup_detail, login } from '../axios/auth';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/auth_state/auth';
 import { ForgetPasswordModal } from '../components/auth/ForgetPasswordModal';
 import '../styles/auth.css'
 import Button from '../components/common/Button';
-import { useSignUp, useAuth, SignUp, SignIn, useSignIn } from "@clerk/clerk-react";
+import { useSignUp, useAuth, SignUp, SignIn, useSignIn, useSession } from "@clerk/clerk-react";
+import { DEFAULT_URL_AFTER_LOGIN } from '../constants/constants';
 
 
 const LoginPage = () => {
-    const navigate = useNavigate()
-    const { signIn } = useSignIn()
+    const navigate = useNavigate();
+    const { user } = useSelector(state => state.user)
+    const { signIn } = useSignIn();
+    const { isSignedIn, getToken } = useAuth()
+    const { isLoaded, session, isSignedIn: sessionSignedIn } = useSession()
     const [modalOpen, setOpenModel] = useState(false)
+
     const [loginForm, setLoginForm] = useState({
         email: '',
         password: '',
     });
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        console.log(isSignedIn, user, isLoaded, session, sessionSignedIn)
+        isSignedIn && navigate(DEFAULT_URL_AFTER_LOGIN['tutor'])
+    }, [isSignedIn, user])
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -29,7 +39,17 @@ const LoginPage = () => {
                 identifier: loginForm.email,
                 password: loginForm.password,
             });
-            console.log(result);
+            console.log(result)
+            if (result.status === "complete") {
+                // const token = await getToken({ template: "tutoring-academy-jwt-template" });
+                // if (token) {
+                //     localStorage.setItem("access_token", token);
+                //     console.log(user, 'signedin user')
+                //     //   loginRedirect(token, emailAddress);
+                // } else {
+                //     toast.error("Could not retrieve token from clerk");
+                // }
+            }
         }
         catch (err) {
             console.log(err.errors[0].message)

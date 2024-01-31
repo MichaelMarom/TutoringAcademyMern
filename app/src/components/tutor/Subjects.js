@@ -13,6 +13,9 @@ import SubjectCard from './SubjectCard';
 import Actions from '../common/Actions'
 import Loading from '../common/Loading';
 import { FaPlus } from 'react-icons/fa';
+import DebounceInput from '../common/DebounceInput';
+import Pill from '../common/Pill';
+import BTN_ICON from '../../images/button__icon.png'
 
 
 const Subjects = () => {
@@ -25,6 +28,7 @@ const Subjects = () => {
     const [showAddNewSubjModal, setShowAddNewSubjModal] = useState(false)
     const [newSubjRequestChecking, setNewSubjReqChecking] = useState(false)
     const [selectedFaculty, setSelectedFaculty] = useState(1);
+    const [subjectExistInFaculties, setSubjectInFaculties] = useState([])
     let [faculty, set_faculty] = useState([]);
     const [subjectsWithRates, setSubjectsWithRates] = useState([]);
 
@@ -35,6 +39,16 @@ const Subjects = () => {
         setNewSubjectData('')
         setNewSubjectFacultyData('')
         setNewSubjectReasonData('')
+    }
+
+    const handleSearch = async () => {
+        if (!newSubjectData.length) setSubjectInFaculties([])
+        else {
+            setNewSubjReqChecking(true)
+            const result = await new_subj_request_exist(newSubjectData);
+            if (result.data) setSubjectInFaculties(result.data.faculties)
+            setNewSubjReqChecking(false)
+        }
     }
 
     useEffect(() => {
@@ -50,7 +64,6 @@ const Subjects = () => {
 
     const getFacultiesOption = async () => {
         let list = await get_faculty()
-        console.log(list)
         const selectOptions = list.map((item) => {
             return (
                 <option data-id={item.Id} value={`${item.Faculty}-${item.Id}`}
@@ -83,13 +96,16 @@ const Subjects = () => {
     const checkRequestExist = async (e) => {
         e.preventDefault()
         setNewSubjReqChecking(true)
-        const result = await new_subj_request_exist(newSubjectData);
-        if (result.status === 200 && !result.subjectExist) {
-            uploadNewSubject()
-        }
-        else {
-            setNewSubjectData('')
-            toast.warning(result.response.data.message)
+        if (!newSubjectData.length) setSubjectInFaculties([])
+        else if (!subjectExistInFaculties.length) {
+            const result = await new_subj_request_exist(newSubjectData);
+            if (!result.subjectExist) {
+                uploadNewSubject()
+            }
+            else {
+                setNewSubjectData('')
+                toast.warning(result.response.data.message)
+            }
         }
         setNewSubjReqChecking(false)
     }
@@ -222,29 +238,50 @@ const Subjects = () => {
                             <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
                             {newSubjectFaculty}
                         </select>
-                        <input
-                            required className='form-control'
+                        <DebounceInput
+                            delay={1000}
                             value={newSubjectData}
-                            onChange={e => setNewSubjectData(e.target.value)} type='text'
-                            placeholder='Type your subject here' />
+                            setInputValue={setNewSubjectData}
+                            onChange={(e) => setNewSubjectData(e.target.value)}
+                            type='text'
+                            debouceCallback={handleSearch}
+                            placeholder='Type your subject here'
+                            className='form-control'
+                            required
+                        />
                         <textarea
                             style={{ height: "200px" }}
                             value={newSubjectReasonData}
                             required className='form-control'
                             onChange={e => setNewSubjectReasonData(e.target.value)}
                             placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />
+                        {
+                            !!subjectExistInFaculties.length &&
+                            <div className='border p-2 shadow rounded'>
+                                <h6>Subject Find in Below Faculties</h6>
+                                <div className='d-flex align-items-center flex-wrap'>
+                                    {subjectExistInFaculties.map(faculty =>
+                                        <Pill label={faculty} width='200px' />
+                                    )}
+                                </div>
+                            </div>
+                        }
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="action-btn btn" onClick={handleModalClose}>
                             <div className="button__content">
-
                                 <p className="button__text">Close</p>
                             </div>
                         </button>
                         <Button type="submit" className="action-btn btn" loading={newSubjRequestChecking}
                             loadingText={' checking if request already sent...'}>
                             <div className="button__content">
-                                <p className="button__text">Submit   </p>
+                                {/* <img src={BTN_ICON} alt={"btn__icon"} style={{
+                                    animation: newSubjRequestChecking ? "spin 2s linear infinite" : 'none',
+                                    wid
+
+                                }} /> */}
+                                <p className="button__text">Submit</p>
                             </div>
                         </Button>
                     </div>

@@ -21,7 +21,7 @@ const Footer = () => {
             let index = eval(window.localStorage.getItem('tutor_tab_index'))
             let new_index = index + 1;
             window.localStorage.setItem('tutor_tab_index', new_index)
-            console.log(typeof index)
+            //console.log(typeof index)
             let userData = window.localStorage.getItem('tutor_screen_name');
             if(userData !== null){
                 navigate(`tutor/${urls[new_index]}`)
@@ -67,7 +67,7 @@ const Footer = () => {
     let save = () => {
         dispatch(setSaveTo(window.localStorage.getItem('tutor_tab_index')));
         if(window.localStorage.getItem('tab_index')=='7') {
-            console.log('save tutor');
+            //console.log('save tutor');
         }
     }
     return (

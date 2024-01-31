@@ -38,6 +38,8 @@ import Edit from "../pages/tutor/Add/Edit";
 import Create from "../pages/tutor/Add/Create";
 import Bid from "../pages/tutor/Add/Bid";
 import List from "../pages/tutor/Add/List";
+import Marketing from "../pages/Admin/Marketing";
+import AdminChat from '../pages/Admin/Chat'
 
 const rolePermissions = {
   tutor: [
@@ -86,8 +88,9 @@ const rolePermissions = {
     { path: "/admin/tutor-data", component: <TutorTable /> },
     { path: "/admin/student-data", component: <StudentTable /> },
     { path: "/admin/new-subject", component: <TutorNewSubject /> },
-    { path: "/admin/tos", component: <TOS /> },
-    { path: "/admin/intro", component: <PlatformIntro /> },
+    { path: "/admin/marketing", component: <Marketing /> },
+    { path: "/admin/chat", component: <AdminChat /> },
+    { path: "/admin/accounting", component: null },
 
   ],
   common: [

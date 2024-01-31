@@ -1403,7 +1403,7 @@ export const PROFILE_STATUS = {
   ACTIVE: 'active',
   SUSPENDED: "suspended",
   CLOSED: "closed",
-  DISAPPROVED:'disapproved'
+  DISAPPROVED: 'disapproved'
 }
 
 export const statesColours = {
@@ -1413,4 +1413,10 @@ export const statesColours = {
   "suspended": "#9210e0",
   "disapproved": "#dd1919",
   "closed": "#000",
+}
+
+export const DEFAULT_URL_AFTER_LOGIN = {
+  admin: "/admin/tutor-data",
+  tutor: "/tutor/intro",
+  student: "/student/intro"
 }

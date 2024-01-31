@@ -96,7 +96,7 @@ const Signup = () => {
       });
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
-        const token = await getToken();
+        const token = await getToken({ template: "tutoring-academy-jwt-template" });
         if (token !== null) {
           localStorage.setItem("access_token", token);
           const result = await signup({

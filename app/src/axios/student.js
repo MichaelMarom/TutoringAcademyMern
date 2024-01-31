@@ -1,4 +1,5 @@
-import { apiClient } from "./config"
+import { toast } from "react-toastify"
+import { apiClient } from "./config";
 
 export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell, grade,
     add1, add2, city, state, zipCode, country, timeZone,
@@ -15,12 +16,11 @@ export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
 }
-
 
 
 export let get_student_setup = (AcademyId) => {
@@ -36,7 +36,7 @@ export let get_student_setup = (AcademyId) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
@@ -68,7 +68,7 @@ export let get_student_grade = () => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
@@ -83,7 +83,7 @@ export let get_student_market_data = (id) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
@@ -107,7 +107,7 @@ export let upload_student_short_list = (items) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
@@ -128,7 +128,6 @@ export let get_student_short_list = async (student) => {
 
 export let get_my_data = (AcademyId) => {
     return new Promise((resolve, reject) => {
-
         apiClient.get('/student/my-data', {
             params: {
                 AcademyId
@@ -138,9 +137,10 @@ export let get_my_data = (AcademyId) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                console.log(err)
+                toast.error(err?.response?.data?.message || "Error Completing the request")
+                // // reject(err)
             })
-
     })
 }
 
@@ -154,7 +154,7 @@ export let get_student_short_list_data = (id) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })

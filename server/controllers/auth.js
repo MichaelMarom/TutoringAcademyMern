@@ -135,8 +135,14 @@ const forget_password = async (req, res) => {
     })
 }
 
+const token_auth = (token) => {
+    const data = jwt.verify(token, process.env.JWT_SECRET)
+    console.log(data)
+}
+
 module.exports = {
     login,
+    token_auth,
     get_user_detail,
     forget_password,
     signup,

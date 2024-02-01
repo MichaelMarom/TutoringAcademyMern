@@ -256,7 +256,7 @@ const Rates = () => {
           <form onSubmit={handleSubmit} className="d-flex justify-content-center" style={{ width: "100%", gap: "3%" }}>
             <div className="d-flex flex-column" style={{ width: "30%" }}>
               <div className=" border m-2 shadow rounded p-4" >
-                <div 
+                <div
                   style={{
                     height: "30px",
                     display: "flex",
@@ -449,44 +449,64 @@ const Rates = () => {
                     <FaInfoCircle size={20} color="#0096ff" />
                   </Tooltip>
                 </div>
+
                 {
                   discountEnabled &&
-                  <div>
-                    <h6 className="mt-4 d-inline">Your Student's new code</h6>
-                    <Tooltip text="Generate New Code">
-                      <IoMdRefresh
-                        size={20}
-                        className="d-inline"
-                        onClick={() => setDiscountCode(generateDiscountCode())}
-                      />
-                    </Tooltip>
-                    <div className="input-group w-50">
-                      <input disabled={!editMode}
-                        type="text"
-                        className="form-control m-0 h-100 p-2"
-                        value={discountCode}
-                        readOnly
-                      />
+                  <div className="d-flex w-100 justify-content-between align-items-end">
+                    <div>
+                      <h6 className="mt-4 d-inline">Your Student's new code</h6>
+                      <Tooltip text="Generate New Code">
+                        <IoMdRefresh
+                          size={20}
+                          className="d-inline"
+                          onClick={() => setDiscountCode(generateDiscountCode())}
+                        />
+                      </Tooltip>
+                      <div className="input-group">
+                        <input disabled={!editMode}
+                          type="text"
+                          className="form-control m-0 h-100 p-2"
+                          value={discountCode}
+                          readOnly
+                        />
 
+                        <label
+                          className="m-0 input-group-text"
+                          type="button"
+                          id="inputGroupFileAddon04"
+                        >
+                          <IoMdCopy
+                            size={20}
+                            color="#0096ff"
+                            onClick={() => {
+                              copyToClipboard(discountCode);
+                              setCopied(true);
+                            }}
+                          />
+                        </label>
+                      </div>
+                      {copied && (
+                        <p className="text-success d-block">Code copied to clipboard!</p>
+                      )}
+                    </div>
+                    <div className="input-group w-50">
                       <label
                         className="m-0 input-group-text"
                         type="button"
                         id="inputGroupFileAddon04"
                       >
-                        <IoMdCopy
-                          size={20}
-                          color="#0096ff"
-                          onClick={() => {
-                            copyToClipboard(discountCode);
-                            setCopied(true);
-                          }}
-                        />
+                        Select Subject
                       </label>
+                      <select className="form-select" value={''}>
+                        <option value='' disabled>Select Subject</option>
+                        <option value='englidh' disabled>englidh</option>
+                        <option value='math' disabled>urdu</option>
+                        <option value='urdu' disabled>math</option>
+                      </select>
                     </div>
-                    {copied && (
-                      <p className="text-success d-block">Code copied to clipboard!</p>
-                    )}
-                  </div>}
+                  </div>
+                }
+
               </div>
               <div className="rounded shadow border m-2 p-4">
                 <h6>Multi Student</h6>
@@ -571,7 +591,10 @@ const Rates = () => {
                 </div>
 
                 <div className="highlight">
-                  Select the discount applies to the number of students in the group, or create your own discount for a group over 10 students. Or a school class.
+                  You or your student can create a group that reflects the discount from the table below. 
+                  Example; if you charge $50/hr then, and the group contain 6 students, then each student pays $30.50  
+                  Only one student responsible for the account. if one of the group is missing a session,
+                  there is no refund.
                 </div>
 
                 <h6>Multi Student hourly rate</h6>

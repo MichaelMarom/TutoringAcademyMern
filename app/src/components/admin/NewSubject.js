@@ -6,11 +6,9 @@ import { toast } from 'react-toastify';
 import { RxCrossCircled } from "react-icons/rx";
 
 const TutorTable = () => {
-
     let [data, setData] = useState([])
     const [loading, setIsLoading] = useState(false);
     const [actionTaken, setActionTaken] = useState()
-
 
     const COLUMNS = [
         {
@@ -40,7 +38,6 @@ const TutorTable = () => {
 
     ];
 
-
     useEffect(() => {
         setIsLoading(true)
         get_tutor_new_subject()
@@ -51,7 +48,6 @@ const TutorTable = () => {
             })
             .catch((err) => console.log(err))
     }, [actionTaken])
-
 
     let acceptNewSubject = async (id, subject, AcademyId) => {
         const response = await post_new_subject(id, subject, AcademyId)
@@ -111,6 +107,7 @@ const TutorTable = () => {
                                                         onClick={() => acceptNewSubject(item.facultyId, item.subject, item.AcademyId[0])}
                                                         className='action-btn btn btn-sm'>
                                                         <div className="button__content">
+                                                           
                                                             <p className="button__text">Accept   </p>
                                                         </div>
                                                     </button>

@@ -3,11 +3,11 @@ import StudentLayout from "../../layouts/StudentLayout";
 
 
 const StudentSetup = () => {
-    return ( 
-        <StudentLayout>
+    return (
+        <StudentLayout showLegacyFooter={false}>
             <StudentSetupComp />
         </StudentLayout>
-     );
+    );
 }
- 
+
 export default StudentSetup;

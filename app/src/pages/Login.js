@@ -41,14 +41,14 @@ const LoginPage = () => {
             });
             console.log(result)
             if (result.status === "complete") {
-                // const token = await getToken({ template: "tutoring-academy-jwt-template" });
-                // if (token) {
-                //     localStorage.setItem("access_token", token);
-                //     console.log(user, 'signedin user')
-                //     //   loginRedirect(token, emailAddress);
-                // } else {
-                //     toast.error("Could not retrieve token from clerk");
-                // }
+                const token = await getToken();
+                if (token) {
+                    localStorage.setItem("access_token", token);
+                    console.log(user, 'signedin user')
+                    //   loginRedirect(token, emailAddress);
+                } else {
+                    toast.error("Could not retrieve token from clerk");
+                }
             }
         }
         catch (err) {

@@ -1,4 +1,4 @@
-const { upload_form_one, get_student_setup, get_student_grade, get_tutor_subject, upload_student_short_list, get_student_short_list,
+const { upload_setup_info, get_student_setup, get_student_grade, get_tutor_subject, upload_student_short_list, get_student_short_list,
     get_student_short_list_data,
     get_student_market_data,
     post_student_bookings,
@@ -29,7 +29,7 @@ STUDENT_ROUTES.put('/student/short-list/:AcademyId/:Student/:Subject', parser, u
 
 STUDENT_ROUTES.get('/student/short-list-data', get_student_short_list_data)
 STUDENT_ROUTES.get('/student/market-data', get_student_market_data)
-STUDENT_ROUTES.post('/student/setup', parser, upload_form_one)
+STUDENT_ROUTES.post('/student/setup', parser, upload_setup_info)
 //bookings
 STUDENT_ROUTES.post('/student/booking', parser, post_student_bookings)
 STUDENT_ROUTES.get('/student/tutor/bookings/:tutorId', get_tutor_bookings)

@@ -12,7 +12,7 @@ import { FACULTIES } from '../../constants/constants';
 import SubjectCard from './SubjectCard';
 import Actions from '../common/Actions'
 import Loading from '../common/Loading';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaSearch } from 'react-icons/fa';
 import DebounceInput from '../common/DebounceInput';
 import Pill from '../common/Pill';
 import BTN_ICON from '../../images/button__icon.png'
@@ -31,6 +31,7 @@ const Subjects = () => {
     const [subjectExistInFaculties, setSubjectInFaculties] = useState([])
     let [faculty, set_faculty] = useState([]);
     const [subjectsWithRates, setSubjectsWithRates] = useState([]);
+    const [phase, setPhase] = useState('search')
 
     const [loadingSubs, setLoadingSubs] = useState(false)
 
@@ -39,6 +40,8 @@ const Subjects = () => {
         setNewSubjectData('')
         setNewSubjectFacultyData('')
         setNewSubjectReasonData('')
+        setSubjectInFaculties([])
+        setPhase('search')
     }
 
     const handleSearch = async () => {
@@ -46,7 +49,8 @@ const Subjects = () => {
         else {
             setNewSubjReqChecking(true)
             const result = await new_subj_request_exist(newSubjectData);
-            if (result.data) setSubjectInFaculties(result.data.faculties)
+            if (result.data) setSubjectInFaculties(result.data.faculties);
+            if (!result.data.faculties.length) setPhase('add')
             setNewSubjReqChecking(false)
         }
     }
@@ -118,7 +122,8 @@ const Subjects = () => {
                     setNewSubjectData('')
                     setNewSubjectFacultyData('')
                     setNewSubjectReasonData('')
-                    toast.success("Subject Added Succefullu. Please wait for Admin to approve your request")
+                    toast.success("Subject Added Succefully. Please wait for Admin to approve your request");
+                    setShowAddNewSubjModal(false)
                 } else {
                     toast.error("Error While Sending Request of New Subject")
                 }
@@ -228,18 +233,14 @@ const Subjects = () => {
             <CenteredModal
                 show={showAddNewSubjModal}
                 handleClose={handleModalClose}
-                title={'Add New Subject'}
+                title={'To Search If your subject exist , please type it on above field'}
             >
                 <form onSubmit={checkRequestExist}>
 
                     <div className='d-flex flex-column' style={{ gap: "20px" }}>
-                        <select className='form-select'
-                            required onChange={e => setNewSubjectFacultyData(e.target.value)} type='text' >
-                            <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
-                            {newSubjectFaculty}
-                        </select>
+
                         <DebounceInput
-                            delay={1000}
+                            delay={500}
                             value={newSubjectData}
                             setInputValue={setNewSubjectData}
                             onChange={(e) => setNewSubjectData(e.target.value)}
@@ -249,41 +250,69 @@ const Subjects = () => {
                             className='form-control'
                             required
                         />
-                        <textarea
+                        {!subjectExistInFaculties.length && !!newSubjectData.length &&
+                            !!newSubjectReasonData.length &&
+                            <select className='form-select'
+                                required onChange={e => setNewSubjectFacultyData(e.target.value)} type='text' >
+                                <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
+                                {newSubjectFaculty}
+                            </select>
+                        }
+
+                        {!subjectExistInFaculties.length && phase === 'add' && <textarea
                             style={{ height: "200px" }}
                             value={newSubjectReasonData}
                             required className='form-control'
                             onChange={e => setNewSubjectReasonData(e.target.value)}
-                            placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />
+                            placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />}
                         {
-                            !!subjectExistInFaculties.length &&
-                            <div className='border p-2 shadow rounded'>
-                                <h6>Subject Find in Below Faculties</h6>
-                                <div className='d-flex align-items-center flex-wrap'>
-                                    {subjectExistInFaculties.map(faculty =>
-                                        <Pill label={faculty} width='200px' />
-                                    )}
+                            !!subjectExistInFaculties.length ?
+                                <div className='border p-2 shadow rounded'>
+                                    <h6>The Subject found in the Faculty below.</h6>
+                                    <div className='d-flex align-items-center flex-wrap'>
+                                        {subjectExistInFaculties.map(faculty =>
+                                            <Pill label={faculty} width='200px' />
+                                        )}
+                                    </div>
+                                </div> :
+                                phase !== 'search' && <div className='border p-2 shadow rounded'>
+                                    <p>This Subject does not exist.
+                                        To add the subject, select also the fauclty to be considered.
+                                    </p>
                                 </div>
-                            </div>
                         }
                     </div>
-                    <div className="modal-footer">
-                        <button type="button" className="action-btn btn" onClick={handleModalClose}>
-                            <div className="button__content">
-                                <p className="button__text">Close</p>
-                            </div>
-                        </button>
-                        <Button type="submit" className="action-btn btn" loading={newSubjRequestChecking}
-                            loadingText={' checking if request already sent...'}>
-                            <div className="button__content">
-                                {/* <img src={BTN_ICON} alt={"btn__icon"} style={{
-                                    animation: newSubjRequestChecking ? "spin 2s linear infinite" : 'none',
-                                    wid
+                    <div className="mt-4 d-flex justify-content-between">
+                        <div>
+                            {
+                                newSubjRequestChecking ? <Loading loadingText='searching subject...' iconSize='20px' height='20px' />
+                                    : null
+                            }
+                        </div>
+                        <div>
+                            <button type="button" className="action-btn btn" onClick={handleModalClose}>
+                                <div className="button__content">
+                                    <p className="button__text">Close</p>
+                                </div>
+                            </button>
+                            <Button type="submit" className="action-btn btn" loading={newSubjRequestChecking}
+                                disabled={newSubjRequestChecking || subjectExistInFaculties.length}>
+                                <div className="button__content align-items-center">
+                                    {!subjectExistInFaculties ?
+                                        <FaPlus style={{
+                                            animation: newSubjRequestChecking ? "spin 2s linear infinite" : 'none',
+                                            marginBottom: "5px"
+                                        }} /> :
+                                        <FaSearch style={{
+                                            animation: newSubjRequestChecking ? "spin 2s linear infinite" : 'none',
+                                            marginBottom: "5px"
+                                        }} />
+                                    }
+                                    <p className="button__text">{phase === 'search' ? 'Search' : 'Add'}</p>
+                                </div>
+                            </Button>
+                        </div>
 
-                                }} /> */}
-                                <p className="button__text">Submit</p>
-                            </div>
-                        </Button>
                     </div>
                 </form>
             </CenteredModal>

@@ -1,16 +1,17 @@
 import { toast } from "react-toastify"
 import { apiClient } from "./config";
 
-export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell, grade,
+export let upload_form_one = (fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
+    is_18, pwd, cell, grade,
     add1, add2, city, state, zipCode, country, timeZone,
-    parent_fname, parent_lname, parent_email, photo, acadId,
+    photo, acadId,
     parentConsent, userId) => {
 
     return new Promise((resolve, reject) => {
-
-
         apiClient.post('/student/setup', {
-            fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId
+            fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
+            is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, photo, acadId,
+            parentConsent, userId
         })
             .then((result) => {
                 resolve(result.data)

@@ -7,6 +7,11 @@ import { setStudent } from '../../redux/student_store/studentData';
 import Tooltip from '../common/ToolTip';
 import { FaInfoCircle } from 'react-icons/fa';
 import { Countries, GMT, GRADES, STATES, US_STATES } from '../../constants/constants';
+import { PhoneInput } from 'react-international-phone';
+import Actions from '../common/Actions';
+import { toast } from 'react-toastify';
+import Button from '../common/Button';
+import BTN_ICON from '../../images/button__icon.png';
 
 const StudentSetup = () => {
     const dispatch = useDispatch()
@@ -26,6 +31,7 @@ const StudentSetup = () => {
     let [country, set_country] = useState('')
     let [timeZone, set_timeZone] = useState('')
     let [is_18, set_is_18] = useState('')
+    console.log(is_18)
     let [lang, set_lang] = useState('')
     let [parentConsent, set_parentConsent] = useState(false)
     let [grade, set_grade] = useState('')
@@ -37,7 +43,13 @@ const StudentSetup = () => {
 
 
     let [countryList, setCountryList] = useState('')
-    let [stateList, setStateList] = useState('')
+    let [stateList, setStateList] = useState('');
+    const [parentAEmail, setParentAEmail] = useState('');
+    const [parentBEmail, setParentBEmail] = useState('');
+    const [parentAName, setParentAName] = useState('');
+    const [parentBName, setParentBName] = useState('');
+    const [secLan, setSecLang] = useState('')
+
     let [lang_list, setlang_list] = useState([
         'English',
         'French',
@@ -52,16 +64,25 @@ const StudentSetup = () => {
     const [userId, setUserId] = useState('')
     const { user } = useSelector(state => state.user)
     const { student } = useSelector(state => state.student)
+    const [saving, setSaving] = useState(false)
+    const [code, set_code] = useState('')
 
     let saver = async () => {
-
-        let response = await upload_form_one(fname, mname, sname, user.role === 'student' ? user.email : email, lang, is_18,
-            pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone,
-            parent_fname, parent_lname, parent_email, photo, acadId, parentConsent,
+        setSaving(true)
+        let response = await upload_form_one(fname, mname, sname, user.role === 'student' ? user.email : email,
+            lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
+            is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone,
+            photo, acadId, parentConsent,
             user.role === 'student' ? user.SID : userId)
-        const res = await get_my_data(localStorage.getItem('student_user_id'));
-        console.log(res[1][0][0])
-        dispatch(setStudent(res[1][0][0]))
+        if (response.bool) {
+            toast.success('success')
+            const res = await get_my_data(localStorage.getItem('student_user_id'));
+            dispatch(setStudent(res[1][0][0]))
+        }
+        else {
+            toast.error('failed')
+        }
+        setSaving(false)
         return response;
     }
 
@@ -100,10 +121,11 @@ const StudentSetup = () => {
                             list[1].checked = true
                         }
                     }
-                    set_parent_lname(data.ParentFirstName)
-                    set_parent_fname(data.ParentLastName)
-                    set_parent_email(data.ParentEmail)
-
+                    setParentAName(data.ParentAName)
+                    setParentBName(data.ParentBName)
+                    setParentAEmail(data.ParentAEmail)
+                    setParentBEmail(data.ParentBEmail)
+                    setSecLang(data.SecLan)
                 }
             }
         }
@@ -277,24 +299,26 @@ const StudentSetup = () => {
     }
 
     useEffect(() => {
-
-
         let list = Countries.map((item) =>
-            <option key={item.Country} className={item.Country} selected={item.Country === country ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Country}>{item.Country}</option>
+            <option key={item.Country} className={item.Country} selected={item.Country === country ? 'selected' : ''}
+                style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Country}>{item.Country}</option>
         );
-        let head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Country</option>
+        let head = <option key='null'
+            style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Country</option>
 
         list.unshift(head);
         setCountryList(list)
 
 
         let gmt_list = GMT.map((item) =>
-            <option key={item.GMT} className={item.GMT} selected={item.GMT === timeZone ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.GMT}>{item.GMT}</option>
+            <option key={item.GMT} className={item.GMT} selected={item.GMT === timeZone ? 'selected' : ''}
+                style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.GMT}>{item.GMT}</option>
         );
-        let gmt_head = <option key='null' style={{
-            height: '50px', width: '100%',
-            outline: 'none', padding: '0 10px 0 10px', borderRadius: '0'
-        }} value=''>GMT</option>
+        let gmt_head = <option key='null'
+            style={{
+                height: '50px', width: '100%',
+                outline: 'none', padding: '0 10px 0 10px', borderRadius: '0'
+            }} value=''>GMT</option>
 
         gmt_list.unshift(gmt_head);
         setGMTList(gmt_list)
@@ -303,18 +327,22 @@ const StudentSetup = () => {
 
 
         let grades_list = GRADES.map((item) =>
-            <option key={item.id} className={item.Grade} selected={item.Grade === grade ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Grade}>{item.Grade}</option>
+            <option key={item.id} className={item.Grade} selected={item.Grade === grade ? 'selected' : ''}
+                style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Grade}>{item.Grade}</option>
         );
-        let grades_head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Grade</option>
+        let grades_head = <option key='null'
+            style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Grade</option>
 
         grades_list.unshift(grades_head);
         setGradeList(grades_list)
 
 
         let states_list = STATES.map((item) =>
-            <option key={item.State} className={item.State} selected={item.State === state ? 'selected' : ''} style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.State}>{item.State}</option>
+            <option key={item.State} className={item.State} selected={item.State === state ? 'selected' : ''}
+                style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.State}>{item.State}</option>
         );
-        let state_head = <option key='null' style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>State</option>
+        let state_head = <option key='null'
+            style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>State</option>
 
         states_list.unshift(state_head);
         setStateList(states_list)
@@ -351,179 +379,296 @@ const StudentSetup = () => {
             <div className="save-overlay">
                 <span className="save_loader"></span>
             </div>
-            <form action="">
-                <div className="tutor-setup-top-field" style={{ height: '100%' }}>
+            <form onSubmit={saver}>
+                <div className="d-flex justify-content-center container mt-4"
+                    style={{ height: '100%', gap: "3%" }}>
 
-                    <div className="profile-photo-cnt">
+                    <div className="profile-photo-cnt"
+                        style={{ width: "30%" }}>
                         <p>{typeof dateTime === 'object' ? '' : dateTime}</p>
 
-                        <h5 style={{ whiteSpace: 'nowrap' }}>Profile Photo</h5>
-                        <input type="file" data-type='file' onChange={handleImage} style={{ display: 'none' }} id="photo" />
+                        <h5
+                            style={{ whiteSpace: 'nowrap' }}>Profile Photo</h5>
+                        <input required className="form-control" type="file" data-type='file' onChange={handleImage}
+                            style={{ display: 'none' }} id="photo" />
                         <div className="tutor-tab-photo-frame">
-                            <img src={photo} style={{ height: "100%", width: "100%" }} alt='photo' />
+                            <img src={photo}
+                                style={{ height: "100%", width: "100%" }} alt='photo' />
                         </div>
-                        <label id='btn' htmlFor="photo">
-                            Upload
+                        <label id='btn' className='action-btn mt-4' htmlFor="photo">
+                            <div className='button__content'>
+                                <div className='button__text'>Upload</div>
+                            </div>
                         </label>
 
-                    </div>
-
-                    <div className="profile-details-cnt" >
-
-                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_fname(e.target.value)} placeholder='First Name' value={fname} type="text" id="fname" style={{ float: 'right' }} />
-                        </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_mname(e.target.value)} placeholder='Middle Name' value={mname} type="text" id="mname" style={{ float: 'right' }} />
-                        </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_sname(e.target.value)} placeholder='Last Name' value={sname} type="text" id="sname" style={{ float: 'right' }} />
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                            <input
-                                placeholder='Email'
-                                value={user.role === 'student' ? user.email : email}
-                                type="text" id="email"
-                                style={{ float: 'right' }} readonly />
-
-                            <div className='err-mssg' >
-                                Email already exist, Please try something else...
-                            </div>
-
-                        </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_cell(e.target.value)} placeholder='Cell Phone' value={cell} type="text" id="cellphn" style={{ float: 'right' }} />
-                        </div>
-
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <select onInput={e => set_lang(e.target.value)} id="state" value={lang}
-                                style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
-                                <option value="null">Select Language</option>
-                                {
-                                    lang_list.map(item =>
-
-                                        <option selected={item === lang ? 'selected' : ''} value={item}>{item}</option>
-                                    )
-                                }
-
-                            </select>
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <select dname="" id="" onInput={e => set_is_18(e.target.value)} style={{ float: 'right', width: '300px', margin: '0  0 10px 0', padding: '0 8px 0 8px', cursor: 'pointer' }}>
-                                <option value="null">Are You Over 18 ?</option>
-                                <option selected={is_18 === 'yes' ? 'selected' : ''} value="yes">Yes</option>
-                                <option selected={is_18 === 'no' ? 'selected' : ''} value="no">No</option>
-                            </select>
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <select onInput={e => set_grade(e.target.value)} id="state" value={grade} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
-                                {
-                                    GradeList
-                                }
-
-                            </select>
-
-                        </div>
-
-                        <div style={{
-                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                            width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'
-                        }}>
-
-                            <h5>Parent(s) video recording consent</h5>
-                            <div className="form-check form-switch d-flex gap-3" style={{ fontSize: "16px " }}>
-                                <input
-                                    className="form-check-input "
-                                    type="checkbox"
-                                    role="switch"
-                                    style={{
-                                        width: "30px",
-                                        height: "15px"
-                                    }}
-                                    onChange={() => { set_parentConsent(!parentConsent) }}
-                                    checked={parentConsent === "true" || parentConsent === true}
-                                />
-                                <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked" >
-                                    Parent(s) consent to record lesson.
-                                </label>
-                                <Tooltip text="Enable this switch to consent video recording for ensuring quality of service. The video clip stored for 30 days, then be deleted from The academy servers." width="200px">
-                                    <FaInfoCircle size={18} color="#0096ff" />
-                                </Tooltip>
+                        <div className='rounded border shadow p-2 mt-4'>
+                            <h6>Write tutor code here</h6>
+                            <div className='mb-2 d-flex align-items-center justify-content-center' style={{ gap: '2%' }}>
+                                <input className="form-control " style={{ width: "65%", }}
+                                    onChange={e => set_code(e.target.value)}
+                                    placeholder='Code' type="text" value={code} />
+                                <Button className='action-btn'>
+                                    <div className="button__content">
+                                        <div className="button__icon">
+                                            <img src={BTN_ICON} alt={"btn__icon"} style={{
+                                                animation: false ? "spin 2s linear infinite" : 'none',
+                                            }} />
+                                        </div>
+                                        <p className="button__text">Connect   </p>
+                                    </div>
+                                </Button>
                             </div>
                         </div>
-
-
                     </div>
+                    <div className='d-flex flex-column' style={{ width: "66%" }}>
+                        <div className='d-flex' style={{ width: "100%", gap: "3%" }}>
+
+                            <div className="profile-details-cnt"
+                                style={{ width: "48%" }}>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">
+                                        First Name</label>
+                                    <input required className="form-control"
+                                        onInput={e => set_fname(e.target.value)} placeholder='First Name'
+                                        value={fname} type="text" id="fname"
+                                    />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Middle Name</label>
+                                    <input required className="form-control" onInput={e => set_mname(e.target.value)} placeholder='Middle Name' value={mname} type="text" id="mname"
+                                    />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Last Name</label>
+                                    <input required className="form-control" onInput={e => set_sname(e.target.value)} placeholder='Last Name' value={sname} type="text" id="sname"
+                                    />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Email</label>
+                                    <input required className="form-control"
+                                        placeholder='Email'
+                                        value={user.role === 'student' ? user.email : email}
+                                        type="text" id="email"
+
+                                        readonly />
+
+                                    <div className='err-mssg' >
+                                        Email already exist, Please try something else...
+                                    </div>
+
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">CellPhone</label>
+                                    <PhoneInput
+                                        defaultCountry="us"
+                                        value={cell}
+                                        onChange={(cell) => set_cell(cell)}
+                                        required
+                                        style={{ width: "65%" }}
+                                    />
+                                </div>
 
 
 
-                    <div className="profile-details-cnt" style={{ float: 'left' }}>
 
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_add1(e.target.value)} placeholder='Address 1' value={add1} type="text" id="add1" style={{ float: 'right' }} />
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Age</label>
+                                    <select required className="form-select " dname="" id="" onInput={e => set_is_18(e.target.value)}>
+                                        <option value="null">Are You Over 18 ?</option>
+                                        <option selected={is_18 === 'yes' ? 'selected' : ''} value="yes">Yes</option>
+                                        <option selected={is_18 === 'no' ? 'selected' : ''} value="no">No</option>
+                                    </select>
+                                </div>
+
+                                <div className='input-group mb-2' >
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">GMT</label>
+
+                                    <select required className="form-select " onInput={e => set_timeZone(e.target.value)} id="timeZone" value={timeZone}>
+                                        {GMTList}
+
+                                    </select>
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Grade</label>
+                                    <select required className="form-select " onInput={e => set_grade(e.target.value)} id="state" value={grade}
+                                    >
+                                        {
+                                            GradeList
+                                        }
+
+                                    </select>
+
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Native Language</label>
+                                    <select required className="form-select " onInput={e => set_lang(e.target.value)} id="state" value={lang}
+
+                                    >
+                                        <option value="null">Select Language</option>
+                                        {
+                                            lang_list.map(item =>
+
+                                                <option selected={item === lang ? 'selected' : ''} value={item}>{item}</option>
+                                            )
+                                        }
+
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div className="profile-details-cnt" style={{ width: "48%" }}>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Address1</label>
+
+                                    <input required className="form-control "
+                                        onInput={e => set_add1(e.target.value)} placeholder='Address 1' value={add1}
+                                        type="text" id="add1"
+                                    />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Address2</label>
+                                    <input className="form-control" onInput={e => set_add2(e.target.value)} placeholder='Optional' value={add2} type="text" id="add2"
+                                    />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">City</label>
+                                    <input required className="form-control" onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" value={city} id="city"
+                                    />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">State</label>
+                                    <select required className="form-select " onInput={e => set_state(e.target.value)} id="state"
+                                        value={state}
+                                    >
+                                        {stateList}
+
+                                    </select>
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Zip</label>
+                                    <input required className="form-control" onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip"
+                                    />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Country</label>
+
+                                    <select required className="form-select " onInput={e => set_country(e.target.value)}
+                                        id="country" value={country}
+                                    >
+                                        {countryList}
+
+                                    </select>
+
+                                </div>
+                                <div className='input-group mb-2' >
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">UTC</label>
+
+                                    <input className='form-control' value={dateTime} />
+                                </div>
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text small" style={{ width: "35%" }} for="inputGroupSelect01">Other Language(s)</label>
+                                    <select className="form-select " placeholder='Optional'
+                                        onChange={e => setSecLang(e.target.value)} id="state" value={secLan}
+                                    >
+                                        <option value="null">Select Language</option>
+                                        {
+                                            lang_list.map(item =>
+
+                                                <option selected={item === lang ? 'selected' : ''}
+                                                    value={item}>{item}</option>
+                                            )
+                                        }
+
+                                    </select>
+                                </div>
+
+                            </div>
                         </div>
+                        <div className='d-flex flex-column border rounded shadow p-2 m-2'
+                            style={{ gap: "2%" }}>
+                            <h6 className='mb-3'>Parent Info</h6>
+                            <div className='d-flex' style={{ gap: "2%" }}>
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Email</label>
+                                    <input required className="form-control"
+                                        onChange={e => setParentAEmail(e.target.value)}
+                                        placeholder='Parent A Email'
+                                        type="email" value={parentAEmail} />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Name</label>
+                                    <input required className="form-control"
+                                        onChange={e => setParentAName(e.target.value)} placeholder='Parent A Name'
+                                        type="text" value={parentAName} />
+                                </div>
+                            </div>
+                            <div className='d-flex' style={{ gap: "2%" }}>
+                                <div className='input-group mb-2'>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Email</label>
+                                    <input required className="form-control"
+                                        onChange={e => setParentBEmail(e.target.value)}
+                                        placeholder='Parent B Email' type="email" value={parentBEmail} />
+                                </div>
+
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Name</label>
+                                    <input required className="form-control"
+                                        onChange={e => setParentBName(e.target.value)}
+                                        placeholder='Parent B Name' type="text" value={parentBName}
+                                    />
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                    width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'
+                                }}>
+
+                                <h5>Parent(s) video recording consent</h5>
+                                <div className="form-check form-switch d-flex gap-3"
+
+                                    style={{ fontSize: "16px " }}>
+                                    <input required className="form-check-input m-1"
+                                        type="checkbox"
+                                        role="switch"
 
 
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_add2(e.target.value)} placeholder='Address 2' value={add2} type="text" id="add2" style={{ float: 'right' }} />
+                                        style={{
+                                            width: "30px",
+                                            height: "15px"
+                                        }}
+                                        onChange={() => { set_parentConsent(!parentConsent) }}
+                                        checked={parentConsent === "true" || parentConsent === true}
+                                    />
+                                    <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked" >
+                                        Parent(s) consent to record lesson.
+                                    </label>
+                                    <Tooltip text="Enable this switch to consent video recording for ensuring quality of service. The video clip stored for 30 days, then be deleted from The academy servers." width="200px">
+                                        <FaInfoCircle size={18} color="#0096ff" />
+                                    </Tooltip>
+                                </div>
+                            </div>
                         </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" value={city} id="city" style={{ float: 'right' }} />
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <select onInput={e => set_state(e.target.value)} id="state" value={state} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
-                                {stateList}
-
-                            </select>
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip" style={{ float: 'right' }} />
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <select onInput={e => set_country(e.target.value)} id="country" value={country} style={{ float: 'right', padding: '5px', margin: '0 0 10px 0' }}>
-                                {countryList}
-
-                            </select>
-
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <select onInput={e => set_timeZone(e.target.value)} id="timeZone" value={timeZone} style={{ float: 'right', padding: '5px 5px 5px 5px', margin: '0 0 10px 0' }}>
-                                {GMTList}
-
-                            </select>
-                        </div>
-
-
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_parent_email(e.target.value)} placeholder='Parent Email' type="text" value={parent_email} id="p-email" style={{ float: 'right' }} />
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_parent_fname(e.target.value)} placeholder='Parent FirstName' type="text" value={parent_fname} id="p-fname" style={{ float: 'right' }} />
-                        </div>
-
-                        <div style={{ display: 'inline-block', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap' }}>
-                            <input onInput={e => set_parent_lname(e.target.value)} placeholder='Parent LastName' type="text" value={parent_lname} id="p-lname" style={{ float: 'right' }} />
-                        </div>
-
-
                     </div>
-
-
                 </div>
+                <Actions
+                    loading={saving}
+                />
             </form>
         </>
     );

@@ -235,7 +235,7 @@ export let get_response = () => {
 }
 
 
-export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, add1, add2, city, state, zipCode,
+export let upload_setup_form = (fname, uname, mname, lname, email, cell, acadId, add1, add2, city, state, zipCode,
     country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
     return new Promise((resolve, reject) => {
 

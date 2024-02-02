@@ -6,8 +6,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes blink {
@@ -37,9 +42,17 @@
 }
 
 
-/* calender */
+/* -------------------------------------------------calender------------------------------------------- */
 .rbc-calendar {
   min-height: 600px;
+}
+
+.rbc-label {
+  font-weight: bold;
+}
+
+.rbc-label.rbc-time-header-gutter::before {
+  content: 'hh:mm a' !important;
 }
 
 .rbc-btn-group button:nth-child(1) {
@@ -89,7 +102,7 @@
   animation: blinking_red 1s infinite;
 }
 
-/* react-datepicker*/
+/* ----------------------------------------------------------react-datepicker--------------------------------------*/
 .react-datepicker__time-container {
   width: 75px !important;
 }
@@ -104,8 +117,7 @@
   margin: 5px;
 }
 
-/*
-pdfviwer*/
+/*-------------------------------------------------pdfviwer--------------------------------------------*/
 .react-pdf__Page__textContent {
   display: none;
 }
@@ -182,11 +194,9 @@ pdfviwer*/
   display: flex;
   transform: translate3d(0px, -4px, 0px);
   grid-column: 4;
-  /* Update to place the icon in the last column */
+  /* Update to place the icon in he last column */
   align-self: center;
-  /* Updated to center the icon vertically */
   justify-self: center;
-  /* Updated to center the icon horizontally */
   width: 20px;
   height: 20px;
   transition: 0.13s ease-in-out;

@@ -10,6 +10,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setShortlist } from '../../redux/student_store/shortlist';
 import { create_chat } from '../../axios/chat';
 import Tooltip from '../common/ToolTip';
+import { convertToDate } from '../common/Calendar/Calendar';
+import { FaSearch } from 'react-icons/fa';
+import tutorData from '../../redux/tutor_store/tutorData';
+import Pill from '../common/Pill';
+import { statesColours } from '../../constants/constants';
 
 const StudentFaculties = () => {
     const dispatch = useDispatch()
@@ -275,7 +280,7 @@ const StudentFaculties = () => {
                         )}
                     </div>
 
-                    <div className="tables" style={{ height: '600px', width: '100%', overflow: 'auto', padding: '5px' }}>
+                    <div className="tables" style={{ height: '40vh', width: '100%', overflow: 'auto', padding: '5px' }}>
 
                         <table>
                             {response?.length ?
@@ -299,14 +304,20 @@ const StudentFaculties = () => {
                                                 let faculty = item[0] || {};
                                                 let experience = item[1] || {};
                                                 return <tr>
-                                                    <td style={{ width: multi_student_cols[0].width }} id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
+                                                    <td style={{ width: multi_student_cols[0].width }} id='student-tutor'
+                                                        data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
 
                                                         <input onInput={handleSavedDeleteData} type='checkbox' style={{ height: '20px', width: '20px' }} />
                                                     </td>
 
                                                     <td style={{ width: multi_student_cols[1].width }}>{faculty.subject}</td>
                                                     <td style={{ width: multi_student_cols[2].width }}>
-                                                        {(faculty.AcademyId).split(".").slice(0, 2).join(".")}
+                                                        <div>
+                                                            {(faculty.AcademyId).split(".").slice(0, 2).join(".")}
+                                                            <Pill label={faculty.status} customColor={true} color={statesColours[faculty.status]}
+                                                                width='auto'
+                                                            />
+                                                        </div>
                                                     </td>
                                                     <td style={{ width: multi_student_cols[3].width }}>
                                                         {experience.EducationalLevelExperience}
@@ -319,7 +330,11 @@ const StudentFaculties = () => {
                                                     </td>
                                                     <td style={{ width: multi_student_cols[6].width }}>
                                                         {experience.CertificateExpiration?.length ?
-                                                            new Date(experience.CertificateExpiration).toLocaleDateString() : "-"}
+                                                            <div className={convertToDate(experience.CertificateExpiration).getTime() <
+                                                                (new Date).getTime() ? `text-danger blinking-button` : ''}>
+                                                                {new Date(experience.CertificateExpiration).toLocaleDateString()}
+                                                            </div> : "-"
+                                                        }
                                                     </td>
                                                     <td style={{ width: multi_student_cols[7].width }}>{faculty.rate}</td>
                                                     <td style={{ width: multi_student_cols[8].width }}>{faculty.cancPolicy} Hrs </td>
@@ -338,8 +353,91 @@ const StudentFaculties = () => {
 
 
                 </div>
-            </div>
+            </div >
             <Actions saveDisabled={true} />
+
+            {/* <CenteredModal
+                show={showAddNewSubjModal}
+                handleClose={handleModalClose}
+                title={'To Search If your subject exist , please type it on above field'}
+            >
+                <form onSubmit={checkRequestExist}>
+
+                    <div className='d-flex flex-column' style={{ gap: "20px" }}>
+
+                        <DebounceInput
+                            delay={500}
+                            value={newSubjectData}
+                            setInputValue={setNewSubjectData}
+                            onChange={(e) => setNewSubjectData(e.target.value)}
+                            type='text'
+                            debouceCallback={handleSearch}
+                            placeholder='Type your subject here'
+                            className='form-control'
+                            required
+                        />
+                        {!subjectExistInFaculties.length && !!newSubjectData.length &&
+                            !!newSubjectReasonData.length &&
+                            <select className='form-select'
+                                required onChange={e => setNewSubjectFacultyData(e.target.value)} type='text' >
+                                <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
+                                {newSubjectFaculty}
+                            </select>
+                        }
+
+                        {!subjectExistInFaculties.length && phase === 'add' && <textarea
+                            style={{ height: "200px" }}
+                            value={newSubjectReasonData}
+                            required className='form-control'
+                            onChange={e => setNewSubjectReasonData(e.target.value)}
+                            placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />}
+                        {
+                            !!subjectExistInFaculties.length ?
+                                <div className='border p-2 shadow rounded'>
+                                    <h6>The Subject found in the Faculty below.</h6>
+                                    <div className='d-flex align-items-center flex-wrap'>
+                                        {subjectExistInFaculties.map(faculty =>
+                                            <Pill label={faculty} width='200px' />
+                                        )}
+                                    </div>
+                                </div> :
+                                phase !== 'search' && <div className='border p-2 shadow rounded'>
+                                    <p>This Subject does not exist.
+                                        To add the subject, select also the fauclty to be considered.
+                                    </p>
+                                </div>
+                        }
+                    </div>
+                    <div className="mt-4 d-flex justify-content-between">
+                        <div>
+                            {
+                                newSubjRequestChecking ? <Loading loadingText='searching subject...' iconSize='20px' height='20px' />
+                                    : null
+                            }
+                        </div>
+                        <div>
+                            <button type="button" className="action-btn btn" onClick={handleModalClose}>
+                                <div className="button__content">
+                                    <p className="button__text">Close</p>
+                                </div>
+                            </button>
+                            <Button type="submit" className="action-btn btn" loading={newSubjRequestChecking}
+                                disabled={newSubjRequestChecking || subjectExistInFaculties.length}>
+                                <div className="button__content align-items-center">
+                                    
+                                        <FaSearch style={{
+                                            animation: searchiung ? "spin 2s linear infinite" : 'none',
+                                            marginBottom: "5px"
+                                        }} />
+                                    
+                                    <p className="button__text">{phase === 'search' ? 'Search' : 'Add'}</p>
+                                </div>
+                            </Button>
+                        </div>
+
+                    </div>
+                </form>
+            </CenteredModal> */}
         </>
     );
 }

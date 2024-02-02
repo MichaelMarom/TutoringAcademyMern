@@ -25,10 +25,11 @@ import { AUST_STATES, CAN_STATES, Countries, GMT, RESPONSE, UK_STATES, US_STATES
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import { capitalizeFirstLetter, unsavedChangesHelper } from "../../helperFunctions/generalHelperFunctions";
 import ReactDatePicker from "react-datepicker";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Button from "../common/Button";
 import { RxAvatar } from "react-icons/rx";
 import { IoPersonCircle } from "react-icons/io5";
+import { convertToDate } from "../common/Calendar/Calendar";
 
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -102,6 +103,16 @@ const TutorSetup = () => {
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
   const [nameFieldsDisabled, setNameFieldsDisabled] = useState(false);
+  const location = useLocation()
+  const screen = location.pathname.split('/')[1];
+  const AcademyId = localStorage.getItem('tutor_user_id')
+
+  useEffect(() => {
+    if (convertToDate(tutor.EndVacation).getTime() < new Date().getTime() && tutor.VacationMode) {
+      post_tutor_setup({ userId: tutor.userId, fname: tutor.FirstName, lname: tutor.LastName, mname: tutor.MiddleName, vacation_mode: false })
+      dispatch(setTutor())
+    }
+  }, [tutor, userId])
 
   const options = {
     "Australia": AUST_STATES,
@@ -1175,6 +1186,7 @@ const TutorSetup = () => {
                         console.log(originalMoment.get('hour'), utcMomentStartDate.get('hour'), originalMoment.get('date'), date.getDate(), date.getHours())
                         setStart(utcMomentStartDate)
                       }}
+                      minDate={new Date()}
                       dateFormat="MMM d, yyyy"
                       className="form-control"
                     />
@@ -1182,6 +1194,7 @@ const TutorSetup = () => {
                     <h6 className="m-0">and</h6>
                     <ReactDatePicker
                       disabled={!editMode}
+                      minDate={new Date(start)}
                       selected={moment(end ? end : new Date()).toDate()}
                       onChange={date => {
                         date.setHours(0);

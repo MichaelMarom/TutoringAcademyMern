@@ -1,7 +1,9 @@
 import { toast } from "react-toastify"
 import { apiClient } from "./config";
 
-export let upload_form_one = (fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
+export let upload_setup_form = (fname, mname, sname, email,
+    lang, secLan, parentAEmail, parentBEmail, parentAName,
+    parentBName,
     is_18, pwd, cell, grade,
     add1, add2, city, state, zipCode, country, timeZone,
     photo, acadId,
@@ -23,6 +25,16 @@ export let upload_form_one = (fname, mname, sname, email, lang, secLan, parentAE
     })
 }
 
+
+export const post_student_agreement = async (userId, body) => {
+    try {
+        const { data } = await apiClient.put(`/student/setup/agreement/${userId}`, body)
+        return data
+    }
+    catch (err) {
+        return err
+    }
+}
 
 export let get_student_setup = (AcademyId) => {
 
@@ -92,9 +104,15 @@ export let get_student_market_data = (id) => {
 
 
 export let get_tutor_subject = async (subject) => {
-    const { data } = await apiClient.get('/student/tutor-subject', { params: { subject } })
-    console.log(data, 'in axios123')
-    return data
+    try {
+        const { data } = await apiClient.get('/student/tutor-subject', { params: { subject } })
+        console.log(data, 'in axios123')
+        return data
+    }
+    catch (err) {
+        console.log(err)
+        return err
+    }
 }
 
 

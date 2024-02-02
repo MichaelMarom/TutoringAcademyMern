@@ -160,7 +160,7 @@ const StudentShortList = () => {
                         </div>
                     )}
                 </div>
-                <div className="tables" style={{ height: '70vh', width: '100%', overflowY: "auto" }}>
+                <div className="tables" style={{ height: '53vh', width: '100%', overflowY: "auto" }}>
                     <table>
                         {response.length ?
                             <thead className='d-none'>

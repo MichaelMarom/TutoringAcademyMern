@@ -6,6 +6,7 @@ import { get_student_events } from '../../axios/student';
 import CustomEvent from '../../components/common/Calendar/Event';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
 import { useSelector } from 'react-redux';
+import Actions from '../../components/common/Actions';
 
 
 export const Schedules = () => {
@@ -73,7 +74,7 @@ export const Schedules = () => {
     return (
         <StudentLayout showLegacyFooter={false}>
             <h4 className='text-center m-3'>Your Schedule</h4>
-            <div className='m-3' style={{ height: "80vh" }}>
+            <div className='m-3' style={{ height: "65vh" }}>
                 <Calendar
                     localizer={localizer}
                     events={(reservedSlots.concat(bookedSlots)).map((event) => ({
@@ -94,9 +95,10 @@ export const Schedules = () => {
                     eventPropGetter={eventPropGetter}
                     startAccessor="start"
                     endAccessor="end"
-                    style={{ height: "100%" }}
+                    style={{ minHeight: "100%" }}
                 />
             </div>
-        </StudentLayout>
+            <Actions saveDisabled />
+        </StudentLayout >
     );
 }

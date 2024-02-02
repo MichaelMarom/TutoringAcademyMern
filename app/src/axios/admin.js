@@ -122,9 +122,9 @@ export const post_termsOfUse = async (data) => {
     }
 };
 
-export const get_adminConstants = async (data) => {
+export const get_adminConstants = async (id=1) => {
     try {
-        const response = await apiClient.get(`/admin/get-constants`);
+        const response = await apiClient.get(`/admin/get-constants/${id}`);
         return response;
     } catch (error) {
         console.log(error);

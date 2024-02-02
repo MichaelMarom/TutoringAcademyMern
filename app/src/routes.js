@@ -49,8 +49,10 @@ const App = () => {
   const { shortlist, isLoading } = useSelector(state => state.shortlist)
   const nullValues = ['undefined', 'null'];
 
+  const screen = location.pathname.split('/')[1]
+
   useEffect(() => {
-    console.log(userId,isSignedIn, 'lololllllll')
+    console.log(userId, isSignedIn, 'lololllllll')
     if (userId) {
       const fetch = async () => {
         const data = await get_user_detail(userId);
@@ -60,21 +62,25 @@ const App = () => {
 
         dispatch(setUser(data));
         localStorage.setItem('user', JSON.stringify(data));
-        console.log(', data', data.SID && data.role === 'tutor')
 
         data.SID && data.role === 'tutor' && dispatch(setTutor())
-        if (data.SID && data.role === 'student') {
+        if (data.SID && (data.role === 'student' || screen === 'student')) {
           dispatch(setShortlist())
-          console.log(', data', data)
-          const result = await get_student_setup_by_userId(data.SID);
-          dispatch(setStudent(result[0]))
-          localStorage.setItem('student_user_id', result[0].AcademyId);
+          if (data.role === 'student') {
+            const result = await get_student_setup_by_userId(data.SID);
+            if (result?.[0]) {
+              dispatch(setStudent(result[0]))
+              localStorage.setItem('student_user_id', result[0].AcademyId);
+            }
+          }
         }
       }
       fetch()
     }
   }, [userId])
 
+
+  console.log(student, 'estudent')
   // useEffect(() => {
   //   if (user?.[0]?.role === "tutor")
   //     window.localStorage.setItem("tutor_tab_index", 0);

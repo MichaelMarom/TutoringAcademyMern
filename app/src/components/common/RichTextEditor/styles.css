@@ -18,3 +18,11 @@
 .work-exp .ql-container {
     height: 80% !important
 }
+
+.student-intro .ql-container {
+    height: 88%;
+}
+
+.student-terms .ql-container {
+    height: 84%;
+}

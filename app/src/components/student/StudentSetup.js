@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { get_my_data, upload_form_one } from '../../axios/student';
+import { get_my_data, upload_setup_form } from '../../axios/student';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { useDispatch } from 'react-redux';
 import { setStudent } from '../../redux/student_store/studentData';
@@ -67,9 +67,10 @@ const StudentSetup = () => {
     const [saving, setSaving] = useState(false)
     const [code, set_code] = useState('')
 
-    let saver = async () => {
+    let saver = async (e) => {
+        e.preventDefault()
         setSaving(true)
-        let response = await upload_form_one(fname, mname, sname, user.role === 'student' ? user.email : email,
+        let response = await upload_setup_form(fname, mname, sname, user.role === 'student' ? user.email : email,
             lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
             is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone,
             photo, acadId, parentConsent,
@@ -271,8 +272,6 @@ const StudentSetup = () => {
                     }, 5000);
 
                 }
-
-
             }
 
 
@@ -379,7 +378,7 @@ const StudentSetup = () => {
             <div className="save-overlay">
                 <span className="save_loader"></span>
             </div>
-            <form onSubmit={saver}>
+            <form onSubmit={saver} style={{ height: "75vh", overflowY: "auto" }}>
                 <div className="d-flex justify-content-center container mt-4"
                     style={{ height: '100%', gap: "3%" }}>
 
@@ -389,7 +388,7 @@ const StudentSetup = () => {
 
                         <h5
                             style={{ whiteSpace: 'nowrap' }}>Profile Photo</h5>
-                        <input required className="form-control" type="file" data-type='file' onChange={handleImage}
+                        <input className="form-control" type="file" data-type='file' onChange={handleImage}
                             style={{ display: 'none' }} id="photo" />
                         <div className="tutor-tab-photo-frame">
                             <img src={photo}
@@ -477,7 +476,7 @@ const StudentSetup = () => {
 
 
                                 <div className='input-group mb-2 '>
-                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Age</label>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Are you over 18?</label>
                                     <select required className="form-select " dname="" id="" onInput={e => set_is_18(e.target.value)}>
                                         <option value="null">Are You Over 18 ?</option>
                                         <option selected={is_18 === 'yes' ? 'selected' : ''} value="yes">Yes</option>
@@ -604,7 +603,7 @@ const StudentSetup = () => {
                             <div className='d-flex' style={{ gap: "2%" }}>
                                 <div className='input-group mb-2 '>
                                     <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Email</label>
-                                    <input required className="form-control"
+                                    <input required={is_18 === 'no'} className="form-control"
                                         onChange={e => setParentAEmail(e.target.value)}
                                         placeholder='Parent A Email'
                                         type="email" value={parentAEmail} />
@@ -612,7 +611,7 @@ const StudentSetup = () => {
 
                                 <div className='input-group mb-2 '>
                                     <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Name</label>
-                                    <input required className="form-control"
+                                    <input required={is_18 === 'no'} className="form-control"
                                         onChange={e => setParentAName(e.target.value)} placeholder='Parent A Name'
                                         type="text" value={parentAName} />
                                 </div>
@@ -620,14 +619,14 @@ const StudentSetup = () => {
                             <div className='d-flex' style={{ gap: "2%" }}>
                                 <div className='input-group mb-2'>
                                     <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Email</label>
-                                    <input required className="form-control"
+                                    <input className="form-control"
                                         onChange={e => setParentBEmail(e.target.value)}
                                         placeholder='Parent B Email' type="email" value={parentBEmail} />
                                 </div>
 
                                 <div className='input-group mb-2 '>
                                     <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Name</label>
-                                    <input required className="form-control"
+                                    <input className="form-control"
                                         onChange={e => setParentBName(e.target.value)}
                                         placeholder='Parent B Name' type="text" value={parentBName}
                                     />

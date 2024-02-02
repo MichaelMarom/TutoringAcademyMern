@@ -204,7 +204,9 @@ const ShowCalendar = ({
     }
   }, [student, tutor])
 
+  //setting default timeZone
   useEffect(() => {
+    console.log(timeZone, tutor, selectedTutor, student)
     moment.tz.setDefault(timeZone);
   }, [timeZone]);
 
@@ -922,7 +924,7 @@ const ShowCalendar = ({
         view={activeView}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: "100%", width: "100%" }}
+        style={{ minHeight: "100%", width: "100%" }}
         step={30}
         onSelectSlot={handleDateClick}
         dayPropGetter={dayPropGetter}

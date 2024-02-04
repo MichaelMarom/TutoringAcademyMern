@@ -1,5 +1,5 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert, getAll, findById, findByAnyIdColumn, update, find } = require('../helperfunctions/crud_queries');
+const { insert, getAll, findById, findByAnyIdColumn, update, find, updateById } = require('../helperfunctions/crud_queries');
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
 const moment = require('moment-timezone')
@@ -197,7 +197,7 @@ let get_tutor_subject = async (req, res) => {
 
         let subjects = async () => await connecteToDB.then(poolConnection =>
             poolConnection.request().query(`SELECT SubjectRates.*,
-            TutorSetup.ResponseHrs as responseTime, 
+            TutorSetup.ResponseHrs as responseTime, TutorSetup.Status as status,
             TutorRates.CancellationPolicy as cancPolicy
             FROM SubjectRates
             JOIN TutorSetup ON cast(TutorSetup.AcademyId as varchar(max)) = cast(SubjectRates.AcademyId as varchar(max))
@@ -907,9 +907,29 @@ function getBookedSlot(req, res) {
     })
 }
 
+const post_student_agreement = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    update('StudentSetup', req.body, req.params)
+                )
+                res.status(200).send(result.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
     post_feedback_questions,
     update_shortlist,
+    post_student_agreement,
     get_feedback_of_questions,
     get_feedback_questions,
     upload_setup_info,

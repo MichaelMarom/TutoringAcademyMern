@@ -12,7 +12,7 @@ const { upload_setup_info, get_student_setup, get_student_grade, get_tutor_subje
     get_feedback_questions,
     get_feedback_of_questions,
     post_feedback_questions,
-    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings } = require('../controllers/student');
+    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings, post_student_agreement } = require('../controllers/student');
 const { express,
     path,
     fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
@@ -30,6 +30,8 @@ STUDENT_ROUTES.put('/student/short-list/:AcademyId/:Student/:Subject', parser, u
 STUDENT_ROUTES.get('/student/short-list-data', get_student_short_list_data)
 STUDENT_ROUTES.get('/student/market-data', get_student_market_data)
 STUDENT_ROUTES.post('/student/setup', parser, upload_setup_info)
+STUDENT_ROUTES.put('/student/setup/agreement/:userId', parser, post_student_agreement)
+
 //bookings
 STUDENT_ROUTES.post('/student/booking', parser, post_student_bookings)
 STUDENT_ROUTES.get('/student/tutor/bookings/:tutorId', get_tutor_bookings)

@@ -199,18 +199,19 @@ const postTerms = async (req, res) => {
         const poolConnection = await sql.connect(config);
         try {
             const existingRecord =
-                await poolConnection.request().query(findByAnyIdColumn('Constants', { ID: 1 }));
+                await poolConnection.request().query(findByAnyIdColumn('Constants', { ID: req.body.id || 1 }));
 
             if (existingRecord.recordset.length) {
 
                 if (poolConnection) {
                     const request = poolConnection.request();
 
-                    request.input('ID', sql.Int, 1);
+                    request.input('ID', sql.Int, req.body.id || 1);
                     request.input('TermContent', sql.NVarChar(sql.MAX), req.body.TermContent);
                     request.input('IntroContent', sql.NVarChar(sql.MAX), req.body.IntroContent);
+                    delete req.body.id
 
-                    const result = await request.query(parameteriedUpdateQuery('Constants', req.body, { ID: 1 }).query);
+                    const result = await request.query(parameteriedUpdateQuery('Constants', req.body, { ID: req.body.id || 1 }).query);
 
                     res.status(200).json(result.recordset[0]);
 
@@ -219,7 +220,7 @@ const postTerms = async (req, res) => {
                 if (poolConnection) {
                     const request = poolConnection.request();
 
-                    request.input('ID', sql.Int, 1);
+                    delete req.body.id
                     request.input('TermContent', sql.NVarChar(sql.MAX), req.body.TermContent);
                     request.input('IntroContent', sql.NVarChar(sql.MAX), req.body.IntroContent);
 
@@ -247,14 +248,13 @@ let get_Constants = (req, res) => {
         if (poolConnection) {
             poolConnection.request().query(
                 `
-                    SELECT * From Constants where ID = 1 
+                    SELECT * From Constants where ID = ${req.params.id} 
                 `
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
                 .catch(err => console.log(err))
-
         }
 
     })

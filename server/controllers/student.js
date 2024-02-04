@@ -31,7 +31,8 @@ const executeQuery = async (query, res) => {
 
 let upload_setup_info = (req, res) => {
 
-    let { fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName, is_18, pwd, cell, grade,
+    let { fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
+        is_18, pwd, cell, grade,
         add1, add2, city, state, zipCode, country,
         timeZone, photo, acadId, parentConsent,
         userId } = req.body;
@@ -82,7 +83,6 @@ let upload_setup_info = (req, res) => {
                 const sql = require('mssql');
                 var poolConnection = await sql.connect(config);
 
-                // let result = poolConnection ? await update_student_data(poolConnection) : 'connection error';
                 update_student_data(poolConnection)
                     .then((result) => {
                         res.status(200).send({ user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Updated Successfully', type: 'update' })
@@ -91,8 +91,6 @@ let upload_setup_info = (req, res) => {
                         res.status(400).send({ user: UserId, screen_name: screenName, bool: false, mssg: 'Data Was Not Updated Successfully Due To Database Malfunction, Please Try Again.' })
                         console.log(err)
                     })
-                //res.send({user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Updated Successfully'})
-
             })
 
         }
@@ -109,11 +107,11 @@ let upload_setup_info = (req, res) => {
 
     let insert_student_data = async (poolConnection) => {
         let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName,
-             MiddleName, LastName, Email, Password, Cell, Language, SecLan, ParentAEmail, ParentBEmail, 
+             MiddleName, LastName, Email, Cell, Language, SecLan, ParentAEmail, ParentBEmail, 
              ParentAName, ParentBName,
              AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, 
              AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
-        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}',
+        VALUES ('${fname}', '${mname}', '${sname}','${email}','${cell}',
         '${lang}', '${secLan}', '${parentAEmail}', '${parentBEmail}', 
         '${parentAName}', '${parentBName}','${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}',
          '${zipCode}',
@@ -130,7 +128,7 @@ let upload_setup_info = (req, res) => {
         set Photo = '${photo}', Address1 = '${add1}', Address2 = '${add2}', City = '${city}',
          State = '${state}', ZipCode = '${zipCode}', Country = '${country}', 
           Email = '${email}', Cell = '${cell}', FirstName='${fname}',LastName='${sname}',
-          MiddleName='${mname}', GMT = '${timeZone}', Password = '${pwd}', Language='${lang}', AgeGrade='${is_18}',
+          MiddleName='${mname}', GMT = '${timeZone}', Language='${lang}', AgeGrade='${is_18}',
          Grade='${grade}', ParentConsent='${parentConsent}', SecLan = '${secLan}', 
          ParentAEmail='${parentAEmail}', ParentBEmail='${parentBEmail}', 
           ParentAName='${parentAName}', ParentBName='${parentBName}'
@@ -139,11 +137,9 @@ let upload_setup_info = (req, res) => {
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);
     }
-
 }
 
 let get_student_setup = (req, res) => {
-    let { AcademyId = null, userId = null } = req.query;
     marom_db(async (config) => {
         const sql = require('mssql');
 
@@ -926,8 +922,33 @@ const post_student_agreement = async (req, res) => {
     })
 }
 
+const set_code_applied = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                await poolConnection.request().query(
+                    update('TutorRates', { CodeStatus: 'used' }, { AcademyId: req.params.tutorId }, { AcademyId: 'varchar' })
+                )
+                await poolConnection.request().query(
+                    update('StudentShortList', { CodeApplied: true },
+                        { AcademyId: req.params.tutorId, Student: req.params.studentId },
+                        { AcademyId: 'varchar', Student: 'varchar' })
+                )
+                res.status(200).send({ message: 'Code applied status changed succesfully' });
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
     post_feedback_questions,
+    set_code_applied,
     update_shortlist,
     post_student_agreement,
     get_feedback_of_questions,

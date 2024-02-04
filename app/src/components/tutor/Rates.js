@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { get_tutor_rates, post_tutor_setup, upload_form_three } from "../../axios/tutor";
+import { get_tutor_rates, get_tutor_subjects, post_tutor_setup, upload_tutor_rates_form } from "../../axios/tutor";
 import { IoMdCopy, IoMdRefresh } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import Tooltip from "../common/ToolTip";
@@ -44,6 +44,8 @@ const Rates = () => {
   const [IntroSessionDiscount, setIntroSessionDiscount] = useState(true)
   const [dbState, setDbState] = useState({});
   const [editMode, setEditMode] = useState(false)
+  const [subjects, setSubjects] = useState([]);
+  const [subject, setSubject] = useState('')
   const dispatch = useDispatch();
 
   const fetchTutorRateRecord = () => {
@@ -118,6 +120,14 @@ const Rates = () => {
   }, [dbState])
 
   useEffect(() => {
+    if (discountEnabled) {
+      get_tutor_subjects(tutor.AcademyId).then(result => {
+        setSubjects(result)
+      }).catch(err => toast.error(err.message))
+    }
+  }, [discountEnabled])
+
+  useEffect(() => {
     fetchTutorRateRecord()
     // eslint-disable-next-line
   }, []);
@@ -151,7 +161,7 @@ const Rates = () => {
   }, [currentState, dbState]);
 
   let saver = async () => {
-    let response = await upload_form_three(
+    let response = await upload_tutor_rates_form(
       MultiStudentHourlyRate,
       selectedCancellationPolicy,
       FreeDemoLesson,
@@ -160,6 +170,7 @@ const Rates = () => {
       SubscriptionPlan,
       window.localStorage.getItem("tutor_user_id"),
       discountCode,
+      subject,
       discountEnabled,
       classTeaching,
       IntroSessionDiscount
@@ -245,412 +256,405 @@ const Rates = () => {
   }, [copied]);
 
   return (
-    <>
-      {/* {changesMade && (
-        <div className="green-bar w-100 bg-success text-white fs-5 text-decoration-underline d-flex justify-content-center m-0">
-          <p className="m-2">You have made changes. Save them before moving to the next tab.</p>
-        </div>
-      )} */}
-      <div className="tutor-tab-rates">
-        <div className="tutor-tab-rate-section" style={{ height: "80vh", overflowY: "auto" }}>
-          <form onSubmit={handleSubmit} className="d-flex justify-content-center" style={{ width: "100%", gap: "3%" }}>
-            <div className="d-flex flex-column" style={{ width: "30%" }}>
-              <div className=" border m-2 shadow rounded p-4" >
-                <div
-                  style={{
-                    height: "30px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "auto",
-                  }}
-                >
-                  <input disabled={!editMode}
-                    type="checkbox"
-                    onChange={(e) =>
-                      setActivateSubscriptionOption(e.target.checked ? true : false)
-                    }
-                    checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
-                    style={{ cursor: "pointer", height: "20px", width: "20px" }}
-                    name="subscription-plan"
-                    id="subscription-plan"
-                  />{" "}
-                  &nbsp;
-                  <label htmlFor="subscription-plan">
-                    <h6>Activate subscription option</h6>
-                  </label>
-                </div>
+    <div className="tutor-tab-rates">
+      <div className="tutor-tab-rate-section" style={{ height: "80vh", overflowY: "auto" }}>
+        <form onSubmit={handleSubmit} className="d-flex justify-content-center" style={{ width: "100%", gap: "3%" }}>
+          <div className="d-flex flex-column" style={{ width: "30%" }}>
+            <div className=" border m-2 shadow rounded p-4" >
+              <div
+                style={{
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "auto",
+                }}
+              >
+                <input disabled={!editMode}
+                  type="checkbox"
+                  onChange={(e) =>
+                    setActivateSubscriptionOption(e.target.checked ? true : false)
+                  }
+                  checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
+                  style={{ cursor: "pointer", height: "20px", width: "20px" }}
+                  name="subscription-plan"
+                  id="subscription-plan"
+                />{" "}
+                &nbsp;
+                <label htmlFor="subscription-plan">
+                  <h6>Activate subscription option</h6>
+                </label>
+              </div>
 
-                <div className="highlight">
-                  You must check the box above to activate this option. Your student
-                  will select one option from the table below when he/she want to
-                  save by paying upfront for multi sessions. The Academy will forward
-                  you 50% from the discounted amount upfront, and the balance upon completion. For example; student
-                  selects the 12 hours option, and you charge $45.00/hr, then $45.00
-                  X 12 = $540 -12% = $475.20 .
-                </div>
+              <div className="highlight">
+                You must check the box above to activate this option. Your student
+                will select one option from the table below when he/she want to
+                save by paying upfront for multi sessions. The Academy will forward
+                you 50% from the discounted amount upfront, and the balance upon completion. For example; student
+                selects the 12 hours option, and you charge $45.00/hr, then $45.00
+                X 12 = $540 -12% = $475.20 .
+              </div>
 
-                <div
-                  className="rate-table m-0 d-flex justify-content-center w-100"
-                  style={{
-                    pointerEvents: ActivateSubscriptionOption === "true"
-                      || ActivateSubscriptionOption === true ? "auto" : "none",
-                    opacity: "0.5",
-                  }}
-                >
-                  <table className="m-0">
-                    <thead>
-                      <tr>
-                        {subscription_cols.map((item) => (
-                          <th key={item.Header}>{item.Header}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {subscription_discount.map((item, index) => (
-                        <tr key={index}>
-                          <td>{item.hours}</td>
-                          <td>
-                            <input disabled={!editMode}
-                              onInput={(e) => { setSubscriptionPlan(e.target.value) }}
-                              type="radio"
-                              value={item.hours}
-                              checked={item.hours === "1-5"}
-                              name="student-subscription"
-                              id="student-subscription"
-                              style={{
-                                height: '20px',
-                                width: '20px',
-                              }}
-                            />
-
-                          </td>
-
-                          <td>{item.discount}</td>
-                        </tr>
+              <div
+                className="rate-table m-0 d-flex justify-content-center w-100"
+                style={{
+                  pointerEvents: ActivateSubscriptionOption === "true"
+                    || ActivateSubscriptionOption === true ? "auto" : "none",
+                  opacity: "0.5",
+                }}
+              >
+                <table className="m-0">
+                  <thead>
+                    <tr>
+                      {subscription_cols.map((item) => (
+                        <th key={item.Header}>{item.Header}</th>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
-
-              </div>
-              <div className="rounded shadow border m-2 p-4" >
-                <div className="dropdown d-flex align-items-center mb-4" style={{ width: "75%" }} >
-                  <label>Tutor Cancellation Policy</label>
-                  <button
-                    style={{ pointerEvents: editMode ? "auto" : "none" }}
-                    className="btn btn-success dropdown-toggle my-0 mx-3"
-                    type="button"
-                    onClick={() => setIsOpen(!isOpen)}
-                  >
-                    {selectedCancellationPolicy.length ? `${selectedCancellationPolicy}hr   ` : " Select"}
-                  </button>
-                  {isOpen && (
-                    <div className="dropdown-menu show" style={{ left: "90px" }}>
-                      <div className="dropdown-item" onClick={() => {
-                        setSelectedCancPolicy('4')
-                        setIsOpen(false)
-                      }}>
-                        4hr.
-
-                      </div>
-                      <div className="dropdown-item" onClick={() => {
-                        setSelectedCancPolicy('8')
-                        setIsOpen(false)
-                      }}>
-                        8hr.
-
-                      </div>
-                      <div className="dropdown-item" onClick={() => {
-                        setSelectedCancPolicy('12')
-                        setIsOpen(false)
-                      }}>
-                        12hr.
-                      </div>
-
-                      <div className="dropdown-item" onClick={() => {
-                        setSelectedCancPolicy('24')
-                        setIsOpen(false)
-                      }}>
-                        24hr
-                      </div>
-                      <div className="dropdown-item" onClick={() => {
-                        setSelectedCancPolicy('48')
-                        setIsOpen(false)
-                      }}>
-                        48 hr.
-                      </div>
-                    </div>
-                  )}
-                  <Tooltip text="How many hours before the lesson, you allow the student to cancel without penalty?" width="200px">
-                    <FaInfoCircle size={20} color="#0096ff" />
-                  </Tooltip>
-                </div>
-                <div className="form-check form-switch d-flex gap-3">
-                  <input disabled={!editMode}
-                    className="form-check-input "
-                    type="checkbox"
-                    role="switch"
-                    onChange={() => setIntroSessionDiscount(!IntroSessionDiscount)}
-                    checked={IntroSessionDiscount}
-                  />
-                  <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked">
-                    50% Intro Session
-                  </label>
-                  <Tooltip text="The academy mandate an |intro| sessions for new student as a 
-                  prerequisite to book further sessions with the tutor. The 50% discount should motivate 
-                  the student to select you."
-                    width="200px">
-                    <FaInfoCircle size={20} color="#0096ff" />
-                  </Tooltip>
-                </div>
-                <div className="form-check form-switch d-flex gap-3">
-                  <input disabled={!editMode}
-                    className="form-check-input "
-                    type="checkbox"
-                    role="switch"
-                    onChange={() => setConsentRecordingLesson(!ConsentRecordingLesson)}
-                    checked={ConsentRecordingLesson}
-                  />
-                  <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
-                    Consent Recording Session
-                  </label>
-                  <Tooltip width="200px"
-                    text="We record the lesson for learning purpose (or complains).
-                     Students or parents can view the recorded lesson. You consent to the recording of the lesson with the student. The recording be saved on the academy servers for 30 days, then be deleted.">
-                    <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
-                  </Tooltip>
-                </div>
-              </div>
-            </div>
-            <div className="d-flex flex-column" style={{ width: "30%" }}>
-              <div className="p-4  float-end rounded shadow border m-2 ">
-                <h6>Tutor's Own Students</h6>
-                <div className="highlight">
-                  In order for you tutoring your own current students on this plateform,
-                  forward the Code below to your students to be used with thier registration.
-                  You need to generate new code for each one of your students.
-
-                </div>
-                <div className="form-check form-switch d-flex align-items-center gap-2">
-                  <input disabled={!editMode}
-                    className="form-check-input "
-                    type="checkbox"
-                    role="switch"
-                    id="flexSwitchCheckChecked"
-                    onChange={() => setDiscountEnabled(!discountEnabled)}
-                    checked={discountEnabled}
-                  />
-                  <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
-                    My Student's code
-                  </label>
-
-                  <Tooltip width="200px" text="Provide the code below to be used by your student for this platform. The code will pair your student to your profile upon the setup of student's account. You must generate new code for each one of your students">
-                    <FaInfoCircle size={20} color="#0096ff" />
-                  </Tooltip>
-                </div>
-
-                {
-                  discountEnabled &&
-                  <div className="d-flex w-100 justify-content-between align-items-end">
-                    <div>
-                      <h6 className="mt-4 d-inline">Your Student's new code</h6>
-                      <Tooltip text="Generate New Code">
-                        <IoMdRefresh
-                          size={20}
-                          className="d-inline"
-                          onClick={() => setDiscountCode(generateDiscountCode())}
-                        />
-                      </Tooltip>
-                      <div className="input-group">
-                        <input disabled={!editMode}
-                          type="text"
-                          className="form-control m-0 h-100 p-2"
-                          value={discountCode}
-                          readOnly
-                        />
-
-                        <label
-                          className="m-0 input-group-text"
-                          type="button"
-                          id="inputGroupFileAddon04"
-                        >
-                          <IoMdCopy
-                            size={20}
-                            color="#0096ff"
-                            onClick={() => {
-                              copyToClipboard(discountCode);
-                              setCopied(true);
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subscription_discount.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.hours}</td>
+                        <td>
+                          <input disabled={!editMode}
+                            onInput={(e) => { setSubscriptionPlan(e.target.value) }}
+                            type="radio"
+                            value={item.hours}
+                            checked={item.hours === "1-5"}
+                            name="student-subscription"
+                            id="student-subscription"
+                            style={{
+                              height: '20px',
+                              width: '20px',
                             }}
                           />
-                        </label>
-                      </div>
-                      {copied && (
-                        <p className="text-success d-block">Code copied to clipboard!</p>
-                      )}
+
+                        </td>
+
+                        <td>{item.discount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+            <div className="rounded shadow border m-2 p-4" >
+              <div className="dropdown d-flex align-items-center mb-4" style={{ width: "75%" }} >
+                <label>Tutor Cancellation Policy</label>
+                <button
+                  style={{ pointerEvents: editMode ? "auto" : "none" }}
+                  className="btn btn-success dropdown-toggle my-0 mx-3"
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  {selectedCancellationPolicy.length ? `${selectedCancellationPolicy}hr   ` : " Select"}
+                </button>
+                {isOpen && (
+                  <div className="dropdown-menu show" style={{ left: "90px" }}>
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('4')
+                      setIsOpen(false)
+                    }}>
+                      4hr.
+
                     </div>
-                    <div className="input-group w-50">
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('8')
+                      setIsOpen(false)
+                    }}>
+                      8hr.
+
+                    </div>
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('12')
+                      setIsOpen(false)
+                    }}>
+                      12hr.
+                    </div>
+
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('24')
+                      setIsOpen(false)
+                    }}>
+                      24hr
+                    </div>
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('48')
+                      setIsOpen(false)
+                    }}>
+                      48 hr.
+                    </div>
+                  </div>
+                )}
+                <Tooltip text="How many hours before the lesson, you allow the student to cancel without penalty?" width="200px">
+                  <FaInfoCircle size={20} color="#0096ff" />
+                </Tooltip>
+              </div>
+              <div className="form-check form-switch d-flex gap-3">
+                <input disabled={!editMode}
+                  className="form-check-input "
+                  type="checkbox"
+                  role="switch"
+                  onChange={() => setIntroSessionDiscount(!IntroSessionDiscount)}
+                  checked={IntroSessionDiscount}
+                />
+                <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked">
+                  50% Intro Session
+                </label>
+                <Tooltip text="The academy mandate an |intro| sessions for new student as a 
+                  prerequisite to book further sessions with the tutor. The 50% discount should motivate 
+                  the student to select you."
+                  width="200px">
+                  <FaInfoCircle size={20} color="#0096ff" />
+                </Tooltip>
+              </div>
+              <div className="form-check form-switch d-flex gap-3">
+                <input disabled={!editMode}
+                  className="form-check-input "
+                  type="checkbox"
+                  role="switch"
+                  onChange={() => setConsentRecordingLesson(!ConsentRecordingLesson)}
+                  checked={ConsentRecordingLesson}
+                />
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
+                  Consent Recording Session
+                </label>
+                <Tooltip width="200px"
+                  text="We record the lesson for learning purpose (or complains).
+                     Students or parents can view the recorded lesson. You consent to the recording of the lesson with the student. The recording be saved on the academy servers for 30 days, then be deleted.">
+                  <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
+                </Tooltip>
+              </div>
+            </div>
+          </div>
+          <div className="d-flex flex-column" style={{ width: "30%" }}>
+            <div className="p-4  float-end rounded shadow border m-2 ">
+              <h6>Tutor's Own Students</h6>
+              <div className="highlight">
+                In order for you tutoring your own current students on this plateform,
+                forward the Code below to your students to be used with thier registration.
+                You need to generate new code for each one of your students.
+
+              </div>
+              <div className="form-check form-switch d-flex align-items-center gap-2">
+                <input disabled={!editMode}
+                  className="form-check-input "
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckChecked"
+                  onChange={() => setDiscountEnabled(!discountEnabled)}
+                  checked={discountEnabled}
+                />
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
+                  My Student's code
+                </label>
+
+                <Tooltip width="200px" text="Provide the code below to be used by your student for this platform. The code will pair your student to your profile upon the setup of student's account. You must generate new code for each one of your students">
+                  <FaInfoCircle size={20} color="#0096ff" />
+                </Tooltip>
+              </div>
+
+              {
+                discountEnabled &&
+                <div className="d-flex w-100 justify-content-between align-items-end">
+                  <div>
+                    <h6 className="mt-4 d-inline">Your Student's new code</h6>
+                    <Tooltip text="Generate New Code">
+                      <IoMdRefresh
+                        size={20}
+                        className="d-inline"
+                        onClick={() => setDiscountCode(generateDiscountCode())}
+                      />
+                    </Tooltip>
+                    <div className="input-group">
+                      <input disabled={!editMode}
+                        type="text"
+                        className="form-control m-0 h-100 p-2"
+                        value={discountCode}
+                        readOnly
+                      />
+
                       <label
                         className="m-0 input-group-text"
                         type="button"
                         id="inputGroupFileAddon04"
                       >
-                        Select Subject
+                        <IoMdCopy
+                          size={20}
+                          color="#0096ff"
+                          onClick={() => {
+                            copyToClipboard(discountCode);
+                            setCopied(true);
+                          }}
+                        />
                       </label>
-                      <select className="form-select" value={''}>
-                        <option value='' disabled>Select Subject</option>
-                        <option value='englidh' disabled>englidh</option>
-                        <option value='math' disabled>urdu</option>
-                        <option value='urdu' disabled>math</option>
-                      </select>
                     </div>
+                    {copied && (
+                      <p className="text-success d-block">Code copied to clipboard!</p>
+                    )}
                   </div>
-                }
-
-              </div>
-              <div className="rounded shadow border m-2 p-4">
-                <h6>Multi Student</h6>
-
-                <div className="p-2 mt-4 highlight">
-
-                  The American public schools are suffering from accute shortage of teachers. if you hold teacher's certificate, and willing to teach full class of students, you are able to post your ad on the portal message board. and charge higher rate for your skills. Similarly, a school in a need for a substitute teacher, can find your account which is flagged accordingly.
+                  <div className="input-group w-50">
+                    <label
+                      className="m-0 input-group-text"
+                      type="button"
+                      id="inputGroupFileAddon04"
+                    >
+                      Select Subject
+                    </label>
+                    <select required className="form-select" value={subject} onChange={(e) => setSubject(e.target.value)}>
+                      <option value='' disabled>Select Subject</option>
+                      {subjects.map(subject =>
+                        <option value={subject} >{subject}</option>
+                      )}
+                    </select>
+                  </div>
                 </div>
-                <div className="form-check form-switch d-flex align-items-center gap-2 mt-4">
-                  <input disabled={!editMode}
-                    className="form-check-input "
-                    type="checkbox"
-                    role="switch"
-                    id="flexSwitchCheckChecked"
-                    onChange={() => setClassTeaching(!classTeaching)}
-                    checked={classTeaching}
-                  />
-                  <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
-                    My hourly Charge for teaching a public or private school class (up to 30 students).
-                    Only tutors that fill up this field are being shown to schools.
-                  </label>
+              }
 
-
-
-                  <Tooltip
-                    width="200px" text="Fill in your hourly amount for teaching a public 0r private school class (up to 30 students)."
-                    direction="left"
-                  >
-                    <FaInfoCircle size={20} color="#0096ff" />
-                  </Tooltip>
-                </div>
-                {
-                  classTeaching &&
-                  <>
-                    <div className="input-group  w-50">
-                      <span className="input-group-text">$</span>
-                      <input disabled={!editMode}
-                        type="text"
-                        required
-                        className="form-control m-0 py-4"
-                        aria-label="Amount (to the nearest dollar)"
-                        value={MultiStudentHourlyRate}
-                        onChange={(e) => {
-                          if (e.target.value < 1000)
-                            setMultiStudentHourlyRate(e.target.value)
-                        }}
-                      />
-                      <span className="input-group-text">.00</span>
-                    </div>
-                    <span className="small text-secondary bg-light">Amount should be less than $999 </span>
-                  </>
-                }
-              </div>
             </div>
-            <div className="d-flex flex-column" style={{ width: "30%" }}>
-              <div className=" border m-2 shadow rounded p-4" >
-                <h6 className="text-start text-danger">Coming Soon!</h6>
-                <div
-                  style={{
-                    height: "50px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    margin: "auto",
-                  }}
+            <div className="rounded shadow border m-2 p-4">
+              <h6>Multi Student</h6>
+
+              <div className="p-2 mt-4 highlight">
+
+                The American public schools are suffering from accute shortage of teachers. if you hold teacher's certificate, and willing to teach full class of students, you are able to post your ad on the portal message board. and charge higher rate for your skills. Similarly, a school in a need for a substitute teacher, can find your account which is flagged accordingly.
+              </div>
+              <div className="form-check form-switch d-flex align-items-center gap-2 mt-4">
+                <input disabled={!editMode}
+                  className="form-check-input "
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckChecked"
+                  onChange={() => setClassTeaching(!classTeaching)}
+                  checked={classTeaching}
+                />
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
+                  My hourly Charge for teaching a public or private school class (up to 30 students).
+                  Only tutors that fill up this field are being shown to schools.
+                </label>
+
+
+
+                <Tooltip
+                  width="200px" text="Fill in your hourly amount for teaching a public 0r private school class (up to 30 students)."
+                  direction="left"
                 >
-                  <input disabled={!editMode || true}
-                    type="checkbox"
+                  <FaInfoCircle size={20} color="#0096ff" />
+                </Tooltip>
+              </div>
+              {
+                classTeaching &&
+                <>
+                  <div className="input-group  w-50">
+                    <span className="input-group-text">$</span>
+                    <input disabled={!editMode}
+                      type="text"
+                      required
+                      className="form-control m-0 py-4"
+                      aria-label="Amount (to the nearest dollar)"
+                      value={MultiStudentHourlyRate}
+                      onChange={(e) => {
+                        if (e.target.value < 1000)
+                          setMultiStudentHourlyRate(e.target.value)
+                      }}
+                    />
+                    <span className="input-group-text">.00</span>
+                  </div>
+                  <span className="small text-secondary bg-light">Amount should be less than $999 </span>
+                </>
+              }
+            </div>
+          </div>
+          <div className="d-flex flex-column" style={{ width: "30%" }}>
+            <div className=" border m-2 shadow rounded p-4" >
+              <h6 className="text-start text-danger">Coming Soon!</h6>
+              <div
+                style={{
+                  height: "50px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "auto",
+                }}
+              >
+                <input disabled={!editMode || true}
+                  type="checkbox"
 
-                    // onChange={(e) =>
-                    //   setActivateSubscriptionOption(e.target.checked ? true : false)
-                    // }
-                    // checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
-                    style={{ cursor: "pointer", height: "20px", width: "20px" }}
-                    name="subscription-plan"
-                    id="subscription-plan"
-                  />{" "}
-                  &nbsp;
-                  <label htmlFor="subscription-plan">
-                    <h6>Activate multi student option</h6>
-                  </label>
-                </div>
+                  // onChange={(e) =>
+                  //   setActivateSubscriptionOption(e.target.checked ? true : false)
+                  // }
+                  // checked={ActivateSubscriptionOption === "true" || ActivateSubscriptionOption === true}
+                  style={{ cursor: "pointer", height: "20px", width: "20px" }}
+                  name="subscription-plan"
+                  id="subscription-plan"
+                />{" "}
+                &nbsp;
+                <label htmlFor="subscription-plan">
+                  <h6>Activate multi student option</h6>
+                </label>
+              </div>
 
-                <div className="highlight">
-                  You or your student can create a group that reflects the discount from the table below. 
-                  Example; if you charge $50/hr then, and the group contain 6 students, then each student pays $30.50  
-                  Only one student responsible for the account. if one of the group is missing a session,
-                  there is no refund.
-                </div>
+              <div className="highlight">
+                You or your student can create a group that reflects the discount from the table below.
+                Example; if you charge $50/hr then, and the group contain 6 students, then each student pays $30.50
+                Only one student responsible for the account. if one of the group is missing a session,
+                there is no refund.
+              </div>
 
-                <h6>Multi Student hourly rate</h6>
-                <div
-                  className="rate-table d-flex w-100 justify-content-center m-0"
-                  style={{
-                    pointerEvents: ActivateSubscriptionOption === "true"
-                      || ActivateSubscriptionOption === true ? "auto" : "none",
-                    opacity: "0.5",
-                  }}
-                >
-                  <table>
-                    <thead>
-                      <tr>
-                        {multi_students_col.map((item) => (
-                          <th key={item.Header}>{item.Header}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {multi_students_discount.map((item, index) => (
-                        <tr key={index}>
-                          <td>{item.total}</td>
-                          <td>
-                            <input disabled={!editMode}
-                              type="radio"
-                              value={item.disc}
-                              name="student-subscription"
-                              id="student-subscription"
-                              style={{
-                                height: '20px',
-                                width: '20px',
-                              }} />
-                          </td>
-
-                          <td>{item.disc} %</td>
-                        </tr>
+              <h6>Multi Student hourly rate</h6>
+              <div
+                className="rate-table d-flex w-100 justify-content-center m-0"
+                style={{
+                  pointerEvents: ActivateSubscriptionOption === "true"
+                    || ActivateSubscriptionOption === true ? "auto" : "none",
+                  opacity: "0.5",
+                }}
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      {multi_students_col.map((item) => (
+                        <th key={item.Header}>{item.Header}</th>
                       ))}
-                    </tbody>
-                  </table>
-                </div>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {multi_students_discount.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.total}</td>
+                        <td>
+                          <input disabled={!editMode}
+                            type="radio"
+                            value={item.disc}
+                            name="student-subscription"
+                            id="student-subscription"
+                            style={{
+                              height: '20px',
+                              width: '20px',
+                            }} />
+                        </td>
 
+                        <td>{item.disc} %</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
             </div>
-            <Actions
-              unSavedChanges={changesMade}
-              loading={loading}
-              onEdit={() => setEditMode(true)}
-              editDisabled={editMode}
-              saveDisabled={!editMode}
-            />
-          </form>
-        </div >
+
+          </div>
+          <Actions
+            unSavedChanges={changesMade}
+            loading={loading}
+            onEdit={() => setEditMode(true)}
+            editDisabled={editMode}
+            saveDisabled={!editMode}
+          />
+        </form>
       </div >
-    </>
+    </div >
   );
 };
 

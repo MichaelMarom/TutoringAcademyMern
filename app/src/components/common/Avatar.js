@@ -1,7 +1,7 @@
 import React from 'react';
 import generalAvatar from '../../images/avatar.png'
 
-const Avatar = ({ avatarSrc, online, size = "50", indicSize="12px" }) => {
+const Avatar = ({ avatarSrc, online, size = "50", indicSize = "12px", positionInPixle = 0 }) => {
     const containerStyle = {
         position: 'relative',
         display: 'inline-block',
@@ -9,8 +9,8 @@ const Avatar = ({ avatarSrc, online, size = "50", indicSize="12px" }) => {
 
     const onlineIndicatorStyle = {
         position: 'absolute',
-        bottom: 0,
-        right: 0,
+        bottom: positionInPixle,
+        right: positionInPixle,
         width: indicSize,
         height: indicSize,
         borderRadius: '50%',

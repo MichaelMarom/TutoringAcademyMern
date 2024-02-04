@@ -278,13 +278,13 @@ export let upload_edu_form = async (level, university1, university2, university3
 }
 
 //not using
-export let upload_form_three = (MutiStudentHourlyRate, CancellationPolicy,
+export let upload_tutor_rates_form = (MutiStudentHourlyRate, CancellationPolicy,
     FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan,
-    AcademyId, DiscountCode, CodeShareable, MultiStudent, IntroSessionDiscount) => {
+    AcademyId, DiscountCode, CodeSubject,CodeShareable, MultiStudent, IntroSessionDiscount) => {
     return new Promise((resolve, reject) => {
 
-        apiClient.post('/tutor/form-three', {
-            MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent
+        apiClient.post('/tutor/tutor-rates', {
+            MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent,CodeSubject
         })
             .then((result) => {
                 resolve(result.data)
@@ -439,6 +439,17 @@ export let get_my_edu = (AcademyId) => {
             })
 
     })
+}
+
+export const get_tutor_subjects = async (id) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/subjects/${id}`)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        return err
+    }
 }
 
 
@@ -790,5 +801,16 @@ export const put_ad = async (id, body) => {
     }
     catch (error) {
         return error
+    }
+}
+
+
+export const get_tutor_against_code = async (code) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/rate/${code}`);
+        return data;
+    }
+    catch (err) {
+        return err
     }
 }

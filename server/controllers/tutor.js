@@ -100,7 +100,7 @@ const subject_already_exist = async (req, res) => {
                         return res.status(200).send({ message: "subject exist", faculties: result.recordset.map(subject => subject.Faculty) })
                     }
                     else {
-                        res.status(200).send({ subjectExist: false, faculties:[] })
+                        res.status(200).send({ subjectExist: false, faculties: [] })
                     }
                 }
             }
@@ -343,12 +343,11 @@ let post_edu_form = async (req, res) => {
     }
 }
 
-let post_form_three = (req, res) => {
-
+let post_tutor_rates_form = (req, res) => {
 
     let { MutiStudentHourlyRate, IntroSessionDiscount, CancellationPolicy,
         FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption,
-        SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent } = req.body;
+        SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent, CodeSubject } = req.body;
     marom_db(async (config) => {
         try {
 
@@ -372,6 +371,7 @@ let post_form_three = (req, res) => {
                           ActivateSubscriptionOption = '${ActivateSubscriptionOption}', 
                           SubscriptionPlan = '${SubscriptionPlan}',
                            DiscountCode = '${DiscountCode}', 
+                           CodeSubject = '${CodeSubject}', 
                            CodeShareable=${CodeShareable ? 1 : 0},  
                            MultiStudent=${MultiStudent ? 1 : 0},
                            IntroSessionDiscount=${IntroSessionDiscount ? 1 : 0}
@@ -383,18 +383,18 @@ let post_form_three = (req, res) => {
                             INSERT INTO "TutorRates"
                             (MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,
                                 ConsentRecordingLesson,ActivateSubscriptionOption,
-                                SubscriptionPlan,AcademyId, DiscountCode,MultiStudent,
+                                SubscriptionPlan,AcademyId, DiscountCode, CodeSubject,
+,                                 MultiStudent,
                                 CodeShareable,IntroSessionDiscount)
                             VALUES ( '${MutiStudentHourlyRate}', 
                             '${CancellationPolicy}','${FreeDemoLesson}',
                             '${ConsentRecordingLesson}','${ActivateSubscriptionOption}',
-                            '${SubscriptionPlan}','${AcademyId}','${DiscountCode}',${MultiStudent ? 1 : 0},
+                            '${SubscriptionPlan}','${AcademyId}','${DiscountCode}', '${CodeSubject}',${MultiStudent ? 1 : 0},
                             ${CodeShareable ? 1 : 0},${IntroSessionDiscount ? 1 : 0})
                             `
                     )
                 }
 
-                {/* console.log(result) */ }
                 result.rowsAffected[0] === 1
                     ?
                     res.send({ bool: true, mssg: 'Data Was Successfully Saved' })
@@ -406,7 +406,6 @@ let post_form_three = (req, res) => {
             console.log(err)
             res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
         }
-
     })
 }
 
@@ -876,6 +875,30 @@ let get_rates = (req, res) => {
             res.status(400).send({ message: err.message })
         }
 
+    })
+}
+
+
+const get_tutor_offered_subjects = (req, res) => {
+    marom_db(async (config) => {
+        const sql = require('mssql');
+
+        var poolConnection = await sql.connect(config);
+        if (poolConnection) {
+            poolConnection.request().query(
+                find('SubjectRates',
+                    { AcademyId: req.params.id }, 'AND', { AcademyId: "varchar" }
+                )
+            )
+                .then((result) => {
+                    const subjects = result.recordset.map(rates => rates.subject)
+                    res.status(200).send(subjects)
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(400).send({ message: err.message })
+                })
+        }
     })
 }
 
@@ -1682,8 +1705,27 @@ const put_ad = async (req, res) => {
     })
 }
 
+const get_tutor_against_code = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql');
+            const poolConnection = await sql.connect(config)
+            if (poolConnection) {
+                const result = await poolConnection.request().query(findByAnyIdColumn('TutorRates', { DiscountCode: req.params.code }))
+
+                result.recordset.length ? res.status(200).send(result.recordset[0]) : res.status(400).send({ message: 'Code Does not Exist!' });
+            }
+        }
+        catch (err) {
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
     get_tutor_profile_data,
+    get_tutor_against_code,
+    get_tutor_offered_subjects,
     getSessionsDetails,
     post_tutor_ad,
     set_agreements_date_null_for_all,
@@ -1700,7 +1742,7 @@ module.exports = {
     faculties,
     post_form_one,
     post_edu_form,
-    post_form_three,
+    post_tutor_rates_form,
     get_countries,
     get_gmt,
     post_new_subject,

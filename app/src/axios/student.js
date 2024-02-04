@@ -25,7 +25,6 @@ export let upload_setup_form = (fname, mname, sname, email,
     })
 }
 
-
 export const post_student_agreement = async (userId, body) => {
     try {
         const { data } = await apiClient.put(`/student/setup/agreement/${userId}`, body)
@@ -37,7 +36,6 @@ export const post_student_agreement = async (userId, body) => {
 }
 
 export let get_student_setup = (AcademyId) => {
-
     return new Promise((resolve, reject) => {
 
         apiClient.get('/student/setup', {
@@ -70,7 +68,6 @@ export const get_student_setup_by_userId = async (userId) => {
     }
 }
 
-
 export let get_student_grade = () => {
 
     return new Promise((resolve, reject) => {
@@ -86,6 +83,7 @@ export let get_student_grade = () => {
 
     })
 }
+
 export let get_student_market_data = (id) => {
 
     return new Promise((resolve, reject) => {
@@ -102,7 +100,6 @@ export let get_student_market_data = (id) => {
     })
 }
 
-
 export let get_tutor_subject = async (subject) => {
     try {
         const { data } = await apiClient.get('/student/tutor-subject', { params: { subject } })
@@ -114,7 +111,6 @@ export let get_tutor_subject = async (subject) => {
         return err
     }
 }
-
 
 export let upload_student_short_list = (items) => {
 
@@ -132,7 +128,6 @@ export let upload_student_short_list = (items) => {
     })
 }
 
-
 export let get_student_short_list = async (student) => {
     try {
         const { data } = await apiClient.get(`/student/short-list/${student}`)
@@ -143,7 +138,6 @@ export let get_student_short_list = async (student) => {
         return err
     }
 }
-
 
 export let get_my_data = (AcademyId) => {
     return new Promise((resolve, reject) => {
@@ -178,7 +172,6 @@ export let get_student_short_list_data = (id) => {
 
     })
 }
-
 
 export const save_student_events = async (body) => {
     await apiClient.post('/student/booking', body);
@@ -297,6 +290,16 @@ export const getBookedSlot = async (AcademyId) => {
 
         return result
 
+    }
+    catch (err) {
+        return err
+    }
+}
+
+export const code_applied = async (studentId, tutorId) => {
+    try {
+        let { data } = await apiClient.put(`/code-applied/${studentId}/${tutorId}`)
+        return data;
     }
     catch (err) {
         return err

@@ -16,6 +16,7 @@ const StudentShortList = () => {
     const dispatch = useDispatch()
     const { shortlist: response, isLoading: shortlistLoading } = useSelector(state => state.shortlist)
     const { student } = useSelector(state => state.student)
+    console.log(response);
     const handleNavigateToSchedule = async (item) => {
         dispatch(setTutor({
             id: item.tutorSetup?.SID,

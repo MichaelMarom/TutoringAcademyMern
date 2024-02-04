@@ -4,7 +4,7 @@ import StudentMarketPlaceComp from '../../components/student/StudentMarketPlace'
 
 const StudentMarketPlace = () => {
   return (
-    <StudentLayout>
+    <StudentLayout showLegacyFooter={false}>
       <StudentMarketPlaceComp />
     </StudentLayout>
   )

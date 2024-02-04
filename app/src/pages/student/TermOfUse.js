@@ -21,7 +21,13 @@ const StudentIntro = () => {
     const [fetching, setFetching] = useState(true);
     const { student } = useSelector(state => state.student)
     const [agreed, setAgreed] = useState();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (student.AgreementDate) {
+            setAgreed(student.AgreementDate)
+        }
+    }, [student])
 
     useEffect(() => {
         const fetchData = async () => {

@@ -58,7 +58,7 @@ const Actions = ({
         { next: "feedback", current: "accounting", back: "short-list" },
         { next: "calender", current: "feedback", back: "accounting" },
         { next: "term-of-use", current: "calender", back: "feedback" },
-        { next: "term-of-use", current: "term-of-use", back: "calender" },
+        { next: "chat", current: "term-of-use", back: "calender" },
         { next: "market-place", current: "chat", back: "term-of-use" },
         { next: "collaboration", current: "market-place", back: "chat" },
         { next: `profile`, current: "collaboration", back: "market-place" },

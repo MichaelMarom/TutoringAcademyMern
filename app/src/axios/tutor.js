@@ -1,20 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
-import { apiClient } from './config'
+import { apiClient, showErrorToast } from './config'
 import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react'
-
-const showErrorToast = (err) => {
-    // const navigate = useNavigate()
-    // const { signOut } = useAuth()
-    console.log(err)
-    if (err?.response?.data?.message.includes('expired')) {
-        // signOut(() => navigate.push("/login"))
-    }
-    toast.error(err?.response?.data?.message || "Error Completing the request")
-    return err;
-}
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
@@ -280,11 +269,11 @@ export let upload_edu_form = async (level, university1, university2, university3
 //not using
 export let upload_tutor_rates_form = (MutiStudentHourlyRate, CancellationPolicy,
     FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan,
-    AcademyId, DiscountCode, CodeSubject,CodeShareable, MultiStudent, IntroSessionDiscount) => {
+    AcademyId, DiscountCode, CodeSubject, CodeShareable, MultiStudent, IntroSessionDiscount, CodeStatus) => {
     return new Promise((resolve, reject) => {
 
         apiClient.post('/tutor/tutor-rates', {
-            MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent,CodeSubject
+            MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent, CodeSubject, CodeStatus
         })
             .then((result) => {
                 resolve(result.data)
@@ -357,7 +346,6 @@ export let get_certificates = () => {
 
 
 export let get_user_data = (user_id) => {
-    console.log(user_id)
     return new Promise((resolve, reject) => {
 
         apiClient.get('/tutor/education', {

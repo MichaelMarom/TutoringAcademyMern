@@ -928,14 +928,53 @@ const set_code_applied = async (req, res) => {
             const sql = require('mssql')
             const poolConnection = await sql.connect(config);
             if (poolConnection) {
-                await poolConnection.request().query(
+
+                const { recordset: tutorRateRecord } = await poolConnection.request().query(
+                    find('TutorRates', { AcademyId: req.params.tutorId },'AND', { AcademyId: 'varchar' })
+                )
+                console.log(tutorRateRecord)
+                if (tutorRateRecord[0].CodeStatus === 'used') throw new Error('Code Already Used!')
+
+                const { recordset: updatedTutorRateRecord } = await poolConnection.request().query(
                     update('TutorRates', { CodeStatus: 'used' }, { AcademyId: req.params.tutorId }, { AcademyId: 'varchar' })
                 )
-                await poolConnection.request().query(
+                if (!updatedTutorRateRecord.length) throw new Error('Code does not exist!')
+                const { recordset: updatedStudenTutorCodeStatus } = await poolConnection.request().query(
                     update('StudentShortList', { CodeApplied: true },
-                        { AcademyId: req.params.tutorId, Student: req.params.studentId },
-                        { AcademyId: 'varchar', Student: 'varchar' })
+                        {
+                            AcademyId: req.params.tutorId,
+                            Student: req.params.studentId,
+                            Subject: updatedTutorRateRecord[0].CodeSubject
+                        },
+                        { AcademyId: 'varchar', Student: 'varchar', Subject: 'varchar' })
                 )
+
+                if (!updatedStudenTutorCodeStatus.length) {
+                    const { recordset: SubjectRate } = await poolConnection.request().query(
+                        find('SubjectRates', {
+                            AcademyId: req.params.tutorId,
+                            Subject: updatedTutorRateRecord[0].CodeSubject
+                        }, 'AND', { AcademyId: 'varchar', Subject: 'varchar' })
+                    )
+
+                    console.log(SubjectRate, updatedTutorRateRecord)
+                    if (!SubjectRate[0].rate) throw new Error('Invalid Code!')
+
+                    await poolConnection.request().query(
+                        insert('StudentShortList',
+                            {
+                                CodeApplied: true,
+                                AcademyId: req.params.tutorId,
+                                Student: req.params.studentId,
+                                Subject: updatedTutorRateRecord[0].CodeSubject,
+                                Rate: SubjectRate[0].rate,
+                                ScreenName: req.params.tutorId,
+                                date: new Date().toLocaleString()
+                            },
+                            { AcademyId: 'varchar', Student: 'varchar', Subject: 'varchar', ScreenName: 'varchar' })
+                    )
+                }
+
                 res.status(200).send({ message: 'Code applied status changed succesfully' });
             }
         }

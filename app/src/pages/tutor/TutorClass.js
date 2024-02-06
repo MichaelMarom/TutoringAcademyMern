@@ -15,26 +15,24 @@ import '../../styles/tutor.css'
 
 const TutorClass = () => {
   return (
-    <TutorLayout showLegacyFooter={false}>
-      <div style={{ position: 'fixed', inset: 0, marginTop: "100px" }}>
-        <div>
-          <Countdown date={Date.now() + 1000 * 60}>
-            <div>Session Ended!</div>
-          </Countdown>
-          {/* <CountdownCircleTimer
-            isPlaying
-            duration={60 * 50}
-            colors={['#004777', '#F7B801', '#A30000', '#A30000']}
-            colorsTime={[60 * 50, 30, 15, 0]}
-            size="50"
-            strokeWidth={"6"}
-
-          >
-            {({ remainingTime }) => remainingTime}
-          </CountdownCircleTimer> */}
-        </div>
-        <Excalidraw />
+    <TutorLayout showLegacyFooter={false} >
+      <div className="d-flex" style={{ gap: "2%" }}>
+        {/* <div style={{ position: 'fixed', inset: 0, marginTop: "100px", width: "70%" }}>
+          <div>
+            <Countdown date={Date.now() + 1000 * 60}>
+              <div>Session Ended!</div>
+            </Countdown>
       </div>
+      <Excalidraw />
+    </div> */}
+
+        <div className="bg-light rounded" style={{ width: "28%" }
+        }>
+          <TutorCollabHeader />
+          {/* <TutorCollabBoard />*/}
+          <TutorCollabFooter /> 
+        </div >
+      </div >
     </TutorLayout >
   );
 };

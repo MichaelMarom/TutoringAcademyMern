@@ -16,7 +16,6 @@ const StudentShortList = () => {
     const dispatch = useDispatch()
     const { shortlist: response, isLoading: shortlistLoading } = useSelector(state => state.shortlist)
     const { student } = useSelector(state => state.student)
-    console.log(response);
     const handleNavigateToSchedule = async (item) => {
         dispatch(setTutor({
             id: item.tutorSetup?.SID,
@@ -179,10 +178,12 @@ const StudentShortList = () => {
                                         const tutorSetup = item.tutorData;
                                         const tutorDemoLesson = item.tutorDemoLesson;
                                         const tutorShortList = item.tutorShortList;
-                                        const rate = tutorShortList.rate
+                                        const rate = tutorShortList.rate;
                                         return (
-                                            <tr key={index}>
-                                                <td className='' style={{ width: multi_student_cols[0].width }}>
+                                            <tr key={index}
+                                                style={{ animation: tutorShortList.CodeApplied ? 'blinking 1s infinite' : 'none' }}
+                                            >
+                                                <td className='' style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
                                                     <Avatar
                                                         size='100'
                                                         indicSize='20px'
@@ -190,7 +191,7 @@ const StudentShortList = () => {
                                                         online={tutorSetup.Online}
                                                     />
                                                 </td>
-                                                <td className='m-auto' style={{ width: multi_student_cols[0].width }}>
+                                                <td className='m-auto' style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
                                                     <div className="form-check form-switch d-flex gap-3 justify-content-center" style={{ fontSize: "16px " }}>
                                                         <input
                                                             className="form-check-input "
@@ -205,30 +206,30 @@ const StudentShortList = () => {
 
                                                     </div>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[0].width }}>
+                                                <td style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
                                                     {tutorSetup.VacationMode ?
                                                         `${showDate(tutorSetup.StartVacation)} - ${showDate(tutorSetup.EndVacation)}`
                                                         : `-`
                                                     }  </td>
-                                                <td style={{ width: multi_student_cols[0].width }}>
+                                                <td style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
                                                     <input type='checkbox'
                                                         style={{ height: '20px', width: '20px' }}
                                                         checked={tutorShortList?.IntroSessionDiscount || false}
                                                     />
                                                 </td>
-                                                <td style={{ width: multi_student_cols[1].width }} className=''>
+                                                <td style={{ width: multi_student_cols[1].width, border: '1px solid lightgray' }} className=''>
                                                     {tutorShortList?.Subject}
                                                 </td>
-                                                <td style={{ width: multi_student_cols[2].width }} className=''>
+                                                <td style={{ width: multi_student_cols[2].width, border: '1px solid lightgray' }} className=''>
                                                     {convertTutorIdToName(tutorSetup?.AcademyId)}
                                                 </td>
-                                                <td style={{ width: multi_student_cols[3].width }}>
+                                                <td style={{ width: multi_student_cols[3].width, border: '1px solid lightgray' }}>
                                                     {tutorSetup?.Country}
                                                 </td>
-                                                <td style={{ width: multi_student_cols[4].width }} className=' text-center'>
+                                                <td style={{ width: multi_student_cols[4].width, border: '1px solid lightgray' }} className=' text-center'>
                                                     {showDate(convertGMTToLocalTime(tutorSetup?.GMT), wholeDateFormat)} <br />
                                                 </td>
-                                                <td style={{ width: multi_student_cols[5].width }} className=''>
+                                                <td style={{ width: multi_student_cols[5].width, border: '1px solid lightgray' }} className=''>
                                                     <div className={`d-inline card px-1 m-auto ${classByDifference(calculateTimeDifference(tutorSetup?.GMT))}`}
                                                         style={{ fontSize: "18px" }}
                                                     >
@@ -237,27 +238,27 @@ const StudentShortList = () => {
                                                             calculateTimeDifference(tutorSetup?.GMT)}
                                                     </div>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[6].width }}>
+                                                <td style={{ width: multi_student_cols[6].width, border: '1px solid lightgray' }}>
                                                     <button className='btn btn-outline-primary btn-sm'
                                                         onClick={() => handleNavigateToSchedule(item)}>
                                                         Book Lesson</button>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[7].width }} >
+                                                <td style={{ width: multi_student_cols[7].width, border: '1px solid lightgray' }} >
                                                     <button className='btn btn-outline-success btn-sm'
                                                         onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>
                                                         Feedbacks</button>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[8].width }}>
+                                                <td style={{ width: multi_student_cols[8].width, border: '1px solid lightgray' }}>
                                                     <button className='btn btn-outline-primary btn-sm'
                                                         onClick={() => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>
                                                         View Profile</button>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[9].width }}>{rate}</td>
-                                                <td style={{ width: multi_student_cols[10].width }}>
+                                                <td style={{ width: multi_student_cols[9].width, border: '1px solid lightgray' }}>{rate}</td>
+                                                <td style={{ width: multi_student_cols[10].width, border: '1px solid lightgray' }}>
                                                     {tutorShortList.CancellationPolicy} Hrs
                                                 </td>
 
-                                                <td style={{ width: multi_student_cols[11].width }}>
+                                                <td style={{ width: multi_student_cols[11].width, border: '1px solid lightgray' }}>
                                                     {tutorSetup.ResponseHrs.replace("Hours", "Hrs")}
                                                 </td>
 

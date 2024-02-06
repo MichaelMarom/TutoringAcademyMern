@@ -45,7 +45,8 @@ const Rates = () => {
   const [dbState, setDbState] = useState({});
   const [editMode, setEditMode] = useState(false)
   const [subjects, setSubjects] = useState([]);
-  const [subject, setSubject] = useState('')
+  const [subject, setSubject] = useState('');
+  const [codeUsed, setCodeUsed] = useState('new')
   const dispatch = useDispatch();
 
   const fetchTutorRateRecord = () => {
@@ -63,6 +64,7 @@ const Rates = () => {
           setClassTeaching(result[0].MultiStudent)
           setDiscountEnabled(result[0].CodeShareable)
           setIntroSessionDiscount(result[0].IntroSessionDiscount)
+          setSubject(result[0].CodeSubject)
 
           let subscriptionPlan = document.querySelector("#subscription-plan");
           ActivateSubscriptionOption === "true"
@@ -121,6 +123,9 @@ const Rates = () => {
 
   useEffect(() => {
     if (discountEnabled) {
+      setDiscountCode(generateDiscountCode())
+      setSubject('')
+      setCodeUsed('new')
       get_tutor_subjects(tutor.AcademyId).then(result => {
         setSubjects(result)
       }).catch(err => toast.error(err.message))
@@ -173,19 +178,12 @@ const Rates = () => {
       subject,
       discountEnabled,
       classTeaching,
-      IntroSessionDiscount
+      IntroSessionDiscount,
+      codeUsed
     );
 
     return response;
   };
-
-  useEffect(() => {
-    let next = document.querySelector(".tutor-next");
-
-    if (next && next.hasAttribute("id")) {
-      next?.removeAttribute("id");
-    }
-  }, []);
 
   let subscription_cols = [
     { Header: "Hours" },
@@ -220,7 +218,6 @@ const Rates = () => {
 
   ];
 
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!selectedCancellationPolicy.length) return toast.warning('Please select Tutor Cancellation Policy');
@@ -254,6 +251,12 @@ const Rates = () => {
       setCopied(false);
     }, 7000);
   }, [copied]);
+
+  useEffect(() => {
+    if (dbState.CodeStatus === 'used') {
+      setDiscountEnabled(false)
+    }
+  }, [dbState.CodeStatus])
 
   return (
     <div className="tutor-tab-rates">
@@ -464,7 +467,7 @@ const Rates = () => {
                       <IoMdRefresh
                         size={20}
                         className="d-inline"
-                        onClick={() => setDiscountCode(generateDiscountCode())}
+                        onClick={() => editMode && setDiscountCode(generateDiscountCode())}
                       />
                     </Tooltip>
                     <div className="input-group">
@@ -500,10 +503,10 @@ const Rates = () => {
                       type="button"
                       id="inputGroupFileAddon04"
                     >
-                      Select Subject
+                      Subject
                     </label>
                     <select required className="form-select" value={subject} onChange={(e) => setSubject(e.target.value)}>
-                      <option value='' disabled>Select Subject</option>
+                      <option value='' disabled>Select</option>
                       {subjects.map(subject =>
                         <option value={subject} >{subject}</option>
                       )}

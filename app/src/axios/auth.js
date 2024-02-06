@@ -1,4 +1,5 @@
-import { apiClient } from "./config";
+import { apiClient, showErrorToast } from "./config";
+
 
 export const signup = async (data) => {
     try {
@@ -6,6 +7,7 @@ export const signup = async (data) => {
         return result
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -17,6 +19,7 @@ export const login = async (data) => {
         return result;
     }
     catch (err) {
+        showErrorToast(err)
         const { response: { data } } = err
         console.log(data)
         return data;
@@ -29,6 +32,7 @@ export const get_user_detail = async (userId) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err;
     }
@@ -40,6 +44,7 @@ export const get_user_setup_detail = async (role, userId) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err;
     }
@@ -51,6 +56,7 @@ export const forget_password = async (email, password) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }

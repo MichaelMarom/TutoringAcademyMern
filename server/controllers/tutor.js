@@ -347,12 +347,11 @@ let post_tutor_rates_form = (req, res) => {
 
     let { MutiStudentHourlyRate, IntroSessionDiscount, CancellationPolicy,
         FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption,
-        SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent, CodeSubject } = req.body;
+        SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent, CodeSubject, CodeStatus } = req.body;
     marom_db(async (config) => {
         try {
 
             const sql = require('mssql');
-            console.log('uploading data...')
 
             var poolConnection = await sql.connect(config);
             let result;
@@ -374,7 +373,8 @@ let post_tutor_rates_form = (req, res) => {
                            CodeSubject = '${CodeSubject}', 
                            CodeShareable=${CodeShareable ? 1 : 0},  
                            MultiStudent=${MultiStudent ? 1 : 0},
-                           IntroSessionDiscount=${IntroSessionDiscount ? 1 : 0}
+                           IntroSessionDiscount=${IntroSessionDiscount ? 1 : 0},
+                           CodeStatus='${CodeStatus}'
                          WHERE cast(AcademyId as varchar) = '${AcademyId}'`
                     )
                 } else {
@@ -385,12 +385,13 @@ let post_tutor_rates_form = (req, res) => {
                                 ConsentRecordingLesson,ActivateSubscriptionOption,
                                 SubscriptionPlan,AcademyId, DiscountCode, CodeSubject,
 ,                                 MultiStudent,
-                                CodeShareable,IntroSessionDiscount)
+                                CodeShareable,IntroSessionDiscount, CodeStatus)
                             VALUES ( '${MutiStudentHourlyRate}', 
                             '${CancellationPolicy}','${FreeDemoLesson}',
                             '${ConsentRecordingLesson}','${ActivateSubscriptionOption}',
                             '${SubscriptionPlan}','${AcademyId}','${DiscountCode}', '${CodeSubject}',${MultiStudent ? 1 : 0},
-                            ${CodeShareable ? 1 : 0},${IntroSessionDiscount ? 1 : 0})
+                            ${CodeShareable ? 1 : 0},${IntroSessionDiscount ? 1 : 0},
+                            '${CodeStatus}')
                             `
                     )
                 }

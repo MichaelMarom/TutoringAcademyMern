@@ -66,8 +66,6 @@ const TutorCollabHeader = () => {
     const time = new Date();
     time.setSeconds(time.getSeconds() + 3000);
 
-
-
     return (
         <>
             <div className="TutorCollabHeader" style={{ marginTop: '5px' }}>
@@ -80,8 +78,6 @@ const TutorCollabHeader = () => {
                     <button className="TutorCollabDeleteBtn">
                         <img src={del} style={{ height: '25px', width: '25px' }} alt="..." />
                     </button>
-
-
 
                 </div>
 

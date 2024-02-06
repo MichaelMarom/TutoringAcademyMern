@@ -1,4 +1,7 @@
-import { apiClient } from "./config";
+import {
+    apiClient,
+    showErrorToast
+} from "./config";
 
 export const get_chats = async (loggedInUserId, role) => {
     try {
@@ -6,6 +9,7 @@ export const get_chats = async (loggedInUserId, role) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -17,6 +21,7 @@ export const get_chat_message = async (chatId) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -27,6 +32,7 @@ export const post_message = async (body) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -44,6 +50,7 @@ export const create_chat = async (body) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -55,6 +62,7 @@ export const set_online_status = async (isOnline, id, role) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -66,6 +74,7 @@ export const recomendation = async (id) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err;
 

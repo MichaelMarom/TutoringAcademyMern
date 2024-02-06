@@ -61,9 +61,8 @@ const verifyToken = async (req, res, next) => {
     const sessToken = cookies.get("__session");
     const token = req.headers.authorization.replace('Bearer ', "");
 
-    if (sessToken === undefined && token === undefined) {
-        res.status(401).json({ message: "not signed in" });
-        return;
+    if (sessToken === undefined && (token === undefined || token === 'null')) {
+        return res.status(401).json({ message: "not signed in" });
     }
 
     try {
@@ -71,15 +70,14 @@ const verifyToken = async (req, res, next) => {
 
         if (token) {
             decoded = jwt.verify(token, publicKey);
-            res.status(200).json({ sessToken: decoded });
+            console.log('verifying token ....')
             next()
         } else {
             decoded = jwt.decode(sessToken, publicKey);
-            res.status(200).json({ sessToken: decoded });
+            // res.status(200).json({ sessToken: decoded });
             next()
         }
     } catch (error) {
-        console.log(error)
         res.status(400).json({
             message: error.message,
         });

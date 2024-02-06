@@ -241,7 +241,7 @@ export const Feedback = () => {
     }, [selectedEvent])
 
     return (
-        <StudentLayout showLegacyFooter={false} >
+        <StudentLayout showLegacyFooter={false}>
             <div className="container mt-5">
                 <div className="py-2 row" >
                     <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}

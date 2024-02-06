@@ -56,9 +56,10 @@ const App = () => {
     if (userId) {
       const fetch = async () => {
         const data = await get_user_detail(userId);
-        console.log(data, data?.response?.data?.message, data?.response?.data?.message?.includes('expired'))
         if (data?.response?.data?.message?.includes('expired') ||
-          data?.response?.data?.message?.includes('malformed')) { return redirect_to_login(navigate, signOut) }
+          data?.response?.data?.message?.includes('malformed')) {
+          return redirect_to_login(navigate, signOut)
+        }
 
         dispatch(setUser(data));
         localStorage.setItem('user', JSON.stringify(data));

@@ -1,4 +1,14 @@
 import axios from "axios";
+import { toast } from "react-toastify";
+
+export const showErrorToast = (err) => {
+    console.log(err)
+    if (err?.response?.data?.message.includes('expired')) {
+        // signOut(() => navigate.push("/login"))
+    }
+    toast.error(err?.response?.data?.message || "Error Completing the request")
+    return err;
+}
 
 export const apiClient = axios.create({
     baseURL: "http://localhost:9876", // Adjust the base URL to match your backend API endpoint

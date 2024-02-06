@@ -1,5 +1,8 @@
 import { toast } from "react-toastify"
-import { apiClient } from "./config";
+import {
+    apiClient,
+    showErrorToast
+} from "./config";
 
 export let upload_setup_form = (fname, mname, sname, email,
     lang, secLan, parentAEmail, parentBEmail, parentAName,
@@ -31,6 +34,7 @@ export const post_student_agreement = async (userId, body) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         return err
     }
 }
@@ -63,6 +67,7 @@ export const get_student_setup_by_userId = async (userId) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err);
         return err
     }
@@ -107,6 +112,7 @@ export let get_tutor_subject = async (subject) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -134,6 +140,7 @@ export let get_student_short_list = async (student) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -188,6 +195,7 @@ export const get_student_events = async (studentId) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -199,6 +207,7 @@ export const get_tutor_bookings = async (tutorId) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
     }
 }
@@ -209,6 +218,7 @@ export const post_bank_details = async (payload) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -220,6 +230,7 @@ export const get_bank_details = async (id) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -231,6 +242,7 @@ export const get_payment_report = async (studentId) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -241,6 +253,7 @@ export const get_all_feedback_questions = async () => {
         const { data } = await apiClient.get('/questions/list');
         return data;
     } catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -251,6 +264,7 @@ export const get_feedback_to_question = async (sessionId, tutorId, studentId) =>
         const { data } = await apiClient.get(`/questions/${studentId}/${tutorId}/${sessionId}`);
         return data;
     } catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -268,6 +282,7 @@ export const post_feedback_to_question = async (sessionId, tutorId, studentId, f
         const { data } = await apiClient.post(`/questions`, body);
         return data;
     } catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -279,6 +294,7 @@ export const update_student_shortlist = async (AcademyId, studentId, subject, bo
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         return err
     }
 }
@@ -292,6 +308,7 @@ export const getBookedSlot = async (AcademyId) => {
 
     }
     catch (err) {
+        showErrorToast(err)
         return err
     }
 }
@@ -302,6 +319,7 @@ export const code_applied = async (studentId, tutorId) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         return err
     }
 }

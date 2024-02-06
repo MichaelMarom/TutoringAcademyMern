@@ -217,7 +217,8 @@ const StudentSetup = () => {
             }
             if (student.AcademyId && data.AcademyId) {
                 const result = await code_applied(student.AcademyId, data.AcademyId);
-                if (result.message) {
+                console.log(result)
+                if (result.message && result?.response?.status !== 400) {
                     dispatch(setShortlist())
                     toast.success(result.message);
                     navigate('/student/short-list')

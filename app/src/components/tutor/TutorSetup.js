@@ -15,7 +15,7 @@ import {
 import { useDispatch } from "react-redux";
 import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString, showDate } from "../../helperFunctions/timeHelperFunctions";
-import ProfileVideoRecord from "./ProfileVideoRecord";
+// import ProfileVideoRecord from "./ProfileVideoRecord";
 import Loading from "../common/Loading";
 import ToolTip from '../common/ToolTip'
 
@@ -993,7 +993,7 @@ const TutorSetup = () => {
             </div>
             {selectedVideoOption === "record" ? (
               <div className="w-100">
-                <ProfileVideoRecord handleVideoBlob={handleVideoBlob} />
+                {/* <ProfileVideoRecord handleVideoBlob={handleVideoBlob} /> */}
               </div>
             ) : selectedVideoOption === "upload" && video?.length ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >

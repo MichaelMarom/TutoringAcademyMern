@@ -6,6 +6,8 @@ import DiableVideoImage from '../../images/video-recorder-off-svgrepo-com.svg';
 import { useLocation } from 'react-router-dom';
 import { socket } from '../../config/socket';
 import { Peer } from 'peerjs';
+import FlipCountdown from '@rumess/react-flip-countdown';
+import { moment } from '../../config/moment'
 
 const TutorAside = () => {
 
@@ -152,57 +154,66 @@ const TutorAside = () => {
 
 
     return (
-        <>
-            <div className="TutorAside shadow-sm">
+        <div className="TutorAside shadow-sm" style={{ top: "43%" }}>
 
-                <div className="TutorAsideVideoCnt">
-                    <video className='tutor-video-tab'>
-                    </video>
-                    <ul>
-                        <li className="video-size" 
+            <div>
+                <FlipCountdown
+                    size={'small'}
+                    hideDay
+                    hideHour
+                    hideMonth
+                    hideYear
+                    minuteTitle='Minutes'
+                    secondTitle='Seconds'
+                    endAt={moment().add('minutes', 53).toDate()} />
+            </div>
+
+            <div className="TutorAsideVideoCnt">
+                <video className='tutor-video-tab'>
+                </video>
+                <ul>
+                    <li className="video-size"
                         style={{ background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px' }} onClick={handleVideoResize}>
-                            <img src={screenType} 
+                        <img src={screenType}
                             style={{ height: '20px', width: '20px' }} alt="..." />
-                        </li>
-                        <li className="disable-visuals" onClick={e => handleVidActions(e)}>
-                            <img src={DiableVideoImage} style={{ height: '25px', width: '25px' }} alt="..." />
+                    </li>
+                    <li className="disable-visuals" onClick={e => handleVidActions(e)}>
+                        <img src={DiableVideoImage} style={{ height: '25px', width: '25px' }} alt="..." />
 
-                        </li>
+                    </li>
 
-                        <li className="disable-visuals" onClick={e => handleAudioActions(e)}>
-                            <img src={muteSvg} style={{ height: '25px', width: '25px' }} alt="..." />
+                    <li className="disable-visuals" onClick={e => handleAudioActions(e)}>
+                        <img src={muteSvg} style={{ height: '25px', width: '25px' }} alt="..." />
 
-                        </li>
-                    </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div className="TutorAsideChatCnt">
+                <div className="TutorAsideChatBox">
+
+                    {
+                        mssgList
+                    }
+
                 </div>
+                <div className="TutorAsideChatControl" style={{ background: '#fff' }}>
+                    <span style={{ width: '80%', height: '80%', float: 'left', background: '#fff' }}>
 
-
-                <div className="TutorAsideChatCnt">
-                    <div className="TutorAsideChatBox">
-
-                        {
-                            mssgList
-                        }
-
-                    </div>
-                    <div className="TutorAsideChatControl" style={{ background: '#fff' }}>
-                        <span style={{ width: '80%', height: '80%', float: 'left', background: '#fff' }}>
-
-                            <textarea type="text" id='TutorChatTextarea' 
+                        <textarea type="text" id='TutorChatTextarea'
                             style={{ width: '100%', borderRadius: '5px', border: 'none', display: 'flex', alignItems: 'center', background: '#f9f9f9', height: '40px', padding: '10px 5px 5px 5px', fontFamily: 'serif', fontSize: 'medium', outline: 'none', resize: 'none' }} onInput={e => setMssg(e.target.value)} placeholder='Type Your Message Here'></textarea>
 
-                        </span>
-                        <span style={{ width: '20%', height: '70%', float: 'right', background: '#fff' }}>
-                            <button className="m-0" 
+                    </span>
+                    <span style={{ width: '20%', height: '70%', float: 'right', background: '#fff' }}>
+                        <button className="m-0"
                             style={{ height: '40px', width: '90%' }} onClick={handleChat}>
-                                send
-                            </button>
-                        </span>
-                    </div>
+                            send
+                        </button>
+                    </span>
                 </div>
-
             </div>
-        </>
+
+        </div>
     );
 }
 

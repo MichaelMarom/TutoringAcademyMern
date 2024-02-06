@@ -83,7 +83,7 @@ const TutorCollabHeader = () => {
 
                 <div>
 
-                    <TutorCollabTools />
+                    {/* <TutorCollabTools /> */}
 
                 </div>
                 <div className="right" style={{ float: 'right', display: 'flex', justifyContent: 'right' }}>

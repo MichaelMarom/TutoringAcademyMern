@@ -19,8 +19,7 @@ const TutorClass = () => {
   return (
     <TutorLayout showLegacyFooter={false} >
       <div className="d-flex" style={{ gap: "2%" }}>
-        <div style={{ position: 'fixed', inset: 0, marginTop: "100px", width: "77%" }}>
-
+        <div style={{ position: 'fixed', inset: 0, marginTop: "100px", width: "80%" }}>
           <Excalidraw />
         </div>
 

@@ -942,7 +942,6 @@ const ShowCalendar = ({
         handleBulkEventCreate={handleBulkEventCreate}
         reservedSlots={reservedSlots}
         bookedSlots={bookedSlots}
-        bookedSlots={bookedSlots}
         clickedSlot={clickedSlot}
         setClickedSlot={setClickedSlot}
         handleRemoveReservedSlot={handleRemoveReservedSlot}

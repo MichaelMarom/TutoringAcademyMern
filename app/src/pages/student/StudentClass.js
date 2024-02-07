@@ -9,20 +9,15 @@ import Countdown from "react-countdown";
 const StudentClass = () => {
     return (
         <StudentLayout showLegacyFooter={false}>
-            {/* <StudentCollabHeader />
-            <StudentCollabBoard />
-            <StudentCollabFooter /> */}
-
-            <div style={{ position: 'fixed', inset: 0, marginTop: "100px" }}>
-                <div>
-                    <Countdown date={Date.now() + 1000 * 60}>
-                        <div>Session Ended!</div>
-                    </Countdown>
-
+            <div className="d-flex" style={{ gap: "2%" }}>
+                <div style={{ position: 'fixed', inset: 0, marginTop: "100px", width: "80%" }}>
+                    <Excalidraw />
                 </div>
-                <Excalidraw />
-            </div>
-            <Actions saveDisabled />
+
+                <div className="bg-light rounded" style={{ width: "28%" }}>
+                    <StudentCollabBoard />
+                </div>
+            </div >
         </StudentLayout>
     );
 }

@@ -1,7 +1,7 @@
 
 import React from 'react';
 
-const Pill = ({ label, editable, hasIcon = true, icon, color = "primary", width = "inherit",
+const Pill = ({ label, editable, hasIcon = true, icon, color = "primary", width = "inherit", fontColor = "white",
     onClick = () => { }, customColor = false }) => {
     return (
         <div
@@ -10,7 +10,7 @@ const Pill = ({ label, editable, hasIcon = true, icon, color = "primary", width 
                 transition: 'background-color 0.3s, box-shadow 0.3s',
                 pointerEvents: editable ? "auto" : "none",
                 background: color,
-                color: 'white'
+                color: fontColor
             }}
             className={` m-2 rounded-pill p-2 d-flex align-items-center 
             justify-content-between border shadow ${customColor ? '' : `text-bg-${color}`} `}

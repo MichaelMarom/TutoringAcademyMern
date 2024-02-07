@@ -10,6 +10,10 @@ import Tooltip from '../common/ToolTip';
 import Actions from '../common/Actions';
 import tutorData from '../../redux/tutor_store/tutorData';
 import { moment } from '../../config/moment'
+import BTN_ICON from '../../images/button__icon.png'
+
+import Pill from '../common/Pill'
+
 
 const StudentShortList = () => {
     let navigate = useNavigate()
@@ -180,16 +184,21 @@ const StudentShortList = () => {
                                         const tutorShortList = item.tutorShortList;
                                         const rate = tutorShortList.rate;
                                         return (
-                                            <tr key={index}
-                                                style={{ animation: tutorShortList.CodeApplied ? 'blinking 1s infinite' : 'none' }}
-                                            >
-                                                <td className='' style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
-                                                    <Avatar
-                                                        size='100'
-                                                        indicSize='20px'
-                                                        avatarSrc={tutorSetup?.Photo}
-                                                        online={tutorSetup.Online}
-                                                    />
+                                            <tr key={index}>
+                                                <td style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
+                                                    <div className='d-flex flex-column' >
+                                                        <Avatar
+                                                            size='100'
+                                                            indicSize='20px'
+                                                            avatarSrc={tutorSetup?.Photo}
+                                                            online={tutorSetup.Online}
+                                                        />
+                                                        {tutorShortList.CodeApplied &&
+                                                            <div className="blinking-button" style={{ color: "black" }}>
+                                                                <Pill fontColor='black' label={'connected'} customColor color='limegreen' editable={false} hasIcon={false} />
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </td>
                                                 <td className='m-auto' style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
                                                     <div className="form-check form-switch d-flex gap-3 justify-content-center" style={{ fontSize: "16px " }}>
@@ -226,7 +235,7 @@ const StudentShortList = () => {
                                                 <td style={{ width: multi_student_cols[3].width, border: '1px solid lightgray' }}>
                                                     {tutorSetup?.Country}
                                                 </td>
-                                                <td style={{ width: multi_student_cols[4].width, border: '1px solid lightgray' }} className=' text-center'>
+                                                <td style={{ width: multi_student_cols[4].width, border: '1px solid lightgray' }} className='text-center'>
                                                     {showDate(convertGMTToLocalTime(tutorSetup?.GMT), wholeDateFormat)} <br />
                                                 </td>
                                                 <td style={{ width: multi_student_cols[5].width, border: '1px solid lightgray' }} className=''>
@@ -239,19 +248,36 @@ const StudentShortList = () => {
                                                     </div>
                                                 </td>
                                                 <td style={{ width: multi_student_cols[6].width, border: '1px solid lightgray' }}>
-                                                    <button className='btn btn-outline-primary btn-sm'
+                                                    <button className='action-btn-square'
                                                         onClick={() => handleNavigateToSchedule(item)}>
-                                                        Book Lesson</button>
+                                                        <div className='button__content'>
+                                                            <div className='button__icon'>
+                                                                <img src={BTN_ICON} alt={"btn__icon"} />
+                                                            </div>
+                                                            <div className='button__text  text-sm'>Book Lesson</div>
+                                                        </div>
+                                                    </button>
                                                 </td>
                                                 <td style={{ width: multi_student_cols[7].width, border: '1px solid lightgray' }} >
-                                                    <button className='btn btn-outline-success btn-sm'
+                                                    <button className='action-btn-square'
                                                         onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>
-                                                        Feedbacks</button>
+                                                        <div className='button__content'>
+                                                            <div className='button__icon'>
+                                                                <img src={BTN_ICON} alt={"btn__icon"} />
+                                                            </div>
+                                                            <div className='button__text'> Feedbacks</div>
+                                                        </div></button>
                                                 </td>
                                                 <td style={{ width: multi_student_cols[8].width, border: '1px solid lightgray' }}>
-                                                    <button className='btn btn-outline-primary btn-sm'
+                                                    <button className='action-btn-square'
                                                         onClick={() => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>
-                                                        View Profile</button>
+                                                        <div className='button__content'>
+                                                            <div className='button__icon'>
+                                                                <img src={BTN_ICON} alt={"btn__icon"} />
+                                                            </div>
+                                                            <div className='button__text'> View Profile</div>
+                                                        </div>
+                                                    </button>
                                                 </td>
                                                 <td style={{ width: multi_student_cols[9].width, border: '1px solid lightgray' }}>{rate}</td>
                                                 <td style={{ width: multi_student_cols[10].width, border: '1px solid lightgray' }}>

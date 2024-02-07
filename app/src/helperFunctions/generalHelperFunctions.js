@@ -124,6 +124,7 @@ export const compareStates = (dbState, currentState) => {
   console.log(dbState, currentState)
   if (!(Object.keys(dbState).length)) return false
   for (const key in currentState) {
+    console.log(currentState[key], key, dbState?.[key], currentState[key] !== dbState?.[key])
     if (currentState[key] !== dbState?.[key]) {
       return true;
     }

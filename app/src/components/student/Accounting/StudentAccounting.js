@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import AmountCalc from './Accounting/AmountCalc';
-import AccountingTable from './Accounting/AccountingTable';
-import BankDetails from './Accounting/BankDetails';
-import { get_bank_details, get_payment_report, post_bank_details } from '../../axios/student';
-import Actions from '../common/Actions';
+import AmountCalc from './AmountCalc';
+import AccountingTable from './AccountingTable';
+import BankDetails from './BankDetails';
+import { get_bank_details, get_payment_report, post_bank_details } from '../../../axios/student';
+import Actions from '../../common/Actions';
 import { toast } from 'react-toastify';
-import Loading from '../common/Loading';
-import { convertToDate } from '../common/Calendar/Calendar';
+import Loading from '../../common/Loading';
+import { convertToDate } from '../../common/Calendar/Calendar';
+import Tabs from '../../common/Tabs';
 
 const StudentAccounting = () => {
     let date = new Date()
@@ -82,6 +83,18 @@ const StudentAccounting = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [paymentReportData, setPaymentReportData] = useState([]);
+    let [activeTab, setActiveTab] = useState(<BankDetails />);
+    const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+    useEffect(() => {
+        setActiveTab(<BankDetails />)
+    }, [])
+
+    const tabs = [
+        { label: 'Bank Info', component: <BankDetails /> },
+        { label: 'Accounting', component: null },
+        { label: 'Lessons Records', component: null },
+    ];
 
     const transformIntoPaymentReport = (item) => {
         const bookedSlots = JSON.parse(item.bookedSlots);
@@ -120,7 +133,18 @@ const StudentAccounting = () => {
         return <Loading />
     return (
         <>
-            <div className='mt-4 container'>
+            <Tabs
+                links={tabs}
+                activeTab={activeTab}
+                activeTabIndex={activeTabIndex}
+                setActiveTab={setActiveTab}
+                setActiveTabIndex={setActiveTabIndex}
+            />
+
+            {
+                activeTab
+            }
+            {/* <div className='mt-4 container'>
                 <BankDetails
                     StudentStartDay={StudentStartDay}
                     set_start_day={set_start_day}
@@ -155,7 +179,7 @@ const StudentAccounting = () => {
                         setEndDate={setEndDate}
                     />
                 </div>
-            </div>
+            </div> */}
             <Actions onSave={onSave} />
         </>
     );

@@ -4,7 +4,6 @@ import { wholeDateFormat } from '../../../constants/constants'
 import { convertTutorIdToName } from '../../../helperFunctions/generalHelperFunctions'
 
 const AccountingTable = ({ tableData }) => {
-
     return (
         <div className="col-md-8" style={{
             overflowY: 'auto',

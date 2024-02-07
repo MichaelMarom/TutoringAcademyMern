@@ -107,7 +107,7 @@ const Actions = ({
                     </div>
                     <div className="" style={{ width: "10%" }}>
                         <Button handleClick={onSave} className={`save-btn action-btn btn 
-                        ${(unSavedChanges && !saveDisabled) ? 'blinking-button' : ''}`} type="submit" loading={loading}
+                        ${(unSavedChanges && !saveDisabled) ? 'blinking-button saving-btn' : ''}`} type="submit" loading={loading}
                             disabled={saveDisabled || loading} >
                             <div className="button__content">
                                 <div className="button__icon">

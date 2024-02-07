@@ -15,6 +15,7 @@ import BTN_ICON from '../../images/button__icon.png';
 import { get_tutor_against_code } from '../../axios/tutor';
 import { useNavigate } from 'react-router-dom';
 import { setShortlist } from '../../redux/student_store/shortlist';
+import { compareStates } from '../../helperFunctions/generalHelperFunctions';
 
 const StudentSetup = () => {
     const dispatch = useDispatch()
@@ -66,6 +67,9 @@ const StudentSetup = () => {
     const { student } = useSelector(state => state.student)
     const [saving, setSaving] = useState(false)
     const [code, set_code] = useState('')
+    const [editMode, setEditMode] = useState(false)
+    const [nameFieldsDisabled, setNameFieldsDisabled] = useState(false);
+    const [unSavedChanges, setUnSavedChanges] = useState(false)
 
     let saver = async (e) => {
         e.preventDefault()
@@ -86,6 +90,44 @@ const StudentSetup = () => {
         setSaving(false)
         return response;
     }
+
+    useEffect(() => {
+        if (student.AcademyId) {
+            setEditMode(false)
+            setNameFieldsDisabled(true)
+        }
+        else {
+            setEditMode(true)
+            setNameFieldsDisabled(false)
+        }
+    }, [student])
+
+    //unsavedChanges
+    const currentState = {
+        Address2: add2,
+        AgeGrade: is_18,
+        Cell: cell,
+        City: city,
+        Country: country,
+        FirstName: fname,
+        GMT: timeZone,
+        Grade: grade,
+        Language: lang,
+        ParentAEmail: parentAEmail,
+        ParentAName: parentAName,
+        ParentBEmail: parentBEmail,
+        ParentBName: parentBName,
+        ParentConsent: `${parentConsent}`,
+        SecLan: secLan,
+        State: state,
+        ZipCode: zipCode,
+    };
+
+    useEffect(() => {
+        setUnSavedChanges(compareStates(student, currentState));
+
+        // eslint-disable-next-line
+    }, [currentState, student]);
 
     useEffect(() => {
         const fetchStudentSetup = async () => {
@@ -217,7 +259,6 @@ const StudentSetup = () => {
             }
             if (student.AcademyId && data.AcademyId) {
                 const result = await code_applied(student.AcademyId, data.AcademyId);
-                console.log(result)
                 if (result.message && result?.response?.status !== 400) {
                     dispatch(setShortlist())
                     toast.success(result.message);
@@ -243,7 +284,7 @@ const StudentSetup = () => {
 
                     <h5
                         style={{ whiteSpace: 'nowrap' }}>Profile Photo</h5>
-                    <input className="form-control" type="file" data-type='file' onChange={handleImage}
+                    <input className="form-control" disabled={!editMode} type="file" data-type='file' onChange={handleImage}
                         style={{ display: 'none' }} id="photo" />
                     <div className="tutor-tab-photo-frame">
                         <img src={photo}
@@ -283,7 +324,7 @@ const StudentSetup = () => {
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">
                                     First Name</label>
-                                <input required className="form-control"
+                                <input required disabled={nameFieldsDisabled} className="form-control"
                                     onInput={e => set_fname(e.target.value)} placeholder='First Name'
                                     value={fname} type="text" id="fname"
                                 />
@@ -291,23 +332,22 @@ const StudentSetup = () => {
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Middle Name</label>
-                                <input required className="form-control" onInput={e => set_mname(e.target.value)} placeholder='Middle Name' value={mname} type="text" id="mname"
+                                <input required disabled={nameFieldsDisabled} className="form-control" onInput={e => set_mname(e.target.value)} placeholder='Middle Name' value={mname} type="text" id="mname"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Last Name</label>
-                                <input required className="form-control" onInput={e => set_sname(e.target.value)} placeholder='Last Name' value={sname} type="text" id="sname"
+                                <input required disabled={nameFieldsDisabled} className="form-control" onInput={e => set_sname(e.target.value)} placeholder='Last Name' value={sname} type="text" id="sname"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Email</label>
-                                <input required className="form-control"
+                                <input required disabled className="form-control"
                                     placeholder='Email'
                                     value={user.role === 'student' ? user.email : email}
                                     type="text" id="email"
-
                                     readonly />
 
                                 <div className='err-mssg' >
@@ -319,6 +359,7 @@ const StudentSetup = () => {
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">CellPhone</label>
                                 <PhoneInput
+                                    disabled={!editMode}
                                     defaultCountry="us"
                                     value={cell}
                                     onChange={(cell) => set_cell(cell)}
@@ -332,7 +373,7 @@ const StudentSetup = () => {
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Are you over 18?</label>
-                                <select required className="form-select " dname="" id="" onInput={e => set_is_18(e.target.value)}>
+                                <select required disabled={!editMode} className="form-select " dname="" id="" onInput={e => set_is_18(e.target.value)}>
                                     <option value="null">Are You Over 18 ?</option>
                                     <option selected={is_18 === 'yes' ? 'selected' : ''} value="yes">Yes</option>
                                     <option selected={is_18 === 'no' ? 'selected' : ''} value="no">No</option>
@@ -342,7 +383,7 @@ const StudentSetup = () => {
                             <div className='input-group mb-2' >
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">GMT</label>
 
-                                <select required className="form-select " onInput={e => set_timeZone(e.target.value)} id="timeZone" value={timeZone}>
+                                <select required disabled={!editMode} className="form-select " onInput={e => set_timeZone(e.target.value)} id="timeZone" value={timeZone}>
                                     {GMTList}
 
                                 </select>
@@ -350,7 +391,7 @@ const StudentSetup = () => {
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Grade</label>
-                                <select required className="form-select " onInput={e => set_grade(e.target.value)} id="state" value={grade}
+                                <select disabled={!editMode} required className="form-select " onInput={e => set_grade(e.target.value)} id="state" value={grade}
                                 >
                                     {
                                         GradeList
@@ -362,7 +403,7 @@ const StudentSetup = () => {
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Native Language</label>
-                                <select required className="form-select " onInput={e => set_lang(e.target.value)} id="state" value={lang}
+                                <select disabled={!editMode} required className="form-select " onInput={e => set_lang(e.target.value)} id="state" value={lang}
 
                                 >
                                     <option value="null">Select Language</option>
@@ -383,7 +424,7 @@ const StudentSetup = () => {
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Address1</label>
 
-                                <input required className="form-control "
+                                <input required disabled={!editMode} className="form-control "
                                     onInput={e => set_add1(e.target.value)} placeholder='Address 1' value={add1}
                                     type="text" id="add1"
                                 />
@@ -391,19 +432,19 @@ const StudentSetup = () => {
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Address2</label>
-                                <input className="form-control" onInput={e => set_add2(e.target.value)} placeholder='Optional' value={add2} type="text" id="add2"
+                                <input disabled={!editMode} className="form-control" onInput={e => set_add2(e.target.value)} placeholder='Optional' value={add2} type="text" id="add2"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">City</label>
-                                <input required className="form-control" onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" value={city} id="city"
+                                <input required disabled={!editMode} className="form-control" onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" value={city} id="city"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">State</label>
-                                <select required className="form-select " onInput={e => set_state(e.target.value)} id="state"
+                                <select required className="form-select " disabled={!editMode} onInput={e => set_state(e.target.value)} id="state"
                                     value={state}
                                 >
                                     {stateList}
@@ -413,14 +454,14 @@ const StudentSetup = () => {
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Zip</label>
-                                <input required className="form-control" onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip"
+                                <input required className="form-control" disabled={!editMode} onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Country</label>
 
-                                <select required className="form-select " onInput={e => set_country(e.target.value)}
+                                <select required className="form-select " disabled={!editMode} onInput={e => set_country(e.target.value)}
                                     id="country" value={country}
                                 >
                                     {countryList}
@@ -431,11 +472,11 @@ const StudentSetup = () => {
                             <div className='input-group mb-2' >
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">UTC</label>
 
-                                <input className='form-control' value={dateTime} />
+                                <input className='form-control' disabled={!editMode} value={dateTime} />
                             </div>
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text small" style={{ width: "35%" }} for="inputGroupSelect01">Other Language(s)</label>
-                                <select className="form-select " placeholder='Optional'
+                                <select className="form-select " disabled={!editMode} placeholder='Optional'
                                     onChange={e => setSecLang(e.target.value)} id="state" value={secLan}
                                 >
                                     <option value="null">Select Language</option>
@@ -458,7 +499,7 @@ const StudentSetup = () => {
                         <div className='d-flex' style={{ gap: "2%" }}>
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Email</label>
-                                <input required={is_18 === 'no'} className="form-control"
+                                <input disabled={!editMode} required={is_18 === 'no'} className="form-control"
                                     onChange={e => setParentAEmail(e.target.value)}
                                     placeholder='Parent A Email'
                                     type="email" value={parentAEmail} />
@@ -466,7 +507,7 @@ const StudentSetup = () => {
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Name</label>
-                                <input required={is_18 === 'no'} className="form-control"
+                                <input disabled={!editMode} required={is_18 === 'no'} className="form-control"
                                     onChange={e => setParentAName(e.target.value)} placeholder='Parent A Name'
                                     type="text" value={parentAName} />
                             </div>
@@ -474,14 +515,14 @@ const StudentSetup = () => {
                         <div className='d-flex' style={{ gap: "2%" }}>
                             <div className='input-group mb-2'>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Email</label>
-                                <input className="form-control"
+                                <input disabled={!editMode} className="form-control"
                                     onChange={e => setParentBEmail(e.target.value)}
                                     placeholder='Parent B Email' type="email" value={parentBEmail} />
                             </div>
 
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Name</label>
-                                <input className="form-control"
+                                <input disabled={!editMode} className="form-control"
                                     onChange={e => setParentBName(e.target.value)}
                                     placeholder='Parent B Name' type="text" value={parentBName}
                                 />
@@ -498,6 +539,7 @@ const StudentSetup = () => {
 
                                 style={{ fontSize: "16px " }}>
                                 <input className="form-check-input m-1"
+                                    disabled={!editMode}
                                     type="checkbox"
                                     role="switch"
                                     style={{
@@ -519,7 +561,11 @@ const StudentSetup = () => {
                 </div>
             </div>
             <Actions
+                editDisabled={editMode}
+                onEdit={() => setEditMode(true)}
                 loading={saving}
+                saveDisabled={!editMode}
+                unSavedChanges={unSavedChanges}
             />
         </form>
     );

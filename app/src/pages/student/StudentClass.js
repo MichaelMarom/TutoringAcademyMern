@@ -1,10 +1,8 @@
 import { Excalidraw } from "@excalidraw/excalidraw";
-import Actions from "../../components/common/Actions";
 import StudentCollabBoard from "../../components/student/StudentCollabBoard";
 import StudentCollabFooter from "../../components/student/StudentCollabFooter";
 import StudentCollabHeader from "../../components/student/StudentCollabHeader";
 import StudentLayout from "../../layouts/StudentLayout";
-import Countdown from "react-countdown";
 
 const StudentClass = () => {
     return (

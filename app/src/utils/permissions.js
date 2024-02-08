@@ -1,3 +1,4 @@
+// tutor
 import Intro from "../pages/tutor/Intro";
 import TutorSetup from "../pages/tutor/TutorSetup";
 import Education from "../pages/tutor/Education";
@@ -9,37 +10,39 @@ import Scheduling from "../pages/tutor/Scheduling";
 import TermOfUse from "../pages/tutor/TermOfUse";
 import Classified from "../pages/tutor/Add/Classified";
 import TutorProfile from "../pages/tutor/TutorProfile";
-
-import StudentSetup from "../pages/student/StudentSetup";
-import StudentFaculty from "../pages/student/StudentFaculty";
-import StudentShortLists from "../pages/student/StudentShortList";
-import StudentAccountings from "../pages/student/StudentAccounting";
-import TutorTable from "../pages/Admin/Tutor";
-import StudentTable from "../pages/Admin/Student";
-import StudentScheduling from "../pages/student/StudentScheduling";
-import StudentTermOfUse from "../pages/student/TermOfUse";
-import StudentMarketPlace from "../pages/student/StudentMarketPlace";
-import TutorNewSubject from "../pages/Admin/NewSubject";
-import StudentProfile from "../pages/student/StudentProfile";
-import StudentIntro from "../pages/student/StudentIntro";
-
-import Login from "../pages/Login";
-import Signup from "../pages/Signup";
-import TutorClass from "../pages/tutor/TutorClass";
-import StudentClass from "../pages/student/StudentClass";
-import { Feedback } from "../pages/student/Feedback";
-import Chat from "../pages/Chat";
-import { Schedules } from "../pages/student/Schedules";
-import { SingleTutorFeedbacks } from "../pages/student/SingleTutorFeedbacks";
-
-import TOS from '../pages/Admin/TOS'
-import PlatformIntro from "../pages/Admin/PlatformIntro";
 import Edit from "../pages/tutor/Add/Edit";
 import Create from "../pages/tutor/Add/Create";
 import Bid from "../pages/tutor/Add/Bid";
 import List from "../pages/tutor/Add/List";
+import TutorClass from "../pages/tutor/TutorClass";
+
+// students
+import StudentSetup from "../pages/student/StudentSetup";
+import StudentFaculty from "../pages/student/StudentFaculty";
+import StudentShortLists from "../pages/student/StudentShortList";
+import StudentAccountings from "../pages/student/StudentAccounting";
+import StudentScheduling from "../pages/student/StudentScheduling";
+import StudentTermOfUse from "../pages/student/TermOfUse";
+import StudentMarketPlace from "../pages/student/StudentMarketPlace";
+import StudentProfile from "../pages/student/StudentProfile";
+import StudentIntro from "../pages/student/StudentIntro";
+import StudentClass from "../pages/student/StudentClass";
+import { Feedback } from "../pages/student/Feedback";
+import { Schedules } from "../pages/student/Schedules";
+import { SingleTutorFeedbacks } from "../pages/student/SingleTutorFeedbacks";
+
+//admin
+import TutorNewSubject from "../pages/Admin/NewSubject";
+import TutorTable from "../pages/Admin/Tutor";
+import StudentTable from "../pages/Admin/Student";
 import Marketing from "../pages/Admin/Marketing";
 import AdminChat from '../pages/Admin/Chat'
+
+//common
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
+import Chat from "../pages/Chat";
+
 
 const rolePermissions = {
   tutor: [

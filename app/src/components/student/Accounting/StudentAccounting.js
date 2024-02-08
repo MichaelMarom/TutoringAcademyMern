@@ -8,92 +8,30 @@ import { toast } from 'react-toastify';
 import Loading from '../../common/Loading';
 import { convertToDate } from '../../common/Calendar/Calendar';
 import Tabs from '../../common/Tabs';
+import Lessons from './Lessons';
 
 const StudentAccounting = () => {
-    let date = new Date()
-    const [loading, setLoading] = useState(false);
-    let [StudentStartDay, set_start_day] = useState(date)
-    let [AccountName, set_acct_name] = useState(null)
-    let [PaymentType, set_acct_type] = useState(null)
-    let [BankName, set_bank_name] = useState(null)
-    let [AccountNumber, set_acct] = useState(null)
-    let [RoutingNumber, set_routing] = useState(null)
-    let [SSH, set_ssh] = useState(null)
-    let [AccumulatedHrs, set_accumulated_hrs] = useState(null)
-    let [PaymentOption, set_payment_option] = useState(null)
     const AcademyId = localStorage.getItem('student_user_id')
 
-    const onSave = async () => {
-
-        if (!StudentStartDay ||
-            !PaymentOption ||
-            !PaymentType ||
-            !AccountName ||
-            !BankName ||
-            !AccountNumber ||
-            !RoutingNumber ||
-            !SSH ||
-            !PaymentType) {
-            toast.warning('All Fields Should be filled')
-            return
-        }
-        setLoading(true)
-        const data = await post_bank_details({
-            StudentStartDay,
-            PaymentOption,
-            PaymentType,
-            AccountName,
-            BankName,
-            AccountNumber,
-            RoutingNumber,
-            SSH,
-            AcademyId,
-            AccumulatedHrs
-        })
-        if (data?.response?.status === 400)
-            toast.error('Error Saving eeh data')
-        else {
-
-            toast.success('Data saved succesfully')
-
-        }
-        setLoading(false)
-        console.log('hit save, data', data)
-    }
-
-    useEffect(() => {
-        const fetchBankDetails = async () => {
-            const data = await get_bank_details(AcademyId)
-            if (data.length) {
-                const result = data[0]
-                set_start_day(result.StudentStartDay);
-                set_acct_name(result.AccountName);
-                set_acct_type(result.PaymentType);
-                set_bank_name(result.BankName);
-                set_acct(result.AccountNumber);
-                set_routing(result.RoutingNumber);
-                set_ssh(result.SSH);
-                set_accumulated_hrs(result.AccumulatedHrs);
-                set_payment_option(result.PaymentOption);
-            }
-        }
-        fetchBankDetails()
-    }, [])
+   
+   
 
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [paymentReportData, setPaymentReportData] = useState([]);
-    let [activeTab, setActiveTab] = useState(<BankDetails />);
     const [activeTabIndex, setActiveTabIndex] = useState(0);
+    let [activeTab, setActiveTab] = useState(null);
 
     useEffect(() => {
         setActiveTab(<BankDetails />)
     }, [])
 
     const tabs = [
-        { label: 'Bank Info', component: <BankDetails /> },
-        { label: 'Accounting', component: null },
-        { label: 'Lessons Records', component: null },
+        {
+            label: 'Payment Type', component: <BankDetails />
+        },
+        { label: 'Accounting', component: <AccountingTable paymentReportData={paymentReportData} startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} /> },
+        { label: 'Lessons Records', component: <Lessons paymentReportData={paymentReportData} /> },
     ];
 
     const transformIntoPaymentReport = (item) => {
@@ -110,7 +48,6 @@ const StudentAccounting = () => {
         const fetchPaymentReport = async () => {
             const studentId = localStorage.getItem('student_user_id')
             const data = await get_payment_report(studentId);
-            console.log(data)
             const uniqueData = data.reduce((unique, item) => {
                 if (unique?.some(detail => detail.tutorId === item.tutorId)) {
                     return unique
@@ -128,9 +65,6 @@ const StudentAccounting = () => {
         fetchPaymentReport();
     }, []);
 
-
-    if (loading)
-        return <Loading />
     return (
         <>
             <Tabs
@@ -180,7 +114,6 @@ const StudentAccounting = () => {
                     />
                 </div>
             </div> */}
-            <Actions onSave={onSave} />
         </>
     );
 };

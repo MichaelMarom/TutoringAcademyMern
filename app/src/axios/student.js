@@ -323,3 +323,15 @@ export const code_applied = async (studentId, tutorId) => {
         return err
     }
 }
+
+export const fetch_published_ads = async () => {
+    try {
+        const { data } = await apiClient.get('/student/ads');
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}

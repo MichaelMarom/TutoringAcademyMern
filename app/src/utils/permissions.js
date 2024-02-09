@@ -23,7 +23,6 @@ import StudentShortLists from "../pages/student/StudentShortList";
 import StudentAccountings from "../pages/student/StudentAccounting";
 import StudentScheduling from "../pages/student/StudentScheduling";
 import StudentTermOfUse from "../pages/student/TermOfUse";
-import StudentMarketPlace from "../pages/student/StudentMarketPlace";
 import StudentProfile from "../pages/student/StudentProfile";
 import StudentIntro from "../pages/student/StudentIntro";
 import StudentClass from "../pages/student/StudentClass";
@@ -42,6 +41,9 @@ import AdminChat from '../pages/Admin/Chat'
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import Chat from "../pages/Chat";
+import Marketplace from "../pages/student/MarketPlace/Marketplace";
+import Bids from "../pages/student/MarketPlace/Bids";
+import Ads from "../pages/student/MarketPlace/Ad";
 
 
 const rolePermissions = {
@@ -75,7 +77,7 @@ const rolePermissions = {
     { path: "/student/faculties", component: <StudentFaculty /> },
     { path: "/student/short-list", component: <StudentShortLists /> },
     { path: "/student/accounting", component: <StudentAccountings /> },
-    { path: "/student/market-place", component: <StudentMarketPlace /> },
+    { path: "/student/market-place", component: <Marketplace /> },
     { path: "/student/booking", component: <StudentScheduling /> },
     { path: "/student/calender", component: <Schedules /> },
     { path: "/student/term-of-use", component: <StudentTermOfUse /> },
@@ -85,7 +87,8 @@ const rolePermissions = {
     { path: '/student/chat', component: <Chat /> },
     { path: '/student/chat/:id', component: <Chat /> },
     { path: "/student/tutor-profile/:id", component: <TutorProfile /> },
-
+    { path: "/student/market-place/bid", component: <Bids /> },
+    { path: "/student/market-place/ad", component: <Ads /> },
   ],
   admin: [
     { path: "/admin/tutor-data", component: <TutorTable /> },

@@ -19,6 +19,7 @@
     "holidayapi": "^6.0.1",
     "install": "^0.13.0",
     "js-ago": "^2.0.2",
+    "lodash": "^4.17.21",
     "mongodb": "^5.1.0",
     "nanoid": "^4.0.2",
     "nginx": "^1.0.8",

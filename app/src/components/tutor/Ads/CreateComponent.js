@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetch_tutor_ads, get_tutor_market_data, post_tutor_ad } from "../../../axios/tutor";
 import { useSelector } from "react-redux";
-import { capitalizeFirstLetter } from "../../../helperFunctions/generalHelperFunctions";
+import { capitalizeFirstLetter, compareStates } from "../../../helperFunctions/generalHelperFunctions";
 import { FaEye } from "react-icons/fa";
 import Pill from '../../common/Pill'
 import Loading from "../../common/Loading";
@@ -24,19 +24,19 @@ const CreateComponent = ({ setActiveTab }) => {
     const [error, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
     const AcademyId = localStorage.getItem('tutor_user_id');
+    const [unSavedChanges, setUnSavedChanges] = useState(false);
 
-    const [addText, setAddText] = useState(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
-    There you can look at my calendar-scheduling for availability, and book your lesson.
-`)
+    const [addText, setAddText] = useState(`Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
+    I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
+    I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
+    I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
+    There you can look at my calendar-scheduling for availability, and book your lesson.`)
 
     useEffect(() => {
-        if (window.localStorage.getItem('tutor_user_id') !== null) {
-            get_tutor_market_data(window.localStorage.getItem('tutor_user_id'))
+        if (AcademyId !== null) {
+            get_tutor_market_data(AcademyId)
                 .then((result) => {
-
                     let { Subjects, Education } = result
-
-                    console.log(Subjects, ';market sa123')
                     set_subjects(Subjects)
                     set_education(Education[0])
                     setFetching(false)
@@ -46,9 +46,11 @@ const CreateComponent = ({ setActiveTab }) => {
     }, [])
 
     useEffect(() => {
-        setAddText(` Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, and I teach ${!!subject.length ? subject : '.....'} for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. I hold ${education ? education?.EducationalLevel : '....'} with experience of ${education ? education?.EducationalLevelExperience : '.....'}.
-    I live in ${tutor.Country}, time zone ${tutor.GMT}. Click <a href="${process.env.REACT_APP_BASE_URL}/tutor/tutor-profile/${tutor.AcademyId}">here</a> to view my profile for my work experience, certificates, and Diploma.
-    There you can look at my calendar-scheduling for availability, and book your Introduction lesson.`)
+        setAddText(`Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
+        I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
+        I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
+        I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
+        There you can look at my calendar-scheduling for availability, and book your lesson.`)
     }, [subject, tutor, education, grades])
 
     const handleClickPill = (grade) => {
@@ -79,8 +81,38 @@ const CreateComponent = ({ setActiveTab }) => {
             Languages: education.NativeLang,
             Grades: grades
         })
+        setSubject('')
+        setGrades([])
+        setHeader('')
+        setAddText(`Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
+        I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
+        I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
+        I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
+        There you can look at my calendar-scheduling for availability, and book your lesson.`)
+
         toast.success('Data Saved Successfully');
     }
+
+    //compare changes
+    const currentState = {
+        Subject: subject,
+        Grades: grades,
+        AdHeader: header,
+        // AdText: addText
+    }
+    useEffect(() => {
+        let initialState = {
+            Subject: '',
+            Grades: [],
+            AdHeader: '',
+            // AdText: `Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
+            // I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
+            // I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
+            // I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
+            // There you can look at my calendar-scheduling for availability, and book your lesson.`
+        }
+        setUnSavedChanges(compareStates(initialState, currentState))
+    }, [currentState, tutor, grades, education, subject])
 
     if (fetching || !tutor.AcademyId)
         return <Loading />
@@ -98,9 +130,9 @@ const CreateComponent = ({ setActiveTab }) => {
                                 disabled
                             />
                             <label htmlFor="reportAd"
-                                onClick={() => toast.warning('You can publish only if you saved the ad before!')}
-
-                            ><b>Publish This Ad</b></label>
+                                onClick={() => toast.warning('You can publish only if you saved the ad before!')}>
+                                <b>Publish This Ad</b>
+                            </label>
                         </div>
                         <div className="highlight w-75" >
                             This is the place where you can promote yourself by publishing your private ad for all students to watch. If you tutor multi subjects, you can select one subject at the time by changing the header.
@@ -240,6 +272,7 @@ const CreateComponent = ({ setActiveTab }) => {
 
                 <Actions
                     loading={loading}
+                    unSavedChanges={unSavedChanges}
                 />
             </form>
         </div >

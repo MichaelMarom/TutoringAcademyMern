@@ -1696,11 +1696,44 @@ const put_ad = async (req, res) => {
     marom_db(async (config) => {
         try {
             const poolConnection = await sql.connect(config);
-            const result = await poolConnection.request().
-                query(update('TutorAds', req.body, req.params))
-            res.status(200).send(result.recordset[0]);
+            const request = poolConnection.request();
+            console.log(req.params, req.body)
+            request.input('AcademyId', sql.NVarChar(sql.MAX),
+                req.body.AcademyId);
+            request.input('AdText', sql.NVarChar(sql.MAX),
+                req.body.AdText);
+            request.input('Subject', sql.NVarChar(sql.MAX),
+                req.body.Subject);
+            request.input('Certificate', sql.NVarChar(sql.MAX),
+                req.body.Certificate);
+            request.input('Experience', sql.NVarChar(sql.MAX),
+                req.body.Experience);
+            request.input('GMT', sql.NVarChar(sql.MAX),
+                req.body.GMT);
+            request.input('Country', sql.NVarChar(sql.MAX),
+                req.body.Country);
+            request.input('EducationalLevel', sql.NVarChar(sql.MAX),
+                req.body.EducationalLevel);
+            request.input('Languages', sql.NVarChar(sql.MAX),
+                req.body.Languages);
+            request.input('Grades', sql.NVarChar(sql.MAX),
+                req.body.Grades);
+            request.input('Status', sql.NVarChar(sql.MAX),
+                req.body.Status);
+            request.input('Published_At', sql.DateTime(),
+                req.body.Published_At);
+
+            request.input('AdHeader', sql.NVarChar(sql.MAX),
+                req.body.AdHeader);
+            request.input('Id', sql.Int(),
+                req.params.Id);
+
+            const result = await request.query(parameteriedUpdateQuery('TutorAds', req.body, req.params, false).query)
+
+            res.status(200).send(result.recordset);
         }
         catch (e) {
+            console.error(e.message)
             res.status(400).send({ message: e.message })
         }
     })

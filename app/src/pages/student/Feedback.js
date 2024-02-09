@@ -242,10 +242,10 @@ export const Feedback = () => {
 
     return (
         <StudentLayout showLegacyFooter={false}>
-            <div className="container mt-5">
+            <div className="container mt-1">
                 <div className="py-2 row" >
                     <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}
-                        style={{ maxHeight: "75vh", overflowY: "auto" }}>
+                        style={{ maxHeight: "68vh", overflowY: "auto" }}>
                         <h2>Booked Lessons</h2>
                         {feedbackData.length ?
                             <>

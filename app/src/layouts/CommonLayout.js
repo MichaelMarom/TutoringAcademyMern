@@ -1,8 +1,6 @@
 import React from 'react'
 import TutorHeader from '../components/tutor/Header'
-import TutorFooter from '../components/tutor/Footer'
 import Header from '../components/student/Header'
-import Footer from '../components/student/Footer'
 
 
 const CommonLayout = ({ role, children, showLegacyFooter = true }) => {
@@ -11,10 +9,6 @@ const CommonLayout = ({ role, children, showLegacyFooter = true }) => {
             <div>
                 <Header />
                 {children}
-                {showLegacyFooter ?
-                    <Footer /> :
-                    null
-                }
             </div>
         )
     else if (role === 'tutor')
@@ -22,10 +16,6 @@ const CommonLayout = ({ role, children, showLegacyFooter = true }) => {
             <div>
                 <TutorHeader />
                 {children}
-                {showLegacyFooter ?
-                    <TutorFooter /> :
-                    null
-                }
             </div>
         )
     else return null

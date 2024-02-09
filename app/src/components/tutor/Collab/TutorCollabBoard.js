@@ -1,6 +1,6 @@
 import TutorAside from "./TutorCollabAside";
-import '../../styles/canvas.css'
-import Actions from "../common/Actions";
+import '../../../styles/canvas.css'
+import Actions from "../../common/Actions";
 const TutorCollabBoard = () => {
 
     return (

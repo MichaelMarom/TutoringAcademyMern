@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import Input from '../common/Input'
-import GradePills from './GradePills'
-import Button from '../common/Button'
-import { post_tutor_setup, remove_subject_rates, upload_tutor_rates } from '../../axios/tutor'
+import Input from '../../common/Input'
+import GradePills from './../GradePills'
+import Button from '../../common/Button'
+import { post_tutor_setup, remove_subject_rates, upload_tutor_rates } from '../../../axios/tutor'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 
@@ -11,7 +11,6 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
     const [grades, setGrades] = useState(gradesVal)
     const [editable, setEditable] = useState(false);
     const tutorId = localStorage.getItem('tutor_user_id')
-    const { tutor } = useSelector(state => state.tutor);
     const options = [
         {
             value: 'K-3',

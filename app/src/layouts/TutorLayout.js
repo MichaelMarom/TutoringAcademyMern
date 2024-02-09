@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Header from '../components/tutor/Header'
-import Footer from '../components/tutor/Footer'
 import { useSelector } from 'react-redux'
 import Steps from '../components/tutor/Steps'
 
@@ -22,10 +21,6 @@ const TutorLayout = ({ children, showLegacyFooter = true }) => {
             < Header />
             {/* // } */}
             {children}
-            {showLegacyFooter ?
-                <Footer /> :
-                null
-            }
         </div>
     )
 }

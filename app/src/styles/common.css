@@ -37,6 +37,11 @@
 }
 
 
+.blinking-frame-red {
+  animation: blinking_red 1s infinite;
+}
+
+
 .blinking-border-bottom {
   /* margin: 20% 45% 0;
   font-size: 4em; */
@@ -90,7 +95,7 @@
   color: #fff !important;
 }
 
-.rbc-btn-group .rbc-active {
+.rbc-btn-group button:not(.rbc-active) {
   padding: 8px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5) !important;
 }
@@ -115,11 +120,6 @@
   color: white;
 }
 
-/**/
-
-.blinking-frame-red {
-  animation: blinking_red 1s infinite;
-}
 
 /* ----------------------------------------------------------react-datepicker--------------------------------------*/
 .react-datepicker__time-container {

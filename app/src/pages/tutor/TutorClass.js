@@ -1,6 +1,6 @@
-import TutorCollabBoard from "../../components/tutor/TutorCollabBoard";
-import TutorCollabFooter from "../../components/tutor/TutorCollabFooter";
-import TutorCollabHeader from "../../components/tutor/TutorCollabHeader";
+import TutorCollabBoard from "../../components/tutor/Collab/TutorCollabBoard";
+import TutorCollabFooter from "../../components/tutor/Collab/TutorCollabFooter";
+import TutorCollabHeader from "../../components/tutor/Collab/TutorCollabHeader";
 import TutorLayout from "../../layouts/TutorLayout";
 
 import {
@@ -18,7 +18,7 @@ const TutorClass = () => {
 
         <div className="bg-light rounded" style={{ width: "28%" }
         }>
-         
+
           <TutorCollabBoard />
         </div >
       </div >

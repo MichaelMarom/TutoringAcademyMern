@@ -11,7 +11,7 @@ import { RxCross2 } from 'react-icons/rx'
 import { GoPlus } from 'react-icons/go'
 import { FaTrashCan } from 'react-icons/fa6'
 import { moment } from '../../../config/moment'
-import { fetch_ad, get_tutor_market_data, put_ad } from '../../../axios/tutor'
+import { fetch_ad, fetch_tutor_ads, get_tutor_market_data, put_ad } from '../../../axios/tutor'
 import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '../../../components/common/Loading'
 import Actions from '../../../components/common/Actions'
@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { showDate } from '../../../helperFunctions/timeHelperFunctions'
 import { convertToDate } from '../../../components/common/Calendar/Calendar'
+import { compareStates } from '../../../helperFunctions/generalHelperFunctions'
 
 const Edit = () => {
     const { tutor } = useSelector(state => state.tutor);
@@ -30,27 +31,15 @@ const Edit = () => {
     const [state, setState] = useState(null)
     const [subject, setSubject] = useState('');
     const [grades, setGrades] = useState([])
-    const [header, setHeader] = useState('');
     const AcademyId = localStorage.getItem('tutor_user_id');
     const [error, setErrors] = useState({})
+    const [header, setHeader] = useState('');
     const [editMode, setEditMode] = useState(false);
-
     const [addText, setAddText] = useState(``);
     const [dbValues, setDBValues] = useState({});
     const [notEditableAfterPublish, setNotEditableAfterPublish] = useState(false);
     const [changesMade, setChangesMade] = useState(false)
-
-    const compareDBAndChangedState = (currentState) => {
-        if (!(Object.keys(dbValues).length)) return setChangesMade(false)
-        for (const key in currentState) {
-            if (currentState[key] !== dbValues?.[key] && typeof (currentState[key]) !== 'object') {
-                console.log(key, dbValues.key, currentState.key, dbValues)
-                setChangesMade(true);
-                return;
-            }
-        }
-        setChangesMade(false);
-    }
+    console.log(editMode, notEditableAfterPublish)
 
     useEffect(() => {
         if (editMode) {
@@ -60,10 +49,9 @@ const Edit = () => {
                 AdHeader: header,
                 Subject: subject
             }
-            compareDBAndChangedState(localStates)
+            setChangesMade(compareStates(dbValues, localStates))
         }
-
-    }, [grades, subject, addText, header, editMode])
+    }, [grades, subject, addText, header, editMode, dbValues])
 
     useEffect(() => {
         if (params.id) {
@@ -97,6 +85,7 @@ const Edit = () => {
         }
     }, [params])
 
+    console.log(notEditableAfterPublish)
     const handleClickPill = (grade) => {
         const gradeExist = grades.find(item => item === grade)
         if (gradeExist) {
@@ -108,7 +97,10 @@ const Edit = () => {
     const handleUpdate = async (e) => {
         e.preventDefault();
         if (!grades.length) return toast.warning('Please select atleast one grade!')
-        params.id && await put_ad(params.id, {
+        const ads = await fetch_tutor_ads(AcademyId)
+        if (ads.filter(ad => ad.Subject === subject).length >= 2) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published!')
+
+        const data = params.id && await put_ad(params.id, {
             AcademyId,
             AdText: addText,
             AdHeader: header,
@@ -119,10 +111,12 @@ const Edit = () => {
             Country: tutor.Country,
             EducationalLevel: education.EducationalLevel,
             Languages: education.NativeLang,
-            Grades: grades,
-            Status: state,
-            Published_At: state === 'published' ? new Date() : null
+            Grades: JSON.stringify(grades),
+            Status: !editMode ? 'published' : null,
+            Published_At: !editMode ? new Date() : null
         })
+
+        if (data?.response?.data?.message) return toast.error(data.response.data.message)
         setEditMode(false)
         setChangesMade(false)
         navigate(`/tutor/market-place/list`)
@@ -139,7 +133,8 @@ const Edit = () => {
                         <div className="d-flex justify-content-between align-items-center mb-2">
                             {dbValues.Status !== 'published' ?
                                 <div className="form-switch form-check w-25" style={{ marginBottom: "-10px" }}>
-                                    <input disabled={!editMode || notEditableAfterPublish} className="form-check-input"
+                                    <input disabled={!editMode || notEditableAfterPublish}
+                                        className="form-check-input"
                                         type="checkbox"
                                         role="switch"
                                         checked={state === 'published'}
@@ -290,11 +285,11 @@ const Edit = () => {
                     </div>
 
                     <Actions
-                        editDisabled={editMode}
-                        savedisabled={!editMode || notEditableAfterPublish}
-                        nextdisabled={!editMode || notEditableAfterPublish}
+                        editDisabled={editMode || notEditableAfterPublish}
+                        saveDisabled={!editMode && notEditableAfterPublish}
                         onEdit={() => setEditMode(true)}
                         unSavedChanges={changesMade}
+                        SaveText={editMode ? 'Save' : 'Publish'}
                     />
                 </form>
             </div >

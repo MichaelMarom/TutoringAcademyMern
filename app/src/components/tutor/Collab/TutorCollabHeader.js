@@ -1,6 +1,6 @@
 import { useState } from "react";
-import home from '../../images/home-vector-svgrepo-com.svg';
-import del from '../../images/delete-svgrepo-com.svg';
+import home from '../../../images/home-vector-svgrepo-com.svg';
+import del from '../../../images/delete-svgrepo-com.svg';
 import TutorCollabTools from "./TutorCollabTools";
 import { useTimer } from 'react-timer-hook';
 

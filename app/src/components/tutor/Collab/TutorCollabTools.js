@@ -1,20 +1,20 @@
-import p1 from '../../images/pencil-tip-svgrepo-com (1).svg';
-import sl from '../../images/line-straight-svgrepo-com.svg';
-import imageSvg from '../../images/image-file-svgrepo-com.svg';
-import fileSvg from '../../images/file-holder-svgrepo-com.svg';
-import shapesImage from '../../images/shapes-svgrepo-com (1).svg';
-import circelImage from '../../images/circle-thin-svgrepo-com.svg';
-import paintImage from '../../images/fill-svgrepo-com.svg';
-import SqImage from '../../images/square-svgrepo-com (1).svg';
-import eraserImage from '../../images/eraser-svgrepo-com.svg';
-import triangleImage from '../../images/triangle-svgrepo-com (1).svg';
-import rectImage from '../../images/rectangle-svgrepo-com.svg'
+import p1 from '../../../images/pencil-tip-svgrepo-com (1).svg';
+import sl from '../../../images/line-straight-svgrepo-com.svg';
+import imageSvg from '../../../images/image-file-svgrepo-com.svg';
+import fileSvg from '../../../images/file-holder-svgrepo-com.svg';
+import shapesImage from '../../../images/shapes-svgrepo-com (1).svg';
+import circelImage from '../../../images/circle-thin-svgrepo-com.svg';
+import paintImage from '../../../images/fill-svgrepo-com.svg';
+import SqImage from '../../../images/square-svgrepo-com (1).svg';
+import eraserImage from '../../../images/eraser-svgrepo-com.svg';
+import triangleImage from '../../../images/triangle-svgrepo-com (1).svg';
+import rectImage from '../../../images/rectangle-svgrepo-com.svg'
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { socket } from '../../config/socket';
-import { setToolTo } from '../../redux/student_store/Tool';
-import { setEraserWidthTo } from '../../redux/student_store/Eraser';
+import { socket } from '../../../config/socket';
+import { setToolTo } from '../../../redux/student_store/Tool';
+import { setEraserWidthTo } from '../../../redux/student_store/Eraser';
 
 
 const TutorCollabTools = () => {

@@ -517,7 +517,7 @@ const Rates = () => {
 
             </div>
             <div className="rounded shadow border m-2 p-4">
-              <h6>Multi Student</h6>
+              <h6>School class Students</h6>
 
               <div className="p-2 mt-4 highlight">
 
@@ -594,7 +594,7 @@ const Rates = () => {
                 />{" "}
                 &nbsp;
                 <label htmlFor="subscription-plan">
-                  <h6>Activate multi student option</h6>
+                  <h6>Activate multi students option</h6>
                 </label>
               </div>
 
@@ -605,7 +605,7 @@ const Rates = () => {
                 there is no refund.
               </div>
 
-              <h6>Multi Student hourly rate</h6>
+              <h6>Multi Students hourly rate</h6>
               <div
                 className="rate-table d-flex w-100 justify-content-center m-0"
                 style={{

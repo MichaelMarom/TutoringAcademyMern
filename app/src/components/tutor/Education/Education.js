@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import { deleteFileOnServer, getPreviousFilePathFromDB, upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
 import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES, languages } from '../../../constants/constants'
-import { getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
+import { compareStates, getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
 import PDFViewer from './PDFViewer'
 import Button from '../../common/Button';
@@ -49,7 +49,7 @@ const Education = () => {
     const [countryForDoc, setCountryForDoc] = useState('');
     const [countryForDeg, setCountryForDeg] = useState('')
 
-    let [back_state, set_bach_state] = useState('');
+    let [bach_state, set_bach_state] = useState('');
     let [mast_state, set_mast_state] = useState('');
     let [deg_state, set_deg_state] = useState('');
     let [cert_state, set_cert_state] = useState('');
@@ -201,7 +201,7 @@ const Education = () => {
             certificate,
             certFileContent,
             JSON.stringify(language),
-            back_state,
+            bach_state,
             mast_state,
             deg_state,
             cert_state,
@@ -244,91 +244,40 @@ const Education = () => {
         set_workExperience(value);
     };
 
+    let fieldValues = {
+        EducationalLevel: level,
+        College1: uni_bach,
+        College2: uni_mast,
+        DoctorateCollege: doc_uni,
+        Certificate: certificate,
+        BachCountry: countryForAssociate,
+        CertCountry: countryForCert,
+        MastCountry: countryForMast,
+        DocCountry: countryForDoc,
+        DegCountry: countryForDeg,
+        College1State: bach_state,
+        College2State: mast_state,
+        DegreeState: deg_state,
+        CertificateState: cert_state,
+        DoctorateState: doctorateState,
+        EducationalLevelExperience: experience,
+        College1Year: bach_yr,
+        College2StateYear: mast_yr,
+        DegreeYear: degree_yr,
+        DoctorateGradYr: doctorateGraduateYear,
+        CertificateExpiration: expiration,
+        WorkExperience: workExperience,
+        Resume: resumePath,
+        ThingsReferences: references,
+        CertFileName: cert_file_name,
+        DegFileName: deg_file_name,
+        NativeLang: language,
+        NativeLangOtherLang: othelang
+    }
     //comparing DB, Local
     useEffect(() => {
-        if (true) {
-            let fieldValues = {
-                level,
-                uni_bach,
-                uni_mast,
-                doc_uni,
-                degree,
-                certificate,
-                language,
-                countryForAssociate,
-                countryForCert,
-                countryForMast,
-                countryForDoc,
-                countryForDeg,
-                back_state,
-                mast_state,
-                deg_state,
-                cert_state,
-                doctorateState,
-                experience,
-                bach_yr,
-                mast_yr,
-                degree_yr,
-                doctorateGraduateYear,
-                expiration,
-                othelang,
-                workExperience,
-                exp,
-                level_list,
-                certificate_list,
-                d_list,
-                data,
-                degreeFile,
-                degreeFileContent,
-                certificateFile,
-                certFileContent,
-                dataFetched,
-                db_edu_level,
-                db_edu_cert,
-                fetchingEdu,
-                resumePath,
-                references
-            }
-            setUnsavedChanges(unsavedEducationChangesHelper(fieldValues, dbValues))
-        }
-    }, [
-        level,
-        uni_bach,
-        uni_mast,
-        doc_uni,
-        degree,
-        certificate,
-        language,
-        countryForAssociate,
-        countryForCert,
-        countryForMast,
-        countryForDoc,
-        countryForDeg,
-        back_state,
-        mast_state,
-        deg_state,
-        cert_state,
-        doctorateState,
-        experience,
-        bach_yr,
-        mast_yr,
-        degree_yr,
-        doctorateGraduateYear,
-        expiration,
-        othelang,
-        workExperience,
-        degreeFile,
-        degreeFileContent,
-        certificateFile,
-        certFileContent,
-        dataFetched,
-        db_edu_level,
-        db_edu_cert,
-        fetchingEdu,
-        dbValues,
-        resumePath,
-        references
-    ])
+        setUnsavedChanges(compareStates(dbValues, fieldValues))
+    }, [dbValues, fieldValues])
 
     //fetching DB
     useEffect(() => {
@@ -338,7 +287,10 @@ const Education = () => {
             .then((result) => {
                 if (result?.length) {
                     let data = result[0];
-                    setDbValues(data)
+                    let NativeLang = JSON.parse(data.NativeLang);
+                    let NativeLangOtherLang = JSON.parse(data.NativeLangOtherLang)
+                    setDbValues({ ...data, NativeLang, NativeLangOtherLang });
+
                     set_workExperience(data.WorkExperience)
                     set_uni_bach(data.College1)
                     set_mast_uni(data.College2)
@@ -398,7 +350,7 @@ const Education = () => {
                         MastCountry: countryForMast,
                         DocCountry: countryForDoc,
                         DegCountry: countryForDeg,
-                        College1State: back_state,
+                        College1State: bach_state,
                         College2State: mast_state,
                         DegreeState: deg_state,
                         CertificateState: cert_state,
@@ -410,7 +362,9 @@ const Education = () => {
                         DoctorateGradYr: doctorateGraduateYear,
                         CertificateExpiration: expiration,
                         WorkExperience: workExperience,
-                        ThingsReferences: references
+                        ThingsReferences: references,
+                        NativeLangOtherLang: othelang,
+                        NativeLang: language
                     })
                 }
 
@@ -617,12 +571,7 @@ const Education = () => {
     if (fetchingEdu)
         return <Loading loadingText='Fetching Tutor Eduction...' />
     return (
-        <div style={{ height: "80vh", overflowY: "auto" }}>
-            <div className='tutor-popin'></div>
-            <div className='save-overlay'>
-                <span className='save-loader'></span>
-            </div>
-
+        <div style={{ height: "70vh", overflowY: "auto" }}>
             <div className="container tutor-tab-education">
                 <form action="" onSubmit={handleSave}>
                     <div className="tutor-tab-education-info pt-4">
@@ -719,7 +668,7 @@ const Education = () => {
                                                         id="state1"
                                                         className="form-select m-0 w-100"
                                                         onChange={(e) => set_bach_state(e.target.value)}
-                                                        value={back_state}
+                                                        value={bach_state}
                                                         required
                                                         disabled={!editMode}
                                                     >
@@ -1168,9 +1117,12 @@ const Education = () => {
                                         onChange={handleLanguageChange}
                                         options={languageOptions}
                                         isDisabled={!editMode} />
-                                </div></div>
+                                </div>
+                            </div>
 
                         </div>
+
+                        <div style={{ height: "100px" }}></div>
                     </div>
                     <div className="tutor-tab-education-experience"
                         style={{ marginTop: "75px" }}>

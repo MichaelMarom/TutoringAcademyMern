@@ -4,18 +4,17 @@ import {
     get_faculty,
     get_rates, new_subj_request_exist,
     upload_new_subject
-} from '../../axios/tutor';
-import CenteredModal from '../common/Modal';
-import Button from '../common/Button';
+} from '../../../axios/tutor';
+import CenteredModal from '../../common/Modal';
+import Button from '../../common/Button';
 import { toast } from 'react-toastify';
-import { FACULTIES } from '../../constants/constants';
 import SubjectCard from './SubjectCard';
-import Actions from '../common/Actions'
-import Loading from '../common/Loading';
+import Actions from '../../common/Actions'
+import Loading from '../../common/Loading';
 import { FaPlus, FaSearch } from 'react-icons/fa';
-import DebounceInput from '../common/DebounceInput';
-import Pill from '../common/Pill';
-import BTN_ICON from '../../images/button__icon.png'
+import DebounceInput from '../../common/DebounceInput';
+import Pill from '../../common/Pill';
+import SubMenu from './SubMenu';
 
 
 const Subjects = () => {
@@ -79,23 +78,6 @@ const Subjects = () => {
     }
     useEffect(() => { getFacultiesOption() }, [newSubjectFacultyData])
 
-    let handle_scroll_right = () => {
-
-        let div = document.querySelector('.tutor-tab-subject-data-tabs');
-        let scroll_elem = div.children[1];
-        let w = scroll_elem.offsetWidth;
-        scroll_elem.scrollLeft = w;
-
-    }
-
-    let handle_scroll_left = () => {
-
-        let div = document.querySelector('.tutor-tab-subject-data-tabs');
-        let scroll_elem = div.children[1];
-        let w = scroll_elem.offsetWidth;
-        scroll_elem.scrollLeft = -w
-
-    }
 
     const checkRequestExist = async (e) => {
         e.preventDefault()
@@ -135,97 +117,61 @@ const Subjects = () => {
 
     return (
         <>
-            <div className="container" style={{ marginTop: "2px" }}>
+            <div className="" style={{ marginTop: "2px" }}>
 
-                <div className="tutor-tab-subject-data-collection-table">
+                <div className=" d-flex flex-column">
 
-                    <div className="tutor-tab-subject-data-tabs">
-                        <div style={{
-                            margin: '0 0 0 0', display
-                                : 'flex', alignItems: 'center', justifyContent: 'center', background:
-                                '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
-                        }} className="scroller-left" onClick={handle_scroll_left}>
-                            <div style={{ opacity: '1' }}>
-                                <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M11 9L8 12M8 12L11 15M8 12H16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </div>
-
-                        </div>
-
-                        <ul>
-
-                            {
-                                faculty.map((item, index) => {
-                                    return <li className='tutor-tab-subject-data-menu'
-                                        style={{
-                                            background: item.Id === selectedFaculty ? "#2471A3" : "",
-                                            color: item.Id === selectedFaculty ? " #F7F9F9" : "",
-                                        }}
-                                        onClick={() => setSelectedFaculty(item.Id)}><a>{item.Faculty}</a></li>
-                                }
-                                )
-                            }
-                        </ul>
-
-                        <div style={{
-                            margin: '0 0 0 0', background: '#efefef', display
-                                : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
-                        }} className="scroller-right" onClick={handle_scroll_right}>
-                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
-                                <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-
-                        </div>
-
-                    </div>
-
-                    <div className="highlight d-flex flex-column align-items-center">
-                        <p>
-                            Select your faculty above, then from the list below click on the 'Edit' button for each subject that you teach (you can select more than one). Type your rate, select the school grade(s) you tutor for this subject and SAVE. Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking here:
-                        </p>
-                        <Button className='action-btn btn text-center w-25' type="button"
-                            handleClick={() => setShowAddNewSubjModal(true)} >
-                            <div className="button__content">
-                                <div className="button__icon">
-                                    <FaPlus />
+                    <SubMenu faculty={faculty} selectedFaculty={selectedFaculty} setSelectedFaculty={setSelectedFaculty} />
+                    <div className='d-flex justify-content-around' >
+                        <div className="highlight d-flex flex-column align-items-center m-0" style={{ width: "20%" }}>
+                            <p>
+                                Select your faculty above, then from the list below click on the 'Edit' button for each subject that you teach
+                                (you can select more than one). Type your rate, select the school grade(s) you tutor for this subject and SAVE.
+                                Didn't find your subject, and want to add it? Submit your request that match your expertise by clicking here:
+                            </p>
+                            <Button className='action-btn btn text-center w-100' type="button"
+                                handleClick={() => setShowAddNewSubjModal(true)} >
+                                <div className="button__content">
+                                    <div className="button__icon">
+                                        <FaPlus />
+                                    </div>
+                                    <p className="button__text">Search/Add New Subject</p>
                                 </div>
-                                <p className="button__text">Search/Add New Subject</p>
-                            </div>
-                        </Button>
+                            </Button>
 
-                    </div>
+                        </div>
 
-                    {loadingSubs ? <Loading height='50vh' /> : <div >
-
-                        <div className='d-flex rounded justify-content-between
+                        {loadingSubs ? <Loading height='57vh' /> :
+                            <div style={{ width: "78%" }}>
+                                <div className='d-flex rounded justify-content-between
                          align-items-center
                          mx-2 p-2' style={{ color: "white", background: "#2471A3" }}>
-                            <p className='m-0 col-2'>{subjectsWithRates.length} Subjects</p>
-                            <p className='m-0 col-6'>School Grades (elementary, middle, & high school)</p>
-                            <p className='m-0 col-3 text-start'> $ Rate</p>
-                            <p className='m-0 col-1'> Action</p>
-                        </div>
-                        <div style={{ height: "50vh", overflowY: "auto", overflowX: "hidden", position: "relative" }}>
-                            {
-                                subjectsWithRates.map((item, index) => {
-                                    const rateExtracted = item.rate && parseFloat(item.rate.replace('$', ''))
-                                    const rate = isNaN(rateExtracted) ? '' : rateExtracted
-                                    const grades = JSON.parse(item.grades ?? '[]');
-                                    return <SubjectCard
-                                        faculty={selectedFaculty}
-                                        subject={item.subject}
-                                        rateVal={rate}
-                                        gradesVal={grades}
-                                        id={item.SID}
-                                    />
-                                }
-                                )
-                            }
-                        </div>
+                                    <p className='m-0 col-2'>{subjectsWithRates.length} Subjects</p>
+                                    <p className='m-0 col-6'>School Grades (elementary, middle, & high school)</p>
+                                    <p className='m-0 col-3 text-start'> $ Rate</p>
+                                    <p className='m-0 col-1'> Action</p>
+                                </div>
+                                <div style={{ height: "57vh", overflowY: "auto", overflowX: "hidden", position: "relative" }}>
+                                    {
+                                        subjectsWithRates.map((item, index) => {
+                                            const rateExtracted = item.rate && parseFloat(item.rate.replace('$', ''))
+                                            const rate = isNaN(rateExtracted) ? '' : rateExtracted
+                                            const grades = JSON.parse(item.grades ?? '[]');
+                                            return <SubjectCard
+                                                faculty={selectedFaculty}
+                                                subject={item.subject}
+                                                rateVal={rate}
+                                                gradesVal={grades}
+                                                id={item.SID}
+                                            />
+                                        }
+                                        )
+                                    }
+                                </div>
 
-                    </div>}
+                            </div>
+                        }
+                    </div>
                 </div>
 
             </div>

@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const formatName = (firstName, lastName) => {
   return `${firstName} ${lastName[0].toUpperCase()}.`;
 };
@@ -77,7 +79,6 @@ export const unsavedChangesHelper = (fieldValues, tutor) => {
 
 export const unsavedEducationChangesHelper = (fieldValues, tutor) => {
   return (
-    // tutor.AcademyId !== undefined && fieldValues.academyId !== undefined && tutor.AcademyId !== fieldValues.academyId ||
     (tutor?.EducationalLevel !== undefined && fieldValues.level !== undefined && tutor?.EducationalLevel !== fieldValues.level) ||
     (tutor?.BachCountry !== undefined && fieldValues.countryForAssociate !== undefined && tutor?.BachCountry !== fieldValues.countryForAssociate) ||
     (tutor?.CertCountry !== undefined && fieldValues.countryForCert !== undefined && tutor?.CertCountry !== fieldValues.countryForCert) ||
@@ -122,12 +123,16 @@ export function getFileExtension(filename) {
  */
 export const compareStates = (dbState, currentState) => {
   console.log(dbState, currentState)
-  if (!(Object.keys(dbState).length)) return false
+  if (!(Object.keys(dbState).length)) return false;
+
   for (const key in currentState) {
-    console.log(currentState[key], key, dbState?.[key], currentState[key] !== dbState?.[key])
-    if (currentState[key] !== dbState?.[key]) {
-      return true;
+    console.log(currentState[key], key, dbState?.[key], currentState[key] !== dbState?.[key], !_.isEqual(currentState[key], dbState[key]))
+    if (_.isObject(currentState[key]) && !_.isEqual(currentState[key], dbState[key])) return true
+    if (!_.isObject(currentState[key]) &&
+      currentState[key] !== dbState?.[key]) {
+      return true
     }
   }
   return false
 };
+

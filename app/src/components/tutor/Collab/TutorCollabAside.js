@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import screenLarge from '../../images/screen-full-svgrepo-com.svg';
-import screenNormal from '../../images/screen-normal-svgrepo-com.svg'
-import muteSvg from '../../images/mute-svgrepo-com.svg'
-import DiableVideoImage from '../../images/video-recorder-off-svgrepo-com.svg';
+import screenLarge from '../../../images/screen-full-svgrepo-com.svg';
+import screenNormal from '../../../images/screen-normal-svgrepo-com.svg'
+import muteSvg from '../../../images/mute-svgrepo-com.svg'
+import DiableVideoImage from '../../../images/video-recorder-off-svgrepo-com.svg';
 import { useLocation } from 'react-router-dom';
-import { socket } from '../../config/socket';
+import { socket } from '../../../config/socket';
 import { Peer } from 'peerjs';
 import FlipCountdown from '@rumess/react-flip-countdown';
-import { moment } from '../../config/moment'
+import { moment } from '../../../config/moment'
 
 const TutorAside = () => {
 

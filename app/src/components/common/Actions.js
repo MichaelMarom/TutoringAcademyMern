@@ -21,6 +21,7 @@ const Actions = ({
     editDisabled = true,
     backDisabled = false,
     nextDisabled = false,
+    SaveText = 'Save',
     loading = false,
     unSavedChanges = false,
     onSave = () => { },
@@ -115,7 +116,7 @@ const Actions = ({
                                         animation: loading ? "spin 2s linear infinite" : 'none',
                                     }} />
                                 </div>
-                                <p className="button__text">Save</p>
+                                <p className="button__text">{SaveText}</p>
                             </div>
                         </Button>
                     </div>

@@ -930,7 +930,7 @@ const set_code_applied = async (req, res) => {
             if (poolConnection) {
 
                 const { recordset: tutorRateRecord } = await poolConnection.request().query(
-                    find('TutorRates', { AcademyId: req.params.tutorId },'AND', { AcademyId: 'varchar' })
+                    find('TutorRates', { AcademyId: req.params.tutorId }, 'AND', { AcademyId: 'varchar' })
                 )
                 console.log(tutorRateRecord)
                 if (tutorRateRecord[0].CodeStatus === 'used') throw new Error('Code Already Used!')
@@ -985,6 +985,25 @@ const set_code_applied = async (req, res) => {
     })
 }
 
+const get_published_ads = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    find('TutorAds', { Status: 'published' })
+                )
+                res.status(200).send(result.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
     post_feedback_questions,
     set_code_applied,
@@ -995,6 +1014,7 @@ module.exports = {
     upload_setup_info,
     get_student_setup,
     get_student_grade,
+    get_published_ads,
     getBookedSlot,
     get_tutor_subject,
     get_student_short_list,

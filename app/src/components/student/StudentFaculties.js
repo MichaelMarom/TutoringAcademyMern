@@ -24,12 +24,13 @@ const StudentFaculties = () => {
 
     useEffect(() => {
         const fetchTutorSubject = async () => {
-            const result = await get_tutor_subject('1')
+            const result = await get_tutor_subject('1');
+            console.log(result, result[0])
             result.sort(function (a, b) {
-                if (a[0].subject < b[0].subject) {
+                if (a.subject < b.subject) {
                     return -1;
                 }
-                if (a[0].subject > b[0].subject) {
+                if (a.subject > b.subject) {
                     return 1;
                 }
                 return 0;
@@ -46,10 +47,10 @@ const StudentFaculties = () => {
         const result = await get_tutor_subject(subject)
         setResponse(result);
         result.sort(function (a, b) {
-            if (a[0].subject < b[0].subject) {
+            if (a.subject < b.subject) {
                 return -1;
             }
-            if (a[0].subject > b[0].subject) {
+            if (a.subject > b.subject) {
                 return 1;
             }
             return 0;
@@ -77,10 +78,10 @@ const StudentFaculties = () => {
     const getShortlist = async () => {
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
         result.sort(function (a, b) {
-            if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
+            if (a.Subject < b.Subject) {
                 return -1;
             }
-            if (a.tutorShortList.Subject > b.tutorShortList.Subject) {
+            if (a.Subject > b.Subject) {
                 return 1;
             }
             return 0;
@@ -138,7 +139,6 @@ const StudentFaculties = () => {
     useEffect(() => {
         get_student_short_list_data(window.localStorage.getItem('student_user_id'))
             .then((result) => {
-                console.log(result, 'cehbcjc')
                 let list = [...document.querySelectorAll('#student-tutor')];
                 if (result.length) {
                     result.map(item => {
@@ -301,44 +301,45 @@ const StudentFaculties = () => {
                                         {
 
                                             response.map((item) => {
+                                                console.log(item)
                                                 let faculty = item[0] || {};
                                                 let experience = item[1] || {};
                                                 return <tr>
                                                     <td style={{ width: multi_student_cols[0].width }} id='student-tutor'
-                                                        data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
+                                                        data-id={`${item.AcademyId[0]}-${item.subject}-${item.rate}-${item?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
 
                                                         <input onInput={handleSavedDeleteData} type='checkbox' style={{ height: '20px', width: '20px' }} />
                                                     </td>
 
-                                                    <td style={{ width: multi_student_cols[1].width }}>{faculty.subject}</td>
+                                                    <td style={{ width: multi_student_cols[1].width }}>{item.subject}</td>
                                                     <td style={{ width: multi_student_cols[2].width }}>
                                                         <div>
-                                                            {(faculty.AcademyId).split(".").slice(0, 2).join(".")}
-                                                            <Pill label={faculty.status} customColor={true} color={statesColours[faculty.status]}
+                                                            {(item.AcademyId[0]).split(".").slice(0, 2).join(".")}
+                                                            <Pill label={item.status} customColor={true} color={statesColours[item.status]}
                                                                 width='auto'
                                                             />
                                                         </div>
                                                     </td>
                                                     <td style={{ width: multi_student_cols[3].width }}>
-                                                        {experience.EducationalLevelExperience}
+                                                        {item.EducationalLevelExperience}
                                                     </td>
                                                     <td style={{ width: multi_student_cols[4].width }}>
-                                                        {experience.Certificate}
+                                                        {item.Certificate}
                                                     </td>
                                                     <td style={{ width: multi_student_cols[5].width }}>
-                                                        {experience.CertificateState}
+                                                        {item.CertificateState}
                                                     </td>
                                                     <td style={{ width: multi_student_cols[6].width }}>
-                                                        {experience.CertificateExpiration?.length ?
-                                                            <div className={convertToDate(experience.CertificateExpiration).getTime() <
+                                                        {item.CertificateExpiration?.length ?
+                                                            <div className={convertToDate(item.CertificateExpiration).getTime() <
                                                                 (new Date).getTime() ? `text-danger blinking-button` : ''}>
-                                                                {new Date(experience.CertificateExpiration).toLocaleDateString()}
+                                                                {new Date(item.CertificateExpiration).toLocaleDateString()}
                                                             </div> : "-"
-                                                        }
+                                                       }
                                                     </td>
-                                                    <td style={{ width: multi_student_cols[7].width }}>{faculty.rate}</td>
-                                                    <td style={{ width: multi_student_cols[8].width }}>{faculty.cancPolicy} Hrs </td>
-                                                    <td style={{ width: multi_student_cols[9].width }}>{faculty.responseTime.replace("Hours", 'Hrs')} </td>
+                                                    <td style={{ width: multi_student_cols[7].width }}>{item.rate}</td>
+                                                    <td style={{ width: multi_student_cols[8].width }}>{item.cancPolicy} Hrs </td>
+                                                    <td style={{ width: multi_student_cols[9].width }}>{item.responseTime.replace("Hours", 'Hrs')} </td>
 
                                                 </tr>
                                             })

@@ -42,18 +42,12 @@ io.on('connection', socket => {
 
     socket.on('DeleteSubjectRate', ({ AcademyId, subject }) => {
         console.log(AcademyId, subject)
-
-
         let deleteData = (AcademyId, subject) => {
             connecteToDB
                 .then((poolConnection) =>
                     poolConnection.request().query(`DELETE FROM SubjectRates  WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' AND CONVERT(VARCHAR, subject) = '${subject}'`)
                         .then((result) => {
-
                             console.log('deleted data successfully')
-
-                            //res.status(200).send()
-                            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
                         })
                         .catch(err => console.log(err))
                 )

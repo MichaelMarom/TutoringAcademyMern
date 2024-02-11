@@ -2,7 +2,9 @@ const { marom_db, connecteToDB } = require('../db');
 const { insert, getAll, findById, findByAnyIdColumn, update, find, updateById } = require('../helperfunctions/crud_queries');
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
-const moment = require('moment-timezone')
+const moment = require('moment-timezone');
+const sql = require('mssql');
+
 const executeQuery = async (query, res) => {
     try {
         const db = await marom_db(() => { })
@@ -185,69 +187,38 @@ let get_student_grade = (req, res) => {
 
 let get_tutor_subject = async (req, res) => {
     try {
+        marom_db(async (config) => {
+            try {
+                let { subject } = req.query;
 
-        let { subject } = req.query;
-        console.log(subject)
-        let book = {}
-        let subjectLength = 0
+                const poolConnection = await sql.connect(config);
+                if (poolConnection) {
+                    const subjects = await poolConnection.request().query(`SELECT 
+                    SubjectRates.*,
+                    edu.*,
+                    TutorSetup.ResponseHrs as responseTime, 
+                    TutorSetup.Status as status,
+                    TutorRates.CancellationPolicy as cancPolicy
+                    FROM SubjectRates
+                    JOIN TutorSetup ON cast(TutorSetup.AcademyId as varchar(max)) = 
+                    cast(SubjectRates.AcademyId as varchar(max))
+                    JOIN TutorRates ON cast(TutorRates.AcademyId as varchar(max)) = 
+                    cast(SubjectRates.AcademyId as varchar(max))
+                    JOIN Education as edu ON
+                    cast(TutorSetup.AcademyId as varchar(max)) =  cast(edu.AcademyId as varchar(max))
+                    WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}';`)
 
-        let subjects = async () => await connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT SubjectRates.*,
-            TutorSetup.ResponseHrs as responseTime, TutorSetup.Status as status,
-            TutorRates.CancellationPolicy as cancPolicy
-            FROM SubjectRates
-            JOIN TutorSetup ON cast(TutorSetup.AcademyId as varchar(max)) = cast(SubjectRates.AcademyId as varchar(max))
-            JOIN TutorRates ON cast(TutorRates.AcademyId as varchar(max)) = cast(SubjectRates.AcademyId as varchar(max))
-            WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}';`)
-                .then((result) => {
-                    subjectLength = result.recordset.length;
-                    return result.recordset;
-                })
-                .catch(err => console.log(err))
-        )
-
-        let edu = (subjectsBook) => connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  
-        '${subjectsBook.AcademyId}'`)
-                .then((result) => {
-                    return result.recordset
-                })
-            //   .catch(err => console.log(err))
-        )
-
-        let tutor = (subjectsBook) => connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT TutorScreenname From TutorSetup  WHERE CONVERT(VARCHAR, AcademyId) = 
-         '${subjectsBook.AcademyId}'`)
-                .then(async (result) => {
-                    console.log(result)
-                    return result.recordset
-                })
-            //   .catch(err => console.log(err))
-        )
-
-        async function extratInfo() {
-            let subject = await subjects();
-            if (subject.length > 0) {
-                subject.map((async (item) => {
-                    let tutorData = await tutor(item);
-                    let tutorEducation = await edu(item)
-
-                    book[shortId.generate()] = [(item), ...tutorEducation, ...tutorData];
-                    if (Object.keys(book).length === subjectLength) {
-
-                        let data = Object.values(book)
-                        res.status(200).send(data)
-                    } else {
-                        console.log(Object.keys(book).length, subjectLength)
-                    }
-                }))
-            } else { res.status(200).send([]) }
-        }
-
-        extratInfo()
+                    res.status(200).send(subjects.recordset)
+                }
+            }
+            catch (err) {
+                console.log(err)
+                res.status(400).send({ message: err.message })
+            }
+        })
     } catch (err) {
         console.log(err)
-        res.status(500).send(err)
+        res.status(500).send({ message: err.message })
     }
 }
 
@@ -268,7 +239,7 @@ let upload_student_short_list = async (req, res) => {
                         return result.recordset
 
                     })
-                //   .catch(err => console.log(err))
+                    .catch(err => console.log(err))
             )
 
 
@@ -292,7 +263,7 @@ let upload_student_short_list = async (req, res) => {
                         }
 
                     })
-                //   .catch(err => console.log(err))
+                    .catch(err => console.log(err))
             )
     }
 
@@ -309,64 +280,28 @@ let upload_student_short_list = async (req, res) => {
 
 const get_student_short_list = async (req, res) => {
     try {
-        let tutorUserData = [];
-        let tutorDemoLesson = [];
-        let shortList = async () => {
-            let poolConnection = await connecteToDB;
+        marom_db(async (config) => {
+            let tutorUserData = [];
+            let tutorDemoLesson = [];
+            let poolConnection = await sql.connect(config);
             let result = await poolConnection.request().query(
-                `SELECT SSL.*, TR.*, SR.rate as rate
+                `SELECT SSL.*, TR.*, SR.rate as rate, TS.*
                 FROM StudentShortList SSL
                 left JOIN TutorRates TR ON 
-                CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TR.AcademyId)   
+                    CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TR.AcademyId)   
+                join TutorSetup as TS ON
+                    CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TS.AcademyId)   
                 inner join SubjectRates as SR ON
-                cast(SR.AcademyId as VARCHAR(MAX)) =  cast( TR.AcademyId as VARCHAR(MAX)) and      
-                cast(SR.subject as VARCHAR(MAX)) =  cast( SSL.Subject as VARCHAR(MAX))   
+                    cast(SR.AcademyId as VARCHAR(MAX)) =  cast( TR.AcademyId as VARCHAR(MAX)) and      
+                    cast(SR.subject as VARCHAR(MAX)) =  cast( SSL.Subject as VARCHAR(MAX))   
                 WHERE cast( SSL.Student as varchar) = cast('${req.params.student}' as varchar) `
             );
-            return result.recordset;
-        };
 
-        let getTutorDemo = async () => {
-            let poolConnection = await connecteToDB;
-            let result = await poolConnection.request().query(
-                'SELECT FreeDemoLesson, AcademyId FROM TutorRates'
-            );
-            tutorDemoLesson.push(result.recordset);
-            return tutorDemoLesson;
-        };
-
-        let getTutorDataViaShortList = async () => {
-            let poolConnection = await connecteToDB;
-            let result = await poolConnection.request().query('SELECT * FROM TutorSetup');
-            tutorUserData.push(result.recordset);
-            return tutorUserData;
-        };
-
-        let studentShortList = await shortList();
-        let tutorProfile = await getTutorDataViaShortList();
-        let demoLesson = await getTutorDemo();
-
-        let studentBook = [];
-
-        studentShortList.map((item) => {
-            let tutorData = tutorProfile[0].filter((tutor) => {
-                return tutor.AcademyId === item.AcademyId[0]
-            })[0];
-            let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId[0])[0];
-            let bookName = shortId.generate();
-            if (Object.keys(tutorData ? tutorData : {})?.length) {
-                bookName = {
-                    tutorDemoLesson: tutorDemoLesson,
-                    tutorData: tutorData,
-                    tutorShortList: item,
-                };
-
-                studentBook.push(bookName);
-            }
-        });
-        res.status(200).send(studentBook);
+            res.status(200).send(result.recordset);
+        })
     } catch (err) {
         console.log(err);
+        res.status(400).send({ message: err.message })
     }
 };
 

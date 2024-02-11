@@ -22,14 +22,14 @@ function BookedLessons({
   useEffect(() => {
     const updatedEvents = events.map(event => {
       const matchingTutor = shortlist.find(tutor => {
-        return (tutor.tutorData.AcademyId === event.tutor
-          || (tutor.tutorData.AcademyId === event.tutorId))
+        return (tutor.AcademyId[0] === event.tutor
+          || (tutor.AcademyId[0] === event.tutorId))
       })
 
       if (matchingTutor) {
         return {
           ...event,
-          photo: matchingTutor.tutorData.Photo,
+          photo: matchingTutor.Photo,
         };
       }
 

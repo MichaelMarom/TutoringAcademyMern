@@ -41,10 +41,10 @@ export function setShortlist() {
         }
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
         result.sort(function (a, b) {
-            if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
+            if (a.Subject < b.Subject) {
                 return -1;
             }
-            if (a.tutorShortList.Subject > b.tutorShortList.Subject) {
+            if (a.Subject > b.Subject) {
                 return 1;
             }
             return 0;

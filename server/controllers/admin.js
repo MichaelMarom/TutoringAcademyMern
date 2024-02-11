@@ -1,8 +1,7 @@
-const { marom_db, connecteToDB } = require('../db');
+const { marom_db } = require('../db');
 const { insert, update, parameteriedUpdateQuery, parameterizedInsertQuery, findByAnyIdColumn } = require('../helperfunctions/crud_queries');
 const { shortId } = require('../modules');
-
-
+const sql = require('mssql');
 
 let get_tutor_data = (req, res) => {
     marom_db(async (config) => {
@@ -127,70 +126,49 @@ let get_tutor_new_subject = async (req, res) => {
     })
 }
 
-
-
 let accept_new_subject = async (req, res) => {
     let { id, subject, AcademyId } = req.body;
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const query = `INSERT INTO Subjects (FacultyId, SubjectName, CreatedOn) 
+                   VALUES ('${id}', '${subject}', GETUTCDATE())`;
 
-    let insert = await connecteToDB
-        .then(async (poolConnection) => {
+                const insert = await poolConnection.request().query(query)
 
-            const query = `INSERT INTO Subjects (FacultyId, SubjectName, CreatedOn) 
-               VALUES ('${id}', '${subject}', GETUTCDATE())`;
-            console.log(query)
-            const result = await poolConnection.request().query(query)
-            return result.rowsAffected[0] === 1 ? true : false
-        })
-        .catch(() => {
-            res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-            return;
-        })
+                if (insert.rowsAffected[0]) {
+                    poolConnection.request().query(` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject)
+                     = '${subject}' AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+                        .then((result) => {
+                            result.rowsAffected[0] === 1 ? res.status(200).send({ bool: true, mssg: 'Data was uploaded successfully' }) : res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
+                        })
+                        .catch(err => console.log(err))
 
-
-    if (insert) {
-
-        connecteToDB
-            .then(async (poolConnection) => {
-                poolConnection.request().query(` DELETE FROM NewTutorSubject WHERE CONVERT(VARCHAR, subject) = '${subject}' 
-                AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
-                    .then((result) => {
-                        result.rowsAffected[0] === 1 ? res.status(200).send({ bool: true, mssg: 'Data was uploaded successfully' }) : res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-                    })
-                    .catch(err => console.log(err))
-            })
-            .catch(() =>
-                res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-            )
-
-    } else {
-        console.log('error inserting data to db')
-        res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-    }
+                }
+            }
+        }
+        catch (err) {
+            res.status(400).send({ mssage: err.message })
+        }
+    })
 }
 
-
 let decline_new_subject = (req, res) => {
-    let { subject, AcademyId } = req.body;
+    marom_db(async (config) => {
+        try {
+            let { subject, AcademyId } = req.body;
+            const poolConnection = await sql.connect(config);
 
-
-    connecteToDB
-        .then(async (poolConnection) => {
-            poolConnection.request().query(`Update NewTutorSubject set IsRejected = 1 
+            const result = poolConnection.request().query(`Update NewTutorSubject set IsRejected = 1 
             WHERE CONVERT(VARCHAR, subject) = '${subject}' AND CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
-                .then((result) => {
 
-                    result.rowsAffected[0] === 1 ? res.status(200).send({ bool: true, mssg: 'Data was uploaded successfully' }) : res.status(200).send({ bool: false, mssg: 'Error uploading files, Please Try Again...' })
+            res.status(200).send({ message: 'Subject Declined succesfully' })
 
-                })
-                .catch(err => console.log(err))
-
-        })
-        .catch((err) => {
-            res.status(200).send({ bool: false, mssg: 'Database Error, Please Try Again...' })
-            console.log(err)
-        })
-
-
+        } catch (err) {
+            res.status(400).send({ message: err.message })
+        }
+    })
 }
 
 const postTerms = async (req, res) => {

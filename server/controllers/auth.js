@@ -1,4 +1,4 @@
-const { marom_db, connecteToDB } = require('../db');
+const { marom_db } = require('../db');
 const { insert, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');

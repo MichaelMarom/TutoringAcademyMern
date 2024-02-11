@@ -14,7 +14,7 @@ import Loading from '../../common/Loading';
 import { FaPlus, FaSearch } from 'react-icons/fa';
 import DebounceInput from '../../common/DebounceInput';
 import Pill from '../../common/Pill';
-import SubMenu from './SubMenu';
+import SubMenu from '../../common/SubMenu';
 
 
 const Subjects = () => {

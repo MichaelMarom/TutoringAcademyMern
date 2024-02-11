@@ -266,7 +266,7 @@ export const Feedback = () => {
                     </div>
                     {
                         selectedEvent.id &&
-                        <div className="col-md-4">
+                        <div className="col-md-4 " style={{ height: "70vh", overflowY: "auto" }}>
                             <h4>Feedback on {showDate(selectedEvent.start, wholeDateFormat)} Session</h4>
                             <div className="questions">
                                 <QuestionFeedback

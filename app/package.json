@@ -23,6 +23,7 @@
     "mongodb": "^5.1.0",
     "nanoid": "^4.0.2",
     "nginx": "^1.0.8",
+    "payment": "^2.4.6",
     "pdf-lib": "^1.17.1",
     "pdfreader": "^3.0.0",
     "peerjs": "^1.4.7",

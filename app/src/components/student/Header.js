@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getBookedSlot } from "../../axios/student";
+import { useSelector } from "react-redux";
 
 
 const Header = () => {
 
     let location = useLocation()
+    const { student } = useSelector(state => state.student)
     const tabs = [
         { name: 'Introduction', url: 'intro' },
         { name: 'Student Setup', url: 'setup' },
@@ -49,7 +51,6 @@ const Header = () => {
     }, [])
 
     let nav = useNavigate()
-    let [screen_name, set_screen_name] = useState('')
     const [activeTab, setActiveTab] = useState('')
 
     useEffect(() => {
@@ -58,12 +59,6 @@ const Header = () => {
             element.scrollIntoView({ behavior: 'smooth' });
         }
     }, [location.pathname, activeTab]);
-
-
-    useEffect(() => {
-        let name = window.localStorage.getItem('student_screen_name');
-        set_screen_name(name)
-    }, []);
 
     useEffect(() => {
         const currentTab = location.pathname.split('/').pop();
@@ -101,11 +96,11 @@ const Header = () => {
             <div className="screen-name btn-primary rounded"
 
                 style={{
-                    display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
+                    display: student.ScreenName ? 'none' : 'flex', position: 'fixed',
                     top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px',
                     padding: '3px 5px 0 5px', height: '30px'
                 }}>
-                {localStorage.getItem('student_screen_name')}
+                {student.ScreenName}
             </div>
             <div className="student-tab-header shadow-sm">
                 <div style={{

@@ -5,10 +5,13 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { get_bank_details, post_bank_details } from '../../../axios/student';
 import Actions from '../../common/Actions';
+import _ from "lodash";
 import { compareStates } from '../../../helperFunctions/generalHelperFunctions';
 
 function BankDetails({ }) {
     let [AccountName, set_acct_name] = useState(null)
+    const [errors, setErrors] = useState({})
+
     let [PaymentType, set_acct_type] = useState(null)
     let [BankName, set_bank_name] = useState(null)
     let [AccountNumber, set_acct] = useState(null)
@@ -43,10 +46,10 @@ function BankDetails({ }) {
             set_routing(result.RoutingNumber);
             set_payment_option(result.PaymentOption);
             setCreditDebitState({
-                number: result.CD_Number,
-                cvc: result.CD_Cvc,
-                name: result.CD_Name,
-                expiry: result.CD_Expiry
+                number: result.CD_Number || '',
+                cvc: result.CD_Cvc || '',
+                name: result.CD_Name || '',
+                expiry: result.CD_Expiry || ''
             })
             set_email(result.Email)
         }
@@ -69,7 +72,7 @@ function BankDetails({ }) {
                 return false
             }
         }
-        if (firstTwoNumbers === '51') {
+        if (firstTwoNumbers === '51' || firstTwoNumbers === '57') {
             if (creditDebitState.number.length !== 16) {
                 toast.warning('Visa card number length should be 16')
                 return false
@@ -93,6 +96,8 @@ function BankDetails({ }) {
     const onSave = async (e) => {
         e.preventDefault()
         setLoading(true)
+        const allNull = _.every(errors, _.isNull);
+        if (!allNull) return
 
         if (validateCreditDebitInfo()) {
             const data = await post_bank_details({
@@ -336,7 +341,10 @@ function BankDetails({ }) {
                 {PaymentOption === 'credit/debit' &&
                     <PaymentForm creditDebitState={creditDebitState}
                         setCreditDebitState={setCreditDebitState}
-                        editMode={editMode} />
+                        editMode={editMode}
+                        errors={errors}
+                        setErrors={setErrors}
+                    />
                 }
 
                 <Actions

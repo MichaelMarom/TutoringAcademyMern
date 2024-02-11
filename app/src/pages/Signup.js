@@ -194,10 +194,10 @@ const Signup = () => {
                         aria-label="Default select example" onChange={handleInputChange}>
                         <option selected>Select Role</option>
                         <option value="tutor">Tutor</option>
-                        <option value="student">Student</option>
+                       {/* <option value="student">Student</option>
                         <option value="visitor">Visitor</option>
                         <option value="parent">Parent</option>
-                        <option value="admin">Admin</option>
+                        <option value="admin">Admin</option> */}
                       </select>
                       {errors.role && <span className='small text-danger'>{errors.role}</span>}
                     </div>

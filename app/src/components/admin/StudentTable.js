@@ -48,8 +48,9 @@ const StudentTable = () => {
         window.localStorage.setItem('student_user_id', student_id);
         localStorage.setItem('student_screen_name', screenName)
         window.localStorage.setItem('user_role', 'admin');
-        navigate('/student/setup')
+        window.open(`${process.env.REACT_APP_BASE_URL}/student/setup`, "_blank")
     }
+
     return (
         <>
             <div className="tables" style={{ width: '100%', overflow: 'auto', padding: '5px' }}>

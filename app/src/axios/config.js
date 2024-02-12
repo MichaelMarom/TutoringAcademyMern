@@ -3,8 +3,9 @@ import { toast } from "react-toastify";
 
 
 const getAccessToken = () => {
-    console.log('called')
-    return localStorage.getItem('access_token');
+    console.log('called', localStorage.getItem('access_token'))
+    const token = localStorage.getItem('access_token');
+    return token
 }
 
 export const showErrorToast = (err) => {
@@ -27,7 +28,11 @@ apiClient.interceptors.request.use(
     config => {
         const accessToken = getAccessToken();
         console.log('inside interceptors')
-        config.headers["Authorization"] = `Bearer ${accessToken}`;
+        if (!config.headers['Authorization'])
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
+        if (config.url === '/auth/signup' || config.url === '/auth/login')
+            delete config?.headers?.Authorization
+        console.log(config.url, config.headers.Authorization)
         console.log(config, '33')
         return config;
     },

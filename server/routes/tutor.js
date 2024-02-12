@@ -48,6 +48,7 @@ const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, j
 const TUTOR_ROUTES = express.Router();
 
 const verifyToken = async (req, res, next) => {
+    if (req.originalUrl === '/auth/signup' || req.originalUrl === '/auth/login') next()
     const publicKey = process.env.JWT_SECRET || `-----BEGIN PUBLIC KEY-----
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7hBgNQubOaYJf8/le9+v
     HzAQ7Jd1pcdDFxHRV4aSDQDMrwpR4q6OZA8XVaKDAS5YgxM01t/Dq2ooQV7MxrXt

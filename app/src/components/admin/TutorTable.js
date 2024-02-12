@@ -51,7 +51,7 @@ const TutorTable = () => {
         window.localStorage.setItem('tutor_user_id', tutor_user_id);
         window.localStorage.setItem('tutor_screen_name', screenName)
         window.localStorage.setItem('user_role', 'admin');
-        navigate('/tutor/setup')
+        window.open(`${process.env.REACT_APP_BASE_URL}/tutor/setup`, "_blank")
     }
 
     if (fetching || updatingStatus)
@@ -72,12 +72,11 @@ const TutorTable = () => {
                             <tr key={item.SID}>
                                 <td data-src={null} className='col-1'>
                                     <div className="col-10 m-auto">
-                                        <Pill customColor={true} label={item.Status} color={statesColours[item.Status]} hasIcon={false} />
+                                        <Pill customColor={true} label={item.Status} fontColor={statesColours[item.Status].color} color={statesColours[item.Status].bg} hasIcon={false} />
                                     </div>
                                 </td>
 
                                 <td data-src={null} className='col-1' onDoubleClick={() => {
-                                    console.log(item)
                                     item.Status === PROFILE_STATUS.CLOSED ?
                                         toast.warning('You cannot view Closed tutor Profile!') :
                                         redirect_to_tutor_setup(item.AcademyId, item.TutorScreenname)

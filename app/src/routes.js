@@ -24,7 +24,10 @@ import { setChats } from "./redux/chat/chat";
 import { socket } from "./config/socket";
 import { moment } from './config/moment';
 import TutorProfile from "./pages/tutor/TutorProfile";
-import { useClerk, useSignIn, useSignUp, SignIn, SignUp, useAuth, useUser, SignedIn, SignedOut, RedirectToSignIn, useSession } from '@clerk/clerk-react';
+import {
+  useClerk, useAuth, useUser,
+  SignedIn
+} from '@clerk/clerk-react';
 import { get_user_detail } from "./axios/auth";
 import { redirect_to_login } from "./helperFunctions/auth";
 
@@ -32,8 +35,8 @@ const App = () => {
   let location = useLocation();
   let navigate = useNavigate();
   const dispatch = useDispatch();
-  const { getToken, isLoaded, isSignedIn, userId, actor, sessionId } = useAuth();
-  const { user: signinUser } = useUser()
+  const token = localStorage.getItem('access_token')
+  const { userId, } = useAuth();
   const { signOut } = useClerk();
   const { user } = useSelector((state) => state.user);
   const { student } = useSelector((state => state.student))
@@ -52,13 +55,12 @@ const App = () => {
   const screen = location.pathname.split('/')[1]
 
   useEffect(() => {
-    console.log(userId, isSignedIn, 'lololllllll')
-    if (userId) {
+    if (userId && token) {
       const fetch = async () => {
         const data = await get_user_detail(userId);
         if (data?.response?.data?.message?.includes('expired') ||
           data?.response?.data?.message?.includes('malformed')) {
-          // return redirect_to_login(navigate, signOut)
+          return redirect_to_login(navigate, signOut)
         }
 
         dispatch(setUser(data));
@@ -78,20 +80,10 @@ const App = () => {
       }
       fetch()
     }
-  }, [userId])
-
-
-  console.log(student, 'estudent')
-  // useEffect(() => {
-  //   if (user?.[0]?.role === "tutor")
-  //     window.localStorage.setItem("tutor_tab_index", 0);
-
-  //   if (user?.[0]?.role === "student")
-  //     window.localStorage.setItem("student_tab_index", 0);
-  // }, [user]);
+  }, [userId, token])
 
   useEffect(() => {
-    if (user && user.role !== 'admin')
+    if (user && user.role !== 'admin' && user.SID)
       get_tutor_setup_by_userId(user.SID).then((result) => {
         localStorage.setItem("tutor_user_id", result[0]?.AcademyId || null);
       });
@@ -113,65 +105,33 @@ const App = () => {
       return dispatch(setStudent({}));
     }
     const res = await get_my_data(studentUserId)
-    console.log(res, res?.response?.data?.message, res?.response?.data?.message?.includes('expired'))
-    // if (res?.response?.data?.message?.includes('expired')) return redirect_to_login(navigate, signOut)
+    if (res?.response?.data?.message?.includes('expired')) return redirect_to_login(navigate, signOut)
     dispatch(setStudent(res[1][0][0]));
   }
 
   useEffect(() => {
-    getStudentDetails()
-  }, [dispatch, studentUserId])
+    if (userId && token) getStudentDetails()
+  }, [dispatch, studentUserId, userId, token])
 
   useEffect(() => {
-    dispatch(setTutor())
-  }, [dispatch, tutorUserId])
+    if (userId && token) dispatch(setTutor())
+  }, [dispatch, tutorUserId, userId, token])
 
   useEffect(() => {
-    const fetchData = () => {
-      if (loggedInUserDetail.AcademyId) {
-        dispatch(setChats(loggedInUserDetail.AcademyId, role));
-      }
-    };
+    if (userId && token) {
+      const fetchData = () => {
+        if (loggedInUserDetail.AcademyId) {
+          dispatch(setChats(loggedInUserDetail.AcademyId, role));
+        }
+      };
 
-    fetchData();
-
-  }, [dispatch, loggedInUserDetail.AcademyId, role])
-
-  //chat
-  useEffect(() => {
-    if (socket) {
-      socket.on("online", (id) => {
-        // dispatch(setShortlist())
-        // console.log(shortlist)
-        // const updatedArray = shortlist.map((item) => {
-        //   if (item?.tutorData?.AcademyId === id) {
-        //     // If the condition is met, update the online property to true
-        //     return { ...item, tutorData: { ...item.tutorData, Online: true } };
-        //   }
-        //   return item;
-        // });
-        // !isLoading && dispatch(setShortlistAction(updatedArray))
-        console.log('id is online', id)
-      })
-      socket.on("offline", (id) => {
-        // console.log(shortlist)
-        // const updatedArray = shortlist.map((item) => {
-        //   if (item?.tutorData?.AcademyId === id) {
-        //     // If the condition is met, update the online property to true
-        //     return { ...item, tutorData: { ...item.tutorData, Online: false } };
-        //   }
-        //   return item;
-        // });
-        // !isLoading && dispatch(setShortlistAction(updatedArray))
-        console.log('id is offline', id)
-      })
+      fetchData();
     }
-  }, [dispatch, isLoading]);
+
+  }, [dispatch, loggedInUserDetail.AcademyId, role, userId, token])
 
   //routes
   const generateRoutes = (role) => {
-    console.log('enterdede', role)
-
     if (role && rolePermissions[role]) {
       if (role === 'admin') {
         const allRoutes = Object.keys(rolePermissions).map((key) => rolePermissions[key]).flat();
@@ -181,7 +141,6 @@ const App = () => {
             element: route.component,
           })))
       } else {
-        console.log('enterdede', role)
         setActiveRoutes(
           rolePermissions[role].map((route) => ({
             path: route.path,
@@ -194,8 +153,6 @@ const App = () => {
     }
   };
 
-  console.log(activeRoutes, student)
-
   useEffect(() => {
     generateRoutes(user?.role);
   }, [user])
@@ -205,60 +162,6 @@ const App = () => {
       navigate('/tutor/setup')
   }, [location, navigate])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log(await getToken(), isLoaded, isSignedIn, userId, signinUser, actor);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const routes12 = (
-    <>
-      <SignedIn>
-        {useRoutes([
-          ...activeRoutes
-        ])}
-      </SignedIn>
-
-      <SignedOut>
-        {useRoutes([
-          {
-            path: '/login',
-            element: <Login />,
-          },
-          {
-            path: '/signup',
-            element: <Signup />,
-          },
-          {
-            path: '*',
-            element: <UnAuthorizeRoute />,
-          },
-        ])}
-      </SignedOut>
-    </>
-  );
-
-  const routes = useRoutes([
-    {
-      path: "/login",
-      element: <SignedOut> <Login /></SignedOut>,
-    },
-    {
-      path: "/signup",
-      element: <SignedOut> <Signup /> </SignedOut>,
-    },
-    ...activeRoutes,
-    {
-      path: "*",
-      element: <UnAuthorizeRoute />,
-    },
-  ]);
-  console.log(activeRoutes)
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

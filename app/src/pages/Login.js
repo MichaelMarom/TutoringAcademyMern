@@ -13,6 +13,7 @@ import { DEFAULT_URL_AFTER_LOGIN } from '../constants/constants';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const token = localStorage.getItem('access_token')
     const { user } = useSelector(state => state.user)
     const { signIn, setActive } = useSignIn();
     const { isSignedIn, getToken, userId } = useAuth()
@@ -47,10 +48,6 @@ const LoginPage = () => {
                 } else {
                     toast.error("Could not retrieve token!");
                 }
-                if (!userId) return toast.error("Could not retrieve userId");;
-                const userDetails = await get_user_detail(userId, token)
-                dispatch(setUser(userDetails))
-                localStorage.setItem('user', JSON.stringify(userDetails))
             }
         }
         catch (err) {
@@ -88,13 +85,16 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (userId) {
-            get_user_detail(userId).then(user => {
-                console.log(user)
-                dispatch(setUser(user))
-                localStorage.setItem('user', JSON.stringify(user))
-            });
+            let fetchUser = async () => {
+                if (token) {
+                    const user = await get_user_detail(userId, token)
+                    dispatch(setUser(user))
+                    localStorage.setItem('user', JSON.stringify(user))
+                }
+            }
+            fetchUser()
         }
-    }, [userId])
+    }, [userId, token])
 
     return (
         <section>
@@ -157,7 +157,7 @@ const LoginPage = () => {
                                         </Button>
 
                                         <div className="text-center">
-                                            <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+                                            <p>Don't have an account? <Link to="/tutor/setup">Sign up</Link></p>
                                         </div>
 
                                     </form>

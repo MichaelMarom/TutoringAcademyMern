@@ -58,7 +58,7 @@ const App = () => {
         const data = await get_user_detail(userId);
         if (data?.response?.data?.message?.includes('expired') ||
           data?.response?.data?.message?.includes('malformed')) {
-          return redirect_to_login(navigate, signOut)
+          // return redirect_to_login(navigate, signOut)
         }
 
         dispatch(setUser(data));
@@ -114,7 +114,7 @@ const App = () => {
     }
     const res = await get_my_data(studentUserId)
     console.log(res, res?.response?.data?.message, res?.response?.data?.message?.includes('expired'))
-    if (res?.response?.data?.message?.includes('expired')) { return redirect_to_login(navigate, signOut) }
+    // if (res?.response?.data?.message?.includes('expired')) return redirect_to_login(navigate, signOut)
     dispatch(setStudent(res[1][0][0]));
   }
 

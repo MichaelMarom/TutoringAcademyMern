@@ -26,9 +26,13 @@ export const login = async (data) => {
     }
 }
 
-export const get_user_detail = async (userId) => {
+export const get_user_detail = async (userId, token) => {
     try {
-        const { data } = await apiClient.get(`/user/${userId}`);
+        const { data } = await apiClient.get(`/user/${userId}`, {
+            headers:{
+                Authorization:`Bearer ${token}`
+            }
+        });
         return data;
     }
     catch (err) {

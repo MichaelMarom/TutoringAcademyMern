@@ -45,13 +45,17 @@ const LoginPage = () => {
                 if (token) {
                     localStorage.setItem("access_token", token);
                 } else {
-                    toast.error("Could not retrieve token from clerk");
+                    toast.error("Could not retrieve token!");
                 }
+                if (!userId) return toast.error("Could not retrieve userId");;
+                const userDetails = await get_user_detail(userId, token)
+                dispatch(setUser(userDetails))
+                localStorage.setItem('user', JSON.stringify(userDetails))
             }
         }
         catch (err) {
             console.log(err.errors[0].message)
-            toast.error(err.errors[0].message)
+            toast.error(err.errors[0].message || err.message)
         }
         // const result = await login(loginForm);
         localStorage.removeItem('tutor_user_id')

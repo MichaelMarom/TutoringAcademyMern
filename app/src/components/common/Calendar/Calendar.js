@@ -121,7 +121,8 @@ const ShowCalendar = ({
   const getTutorSetup = async () => {
     const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
     if (Object.keys(result ? result : {}).length) {
-      const updatedEnableHours = getTimeZonedEnableHours(JSON.parse(result.enableHourSlots), timeZone)
+      console.log(result)
+      const updatedEnableHours = getTimeZonedEnableHours(JSON.parse(result.enableHourSlots === 'undefined' ? '[]' : result.enableHourSlots), timeZone)
       setEnableHourSlots(updatedEnableHours); //done
 
       setDisableDates(JSON.parse(result.disableDates)); //done

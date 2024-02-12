@@ -61,7 +61,7 @@ const verifyToken = async (req, res, next) => {
     const sessToken = cookies.get("__session");
     const token = req.headers.authorization.replace('Bearer ', "");
 
-    if (sessToken === undefined && (token === undefined || token === 'null')) {
+    if (sessToken === undefined && (token === undefined || token === 'undefined' || token === 'null')) {
         return res.status(401).json({ message: "not signed in" });
     }
 
@@ -78,14 +78,15 @@ const verifyToken = async (req, res, next) => {
             next()
         }
     } catch (error) {
-        res.status(400).json({
+        console.error(error.message)
+        res.status(401).json({
             message: error.message,
         });
         return;
     }
 };
 
-// TUTOR_ROUTES.use(verifyToken);
+TUTOR_ROUTES.use(verifyToken);
 
 TUTOR_ROUTES.get('/tutor/tutor-status', get_tutor_status)
 TUTOR_ROUTES.get('/tutor/subjects', subjects)

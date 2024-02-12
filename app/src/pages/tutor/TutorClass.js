@@ -16,8 +16,7 @@ const TutorClass = () => {
           <Excalidraw />
         </div>
 
-        <div className="bg-light rounded" style={{ width: "28%" }
-        }>
+        <div className="bg-light rounded" style={{ width: "28%" }}>
 
           <TutorCollabBoard />
         </div >

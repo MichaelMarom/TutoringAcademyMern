@@ -4,6 +4,7 @@ const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, j
 require('dotenv').config();
 const moment = require('moment-timezone');
 const sql = require('mssql');
+const capitalizeFirstLetter = require('../constants/helperfunctions.js')
 
 const executeQuery = async (query, res) => {
     try {
@@ -42,8 +43,8 @@ let upload_setup_info = (req, res) => {
     let UserId = mname?.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] +
         shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
 
-    let screenName = mname?.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] :
-        fname + '.' + ' ' + sname[0];
+    let screenName = mname?.length > 0 ? capitalizeFirstLetter(fname) + ' ' + capitalizeFirstLetter(mname[0]) + '. ' + capitalizeFirstLetter(sname[0]) :
+        capitalizeFirstLetter(fname) + '. ' + capitalizeFirstLetter(sname[0]);
 
 
     let action = cb => {
@@ -111,7 +112,7 @@ let upload_setup_info = (req, res) => {
         let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName,
              MiddleName, LastName, Email, Cell, Language, SecLan, ParentAEmail, ParentBEmail, 
              ParentAName, ParentBName,
-             AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, 
+             AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT
              AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
         VALUES ('${fname}', '${mname}', '${sname}','${email}','${cell}',
         '${lang}', '${secLan}', '${parentAEmail}', '${parentBEmail}', 
@@ -133,7 +134,7 @@ let upload_setup_info = (req, res) => {
           MiddleName='${mname}', GMT = '${timeZone}', Language='${lang}', AgeGrade='${is_18}',
          Grade='${grade}', ParentConsent='${parentConsent}', SecLan = '${secLan}', 
          ParentAEmail='${parentAEmail}', ParentBEmail='${parentBEmail}', 
-          ParentAName='${parentAName}', ParentBName='${parentBName}'
+          ParentAName='${parentAName}', ParentBName='${parentBName}', ScreenName= '${screenName}'
           WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false

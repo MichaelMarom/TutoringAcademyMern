@@ -826,10 +826,11 @@ const TutorSetup = () => {
               <input
                 className="form-control m-0"
                 onInput={(e) => set_add1(e.target.value)}
-                placeholder="Optional"
+                placeholder="Address 1"
                 value={add1}
                 type="text"
                 id="add1"
+                required
                 disabled={!editMode}
               />
             </div>
@@ -877,8 +878,9 @@ const TutorSetup = () => {
                 className="form-control m-0"
 
                 onInput={(e) => set_city(e.target.value)}
-                placeholder="Optional"
+                placeholder="City"
                 type="text"
+                required
                 value={city}
                 id="city"
                 disabled={!editMode}
@@ -954,8 +956,9 @@ const TutorSetup = () => {
                 onInput={(e) => set_zipCode(e.target.value)}
                 value={zipCode}
                 disabled={!editMode}
-                placeholder="Optional"
+                placeholder="Zip Code"
                 type="text"
+                required
                 id="zip"
               />
             </div>

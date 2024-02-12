@@ -3,28 +3,25 @@ import screenLarge from '../../../images/screen-full-svgrepo-com.svg';
 import screenNormal from '../../../images/screen-normal-svgrepo-com.svg'
 import muteSvg from '../../../images/mute-svgrepo-com.svg'
 import DiableVideoImage from '../../../images/video-recorder-off-svgrepo-com.svg';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { socket } from '../../../config/socket';
 import { Peer } from 'peerjs';
 import FlipCountdown from '@rumess/react-flip-countdown';
 import { moment } from '../../../config/moment'
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const TutorAside = () => {
-
+    const navigate = useNavigate();
     let [mssg, setMssg] = useState('hi');
     let [mssgList, setMssgList] = useState([]);
-
     let location = useLocation();
-    let [authorization, setAuthorization] = useState(false);
     let [peerId, setPeerId] = useState('')
-    let [conn, setConn] = useState('');
     let [videoLoader, setVideoLoader] = useState('');
-    let [largeScreen, setLargeSreccn] = useState(false);
     let [screenType, setScreenType] = useState(screenLarge);
-    let [isVisuals, setIsVisuals] = useState(true)
 
     let [visuals, setVisuals] = useState(true)
-    let [uname, setUname] = useState('')
+    const { tutor } = useSelector(state => state.tutor);
 
     let handleChat = e => {
         if (mssg !== null) {
@@ -152,6 +149,10 @@ const TutorAside = () => {
 
     }, [location, peerId])
 
+    const handleTimeUp = () => {
+        toast.warning('Session Time is Up!');
+        navigate(`/tutor/setup`)
+    }
 
     return (
         <div className="TutorAside shadow-sm" style={{ top: "43%" }}>
@@ -165,6 +166,8 @@ const TutorAside = () => {
                     hideYear
                     minuteTitle='Minutes'
                     secondTitle='Seconds'
+                    endAtZero
+                    onTimeUp={handleTimeUp}
                     endAt={moment().add('minutes', 53).toDate()} />
             </div>
 

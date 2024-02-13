@@ -36,7 +36,7 @@ const App = () => {
   let navigate = useNavigate();
   const dispatch = useDispatch();
   const token = localStorage.getItem('access_token')
-  const { userId, } = useAuth();
+  const { userId, isSignedIn } = useAuth();
   const { signOut } = useClerk();
   const { user } = useSelector((state) => state.user);
   const { student } = useSelector((state => state.student))
@@ -55,7 +55,7 @@ const App = () => {
   const screen = location.pathname.split('/')[1]
 
   useEffect(() => {
-    if (userId && token) {
+    if (userId && token && isSignedIn) {
       const fetch = async () => {
         const data = await get_user_detail(userId);
         if (data?.response?.data?.message?.includes('expired') ||
@@ -80,14 +80,14 @@ const App = () => {
       }
       fetch()
     }
-  }, [userId, token])
+  }, [userId, token, isSignedIn])
 
   useEffect(() => {
-    if (user && user.role !== 'admin' && user.SID)
+    if (user && user.role !== 'admin' && user.SID && isSignedIn)
       get_tutor_setup_by_userId(user.SID).then((result) => {
         localStorage.setItem("tutor_user_id", result[0]?.AcademyId || null);
       });
-  }, [user]);
+  }, [user, isSignedIn]);
 
   //dispatch
 
@@ -110,15 +110,15 @@ const App = () => {
   }
 
   useEffect(() => {
-    if (userId && token) getStudentDetails()
-  }, [dispatch, studentUserId, userId, token])
+    if (userId && token && isSignedIn) getStudentDetails()
+  }, [dispatch, studentUserId, userId, isSignedIn, token])
 
   useEffect(() => {
-    if (userId && token) dispatch(setTutor())
-  }, [dispatch, tutorUserId, userId, token])
+    if (userId && token && isSignedIn) dispatch(setTutor())
+  }, [dispatch, tutorUserId, userId, isSignedIn, token])
 
   useEffect(() => {
-    if (userId && token) {
+    if (userId && token && isSignedIn) {
       const fetchData = () => {
         if (loggedInUserDetail.AcademyId) {
           dispatch(setChats(loggedInUserDetail.AcademyId, role));
@@ -128,7 +128,7 @@ const App = () => {
       fetchData();
     }
 
-  }, [dispatch, loggedInUserDetail.AcademyId, role, userId, token])
+  }, [dispatch, loggedInUserDetail.AcademyId, role, userId, isSignedIn, token])
 
   //routes
   const generateRoutes = (role) => {

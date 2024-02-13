@@ -90,11 +90,14 @@ const LoginPage = () => {
                     const user = await get_user_detail(userId, token)
                     dispatch(setUser(user))
                     localStorage.setItem('user', JSON.stringify(user))
+                    console.log(user);
+                    user.role !== 'admin' ? navigate(`/${user.role}/intro`) :
+                        navigate(`/${user.role}/tutor-data`)
                 }
             }
             fetchUser()
         }
-    }, [userId, token])
+    }, [userId, token, isSignedIn])
 
     return (
         <section>

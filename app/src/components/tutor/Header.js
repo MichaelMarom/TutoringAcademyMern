@@ -95,9 +95,10 @@ const Header = () => {
         <>
             <div className={`screen-name btn-success rounded  p-2 flex-column`}
                 style={{
-                    display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
+                    display: !tutor.TutorScreenname ? 'none' : 'flex', position: 'fixed',
                     top: '2px', zIndex: '999', left: '45px',
-                    background: statesColours[tutorState]
+                    background: statesColours[tutorState]?.bg,
+                    color: statesColours[tutorState]?.color
                 }}>
                 <div style={{ fontWeight: 'bold' }}>{screen_name}</div>
                 <div style={{ fontSize: "12px" }} >
@@ -133,7 +134,7 @@ const Header = () => {
                         </li>
                     ))}
                 </ul>
-               
+
                 <div className="scroller-right" onClick={handle_scroll_right}></div>
                 <div style={{
                     margin: '0 0 0 0', background: '#efefef', display

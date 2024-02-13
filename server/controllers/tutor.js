@@ -8,6 +8,7 @@ const multer = require('multer');
 const path = require('path');
 const sql = require('mssql');
 const COMMISSION_DATA = require('../constants/tutor');
+const educationSchema = require('../schema/tutor/education');
 
 
 let post_new_subject = (req, res) => {
@@ -341,6 +342,38 @@ let post_edu_form = async (req, res) => {
 
         })
     }
+}
+
+const dynamically_post_edu_info = (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            const request = poolConnection.request()
+            Object.keys(req.body).map(column => {
+                request.input(column, educationSchema[column], req.body[column])
+            })
+
+            const existEduRec = await request.query(
+                findByAnyIdColumn('Education1', { AcademyId: req.body.AcademyId }, 'varchar'))
+            if (existEduRec.recordset.length) {
+                const update = await request.query(
+                    parameteriedUpdateQuery('Education1', req.body, { AcademyId: req.body.AcademyId }, false).query
+                )
+                update.rowsAffected ?
+                    res.status(200).send({ message: "Updated Sucesfully" }) :
+                    res.status(400).send({ message: "Failed to update the record" })
+            }
+            else {
+                const insert = await request.query(
+                    parameterizedInsertQuery('Education1', req.body).query
+                )
+                res.status(200).send(insert.recordset)
+            }
+        }
+        catch (err) {
+            res.status(400).send({ message: err.message })
+        }
+    })
 }
 
 let post_tutor_rates_form = (req, res) => {
@@ -1010,7 +1043,7 @@ let get_my_edu = (req, res) => {
         var poolConnection = await sql.connect(config);
         if (poolConnection) {
             poolConnection.request().query(
-                findByAnyIdColumn('Education', req.query, 'varchar(max)')
+                findByAnyIdColumn('Education1', req.query, 'varchar(max)')
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
@@ -1766,6 +1799,7 @@ module.exports = {
     get_ad,
     put_ad,
     get_tutor_ads,
+    dynamically_post_edu_info,
     remove_subject_rates,
     subject_already_exist,
     last_pay_day,

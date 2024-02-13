@@ -244,26 +244,38 @@ export let upload_setup_form = (fname, uname, mname, lname, email, cell, acadId,
 }
 
 
-export let upload_edu_form = async (level, university1, university2, university3, degree, degreeFile, certificate,
-    certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1,
-    graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
-    countryForMast,
-    countryForCert,
-    countryForDoc,
-    countryForAssociate, resume, cert_file_name, deg_file_name, references) => {
+// export let upload_edu_form = async (level, university1, university2, university3, degree, degreeFile, certificate,
+//     certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1,
+//     graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
+//     countryForMast,
+//     countryForCert,
+//     countryForDoc,
+//     countryForAssociate, resume, cert_file_name, deg_file_name, references) => {
 
-    const result = await apiClient.post('/tutor/edu', {
-        level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
-        state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
-        doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
-        countryForMast,
-        countryForCert,
-        countryForDoc,
-        countryForAssociate, resume, cert_file_name, deg_file_name, references
-    })
+//     const result = await apiClient.post('/tutor/edu', {
+//         level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
+//         state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
+//         doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
+//         countryForMast,
+//         countryForCert,
+//         countryForDoc,
+//         countryForAssociate, resume, cert_file_name, deg_file_name, references
+//     })
 
-    return result.data
+//     return result.data
 
+// }
+
+
+export const post_edu = async(body) => {
+    try {
+        const data = await apiClient.post('/tutor/edu', body)
+        return data
+    }
+    catch (error) {
+        showErrorToast(error)
+        return error
+    }
 }
 
 //not using

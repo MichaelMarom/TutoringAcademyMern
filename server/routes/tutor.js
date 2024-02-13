@@ -39,7 +39,8 @@ const { subjects,
     put_ad,
     set_agreements_date_null_for_all,
     get_tutor_against_code,
-    get_tutor_offered_subjects } = require('../controllers/tutor');
+    get_tutor_offered_subjects,
+    dynamically_post_edu_info } = require('../controllers/tutor');
 
 const Cookies = require("cookies");
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
@@ -117,7 +118,9 @@ TUTOR_ROUTES.post('/tutor/rates/:faculty/:subject/:id', parser, upload_tutor_rat
 TUTOR_ROUTES.delete('/subject-rate/:id', parser, remove_subject_rates);
 
 TUTOR_ROUTES.post('/tutor/form-one', parser, post_form_one);
-TUTOR_ROUTES.post('/tutor/edu', parser, post_edu_form);
+// TUTOR_ROUTES.post('/tutor/edu', parser, post_edu_form);
+TUTOR_ROUTES.post('/tutor/edu', parser, dynamically_post_edu_info);
+
 TUTOR_ROUTES.post('/tutor/tutor-rates', parser, post_tutor_rates_form);
 TUTOR_ROUTES.post('/tutor/new-subject', parser, post_new_subject);
 TUTOR_ROUTES.get('/p-payment/last_payday', last_pay_day);

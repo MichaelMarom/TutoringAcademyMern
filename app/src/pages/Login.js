@@ -84,15 +84,17 @@ const LoginPage = () => {
     };
 
     useEffect(() => {
-        if (userId) {
+        if (userId && isSignedIn) {
             let fetchUser = async () => {
                 if (token) {
                     const user = await get_user_detail(userId, token)
                     dispatch(setUser(user))
                     localStorage.setItem('user', JSON.stringify(user))
                     console.log(user);
-                    user.role !== 'admin' ? navigate(`/${user.role}/intro`) :
-                        navigate(`/${user.role}/tutor-data`)
+                    if (user.role) {
+                        user.role !== 'admin' ? navigate(`/${user.role}/intro`) :
+                            navigate(`/${user.role}/tutor-data`)
+                    }
                 }
             }
             fetchUser()

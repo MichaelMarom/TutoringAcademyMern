@@ -1,5 +1,6 @@
 
 const sql = require('mssql')
+
 const educationSchema = {
     SID: sql.Int(),
     EducationalLevel: sql.VarChar(100),

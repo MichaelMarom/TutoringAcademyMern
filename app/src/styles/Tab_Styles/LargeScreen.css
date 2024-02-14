@@ -157,13 +157,13 @@ body {
 
     .tutor-tab-header {
         height: 60px;
-        width: 100%;
+        /* width: 100%; */
         padding: 0;
         margin: 0;
         display: flex;
         z-index: 998;
         align-items: center;
-        justify-content: right;
+        /* justify-content: right; */
         font-family: cursive;
         position: relative;
         background: #212F3D;
@@ -177,12 +177,10 @@ body {
     .tutor-tab-header ul {
         list-style-type: none;
         margin: 0;
-        float: right;
         height: 100%;
         width: calc(100% - 150px);
         display: flex;
         align-items: center;
-        justify-content: left;
         overflow-x: auto;
         overflow-y: hidden;
         padding: 0 8px 0 8px;
@@ -238,7 +236,7 @@ body {
         margin: 0;
         display: flex;
         align-items: center;
-        justify-content: left;
+        /* justify-content: left; */
         overflow-x: auto;
         overflow-y: hidden;
         padding: 0 8px 0 8px;

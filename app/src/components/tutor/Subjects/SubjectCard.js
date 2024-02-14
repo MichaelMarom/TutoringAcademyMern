@@ -56,13 +56,13 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
 
     const handleSave = async (e) => {
         e.preventDefault()
-        
+
         if (!grades.length) return toast.warning("Please select at least one range of school grades!")
         if (rate < 3) return toast.warning("Minimum rate is $3")
 
         setEditable(false);
         const data = await upload_tutor_rates(`$${rate}.00`, grades, tutorId, faculty, subject)
-       
+
         if (data?.response?.status === 400) {
             toast.error('Failed to Save Record')
         }
@@ -106,7 +106,7 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
                     }
 
 
-                    <Button type='submit' className='action-btn btn' disabled={!editable}>
+                    <Button type='submit' className={`action-btn btn ${editable ? 'blinking-button saving-btn' : ''}`} disabled={!editable}>
                         <div className="button__content">
                             <p className="button__text">Save</p>
                         </div>

@@ -210,11 +210,11 @@ const CreateComponent = ({ setActiveTab }) => {
 
                             <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                 <label htmlFor="">Subject</label>
-                                <select className="form-select"
+                                <select className="form-select shadow"
                                     required
                                     onChange={(e) => setSubject(e.target.value)}
                                     value={subject}>
-                                    <option value={''} disabled>Subject</option>
+                                    <option value={''} disabled>Select</option>
 
                                     {subjects.map((item, index) =>
                                         <option key={index} value={item.subject}>{item.subject}</option>
@@ -224,23 +224,24 @@ const CreateComponent = ({ setActiveTab }) => {
 
                             <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                 <label htmlFor="">Educational Level</label>
-                                <input type="text" className="form-control" value={education.EducationalLevel} />
+                                <input type="text" className="form-control" 
+                                value={education.EducationalLevel} disabled />
                             </div>
 
                             <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                 <label htmlFor="">Teaching Experience</label>
-                                <input className="form-control" type="text" value={education.EducationalLevelExperience} />
+                                <input className="form-control" disabled type="text" value={education.EducationalLevelExperience} />
                             </div>
 
                             {!!education.Certificate.length && <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                 <label htmlFor="">Tutor's Certificate</label>
-                                <input className="form-control" type="text" value={education.Certificate} />
+                                <input className="form-control" disabled type="text" value={education.Certificate} />
                             </div>}
 
                             <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                 <label htmlFor="">Country</label>
 
-                                <input className="form-control"
+                                <input className="form-control" disabled
                                     value={tutor.Country} />
                             </div>
 
@@ -248,7 +249,7 @@ const CreateComponent = ({ setActiveTab }) => {
                                 className="d-flex flex-column justify-content-start ">
                                 <label htmlFor="">GMT</label>
 
-                                <input className="form-control"
+                                <input className="form-control" disabled
                                     value={tutor.GMT}
                                 />
 

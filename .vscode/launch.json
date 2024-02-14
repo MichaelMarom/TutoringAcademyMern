@@ -20,6 +20,7 @@
                 "HOLIDAY_API_KEY": "6659ac25-976b-470b-9ca8-ace223382078",
                 "HOLIDAY_ABS_API_KEY": "ae677858abf044338858283038b06056",
                 "SERVER_URL": "http://localhost:9876",
+                "JWT_SECRET":"https://crucial-shrink-84.clerk.accounts.dev/.well-known/jwks.json",
                 "COMMUNICATION_SERVICES_CONNECTION_STRING": " endpoint=https://smstutoingacademy.unitedstates.communication.azure.com/;accesskey=1lnFDblTzTOwzwYK0hoZ80AeLfhhYpxFo0CqwoKNBie2ra3yJtz6oAJzLC5sBdSp0jx5d+XjLfnwMSX/7eWvMg=="
             }
         }

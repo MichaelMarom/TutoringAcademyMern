@@ -3,13 +3,11 @@ import StudentAside from "./StudentCollabAside";
 
 const StudentCollabBoard = () => {
 
-    return ( 
-        <>
-            <div className="StudentCollabBoard">
-                <StudentAside />
-            </div>
-        </>
-     );
+    return (
+        <div className="StudentCollabBoard">
+            <StudentAside />
+        </div>
+    );
 }
- 
+
 export default StudentCollabBoard;

@@ -80,13 +80,14 @@ const Actions = ({
         navigate(`/${currentUser}/${currentTabInfo.back}`)
     }
 
+
     return (
         <div style={actionsStyle}>
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="" style={{ width: "10%" }}>
                         <button type='button' onClick={onBack} className="back-btn action-btn btn"
-                            disabled={unSavedChanges || loading || backDisabled || !isBackTabExist}>
+                            disabled={!saveDisabled && (unSavedChanges || loading || backDisabled || !isBackTabExist)}>
                             <div className="button__content">
                                 <div className="button__icon">
                                     <img src={BTN_ICON} alt={"btn__icon"} />

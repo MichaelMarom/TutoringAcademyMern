@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setStudent } from '../../redux/student_store/studentData';
 import Tooltip from '../common/ToolTip';
 import { FaInfoCircle } from 'react-icons/fa';
-import { Countries, GMT, GRADES, STATES, US_STATES } from '../../constants/constants';
+import { AUST_STATES, CAN_STATES, Countries, GMT, GRADES, STATES, UK_STATES, US_STATES } from '../../constants/constants';
 import { PhoneInput } from 'react-international-phone';
 import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
@@ -41,7 +41,6 @@ const StudentSetup = () => {
 
     let [photo, set_photo] = useState('')
 
-
     let [countryList, setCountryList] = useState('')
     let [stateList, setStateList] = useState('');
     const [parentAEmail, setParentAEmail] = useState('');
@@ -50,6 +49,13 @@ const StudentSetup = () => {
     const [parentBName, setParentBName] = useState('');
     const [secLan, setSecLang] = useState('')
     const navigate = useNavigate()
+
+    const options = {
+        "Australia": AUST_STATES,
+        "USA": US_STATES,
+        "Canada": CAN_STATES,
+        "UnitedKingdom": UK_STATES
+    }
 
     let [lang_list, setlang_list] = useState([
         'English',
@@ -74,7 +80,8 @@ const StudentSetup = () => {
     let saver = async (e) => {
         e.preventDefault()
         setSaving(true)
-        let response = await upload_setup_form(fname, mname, sname, user.role === 'student' ? user.email : email,
+        let response = await upload_setup_form(fname, mname, sname, user.role === 'student' ?
+            user.email : email,
             lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
             is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone,
             photo, acadId, parentConsent,
@@ -278,15 +285,13 @@ const StudentSetup = () => {
             <div className="d-flex justify-content-center container mt-4"
                 style={{ height: '100%', gap: "3%" }}>
 
-                <div className="profile-photo-cnt"
+                <div className="text-center"
                     style={{ width: "30%" }}>
-                    <p>{typeof dateTime === 'object' ? '' : dateTime}</p>
-
                     <h5
                         style={{ whiteSpace: 'nowrap' }}>Profile Photo</h5>
                     <input className="form-control" disabled={!editMode} type="file" data-type='file' onChange={handleImage}
                         style={{ display: 'none' }} id="photo" />
-                    <div className="tutor-tab-photo-frame">
+                    <div className="m-auto border shadow" style={{ width: "200px", height: "200px" }}>
                         <img src={photo}
                             style={{ height: "100%", width: "100%" }} alt='photo' />
                     </div>
@@ -441,23 +446,6 @@ const StudentSetup = () => {
                                 <input required disabled={!editMode} className="form-control" onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" value={city} id="city"
                                 />
                             </div>
-
-                            <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">State</label>
-                                <select required className="form-select " disabled={!editMode} onInput={e => set_state(e.target.value)} id="state"
-                                    value={state}
-                                >
-                                    {stateList}
-
-                                </select>
-                            </div>
-
-                            <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Zip</label>
-                                <input required className="form-control" disabled={!editMode} onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip"
-                                />
-                            </div>
-
                             <div className='input-group mb-2 '>
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Country</label>
 
@@ -469,7 +457,32 @@ const StudentSetup = () => {
                                 </select>
 
                             </div>
+
+                            {options[country] &&
+                                <div className='input-group mb-2 '>
+                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">State</label>
+                                    <select required className="form-select "
+                                        disabled={!editMode} onInput={e => set_state(e.target.value)} id="state"
+                                        value={state}
+                                    >
+                                        <option value="">Select State</option>
+
+                                        {options[country].map((item) => (
+                                            <option key={item} value={item}>
+                                                {item}
+                                            </option>
+                                        ))}
+
+                                    </select>
+                                </div>}
+
+                            <div className='input-group mb-2 '>
+                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Zip</label>
+                                <input required className="form-control" disabled={!editMode} onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip"
+                                />
+                            </div>
                             <div className='input-group mb-2' >
+
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">UTC</label>
 
                                 <input className='form-control' disabled={!editMode} value={dateTime} />
@@ -517,7 +530,7 @@ const StudentSetup = () => {
                                 <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Email</label>
                                 <input disabled={!editMode} className="form-control"
                                     onChange={e => setParentBEmail(e.target.value)}
-                                    placeholder='Parent B Email' type="email" value={parentBEmail} />
+                                    placeholder='Parent B Email' type="email" value={parentBEmail} required={is_18 === 'no'} />
                             </div>
 
                             <div className='input-group mb-2 '>
@@ -525,6 +538,7 @@ const StudentSetup = () => {
                                 <input disabled={!editMode} className="form-control"
                                     onChange={e => setParentBName(e.target.value)}
                                     placeholder='Parent B Name' type="text" value={parentBName}
+                                    required={is_18 === 'no'}
                                 />
                             </div>
                         </div>

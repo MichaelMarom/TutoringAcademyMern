@@ -3,16 +3,11 @@ import { toast } from "react-toastify";
 
 
 const getAccessToken = () => {
-    console.log('called', localStorage.getItem('access_token'))
     const token = localStorage.getItem('access_token');
     return token
 }
 
 export const showErrorToast = (err) => {
-    console.log(err)
-    if (err?.response?.data?.message.includes('expired')) {
-        // signOut(() => navigate.push("/login"))
-    }
     toast.error(err?.response?.data?.message || "Error Completing the request")
     return err;
 }
@@ -27,17 +22,13 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
     config => {
         const accessToken = getAccessToken();
-        console.log('inside interceptors')
         if (!config.headers['Authorization'])
             config.headers["Authorization"] = `Bearer ${accessToken}`;
         if (config.url === '/auth/signup' || config.url === '/auth/login')
             delete config?.headers?.Authorization
-        console.log(config.url, config.headers.Authorization)
-        console.log(config, '33')
         return config;
     },
     error => {
-        console.log(error, 'in intercepter')
         return Promise.reject(error);
     }
 );

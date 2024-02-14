@@ -11,7 +11,6 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import { SignedOut, SignedIn } from "@clerk/clerk-react"
 
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY
-console.log(process.env, process.env.REACT_APP_CLERK_PUBLISHABLE_KEY)
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key")

@@ -51,7 +51,8 @@ const TUTOR_ROUTES = express.Router();
 const verifyToken = async (req, res, next) => {
     if (req.originalUrl === '/auth/signup' || req.originalUrl === '/auth/login'
         || req.originalUrl === '/user/:SID') next()
-    const publicKey = process.env.JWT_SECRET || `-----BEGIN PUBLIC KEY-----
+    const publicKey = process.env.JWT_SECRET ||
+    `-----BEGIN PUBLIC KEY-----
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7hBgNQubOaYJf8/le9+v
     HzAQ7Jd1pcdDFxHRV4aSDQDMrwpR4q6OZA8XVaKDAS5YgxM01t/Dq2ooQV7MxrXt
     qYD+FKmF9hBXmMpAZEijdrW7JdMyEN/qeWtM9g6qjRsIf/eh/fKY0r3EYcknxRZE
@@ -69,15 +70,11 @@ const verifyToken = async (req, res, next) => {
     }
 
     try {
-        let decoded = "";
-
         if (token) {
-            decoded = jwt.verify(token, publicKey);
-            console.log('verifying token ....')
-            next()
-        } else {
-            decoded = jwt.decode(sessToken, publicKey);
-            // res.status(200).json({ sessToken: decoded });
+            console.log('start verifying token ....')
+
+            const dec = jwt.verify(token, publicKey, algorithms = ['RS256']);
+            console.log('end verifying token ....')
             next()
         }
     } catch (error) {

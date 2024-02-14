@@ -74,21 +74,17 @@ const Header = () => {
     }
 
     let handle_scroll_right = () => {
-
         let div = document.querySelector('.tutor-tab-header');
         let scroll_elem = div.children[1];
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = w;
-
     }
 
     let handle_scroll_left = () => {
-
         let div = document.querySelector('.tutor-tab-header');
         let scroll_elem = div.children[1];
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = -w
-
     }
 
     return (
@@ -110,7 +106,7 @@ const Header = () => {
                 <div style={{
                     margin: '0 0 0 0', display
                         : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef',
-                    opacity: '.7', height: '100%', transform: 'skew(-0deg)'
+                    opacity: '.7', height: '100%', transform: 'skew(-0deg)', width: "50px",
                 }} className="scroller-left" onClick={handle_scroll_left}>
                     <div style={{ opacity: '1' }}>
                         <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -119,9 +115,11 @@ const Header = () => {
                     </div>
 
                 </div>
-                <ul id="tutor-header-menus" className={` header`} style={{
+                <ul id="" className={` header`} style={{
                     background: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? '#737476' : 'inherit',
                     pointerEvents: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? 'none' : 'auto',
+                    width: 'calc(100% - 300px)',
+                    margin: '0 200px 0 200px'
                 }}>
                     {tabs.map((tab) => (
                         <li
@@ -135,19 +133,22 @@ const Header = () => {
                     ))}
                 </ul>
 
-                <div className="scroller-right" onClick={handle_scroll_right}></div>
+                <div className="scroller-right" onClick={handle_scroll_right}
+                    style={{
+                        margin: '0 0 0 0', display
+                            : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef',
+                        opacity: '.7', height: '100%', transform: 'skew(-0deg)', width: "50px"
+                    }}></div>
                 <div style={{
-                    margin: '0 0 0 0', background: '#efefef', display
-                        : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
+                    margin: '0 0 0 0', background: '#efefef', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%',
+                    transform: 'skew(-0deg)'
                 }} className="scroller-right" onClick={handle_scroll_right}>
                     <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
 
                 </div>
-
-
-
             </div>
         </>
     );

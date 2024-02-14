@@ -23,6 +23,7 @@ import ReactDatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTutor } from '../../../redux/tutor_store/tutorData';
 import DebounceInput from '../../common/DebounceInput';
+import _ from 'lodash';
 
 const languageOptions = languages.map((language) => ({
     value: language,
@@ -42,7 +43,7 @@ const Education = () => {
 
     let [degree, set_degree] = useState([]);
     let [certificate, set_certificate] = useState('');
-    let [language, set_language] = useState([]);
+    let [language, set_language] = useState({});
 
     const [countryForAssociate, setCountryForAssoc] = useState('');
     const [countryForCert, setCountryForCert] = useState('');
@@ -202,18 +203,66 @@ const Education = () => {
     }
 
     const markSecondEduStepCompleted = () => {
-        const fieldsForThirdStep = [
-            level, experience, uni_bach, uni_mast, bach_yr, bach_state, mast_yr, mast_state, countryForAssociate, countryForMast
-            , countryForDoc, doc_uni, doctorateGraduateYear, doctorateState, expiration, certificate, cert_state, countryForCert,
-            language, othelang
-        ]
+        const fieldsForThirdStep = {
+            level: { validate: true, value: level }, experience: { validate: true, value: experience },
+            uni_bach: { value: uni_bach, validate: level !== 'No Academic Education' },
+            bach_yr: { value: bach_yr, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student') },
+            bach_state: { value: bach_state, validate: (level !== 'No Academic Education' && options[countryForAssociate]) },
+            countryForAssociate: { value: countryForAssociate, validate: level !== 'No Academic Education' },
+            countryForMast: {
+                value: countryForMast, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree')
+            },
+            uni_mast: {
+                value: uni_mast, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree')
+            },
+            mast_yr: {
+                value: mast_yr, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree')
+            },
+            mast_state: {
+                value: mast_state, validate: ((level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree') && options[countryForAssociate])
+            },
+            countryForDoc: { value: countryForDoc, validate: (level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') },
+            doc_uni: { value: doc_uni, validate: (level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') },
+            doctorateGraduateYear: { value: doctorateGraduateYear, validate: (level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') },
+            doctorateState: { value: doctorateState, validate: ((level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') && options[countryForAssociate]) },
+            certificate: { validate: false },
+            expiration: { value: expiration, validate: (certificate && certificate !== 'Not Certified') },
+            cert_state: { value: cert_state, validate: ((certificate && certificate !== 'Not Certified') && options[countryForAssociate]) },
+            countryForCert: { value: countryForCert, validate: (certificate && certificate !== 'Not Certified') },
+            NativeLang: { validate: true, value: language }, NativeLangOtherLang: { validate: false },
+            workExperience: { validate: true, value: workExperience },
+            references: { validate: false }
+        }
+        let flag = { value: null, valid: 1 }
+
+        console.log(expiration.length)
+        Object.keys(fieldsForThirdStep).map(fields => {
+            if (fieldsForThirdStep[fields].validate) {
+                const validated = jsonFields.includes(fields) ?
+                    !!Object.keys(fieldsForThirdStep[fields].value).length :
+                    !!fieldsForThirdStep[fields].value?.length;
+
+                console.log(validated, fields, expiration)
+                if (!validated) {
+                    flag.valid = 0;
+                    flag.value = fields
+                }
+            }
+        })
+        return flag
     }
 
     let saver = async () => {
-        let Step = null;
-        if (!dbValues.AcademyId) {
-            Step = 3;
-        }
+        let Step = 3;
+        await post_tutor_setup({
+            Step, fname: tutor.FirstName,
+            lname: tutor.LastName, mname: tutor.MiddleName, userId: tutor.userId
+        })
+        dispatch(setTutor())
         // let response = await upload_edu_form(level,
         //     uni_bach,
         //     uni_mast,
@@ -248,14 +297,6 @@ const Education = () => {
         //     deg_file_name,
         //     references
         // )
-        if (Step) {
-            await post_tutor_setup({
-                Step, fname: tutor.FirstName,
-                lname: tutor.LastName, mname: tutor.MiddleName, userId: tutor.userId
-            })
-            dispatch(setTutor())
-        }
-        return 'response';
     }
 
     const handleEditClick = () => {
@@ -292,12 +333,13 @@ const Education = () => {
         NativeLang: language,
         NativeLangOtherLang: othelang
     }
-    //comparing DB, Local
+    // comparing DB, Local
     useEffect(() => {
         setUnsavedChanges(compareStates(dbValues, fieldValues))
     }, [dbValues, fieldValues])
 
     //fetching DB
+
     useEffect(() => {
         !editMode && setFetchingEdu(true)
 
@@ -468,10 +510,6 @@ const Education = () => {
             })
     }, [certificate, degree, experience, level])
 
-    let certified = e => {
-        set_certificate(e.target.value)
-    }
-
     const handleDegFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -488,6 +526,7 @@ const Education = () => {
             setDegreeFile(file);
         }
     }
+
     useEffect(() => {
         if (degreeFile && level && deg_file_name) {
             handleUploadDegreeToServer()
@@ -582,21 +621,16 @@ const Education = () => {
         e.preventDefault();
         if (!workExperience || workExperience.length === 11 || !workExperience.length) return toast.warning('Work Experiece in Required!')
 
+        if (!markSecondEduStepCompleted().valid)
+            return toast.warning(`Please fill required fields ${markSecondEduStepCompleted().value}`)
+
+
         if (!cert_file_name || !deg_file_name)
             toast.warning('Since you selected academic education, but You did not upload your diploma, your Profile will stay in Pending status and cannot be activated until you upload the missing documents!')
 
         setSaving(true)
-        let res = await saver();
+        tutor.Status === 'pending' && await saver();
         setSaving(false)
-        if (res) {
-            handleUploadDegreeToServer()
-            handleUploadCertificateToServer()
-            // handleUploadResumeToServer();
-            toast.success('Education record saved Successfully');
-        }
-        else {
-            toast.error('Failed to save Record')
-        }
         setEditMode(false)
     }
 

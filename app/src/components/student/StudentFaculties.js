@@ -10,22 +10,32 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setShortlist } from '../../redux/student_store/shortlist';
 import { create_chat } from '../../axios/chat';
 import Tooltip from '../common/ToolTip';
+import { convertToDate } from '../common/Calendar/Calendar';
+import { FaSearch } from 'react-icons/fa';
+import tutorData from '../../redux/tutor_store/tutorData';
+import Pill from '../common/Pill';
+import { statesColours } from '../../constants/constants';
+import { get_faculty } from '../../axios/tutor';
+import SubMenu from '../common/SubMenu';
+import Loading from '../common/Loading';
 
 const StudentFaculties = () => {
     const dispatch = useDispatch()
     const [response, setResponse] = useState([]);
     const [checkBoxClicked, setCheckBoxClicked] = useState("")
     const { student } = useSelector(state => state.student)
+    const [faculties, set_faculties] = useState([]);
+    const [selectedFaculty, setSelectedFaculty] = useState(1);
+    const [fetchedTutorSubjectRecord, setFetchedTutorSubjectRecord] = useState(false)
 
     useEffect(() => {
         const fetchTutorSubject = async () => {
-            const result = await get_tutor_subject('1')
-            console.log(result, 123)
+            const result = await get_tutor_subject('1');
             result.sort(function (a, b) {
-                if (a[0].subject < b[0].subject) {
+                if (a.subject < b.subject) {
                     return -1;
                 }
-                if (a[0].subject > b[0].subject) {
+                if (a.subject > b.subject) {
                     return 1;
                 }
                 return 0;
@@ -36,53 +46,31 @@ const StudentFaculties = () => {
 
     }, [])
 
-    let getTutorSubject = async (e) => {
-        let subject = e.currentTarget.dataset.id;
-
-        const result = await get_tutor_subject(subject)
-        setResponse(result);
+    let getTutorSubject = async () => {
+        const result = await get_tutor_subject(selectedFaculty)
+        setFetchedTutorSubjectRecord(true)
         result.sort(function (a, b) {
-            if (a[0].subject < b[0].subject) {
+            if (a.subject < b.subject) {
                 return -1;
             }
-            if (a[0].subject > b[0].subject) {
+            if (a.subject > b.subject) {
                 return 1;
             }
             return 0;
         });
-        // let clickedElem = e.currentTarget;
-        // let deactivedElem = [...clickedElem?.parentElement.children ? clickedElem?.parentElement.children : []].filter(item => item.hasAttribute('id'))[0];
-
-        // deactivedElem?.removeAttribute('id');
-        // clickedElem?.setAttribute('id', 'form-subject-data-tabs-list-active')
+        setResponse(result);
     }
-
-    let handle_scroll_right = () => {
-
-        let div = document.querySelector('.form-subject-data-tabs');
-        let scroll_elem = div.children[1];
-        let w = scroll_elem.offsetWidth;
-        scroll_elem.scrollLeft = w;
-
-    }
-
-    let handle_scroll_left = () => {
-
-        let div = document.querySelector('.form-subject-data-tabs');
-        let scroll_elem = div.children[1];
-        let w = scroll_elem.offsetWidth;
-        scroll_elem.scrollLeft = -w
-
-    }
+    useEffect(() => {
+        getTutorSubject()
+    }, [selectedFaculty])
 
     const getShortlist = async () => {
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
-        console.log(result, 'shortlists')
         result.sort(function (a, b) {
-            if (a.tutorShortList.Subject < b.tutorShortList.Subject) {
+            if (a.Subject < b.Subject) {
                 return -1;
             }
-            if (a.tutorShortList.Subject > b.tutorShortList.Subject) {
+            if (a.Subject > b.Subject) {
                 return 1;
             }
             return 0;
@@ -91,7 +79,6 @@ const StudentFaculties = () => {
     }
 
     useEffect(() => {
-        // document.querySelector('#student-save').onclick = () => {
         if (checkBoxClicked.type?.length) {
             document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
             let list = [...document.querySelectorAll('#student-tutor')];
@@ -136,13 +123,11 @@ const StudentFaculties = () => {
                 }
             }
         }
-        // }
     }, [checkBoxClicked])
 
     useEffect(() => {
         get_student_short_list_data(window.localStorage.getItem('student_user_id'))
             .then((result) => {
-                console.log(result, 'cehbcjc')
                 let list = [...document.querySelectorAll('#student-tutor')];
                 if (result.length) {
                     result.map(item => {
@@ -162,8 +147,11 @@ const StudentFaculties = () => {
             Header: '# Select',
             width: "7%",
             tooltip: <Tooltip color='white' width="200px" direction='bottomright'
-                text="The student must conduct an introduction lesson with tutor. Most Tutors motivate students by offering the 'Intro' lesson at half price. The discounted 'Intro' marked by a green check boxk icon. 
-            After the 'intro' lesson performed, the student must provide a feedback before permitted to book further lessons with the tutor."  />
+                text="The student must conduct an introduction lesson with tutor. 
+                Most Tutors motivate students by offering the 'Intro' lesson at half price. 
+                The discounted 'Intro' marked by a green check box icon. 
+            After the 'intro' lesson performed, the student being requested to provide  
+            feedback before permitted to book further lessons with the tutor."  />
         },
         { Header: 'Subject', width: "7%", },
         { Header: 'Tutor', width: "7%", },
@@ -202,6 +190,12 @@ const StudentFaculties = () => {
         }
     }
 
+    const getFacultiesOption = async () => {
+        let list = await get_faculty()
+        set_faculties(list)
+    }
+    useEffect(() => { getFacultiesOption() }, [])
+
     return (
         <>
             <div className="tutor-popin"></div>
@@ -211,53 +205,7 @@ const StudentFaculties = () => {
             <div className="form-subjects" style={{ overflow: 'hidden', height: 'calc(100vh - 50px)' }}>
 
                 <div id="form-subject-data-collection-table">
-
-                    <div className="form-subject-data-tabs mt-1" style={{ display: 'flex', margin: 'auto', padding: '0 0 0 0', justifyContent: 'center', alignItems: 'center', overflowX: 'hidden', width: '100%' }}>
-
-                        <div style={{
-                            margin: '0 0 0 0', display
-                                : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
-                        }} className="scroller-left" onClick={handle_scroll_left}>
-                            <div style={{ opacity: '1' }}>
-                                <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M11 9L8 12M8 12L11 15M8 12H16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </div>
-
-                        </div>
-                        <ul>
-                            <li data-id='1' onClick={getTutorSubject} id='form-subject-data-tabs-list-active'><a>Math</a></li>
-                            <li data-id='2' onClick={getTutorSubject}><a>Computer Language</a></li>
-                            <li data-id='3' onClick={getTutorSubject}><a>English</a></li>
-                            <li data-id='4' onClick={getTutorSubject}><a>Languages</a></li>
-                            <li data-id='5' onClick={getTutorSubject}><a>Elementary Education</a></li>
-                            <li data-id='6' onClick={getTutorSubject}><a>Science</a></li>
-                            <li data-id='7' onClick={getTutorSubject}><a>Art </a></li>
-                            <li data-id='8' onClick={getTutorSubject}><a>Social Studies </a></li>
-                            <li data-id='9' onClick={getTutorSubject}><a>Programming</a></li>
-                            <li data-id='10' onClick={getTutorSubject}><a>TestPrep</a></li>
-                            <li data-id='11' onClick={getTutorSubject}><a>Business</a></li>
-                            <li data-id='12' onClick={getTutorSubject}><a></a></li>
-                            <li data-id='13' onClick={getTutorSubject}><a></a></li>
-                            <li data-id='14' onClick={getTutorSubject}><a></a></li>
-                            <li data-id='15' onClick={getTutorSubject}><a>Aviation</a></li>
-                            <li data-id='16' onClick={getTutorSubject}><a>Engineering</a></li>
-                        </ul>
-
-
-                        <div style={{
-                            margin: '0 0 0 0', background: '#efefef', display
-                                : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
-                        }} className="scroller-right" onClick={handle_scroll_right}>
-                            <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
-                                <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-
-                        </div>
-                    </div>
-
-
-
+                    <SubMenu faculty={faculties} selectedFaculty={selectedFaculty} setSelectedFaculty={setSelectedFaculty} />
 
                     <div className="highlight m-0" style={{ width: '100%' }}>
                         There are 31 faculties containing 400+ subjects to select from. From the sub menu above, select the faculty of interest.
@@ -265,90 +213,88 @@ const StudentFaculties = () => {
                         from the list. Then on the SHORT LIST tab, click on BOOK LESSON button to view tutor calendar.
                     </div>
 
-
-                    <div className='d-flex rounded justify-content-between
+                    {fetchedTutorSubjectRecord ?
+                        response?.length ?
+                            <>
+                                <div className='d-flex rounded justify-content-between
                          align-items-center
                          p-2' style={{ color: "white", background: "#2471A3" }}>
-                        {multi_student_cols.map(item =>
+                                    {multi_student_cols.map(item =>
 
-                            <div className='text-center d-flex flex-column'
-                                style={{ width: item.width }}>
-                                <p className='m-0' key={item.Header} > {item.Header}</p>
-                                <div style={{ float: "right" }}>
-                                    {item.tooltip}
+                                        <div className='text-center d-flex flex-column'
+                                            style={{ width: item.width }}>
+                                            <p className='m-0' key={item.Header} > {item.Header}</p>
+                                            <div style={{ float: "right" }}>
+                                                {item.tooltip}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                        )}
-                    </div>
 
-                    <div className="tables" style={{ height: '600px', width: '100%', overflow: 'auto', padding: '5px' }}>
+                                <div className="tables" style={{ height: '40vh', width: '100%', overflow: 'auto', padding: '5px' }}>
+                                    <table>
+                                        <thead className='d-none'>
+                                            <tr>
+                                                {multi_student_cols.map(item => <th key={item.Header}>{item.Header}{item.tooltip}</th>)}
+                                            </tr>
+                                        </thead>
 
-                        <table>
-                            {response?.length ?
-                                <thead className='d-none'>
-                                    <tr>
-                                        {multi_student_cols.map(item => <th key={item.Header}>{item.Header}{item.tooltip}</th>)}
-                                    </tr>
-                                </thead>
-                                :
-                                <div className='text-danger'>
-                                    No record found!
-                                </div>}
+                                        <tbody>
+                                            {
 
-                            {
-                                response?.length
-                                    ?
-                                    <tbody>
-                                        {
+                                                response.map((item) => {
 
-                                            response.map((item) => {
-                                                let faculty = item[0] || {};
-                                                let experience = item[1] || {};
-                                                return <tr>
-                                                    <td style={{ width: multi_student_cols[0].width }} id='student-tutor' data-id={`${faculty.AcademyId}-${faculty.subject}-${faculty.rate}-${faculty?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
+                                                    return <tr>
+                                                        <td style={{ width: multi_student_cols[0].width }} id='student-tutor'
+                                                            data-id={`${item.AcademyId[0]}-${item.subject}-${item.rate}-${item?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
 
-                                                        <input onInput={handleSavedDeleteData} type='checkbox' style={{ height: '20px', width: '20px' }} />
-                                                    </td>
+                                                            <input onInput={handleSavedDeleteData} type='checkbox' style={{ height: '20px', width: '20px' }} />
+                                                        </td>
 
-                                                    <td style={{ width: multi_student_cols[1].width }}>{faculty.subject}</td>
-                                                    <td style={{ width: multi_student_cols[2].width }}>
-                                                        {(faculty.AcademyId).split(".").slice(0, 2).join(".")}
-                                                    </td>
-                                                    <td style={{ width: multi_student_cols[3].width }}>
-                                                        {experience.EducationalLevelExperience}
-                                                    </td>
-                                                    <td style={{ width: multi_student_cols[4].width }}>
-                                                        {experience.Certificate}
-                                                    </td>
-                                                    <td style={{ width: multi_student_cols[5].width }}>
-                                                        {experience.CertificateState}
-                                                    </td>
-                                                    <td style={{ width: multi_student_cols[6].width }}>
-                                                        {experience.CertificateExpiration?.length ?
-                                                            new Date(experience.CertificateExpiration).toLocaleDateString() : "-"}
-                                                    </td>
-                                                    <td style={{ width: multi_student_cols[7].width }}>{faculty.rate}</td>
-                                                    <td style={{ width: multi_student_cols[8].width }}>{faculty.cancPolicy} Hrs </td>
-                                                    <td style={{ width: multi_student_cols[9].width }}>{faculty.responseTime.replace("Hours", 'Hrs')} </td>
+                                                        <td style={{ width: multi_student_cols[1].width }}>{item.subject}</td>
+                                                        <td style={{ width: multi_student_cols[2].width }}>
+                                                            <div>
+                                                                {(item.AcademyId[0]).split(".").slice(0, 2).join(".")}
+                                                                <Pill label={item.status} customColor={true} color={statesColours[item.status]}
+                                                                    width='auto'
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                        <td style={{ width: multi_student_cols[3].width }}>
+                                                            {item.EducationalLevelExperience}
+                                                        </td>
+                                                        <td style={{ width: multi_student_cols[4].width }}>
+                                                            {item.Certificate}
+                                                        </td>
+                                                        <td style={{ width: multi_student_cols[5].width }}>
+                                                            {item.CertificateState}
+                                                        </td>
+                                                        <td style={{ width: multi_student_cols[6].width }}>
+                                                            {item.CertificateExpiration?.length ?
+                                                                <div className={convertToDate(item.CertificateExpiration).getTime() <
+                                                                    (new Date).getTime() ? `text-danger blinking-button` : ''}>
+                                                                    {new Date(item.CertificateExpiration).toLocaleDateString()}
+                                                                </div> : "-"
+                                                            }
+                                                        </td>
+                                                        <td style={{ width: multi_student_cols[7].width }}>{item.rate}</td>
+                                                        <td style={{ width: multi_student_cols[8].width }}>{item.cancPolicy} Hrs </td>
+                                                        <td style={{ width: multi_student_cols[9].width }}>{item.responseTime.replace("Hours", 'Hrs')} </td>
 
-                                                </tr>
+                                                    </tr>
+                                                })
                                             }
-                                            )
-
-                                        }
-
-
-                                    </tbody>
-                                    :
-                                    <div style={{ position: 'absolute', width: '100%', textAlign: 'center', fontSize: 'large', paddingTop: '20px', fontWeight: 'bold' }}>We Are Sorry, There Are No Tutor(s) Available For This Faculty. Please check later. New tutors register every day.</div>
-                            }
-                        </table>
-
-                    </div>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </>
+                            : <div style={{ position: 'absolute', width: '100%', textAlign: 'center', fontSize: 'large', paddingTop: '20px', fontWeight: 'bold' }}>We Are Sorry, There Are No Tutor(s) Available For This Faculty. Please check later. New tutors register every day.</div>
+                        : <Loading height='50vh' />
+                    }
 
 
                 </div>
-            </div>
+            </div >
             <Actions saveDisabled={true} />
         </>
     );

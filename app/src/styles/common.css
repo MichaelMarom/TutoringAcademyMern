@@ -6,8 +6,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes blink {
@@ -24,6 +29,30 @@
   }
 }
 
+
+@keyframes border-blinking {
+  50% {
+    border-color: limegreen;
+  }
+}
+
+
+.blinking-frame-red {
+  animation: blinking_red 1s infinite;
+}
+
+
+.blinking-border-bottom {
+  /* margin: 20% 45% 0;
+  font-size: 4em; */
+  border: none;
+  border-bottom: 10px solid green;
+  animation-name: border-blinking;
+  animation-duration: 1s;
+  animation-iteration-count: 100;
+}
+
+
 .blinking-button {
   animation: blink 1s infinite;
 }
@@ -37,9 +66,17 @@
 }
 
 
-/* calender */
+/* -------------------------------------------------calender------------------------------------------- */
 .rbc-calendar {
   min-height: 600px;
+}
+
+.rbc-label {
+  font-weight: bold;
+}
+
+.rbc-label.rbc-time-header-gutter::before {
+  content: 'hh:mm a' !important;
 }
 
 .rbc-btn-group button:nth-child(1) {
@@ -58,7 +95,7 @@
   color: #fff !important;
 }
 
-.rbc-btn-group .rbc-active {
+.rbc-btn-group button:not(.rbc-active) {
   padding: 8px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5) !important;
 }
@@ -83,13 +120,8 @@
   color: white;
 }
 
-/**/
 
-.blinking-frame-red {
-  animation: blinking_red 1s infinite;
-}
-
-/* react-datepicker*/
+/* ----------------------------------------------------------react-datepicker--------------------------------------*/
 .react-datepicker__time-container {
   width: 75px !important;
 }
@@ -104,8 +136,7 @@
   margin: 5px;
 }
 
-/*
-pdfviwer*/
+/*-------------------------------------------------pdfviwer--------------------------------------------*/
 .react-pdf__Page__textContent {
   display: none;
 }
@@ -163,7 +194,80 @@ pdfviwer*/
   transform: translate3d(0px, 0px, 0px);
 }
 
-.button__content {
+.action-btn-square {
+  position: relative;
+  padding: 0;
+  width: 100px;
+  height: 50px;
+  border: 2px solid #888888;
+  outline: none;
+  background-color: #f4f5f6;
+  border-radius: 10px;
+  box-shadow: -6px -12px 10px #ffffff, -6px -10px 15px #ffffff, -21px 0px 6px #ffffff, 6px 6px 11px rgba(0, 0, 0, 0.2);
+  transition: 0.13s ease-in-out;
+  cursor: pointer;
+}
+
+.action-btn-square:active {
+  box-shadow: none;
+}
+
+.action-btn-square:active .button__content {
+  box-shadow: none;
+}
+
+.action-btn-square:active .button__content .button__text,
+.btn:active .button__content .button__icon {
+  transform: translate3d(0px, 0px, 0px);
+}
+
+.action-btn-square .button__content {
+  position: relative;
+  display: grid;
+  padding: 5px;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  box-shadow: inset 0px -8px 0px #dddddd, 0px -8px 0px #f4f5f6;
+  border-radius: 10px;
+  transition: 0.13s ease-in-out;
+  z-index: 1;
+}
+
+.action-btn-square .button__icon {
+  position: relative;
+  display: flex;
+  transform: translate3d(0px, -4px, 0px);
+  grid-column: 4;
+  /* Update to place the icon in he last column */
+  align-self: center;
+  justify-self: center;
+  width: 20px;
+  height: 20px;
+  transition: 0.13s ease-in-out;
+}
+
+.action-btn-square .button__text {
+  position: relative;
+  transform: translate3d(0px, -4px, 0px);
+  margin: 0;
+  align-self: center;
+  grid-column: 1/4;
+  grid-row: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: #888888;
+  color: #5e5e5e;
+  text-shadow: 2px 2px 3px rgba(255, 255, 255, 0.5);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  transition: 0.13s ease-in-out;
+}
+
+.action-btn .button__content {
   position: relative;
   display: grid;
   padding: 5px;
@@ -177,22 +281,20 @@ pdfviwer*/
   z-index: 1;
 }
 
-.button__icon {
+.action-btn .button__icon {
   position: relative;
   display: flex;
   transform: translate3d(0px, -4px, 0px);
   grid-column: 4;
-  /* Update to place the icon in the last column */
+  /* Update to place the icon in he last column */
   align-self: center;
-  /* Updated to center the icon vertically */
   justify-self: center;
-  /* Updated to center the icon horizontally */
   width: 20px;
   height: 20px;
   transition: 0.13s ease-in-out;
 }
 
-.button__text {
+.action-btn .button__text {
   position: relative;
   transform: translate3d(0px, -4px, 0px);
   margin: 0;
@@ -209,4 +311,114 @@ pdfviwer*/
   -moz-background-clip: text;
   background-clip: text;
   transition: 0.13s ease-in-out;
+}
+
+/* saving */
+
+.action-btn.saving-btn {
+  position: relative;
+  padding: 0;
+  width: 100px;
+  height: 50px;
+  border: 2px solid green;
+  outline: none;
+  background-color: lightgreen;
+  border-radius: 40px;
+  box-shadow: -6px -12px 10px #fff, -6px -10px 15px #fff, -21px 0px 6px #fff, 6px 6px 11px rgba(1, 164, 44, 0.2);
+  transition: 0.13s ease-in-out;
+  cursor: pointer;
+}
+
+.action-btn.saving-btn:active {
+  box-shadow: none;
+}
+
+.action-btn.saving-btn:active .button__content {
+  box-shadow: none;
+}
+
+.action-btn.saving-btn:active .button__content .button__text,
+.btn:active .button__content .button__icon {
+  transform: translate3d(0px, 0px, 0px);
+}
+
+.action-btn.saving-btn .button__content {
+  position: relative;
+  display: grid;
+  padding: 5px;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+  box-shadow: inset 0px -8px 0px #92be7e, 0px -8px 0px #fff;
+  border-radius: 40px;
+  transition: 0.13s ease-in-out;
+  z-index: 1;
+}
+
+.action-btn.saving-btn .button__icon {
+  position: relative;
+  display: flex;
+  transform: translate3d(0px, -4px, 0px);
+  grid-column: 4;
+  /* Update to place the icon in he last column */
+  align-self: center;
+  justify-self: center;
+  width: 20px;
+  height: 20px;
+  transition: 0.13s ease-in-out;
+}
+
+.action-btn.saving-btn .button__text {
+  position: relative;
+  transform: translate3d(0px, -4px, 0px);
+  margin: 0;
+  align-self: center;
+  grid-column: 1/4;
+  grid-row: 1;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: green;
+  color: rgb(17, 52, 17);
+  text-shadow: 2px 2px 3px rgb(34, 73, 34);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  transition: 0.13s ease-in-out;
+}
+
+
+/* //-----------------------------------------------------------------/SmallSideBar---------------------------------- */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -200px;
+  /* Initially hides the sidebar */
+  width: 200px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  transition: right 0.3s ease;
+}
+
+.sidebar.open {
+  right: 0;
+  /* Shows the sidebar when open */
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 10px;
+  right: -30px;
+}
+
+.content {
+  margin-left: 200px;
+  /* Adjust this value to make space for the sidebar */
+  padding: 20px;
 }

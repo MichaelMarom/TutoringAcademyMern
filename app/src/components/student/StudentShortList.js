@@ -10,6 +10,10 @@ import Tooltip from '../common/ToolTip';
 import Actions from '../common/Actions';
 import tutorData from '../../redux/tutor_store/tutorData';
 import { moment } from '../../config/moment'
+import BTN_ICON from '../../images/button__icon.png'
+
+import Pill from '../common/Pill'
+
 
 const StudentShortList = () => {
     let navigate = useNavigate()
@@ -18,20 +22,20 @@ const StudentShortList = () => {
     const { student } = useSelector(state => state.student)
     const handleNavigateToSchedule = async (item) => {
         dispatch(setTutor({
-            id: item.tutorSetup?.SID,
-            academyId: item.tutorData?.AcademyId,
-            GMT: item.tutorData?.GMT,
-            firstName: item.tutorData?.FirstName,
-            lastName: item.tutorData?.LastName,
-            subject: item.tutorShortList.Subject,
-            rate: item.tutorShortList.Rate,
-            disableColor: item.tutorData?.disableColor,
-            introDiscountEnabled: item.tutorShortList.IntroSessionDiscount || false,
-            activateSubscriptionOption: item.tutorShortList.ActivateSubscriptionOption === "true",
-            discountHours: item.tutorShortList.DiscountHours,
-            StartVacation: item.tutorData.StartVacation,
-            EndVacation: item.tutorData.EndVacation,
-            VacationMode: item.tutorData.VacationMode,
+            id: item.SID[0],
+            academyId: item.AcademyId[0],
+            GMT: item.GMT,
+            firstName: item.FirstName,
+            lastName: item.LastName,
+            subject: item.Subject,
+            rate: item.Rate,
+            disableColor: item.disableColor,
+            introDiscountEnabled: item.IntroSessionDiscount || false,
+            activateSubscriptionOption: item.ActivateSubscriptionOption === "true",
+            discountHours: item.DiscountHours,
+            StartVacation: item.StartVacation,
+            EndVacation: item.EndVacation,
+            VacationMode: item.VacationMode,
         }))
         navigate('/student/booking')
     }
@@ -61,8 +65,11 @@ const StudentShortList = () => {
             Header: 'Demo Lesson @50%',
             width: "6%",
             tooltip: <Tooltip color='white' width="200px" direction='bottomright'
-                text="The student must conduct an introduction lesson with tutor. Most Tutors motivate students by offering the 'Intro' lesson at half price. The discounted 'Intro' marked by a green check boxk icon. 
-                After the 'intro' lesson performed, the student must provide a feedback before permitted to book further lessons with the tutor."  />
+                text="The student must conduct an introduction lesson with tutor. Most 
+                Tutors motivate students by offering the 'Intro' lesson at half price. 
+                The discounted 'Intro' marked by a green check box icon. 
+                After the 'intro' lesson performed, the student being requested to provide
+                 feedback before permitted to book further lessons with the tutor."  />
         },
         { Header: 'Subject', width: "6%", },
         { Header: 'Tutor Name', width: "6%", },
@@ -157,7 +164,7 @@ const StudentShortList = () => {
                         </div>
                     )}
                 </div>
-                <div className="tables" style={{ height: '70vh', width: '100%', overflowY: "auto" }}>
+                <div className="tables" style={{ height: '53vh', width: '100%', overflowY: "auto" }}>
                     <table>
                         {response.length ?
                             <thead className='d-none'>
@@ -172,21 +179,25 @@ const StudentShortList = () => {
                                 response.length > 0
                                     ?
                                     response.map((item, index) => {
-                                        const tutorSetup = item.tutorData;
-                                        const tutorDemoLesson = item.tutorDemoLesson;
-                                        const tutorShortList = item.tutorShortList;
-                                        const rate = tutorShortList.rate
+                                        const rate = item.rate;
                                         return (
                                             <tr key={index}>
-                                                <td className='' style={{ width: multi_student_cols[0].width }}>
-                                                    <Avatar
-                                                        size='100'
-                                                        indicSize='20px'
-                                                        avatarSrc={tutorSetup?.Photo}
-                                                        online={tutorSetup.Online}
-                                                    />
+                                                <td style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
+                                                    <div className='d-flex flex-column' >
+                                                        <Avatar
+                                                            size='100'
+                                                            indicSize='20px'
+                                                            avatarSrc={item?.Photo}
+                                                            online={item.Online}
+                                                        />
+                                                        {item.CodeApplied &&
+                                                            <div className="blinking-button" style={{ color: "black" }}>
+                                                                <Pill fontColor='black' label={'connected'} customColor color='limegreen' editable={false} hasIcon={false} />
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </td>
-                                                <td className='m-auto' style={{ width: multi_student_cols[0].width }}>
+                                                <td className='m-auto' style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
                                                     <div className="form-check form-switch d-flex gap-3 justify-content-center" style={{ fontSize: "16px " }}>
                                                         <input
                                                             className="form-check-input "
@@ -196,65 +207,82 @@ const StudentShortList = () => {
                                                                 width: "30px",
                                                                 height: "15px"
                                                             }}
-                                                            checked={tutorSetup.VacationMode}
+                                                            checked={item.VacationMode}
                                                         />
 
                                                     </div>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[0].width }}>
-                                                    {tutorSetup.VacationMode ?
-                                                        `${showDate(tutorSetup.StartVacation)} - ${showDate(tutorSetup.EndVacation)}`
+                                                <td style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
+                                                    {item.VacationMode ?
+                                                        `${showDate(item.StartVacation)} - ${showDate(item.EndVacation)}`
                                                         : `-`
                                                     }  </td>
-                                                <td style={{ width: multi_student_cols[0].width }}>
+                                                <td style={{ width: multi_student_cols[0].width, border: '1px solid lightgray' }}>
                                                     <input type='checkbox'
                                                         style={{ height: '20px', width: '20px' }}
-                                                        checked={tutorShortList?.IntroSessionDiscount || false}
+                                                        checked={item?.IntroSessionDiscount || false}
                                                     />
                                                 </td>
-                                                <td style={{ width: multi_student_cols[1].width }} className=''>
-                                                    {tutorShortList?.Subject}
+                                                <td style={{ width: multi_student_cols[1].width, border: '1px solid lightgray' }} className=''>
+                                                    {item?.Subject}
                                                 </td>
-                                                <td style={{ width: multi_student_cols[2].width }} className=''>
-                                                    {convertTutorIdToName(tutorSetup?.AcademyId)}
+                                                <td style={{ width: multi_student_cols[2].width, border: '1px solid lightgray' }} className=''>
+                                                    {convertTutorIdToName(item?.AcademyId[0])}
                                                 </td>
-                                                <td style={{ width: multi_student_cols[3].width }}>
-                                                    {tutorSetup?.Country}
+                                                <td style={{ width: multi_student_cols[3].width, border: '1px solid lightgray' }}>
+                                                    {item?.Country}
                                                 </td>
-                                                <td style={{ width: multi_student_cols[4].width }} className=' text-center'>
-                                                    {showDate(convertGMTToLocalTime(tutorSetup?.GMT), wholeDateFormat)} <br />
+                                                <td style={{ width: multi_student_cols[4].width, border: '1px solid lightgray' }} className='text-center'>
+                                                    {showDate(convertGMTToLocalTime(item?.GMT), wholeDateFormat)} <br />
                                                 </td>
-                                                <td style={{ width: multi_student_cols[5].width }} className=''>
-                                                    <div className={`d-inline card px-1 m-auto ${classByDifference(calculateTimeDifference(tutorSetup?.GMT))}`}
+                                                <td style={{ width: multi_student_cols[5].width, border: '1px solid lightgray' }} className=''>
+                                                    <div className={`d-inline card px-1 m-auto ${classByDifference(calculateTimeDifference(item?.GMT))}`}
                                                         style={{ fontSize: "18px" }}
                                                     >
-                                                        {calculateTimeDifference(tutorSetup?.GMT) > 0 ?
-                                                            `+${calculateTimeDifference(tutorSetup?.GMT)}` :
-                                                            calculateTimeDifference(tutorSetup?.GMT)}
+                                                        {calculateTimeDifference(item?.GMT) > 0 ?
+                                                            `+${calculateTimeDifference(item?.GMT)}` :
+                                                            calculateTimeDifference(item?.GMT)}
                                                     </div>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[6].width }}>
-                                                    <button className='btn btn-outline-primary btn-sm'
+                                                <td style={{ width: multi_student_cols[6].width, border: '1px solid lightgray' }}>
+                                                    <button className='action-btn-square'
                                                         onClick={() => handleNavigateToSchedule(item)}>
-                                                        Book Lesson</button>
+                                                        <div className='button__content'>
+                                                            <div className='button__icon'>
+                                                                <img src={BTN_ICON} alt={"btn__icon"} />
+                                                            </div>
+                                                            <div className='button__text  text-sm'>Book Lesson</div>
+                                                        </div>
+                                                    </button>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[7].width }} >
-                                                    <button className='btn btn-outline-success btn-sm'
-                                                        onClick={() => handleNavigateToFeedback(tutorSetup.AcademyId)}>
-                                                        Feedbacks</button>
+                                                <td style={{ width: multi_student_cols[7].width, border: '1px solid lightgray' }} >
+                                                    <button className='action-btn-square'
+                                                        onClick={() => handleNavigateToFeedback(item.AcademyId[0])}>
+                                                        <div className='button__content'>
+                                                            <div className='button__icon'>
+                                                                <img src={BTN_ICON} alt={"btn__icon"} />
+                                                            </div>
+                                                            <div className='button__text'> Feedbacks</div>
+                                                        </div></button>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[8].width }}>
-                                                    <button className='btn btn-outline-primary btn-sm'
-                                                        onClick={() => redirect_to_tutor_profile(tutorSetup?.AcademyId)}>
-                                                        View Profile</button>
+                                                <td style={{ width: multi_student_cols[8].width, border: '1px solid lightgray' }}>
+                                                    <button className='action-btn-square'
+                                                        onClick={() => redirect_to_tutor_profile(item?.AcademyId[0])}>
+                                                        <div className='button__content'>
+                                                            <div className='button__icon'>
+                                                                <img src={BTN_ICON} alt={"btn__icon"} />
+                                                            </div>
+                                                            <div className='button__text'> View Profile</div>
+                                                        </div>
+                                                    </button>
                                                 </td>
-                                                <td style={{ width: multi_student_cols[9].width }}>{rate}</td>
-                                                <td style={{ width: multi_student_cols[10].width }}>
-                                                    {tutorShortList.CancellationPolicy} Hrs
+                                                <td style={{ width: multi_student_cols[9].width, border: '1px solid lightgray' }}>{rate}</td>
+                                                <td style={{ width: multi_student_cols[10].width, border: '1px solid lightgray' }}>
+                                                    {item.CancellationPolicy} Hrs
                                                 </td>
 
-                                                <td style={{ width: multi_student_cols[11].width }}>
-                                                    {tutorSetup.ResponseHrs.replace("Hours", "Hrs")}
+                                                <td style={{ width: multi_student_cols[11].width, border: '1px solid lightgray' }}>
+                                                    {item.ResponseHrs.replace("Hours", "Hrs")}
                                                 </td>
 
                                             </tr>

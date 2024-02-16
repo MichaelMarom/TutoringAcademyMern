@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebook, FaGoogle, FaTwitter, FaGithub } from 'react-icons/fa';
 import { signup } from '../axios/auth';
 import { toast } from 'react-toastify';
+import { useSignUp, useAuth, SignUp, SignIn, useUser } from "@clerk/clerk-react";
+import Button from '../components/common/Button';
 
 const Signup = () => {
   const [signupFormValues, setSignupFormValues] = useState({
@@ -13,6 +15,13 @@ const Signup = () => {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const { user } = useUser();
+  const { userId } = useAuth()
+
+  const { getToken } = useAuth();
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [code, setCode] = useState("");
 
   const handleValidation = () => {
     const newErrors = {};
@@ -56,18 +65,63 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (handleValidation()) {
-      setLoading(true)
-      const result = await signup(signupFormValues);
-      if (result.status === 200) {
-        setSignupFormValues({ role: '', email: '', password: '' })
-        toast.success("Registration SuccessFull")
-        navigate(`/login`)
+    setLoading(true);
+    try {
+      await signUp.create({
+        emailAddress: signupFormValues.email,
+        password: signupFormValues.password,
+        unsafeMetadata: {
+          role: signupFormValues.role,
+        },
+      });
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      setPendingVerification(true);
+    }
+    catch (err) {
+      console.log(err.errors[0].message)
+      toast.error(err.errors[0].message)
+    }
+    setLoading(false)
+  };
+
+  const handleVerification = async (e) => {
+    setLoading(true);
+    e.preventDefault();
+    if (!isLoaded) {
+      return;
+    }
+    try {
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
+        code,
+      });
+      if (completeSignUp.status === "complete") {
+        await setActive({ session: completeSignUp.createdSessionId });
+        const token = await getToken({ template: "tutoring-academy-jwt-template" });
+        if (token) {
+          localStorage.setItem("access_token", token);
+          const result = await signup({
+            email: signupFormValues.email,
+            SID: completeSignUp.createdUserId,
+            role: signupFormValues.role
+          })
+          if (result.status === 200) {
+            setSignupFormValues({ role: '', email: '', password: '' })
+            toast.success('Registration Succesfull')
+          }
+          else {
+            toast.error("Error: Please contact support!");
+          }
+        } else {
+          toast.error("Could not retrieve token from clerk");
+        }
+      } else {
+        toast.error("Unable to complete sign up. Please contact support");
       }
-      else {
-        toast.error(result.response.data.message)
-      }
-      setLoading(false)
+    } catch (err) {
+      // setErrors(err.errors);
+    } finally {
+      setLoading(false);
+      setPendingVerification(false);
     }
   };
 
@@ -99,8 +153,8 @@ const Signup = () => {
                 veritatis? Dicta facilis sint aliquid ipsum atque?
               </p>
             </div>
-
             <div className="col-lg-6 mb-5 mb-lg-0">
+              {/* <SignUp path="/signup" routing="path" signInUrl="/login" /> */}
               <div className="card">
                 <div className="card-body py-5 px-md-5">
                   <form onSubmit={handleSignup}>
@@ -143,7 +197,7 @@ const Signup = () => {
                         <option value="student">Student</option>
                         <option value="visitor">Visitor</option>
                         <option value="parent">Parent</option>
-                        <option value="admin">Admin</option>
+                        <option value="admin">Admin</option> 
                       </select>
                       {errors.role && <span className='small text-danger'>{errors.role}</span>}
                     </div>
@@ -159,7 +213,6 @@ const Signup = () => {
                         </div>
                       )}
                     </button>
-
 
                     <div className="text-center">
                       <p>Already have an account? <Link to="/login">Login</Link></p>
@@ -184,6 +237,16 @@ const Signup = () => {
                       </button>
                     </div>
                   </form>
+                  {pendingVerification && (
+                    <div>
+                      <form>
+                        <input type='text' onBlur={() => { }} onChange={(e) => setCode(e.target.value)} />
+                        <Button handleClick={handleVerification}>
+                          Verify Email
+                        </Button>
+                      </form>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

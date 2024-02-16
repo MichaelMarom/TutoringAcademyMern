@@ -21,6 +21,7 @@ const Actions = ({
     editDisabled = true,
     backDisabled = false,
     nextDisabled = false,
+    SaveText = 'Save',
     loading = false,
     unSavedChanges = false,
     onSave = () => { },
@@ -58,7 +59,7 @@ const Actions = ({
         { next: "feedback", current: "accounting", back: "short-list" },
         { next: "calender", current: "feedback", back: "accounting" },
         { next: "term-of-use", current: "calender", back: "feedback" },
-        { next: "term-of-use", current: "term-of-use", back: "calender" },
+        { next: "chat", current: "term-of-use", back: "calender" },
         { next: "market-place", current: "chat", back: "term-of-use" },
         { next: "collaboration", current: "market-place", back: "chat" },
         { next: `profile`, current: "collaboration", back: "market-place" },
@@ -78,15 +79,15 @@ const Actions = ({
     const onBack = () => {
         navigate(`/${currentUser}/${currentTabInfo.back}`)
     }
-    console.log(currentTab === STEPS[tutor.Step], tutor.Step, currentTab, !isStudentSide)
-    console.log(unSavedChanges, loading, backDisabled, !isBackTabExist)
+
+
     return (
         <div style={actionsStyle}>
             <div className="container">
                 <div className="row justify-content-center">
                     <div className="" style={{ width: "10%" }}>
                         <button type='button' onClick={onBack} className="back-btn action-btn btn"
-                            disabled={unSavedChanges || loading || backDisabled || !isBackTabExist}>
+                            disabled={!saveDisabled && (unSavedChanges || loading || backDisabled || !isBackTabExist)}>
                             <div className="button__content">
                                 <div className="button__icon">
                                     <img src={BTN_ICON} alt={"btn__icon"} />
@@ -108,7 +109,7 @@ const Actions = ({
                     </div>
                     <div className="" style={{ width: "10%" }}>
                         <Button handleClick={onSave} className={`save-btn action-btn btn 
-                        ${(unSavedChanges && !saveDisabled) ? 'blinking-button' : ''}`} type="submit" loading={loading}
+                        ${(unSavedChanges && !saveDisabled) ? 'blinking-button saving-btn' : ''}`} type="submit" loading={loading}
                             disabled={saveDisabled || loading} >
                             <div className="button__content">
                                 <div className="button__icon">
@@ -116,7 +117,7 @@ const Actions = ({
                                         animation: loading ? "spin 2s linear infinite" : 'none',
                                     }} />
                                 </div>
-                                <p className="button__text">Save</p>
+                                <p className="button__text">{SaveText}</p>
                             </div>
                         </Button>
                     </div>

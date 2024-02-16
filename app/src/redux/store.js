@@ -20,12 +20,14 @@ import shortlistReducer from './student_store/shortlist'
 import tutorReducer from './tutor_store/tutorData'
 import videoReducer from './tutor_store/video'
 import chatReducer from './chat/chat';
+import studentSessionsReducer from './student_store/studentSessions.js';
 
 let store = configureStore({
   reducer: {
     user: userReducer,
     subject: subjectReducer,
     selectedTutor: selectedTutorReducer,
+    studentSessions: studentSessionsReducer,
     student: studentReducer,
     shortlist: shortlistReducer,
     bookings: studentBookingsReducer,

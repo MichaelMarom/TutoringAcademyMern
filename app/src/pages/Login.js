@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { get_user_setup_detail, login } from '../axios/auth';
+import { get_user_detail, get_user_setup_detail, login } from '../axios/auth';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/auth_state/auth';
 import { ForgetPasswordModal } from '../components/auth/ForgetPasswordModal';
 import '../styles/auth.css'
 import Button from '../components/common/Button';
+import { useSignUp, useAuth, SignUp, SignIn, useSignIn, useSession } from "@clerk/clerk-react";
+import { DEFAULT_URL_AFTER_LOGIN } from '../constants/constants';
+
 
 const LoginPage = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const token = localStorage.getItem('access_token')
+    const { user } = useSelector(state => state.user)
+    const { signIn, setActive } = useSignIn();
+    const { isSignedIn, getToken, userId } = useAuth()
+    const { isLoaded, session, isSignedIn: sessionSignedIn } = useSession()
     const [modalOpen, setOpenModel] = useState(false)
+
     const [loginForm, setLoginForm] = useState({
         email: '',
         password: '',
@@ -18,39 +27,79 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch()
 
+    // useEffect(() => {
+    //     console.log(isSignedIn, user, isLoaded, session, sessionSignedIn)
+    //     isSignedIn && navigate(DEFAULT_URL_AFTER_LOGIN['tutor'])
+    // }, [isSignedIn, user])
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true)
-        const result = await login(loginForm);
-        localStorage.setItem('tutor_user_id', null)
-        localStorage.setItem('student_user_id', null)
-        localStorage.setItem('student_screen_name', null)
-        localStorage.setItem('tutor_screen_name', null)
-        localStorage.setItem('user', null)
-        localStorage.setItem('user_role', null)
-        localStorage.setItem('logged_user', null)
-
-
-        if (result.status === 200) {
-            toast.success("Login Successfull!");
-            setLoginForm({});
-            localStorage.setItem('user', JSON.stringify(result.data));
-            localStorage.setItem('user_role', result.data[0].role)
-
-            const getUserSetup = await get_user_setup_detail(result.data[0].role, result.data[0].SID);
-            dispatch(setUser(result.data))
-            if (result.data[0].role === 'admin') {
-                return navigate(`/${result.data[0].role}/tutor-data`);
-
+        try {
+            const result = await signIn.create({
+                identifier: loginForm.email,
+                password: loginForm.password,
+            });
+            if (result.status === "complete") {
+                await setActive({ session: result.createdSessionId });
+                const token = await getToken({ template: 'tutoring-academy-jwt-template' });
+                if (token) {
+                    localStorage.setItem("access_token", token);
+                } else {
+                    toast.error("Could not retrieve token!");
+                }
             }
-            localStorage.setItem(`${result.data[0].role}_user_id`, getUserSetup.AcademyId)
-            navigate(`/${result.data[0].role}/intro`);
         }
-        else {
-            toast.warning(result.message)
+        catch (err) {
+            console.log(err.errors[0].message)
+            toast.error(err.errors[0].message || err.message)
         }
+        // const result = await login(loginForm);
+        localStorage.removeItem('tutor_user_id')
+        localStorage.removeItem('student_user_id')
+        localStorage.removeItem('student_screen_name')
+        localStorage.removeItem('tutor_screen_name')
+        localStorage.removeItem('user_role')
+        localStorage.removeItem('logged_user');
+
+        // if (result.status === 200) {
+        //     toast.success("Login Successfull!");
+        //     setLoginForm({});
+        //     localStorage.setItem('user', JSON.stringify(result.data));
+        //     localStorage.setItem('user_role', result.data[0].role)
+
+        //     const getUserSetup = await get_user_setup_detail(result.data[0].role, result.data[0].SID);
+        //     dispatch(setUser(result.data))
+        //     if (result.data[0].role === 'admin') {
+        //         return navigate(`/${result.data[0].role}/tutor-data`);
+
+        //     }
+        //     localStorage.setItem(`${result.data[0].role}_user_id`, getUserSetup.AcademyId)
+        //     navigate(`/${result.data[0].role}/intro`);
+        // }
+        // else {
+        //     toast.warning(result.message)
+        // }
         setLoading(false)
     };
+
+    useEffect(() => {
+        if (userId && isSignedIn) {
+            let fetchUser = async () => {
+                if (token) {
+                    const user = await get_user_detail(userId, token)
+                    dispatch(setUser(user))
+                    localStorage.setItem('user', JSON.stringify(user))
+                    console.log(user);
+                    if (user.role) {
+                        user.role !== 'admin' ? navigate(`/${user.role}/intro`) :
+                            navigate(`/${user.role}/tutor-data`)
+                    }
+                }
+            }
+            fetchUser()
+        }
+    }, [userId, token, isSignedIn])
 
     return (
         <section>
@@ -113,7 +162,7 @@ const LoginPage = () => {
                                         </Button>
 
                                         <div className="text-center">
-                                            <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+                                            <p>Don't have an account? <Link to="/tutor/setup">Sign up</Link></p>
                                         </div>
 
                                     </form>

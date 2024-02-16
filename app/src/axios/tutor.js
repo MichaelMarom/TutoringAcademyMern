@@ -1,6 +1,9 @@
 import { v4 as uuidv4 } from 'uuid'
-import { apiClient } from './config'
-import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions'
+import { apiClient, showErrorToast } from './config'
+import { capitalizeFirstLetter } from '../helperFunctions/generalHelperFunctions';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react'
 
 export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {
@@ -11,10 +14,10 @@ export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId)
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+                // reject(error)
             })
-
     })
 }
 export const uploadFile = (file) => {
@@ -31,11 +34,14 @@ export const uploadFile = (file) => {
                 .then((result) => {
                     resolve(result.data);
                 })
-                .catch((err) => {
-                    reject(err);
+                .catch(error => {
+                    showErrorToast(error)
+
+                    // reject(error);
                 });
         } catch (error) {
-            reject(error);
+            showErrorToast(error)
+            // reject(error);
         }
     });
 };
@@ -53,8 +59,12 @@ export let get_subject = (id) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -75,8 +85,10 @@ export let get_faculty = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -97,8 +109,10 @@ export let get_tutor_status = (faculty, subject, reason, AcademyId) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -117,8 +131,10 @@ export let get_countries = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -136,8 +152,10 @@ export let get_state = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -155,8 +173,10 @@ export let get_experience = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -174,8 +194,10 @@ export let get_gmt = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -192,15 +214,17 @@ export let get_response = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
 }
 
 
-export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, add1, add2, city, state, zipCode,
+export let upload_setup_form = (fname, uname, mname, lname, email, cell, acadId, add1, add2, city, state, zipCode,
     country, timeZone, response_zone, intro, motivation, headline, photo, video, grades, userId) => {
     return new Promise((resolve, reject) => {
 
@@ -210,50 +234,66 @@ export let upload_form_one = (fname, uname, mname, lname, email, cell, acadId, a
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
 }
 
 
-export let upload_edu_form = async (level, university1, university2, university3, degree, degreeFile, certificate,
-    certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1,
-    graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
-    countryForMast,
-    countryForCert,
-    countryForDoc,
-    countryForAssociate, resume, cert_file_name, deg_file_name, references) => {
+// export let upload_edu_form = async (level, university1, university2, university3, degree, degreeFile, certificate,
+//     certificateFile, language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1,
+//     graduagteYr2, graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
+//     countryForMast,
+//     countryForCert,
+//     countryForDoc,
+//     countryForAssociate, resume, cert_file_name, deg_file_name, references) => {
 
-    const result = await apiClient.post('/tutor/edu', {
-        level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
-        state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
-        doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
-        countryForMast,
-        countryForCert,
-        countryForDoc,
-        countryForAssociate, resume, cert_file_name, deg_file_name, references
-    })
+//     const result = await apiClient.post('/tutor/edu', {
+//         level, university1, university2, university3, degree, degreeFile, certificate, certificateFile, language,
+//         state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2, graduagteYr3,
+//         doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
+//         countryForMast,
+//         countryForCert,
+//         countryForDoc,
+//         countryForAssociate, resume, cert_file_name, deg_file_name, references
+//     })
 
-    return result.data
+//     return result.data
 
+// }
+
+
+export const post_edu = async(body) => {
+    try {
+        const data = await apiClient.post('/tutor/edu', body)
+        return data
+    }
+    catch (error) {
+        showErrorToast(error)
+        return error
+    }
 }
 
 //not using
-export let upload_form_three = (MutiStudentHourlyRate, CancellationPolicy,
+export let upload_tutor_rates_form = (MutiStudentHourlyRate, CancellationPolicy,
     FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan,
-    AcademyId, DiscountCode, CodeShareable, MultiStudent, IntroSessionDiscount) => {
+    AcademyId, DiscountCode, CodeSubject, CodeShareable, MultiStudent, IntroSessionDiscount, CodeStatus) => {
     return new Promise((resolve, reject) => {
 
-        apiClient.post('/tutor/form-three', {
-            MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent
+        apiClient.post('/tutor/tutor-rates', {
+            MutiStudentHourlyRate, CancellationPolicy, IntroSessionDiscount, FreeDemoLesson, ConsentRecordingLesson, ActivateSubscriptionOption, SubscriptionPlan, AcademyId, DiscountCode, CodeShareable, MultiStudent, CodeSubject, CodeStatus
         })
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -269,8 +309,10 @@ export let get_degree = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -285,8 +327,10 @@ export let get_level = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -303,8 +347,10 @@ export let get_certificates = () => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -312,7 +358,6 @@ export let get_certificates = () => {
 
 
 export let get_user_data = (user_id) => {
-    console.log(user_id)
     return new Promise((resolve, reject) => {
 
         apiClient.get('/tutor/education', {
@@ -323,8 +368,10 @@ export let get_user_data = (user_id) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -340,8 +387,8 @@ export let upload_tutor_rates = async (rate, grades, id, faculty, subject) => {
         })
         return data
     }
-    catch (err) {
-        return err
+    catch (error) {
+        return error
     }
 }
 
@@ -350,9 +397,9 @@ export const remove_subject_rates = async (id) => {
         const { data } = await apiClient.delete(`/subject-rate/${id}`)
         return data
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 }
 
@@ -361,14 +408,14 @@ export let get_my_data = (AcademyId) => {
 
         apiClient.get('/tutor/my-data', {
             params: {
-                AcademyId
             }
         })
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+                // reject(error)
             })
 
     })
@@ -385,11 +432,24 @@ export let get_my_edu = (AcademyId) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
+}
+
+export const get_tutor_subjects = async (id) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/subjects/${id}`)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        return err
+    }
 }
 
 
@@ -405,8 +465,10 @@ export let get_rates = (AcademyId, facultyId) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -423,8 +485,10 @@ export let get_bank_details = (AcademyId) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -441,8 +505,10 @@ export let get_tutor_rates = (AcademyId) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -457,8 +523,10 @@ export let upload_tutor_bank = (email, acct_name, acct_type, bank_name, acct, ro
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -476,8 +544,9 @@ export let get_tutor_setup = (AcademyId) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+                // // reject(error)
             })
 
     })
@@ -492,9 +561,9 @@ export let get_tutor_setup_by_userId = async (userId) => {
         })
         return data
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 
 }
@@ -508,9 +577,9 @@ export let get_tutor_setup_by_acaId = async (AcademyId) => {
         })
         return data
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 
 }
@@ -527,6 +596,8 @@ export const storeEventAPI = async (eventDetails) => {
         const response = await apiClient.post("/api/store-event", newEvent);
         return response.data;
     } catch (error) {
+        showErrorToast(error)
+
         console.error("Error:", error);
     }
 };
@@ -536,6 +607,8 @@ export const fetchStudentsBookings = async (tutorId) => {
         const response = await apiClient.get(`api/bookings/${tutorId}`);
         return response.data;
     } catch (error) {
+        showErrorToast(error)
+
         console.error("Error:", error);
     }
 };
@@ -545,6 +618,7 @@ export const new_subj_request_exist = async (subject) => {
         const response = await apiClient.get(`/tutor/newsubject/${subject}`);
         return response;
     } catch (error) {
+        showErrorToast(error)
         console.error("Error:", error);
         return error
     }
@@ -559,8 +633,10 @@ export let get_tutor_market_data = (id) => {
             .then((result) => {
                 resolve(result.data)
             })
-            .catch((err) => {
-                reject(err)
+            .catch(error => {
+                showErrorToast(error)
+
+                // reject(error)
             })
 
     })
@@ -572,9 +648,9 @@ export const updateTutorDisableslots = async (tutorAcademyId, body) => {
         const { data } = await apiClient.put(`/tutor/update/${tutorAcademyId}`, body);
         return data
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 }
 export const addDisabledDates = async (date) => {
@@ -582,6 +658,8 @@ export const addDisabledDates = async (date) => {
         const response = await apiClient.post("/api/store-disabled-dates", date);
         return response.data;
     } catch (error) {
+        showErrorToast(error)
+
         console.error("Error:", error);
     }
 };
@@ -625,9 +703,9 @@ export const post_tutor_setup = async (data) => {
 
         dataObject.AcademyId = uuidv4();
         return await apiClient.post('/tutor/setup', dataObject);
-    } catch (err) {
-        console.log(err)
-        return err
+    } catch (error) {
+        console.log(error)
+        return error
     }
 }
 
@@ -636,8 +714,8 @@ export const setAgreementDateToNullForAll = async () => {
         const data = apiClient.put('/tutor/agreement-updated')
         return data
     }
-    catch (err) {
-        return err
+    catch (error) {
+        return error
     }
 }
 export const get_tutor_students = async (AcademyId) => {
@@ -645,6 +723,8 @@ export const get_tutor_students = async (AcademyId) => {
         const { data } = await apiClient.get(`/tutor/get_students/${AcademyId}`);
         return data;
     } catch (error) {
+        showErrorToast(error)
+
         console.log(error)
     }
 }
@@ -654,9 +734,9 @@ export const get_sessions_details = async (AcademyId) => {
         const { data } = await apiClient.get(`/tutor/session/${AcademyId}`);
         return data
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 }
 
@@ -665,9 +745,9 @@ export const get_last_pay_day = async () => {
         const { data } = await apiClient.get(`/p-payment/last_payday`);
         return data
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 }
 
@@ -676,9 +756,9 @@ export const get_tutor_profile = async (tutorId, studentId) => {
         const { data } = await apiClient.get(`/profile/${tutorId}/${studentId}`);
         return data
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 }
 
@@ -687,9 +767,9 @@ export const post_tutor_ad = async (body) => {
         const { data } = await apiClient.post(`/tutor/market-place`, body)
         return data;
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 }
 
@@ -698,9 +778,9 @@ export const fetch_tutor_ads = async (id) => {
         const { data } = await apiClient.get(`/tutor/market-place/list/${id}`)
         return data;
     }
-    catch (err) {
-        console.log(err)
-        return err
+    catch (error) {
+        console.log(error)
+        return error
     }
 }
 
@@ -709,8 +789,8 @@ export const fetch_ad = async (id) => {
         const { data } = await apiClient.get(`/tutor/ad/${id}`)
         return data
     }
-    catch (err) {
-        return err
+    catch (error) {
+        return error
     }
 }
 
@@ -718,6 +798,17 @@ export const put_ad = async (id, body) => {
     try {
         const { data } = await apiClient.put(`/tutor/ad/${id}`, body)
         return data
+    }
+    catch (error) {
+        return error
+    }
+}
+
+
+export const get_tutor_against_code = async (code) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/rate/${code}`);
+        return data;
     }
     catch (err) {
         return err

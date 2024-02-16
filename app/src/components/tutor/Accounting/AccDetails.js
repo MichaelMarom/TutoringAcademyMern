@@ -179,7 +179,7 @@ const AccDetails = ({ sessions }) => {
                 </div>
 
             </div>
-            <div className="mt-4" style={{ height: "70vh", overflowY: "auto" }}>
+            <div className="mt-4" style={{ height: "53vh", overflowY: "auto" }}>
                 {selectedWeekSession.length ? <table>
                     <thead>
                         <th>Sr.</th>

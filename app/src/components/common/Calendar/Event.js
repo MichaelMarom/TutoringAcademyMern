@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import StarRating from '../../student/Feedback/StarRating';
+import StarRating from '../StarRating';
 import { useSelector } from 'react-redux';
 import { convertToDate } from './Calendar';
 import { convertTutorIdToName } from '../../../helperFunctions/generalHelperFunctions';

@@ -1,30 +1,45 @@
-import { apiClient } from "./config"
+import { toast } from "react-toastify"
+import {
+    apiClient,
+    showErrorToast
+} from "./config";
 
-export let upload_form_one = (fname, mname, sname, email, lang, is_18, pwd, cell, grade,
+export let upload_setup_form = (fname, mname, sname, email,
+    lang, secLan, parentAEmail, parentBEmail, parentAName,
+    parentBName,
+    is_18, pwd, cell, grade,
     add1, add2, city, state, zipCode, country, timeZone,
-    parent_fname, parent_lname, parent_email, photo, acadId,
+    photo, acadId,
     parentConsent, userId) => {
 
     return new Promise((resolve, reject) => {
-
-
         apiClient.post('/student/setup', {
-            fname, mname, sname, email, lang, is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent, userId
+            fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
+            is_18, pwd, cell, grade, add1, add2, city, state, zipCode, country, timeZone, photo, acadId,
+            parentConsent, userId
         })
             .then((result) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
 }
 
-
+export const post_student_agreement = async (userId, body) => {
+    try {
+        const { data } = await apiClient.put(`/student/setup/agreement/${userId}`, body)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        return err
+    }
+}
 
 export let get_student_setup = (AcademyId) => {
-
     return new Promise((resolve, reject) => {
 
         apiClient.get('/student/setup', {
@@ -36,27 +51,27 @@ export let get_student_setup = (AcademyId) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
 }
 
-export const get_student_setup_by_userId = async (AcademyId) => {
+export const get_student_setup_by_userId = async (userId) => {
     try {
         const { data } = await apiClient.get('/student/setup', {
             params: {
-                AcademyId
+                userId
             }
         })
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err);
         return err
     }
 }
-
 
 export let get_student_grade = () => {
 
@@ -68,11 +83,12 @@ export let get_student_grade = () => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
 }
+
 export let get_student_market_data = (id) => {
 
     return new Promise((resolve, reject) => {
@@ -83,19 +99,24 @@ export let get_student_market_data = (id) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
 }
 
-
 export let get_tutor_subject = async (subject) => {
-    const { data } = await apiClient.get('/student/tutor-subject', { params: { subject } })
-    console.log(data, 'in axios123')
-    return data
+    try {
+        const { data } = await apiClient.get('/student/tutor-subject', { params: { subject } })
+        console.log(data, 'in axios123')
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
 }
-
 
 export let upload_student_short_list = (items) => {
 
@@ -107,12 +128,11 @@ export let upload_student_short_list = (items) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
 }
-
 
 export let get_student_short_list = async (student) => {
     try {
@@ -120,15 +140,14 @@ export let get_student_short_list = async (student) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
 }
 
-
 export let get_my_data = (AcademyId) => {
     return new Promise((resolve, reject) => {
-
         apiClient.get('/student/my-data', {
             params: {
                 AcademyId
@@ -138,9 +157,10 @@ export let get_my_data = (AcademyId) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                console.log(err)
+                toast.error(err?.response?.data?.message || "Error Completing the request")
+                // // reject(err)
             })
-
     })
 }
 
@@ -154,12 +174,11 @@ export let get_student_short_list_data = (id) => {
                 resolve(result.data)
             })
             .catch((err) => {
-                reject(err)
+                // reject(err)
             })
 
     })
 }
-
 
 export const save_student_events = async (body) => {
     await apiClient.post('/student/booking', body);
@@ -176,6 +195,19 @@ export const get_student_events = async (studentId) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
+}
+
+export const formatted_student_sessions = async (studentId) => {
+    try {
+        const { data } = await apiClient.get(`/student/sessions/formatted/${studentId}`);
+        return data;
+    }
+    catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -187,6 +219,7 @@ export const get_tutor_bookings = async (tutorId) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
     }
 }
@@ -197,6 +230,7 @@ export const post_bank_details = async (payload) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -208,6 +242,7 @@ export const get_bank_details = async (id) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -219,6 +254,7 @@ export const get_payment_report = async (studentId) => {
         return data
     }
     catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -229,6 +265,7 @@ export const get_all_feedback_questions = async () => {
         const { data } = await apiClient.get('/questions/list');
         return data;
     } catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -239,6 +276,7 @@ export const get_feedback_to_question = async (sessionId, tutorId, studentId) =>
         const { data } = await apiClient.get(`/questions/${studentId}/${tutorId}/${sessionId}`);
         return data;
     } catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -256,6 +294,7 @@ export const post_feedback_to_question = async (sessionId, tutorId, studentId, f
         const { data } = await apiClient.post(`/questions`, body);
         return data;
     } catch (err) {
+        showErrorToast(err)
         console.log(err)
         return err
     }
@@ -267,6 +306,7 @@ export const update_student_shortlist = async (AcademyId, studentId, subject, bo
         return data;
     }
     catch (err) {
+        showErrorToast(err)
         return err
     }
 }
@@ -280,6 +320,30 @@ export const getBookedSlot = async (AcademyId) => {
 
     }
     catch (err) {
+        showErrorToast(err)
         return err
+    }
+}
+
+export const code_applied = async (studentId, tutorId) => {
+    try {
+        let { data } = await apiClient.put(`/code-applied/${studentId}/${tutorId}`)
+        return data;
+    }
+    catch (err) {
+        showErrorToast(err)
+        return err
+    }
+}
+
+export const fetch_published_ads = async () => {
+    try {
+        const { data } = await apiClient.get('/student/ads');
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
     }
 }

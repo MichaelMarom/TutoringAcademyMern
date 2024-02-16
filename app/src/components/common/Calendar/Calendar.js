@@ -17,6 +17,7 @@ import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
 import { get_student_tutor_events } from "../../../axios/student";
+import { setStudentSessions } from "../../../redux/student_store/studentSessions";
 
 const views = {
   WEEK: 'week',
@@ -49,7 +50,7 @@ const ShowCalendar = ({
 
   // Extract student information from the URL
   const isStudentRoute = (location.pathname.split('/'))[1] === 'student';
-  const isStudentLoggedIn = user[0].role === 'student' ? true : user[0].role === 'admin' && isStudentRoute ? true : false;
+  const isStudentLoggedIn = user.role === 'student' ? true : user.role === 'admin' && isStudentRoute ? true : false;
   const [timeZone, setTimeZone] = useState();
 
   const [enabledDays, setEnabledDays] = useState([]);
@@ -121,7 +122,8 @@ const ShowCalendar = ({
   const getTutorSetup = async () => {
     const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
     if (Object.keys(result ? result : {}).length) {
-      const updatedEnableHours = getTimeZonedEnableHours(JSON.parse(result.enableHourSlots), timeZone)
+      console.log(result)
+      const updatedEnableHours = getTimeZonedEnableHours(JSON.parse(result.enableHourSlots === 'undefined' ? '[]' : result.enableHourSlots), timeZone)
       setEnableHourSlots(updatedEnableHours); //done
 
       setDisableDates(JSON.parse(result.disableDates)); //done
@@ -204,7 +206,9 @@ const ShowCalendar = ({
     }
   }, [student, tutor])
 
+  //setting default timeZone
   useEffect(() => {
+    console.log(timeZone, tutor, selectedTutor, student)
     moment.tz.setDefault(timeZone);
   }, [timeZone]);
 
@@ -303,12 +307,6 @@ const ShowCalendar = ({
     (activeTab === views.MONTH) ? setActiveView(views.MONTH) : setActiveView(views.WEEK)
   }, [activeTab])
 
-  useEffect(() => {
-    return () => {
-      toast.success("Saving Block_out slots!")
-    }
-  }, [])
-
   useDebouncedEffect(() => {
     if (dataFetched && !isStudentLoggedIn) {
       updateTutorDisableRecord();
@@ -382,6 +380,7 @@ const ShowCalendar = ({
       let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
+    student.AcademyId && dispatch(setStudentSessions(student))
   }
 
   const handleRemoveReservedSlot = (reservedSlots) => {
@@ -922,7 +921,7 @@ const ShowCalendar = ({
         view={activeView}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: "100%", width: "100%" }}
+        style={{ minHeight: "100%", width: "100%" }}
         step={30}
         onSelectSlot={handleDateClick}
         dayPropGetter={dayPropGetter}
@@ -939,7 +938,6 @@ const ShowCalendar = ({
         setSelectedSlots={setSelectedSlots}
         handleBulkEventCreate={handleBulkEventCreate}
         reservedSlots={reservedSlots}
-        bookedSlots={bookedSlots}
         bookedSlots={bookedSlots}
         clickedSlot={clickedSlot}
         setClickedSlot={setClickedSlot}

@@ -14,10 +14,10 @@ const Header = () => {
     const tabs = [
         { id: 'tutor-data', label: 'Tutor' },
         { id: 'student-data', label: 'Student' },
-        { id: 'email-prog', label: 'Email Prog' },
+        { id: 'marketing', label: 'Marketing' },
         { id: 'new-subject', label: 'New Subject' },
         { id: 'accounting', label: 'Accounting' },
-        { id: 'communications', label: 'Communications' },
+        { id: 'chat', label: 'Communications' },
         // { id: 'tos', label: 'TOS' },
         // { id: 'intro', label: 'Plateform Intro' },
     ];

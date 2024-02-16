@@ -1402,14 +1402,21 @@ export const PROFILE_STATUS = {
   UNDER_REVIEW: "under-review",
   ACTIVE: 'active',
   SUSPENDED: "suspended",
-  DELETED: "deleted"
+  CLOSED: "closed",
+  DISAPPROVED: 'disapproved'
 }
 
 export const statesColours = {
-  'pending': "#e2e222",
-  'active': "#1fe010",
-  "under-review": "#d5a414",
-  "suspended": "#9210e0",
-  "disapproved": "#dd1919",
-  "closed": "#000",
+  'pending': { bg: "#e2e222", color: 'black' },
+  'active': { bg: "#1fe010", color: 'black' },
+  "under-review": { bg: "#d5a414", color: 'black' },
+  "suspended": { bg: "#9210e0", color: 'white' },
+  "disapproved": { bg: "#dd1919", color: 'white' },
+  "closed": { bg: "#000", color: 'white' },
+}
+
+export const DEFAULT_URL_AFTER_LOGIN = {
+  admin: "/admin/tutor-data",
+  tutor: "/tutor/intro",
+  student: "/student/intro"
 }

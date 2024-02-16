@@ -24,6 +24,7 @@ const MyStudents = () => {
     fetchStudents();
   }, []);
 
+
   if (loading || fetching)
     return <Loading />
   return (
@@ -59,7 +60,7 @@ const MyStudents = () => {
               <td>{student.totalHours}</td>
               <td className='col-2'>{showDate(student.dateStart, wholeDateFormat)}</td>
               <td className='col-2'>{showDate(student.dateLast, wholeDateFormat)}</td>
-              <td>${student.totalNet}</td>
+              <td>{student.totalNet.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
               <td></td>
             </tr>
           ))}

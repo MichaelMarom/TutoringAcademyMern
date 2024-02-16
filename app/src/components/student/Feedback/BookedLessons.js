@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { wholeDateFormat } from '../../../constants/constants';
 import { showDate } from '../../../helperFunctions/timeHelperFunctions'
 import Comment from './Comment';
-import StarRating from './StarRating';
+import StarRating from '../../common/StarRating';
 import { convertToDate } from '../../common/Calendar/Calendar';
 import { useSelector } from 'react-redux';
 import Tooltip from '../../common/ToolTip';
@@ -14,29 +14,36 @@ function BookedLessons({
   selectedEvent,
   setEvents
 }) {
-  console.log(moment.tz(events[0].start, moment.tz.guess()).format('z'), 'timeZOne')
-
   const { shortlist } = useSelector(state => state.shortlist)
   const [eventsWithPhoto, setEventsWithPhoto] = useState([])
+  const [sortedEvents, setSortedEvents] = useState([])
 
   useEffect(() => {
     const updatedEvents = events.map(event => {
       const matchingTutor = shortlist.find(tutor => {
-        return (tutor.tutorData.AcademyId === event.tutor
-          || (tutor.tutorData.AcademyId === event.tutorId))
+        return (tutor.AcademyId[0] === event.tutor
+          || (tutor.AcademyId[0] === event.tutorId))
       })
 
       if (matchingTutor) {
         return {
           ...event,
-          photo: matchingTutor.tutorData.Photo,
+          photo: matchingTutor.Photo,
         };
       }
 
       return event;
     });
 
+    const sortedEvents = updatedEvents.sort((a, b) => {
+      const startDateA = new Date(a.start);
+      const startDateB = new Date(b.start);
+
+      return startDateB - startDateA;
+    })
+    setSortedEvents(sortedEvents)
     setEventsWithPhoto(updatedEvents);
+
   }, [events, shortlist]);
 
   return (
@@ -53,7 +60,7 @@ function BookedLessons({
         </tr>
       </thead>
       <tbody>
-        {eventsWithPhoto.map((event, index) => (
+        {sortedEvents.map((event, index) => (
           <tr key={index}>
             <td>
               <Tooltip text={event.tutorId}>

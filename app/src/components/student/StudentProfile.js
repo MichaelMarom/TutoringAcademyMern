@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { get_my_data } from '../../axios/student';
 import moment from 'moment-timezone'
+import { useSelector } from 'react-redux';
+import Avatar from '../common/Avatar';
+import { capitalizeFirstLetter } from '../../helperFunctions/generalHelperFunctions';
+import { IoWarning } from 'react-icons/io5';
+import { FaCheckCircle } from "react-icons/fa";
+
 
 function calcTime() {
     let utcDateTime = moment().utc()
@@ -10,144 +16,60 @@ function calcTime() {
 }
 
 const StudentProfileCnt = () => {
-
-    let [photo, setphoto] = useState('')
-    let [screenName, setscreenName] = useState('')
-    let [Id, setId] = useState('')
-    let [consentVideo, setconsentVideo] = useState('')
-    let [grade, setGrade] = useState('')
-    let [GMT, setGMT] = useState('')
-    let [country, setcountry] = useState('')
-    let [parentFname, setparentFname] = useState('')
-    let [parentLname, setparentLname] = useState('')
-    
-
-    let [rates, setRates] = useState([])
-    const [currentTime, setCurrentTime] = useState(calcTime())
-
-    useEffect(() => {
-        get_my_data(window.localStorage.getItem('student_user_id'))
-            .then((result) => {
-
-                let response_0 = result[0];
-                let response_1 = result[1];
-
-
-                let files = [...response_0[0], ...response_1[0]];
-                let me = { ...files[0], ...files[1], ...files[2]}
-
-                console.log(me)
-
-                setphoto(me.Photo)
-                setGMT(me.GMT)
-                setscreenName(me.ScreenName)
-                setcountry(me.Country)
-                setId(me.AcademyId)
-                setconsentVideo(me.ParentConsent)
-                setGrade(me.Grade)
-                setparentFname(me.ParentFirstName)
-                setparentLname(me.ParentLastName)
-
-            })
-            .catch((err) => console.log(err))
-
-        
-    }, [])
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            setCurrentTime(calcTime())
-        }, 1000);
-
-        return () => {
-            clearInterval(intervalId);
-        };
-    }, []);
+    const { student } = useSelector(state => state.student)
+    console.log(student.ParentAName, student)
 
     return (
-        <>
-            <div className="form-student-profile">
-<br />
-                <div className="form-student-profile-head">
-                    <div style={{ height: '230px', width: '180px', margin: '0 0 0 40px', position: 'relative' }}>
-                        <div><b className='small'>{calcTime()}</b></div>
-                        <img src={photo} style={{ height: '180px', width: '180px' }} alt="" />
-                    </div>
-                </div>
-                <br />
-
-
-                <div className="form-student-profile-body">
-                    <div style={{display: 'flex'}}>
-                        
-                       
-                    </div>
-
-                    <br />
-
-                    <div style={{display: 'flex'}}>
-                        <div>
-
-                            <div className='input-cnt' style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
-                                <label>Screen Name</label>
-                                <input defaultValue={screenName} type='text'></input>
-                            </div>
-                            <div className='input-cnt' style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
-                                <label>Grade</label>
-                                <input defaultValue={grade} type='text'></input>
-                            </div>
-                            <div className='input-cnt' style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
-                                <label>Country</label>
-
-                                <input defaultValue={country} type='text'></input>
-
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className='input-cnt' style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
-                                <label>Time Zone GMT</label>
-                                <input defaultValue={GMT} type='text'></input>
-                            </div>
-                            <div className='input-cnt' style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
-                                <label>Parent FirstName</label>
-
-                                <input defaultValue={parentFname} type='text'></input>
-
-                            </div>
-                            <div className='input-cnt' style={{display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center'}}>
-                                <label>Parent LastName</label>
-
-                                <input defaultValue={parentLname} type='text'></input>
-
-                            </div>
-                            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'}}>
-                                
-                                    <h5>Parent(s) video recording consent</h5>
-                                    <div style={{display: 'flex', flexDirection: 'row',}}>
-                                        <div className='input-cnt' style={{height: '20px', width: '70px'}}>
-                                            <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentYes'>Yes</label>
-                                            &nbsp;&nbsp;
-                                            <input checked={consentVideo ? true: false} data-type='radio' name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}} id='parentConsentYes' type='radio'/>
-                                        </div>
-
-                                        <div className='input-cnt' style={{height: '20px', width: '70px'}}>
-
-                                            <label style={{height: '20px', width: '20px'}} htmlFor='parentConsentNo'>No</label>
-                                            &nbsp;&nbsp;
-                                            <input checked={!consentVideo ? true: false} data-type='radio' name='parentConsent' style={{height: '20px', width: '20px', marginTop: '10px'}}  id='parentConsentNo' type='radio'/>
-                                        </div>
-                                    </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-
-
+        <div className='d-flex flex-column container justify-content-center align-items-center' style={{ gap: "20px" }}>
+            <div className='m-2'><b className='small'>{calcTime()}</b></div>
+            <div className='d-flex'>
+                <Avatar avatarSrc={student.Photo} size='200px' positionInPixle='20px' online={student.Online} indicSize='20px' />
             </div>
-        </>
+
+            <div className='d-flex' style={{ width: "700px", gap: "2%" }}>
+                <div className='d-flex flex-column w-50' style={{ gap: "10px", width: "345px" }}>
+                    <div className="d-flex">
+                        <label style={{ width: "200px" }}>Screen Name</label>
+                        <input className="form-control" disabled defaultValue={student.ScreenName} type='text'></input>
+                    </div>
+                    <div className='d-flex'>
+                        <label style={{ width: "200px" }}>Grade</label>
+                        <input className="form-control" disabled defaultValue={student.Grade} type='text'></input>
+                    </div>
+                    <div className='d-flex'>
+                        <label style={{ width: "200px" }}>Country</label>
+                        <input className="form-control" disabled defaultValue={student.Country} type='text'></input>
+                    </div>
+                </div>
+
+                <div className='d-flex flex-column' style={{ gap: "10px", width: "345px" }}>
+                    <div className='d-flex'>
+                        <label style={{ width: "200px" }}>Time Zone GMT</label>
+                        <input className="form-control" disabled
+                            defaultValue={student.GMT} type='text'></input>
+                    </div>
+                    {student.ParentAName && <div className='d-flex'>
+                        <label style={{ width: "200px" }}>Parent Name</label>
+                        <input className="form-control" disabled defaultValue={student.ParentAName?.split(' ')[0]?.length ? capitalizeFirstLetter(student.ParentAName.split(' ')[0]) : student.ParentAName} type='text'></input>
+                    </div>}
+                </div>
+            </div>
+            <div style={{ width: "700px" }} >
+                {student.ParentConsent === 'true' ?
+                    <div className='alert alert-success d-flex'><FaCheckCircle size={20} color={'green'}
+                        className='m-1' />
+                        <h6 className='m-1'>
+                            Parent Has Given Consent Of Video recording
+                        </h6>
+                    </div> :
+                    <div className='alert alert-warning d-flex'> <IoWarning size={20} className='m-1 text-warning' />
+                        <h6 className='m-1'>
+                            Parent did not give consent of video recording
+                        </h6>
+                    </div>
+                }
+            </div>
+        </div>
     );
 }
 

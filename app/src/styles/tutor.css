@@ -35,18 +35,18 @@ a.active {
 }
 
 .form-control {
-    background-color: rgb(241, 243, 247);
-    border: none;
+    /* background-color: rgb(241, 243, 247);
+    border: none; */
 }
 
 /* 3nd card */
 span {
-    margin-left: 0.5rem;
+    /* margin-left: 0.5rem;
     padding: 1px 10px;
     color: white;
-    background-color: rgb(143, 143, 143);
     border-radius: 4px;
     font-weight: 600;
+    */
 }
 
 .third {
@@ -67,18 +67,18 @@ label {
 }
 
 select {
-    -webkit-appearance: none;
+    /* -webkit-appearance: none;
     -moz-appearance: none;
     text-indent: 1px;
-    text-overflow: "";
+    text-overflow: ""; */
 }
 
 /* 1st card */
 
 ul {
-    list-style: none;
+    /* list-style: none;
     margin-top: 1rem;
-    padding-inline-start: 0;
+    padding-inline-start: 0; */
 }
 
 .search {
@@ -119,4 +119,37 @@ ul {
 /********************************************** Profile ------------------------*********************/
 ul.vertical-tabs .nav-link :hover {
     background: aliceblue !important;
+}
+
+
+/**************************************Collaboration Tab *******************************/
+.App-menu.App-menu_top {
+    background-color: #212f3d !important;
+    border-radius: 5px !important;
+    height: 60px;
+}
+
+.layer-ui__wrapper__top-right.zen-mode-transition {
+    margin-top: 10px !important;
+    margin-right: 10px !important
+}
+
+.shapes-section {
+    margin-top: 10px
+}
+
+.ToolIcon__keybinding {
+    background: inherit;
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    display: none
+}
+
+.ToolIcon {
+    height: 40px;
+}
+
+.Stack.Stack_horizontal {
+    height: 40px
 }

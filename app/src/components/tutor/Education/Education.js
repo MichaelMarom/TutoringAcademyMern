@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 
-import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, post_tutor_setup, upload_edu_form, upload_form_two } from '../../../axios/tutor';
+import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, post_edu, post_tutor_setup, upload_edu_form, upload_form_two } from '../../../axios/tutor';
 import career from '../../../images/Experience-photo50.jpg';
 
 import { moment } from '../../../config/moment'
@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import { deleteFileOnServer, getPreviousFilePathFromDB, upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
 import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES, languages } from '../../../constants/constants'
-import { getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
+import { compareStates, getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
 import PDFViewer from './PDFViewer'
 import Button from '../../common/Button';
@@ -22,6 +22,8 @@ import Tooltip from '../../common/ToolTip';
 import ReactDatePicker from 'react-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTutor } from '../../../redux/tutor_store/tutorData';
+import DebounceInput from '../../common/DebounceInput';
+import _ from 'lodash';
 
 const languageOptions = languages.map((language) => ({
     value: language,
@@ -41,7 +43,7 @@ const Education = () => {
 
     let [degree, set_degree] = useState([]);
     let [certificate, set_certificate] = useState('');
-    let [language, set_language] = useState([]);
+    let [language, set_language] = useState({});
 
     const [countryForAssociate, setCountryForAssoc] = useState('');
     const [countryForCert, setCountryForCert] = useState('');
@@ -49,7 +51,7 @@ const Education = () => {
     const [countryForDoc, setCountryForDoc] = useState('');
     const [countryForDeg, setCountryForDeg] = useState('')
 
-    let [back_state, set_bach_state] = useState('');
+    let [bach_state, set_bach_state] = useState('');
     let [mast_state, set_mast_state] = useState('');
     let [deg_state, set_deg_state] = useState('');
     let [cert_state, set_cert_state] = useState('');
@@ -91,6 +93,8 @@ const Education = () => {
     const [recordFetched, setRecordFetched] = useState(false);
     const { tutor } = useSelector(state => state.tutor);
     const dispatch = useDispatch();
+
+    console.log(dbValues)
 
     //private info protection notice
     let toastId = useRef();
@@ -186,151 +190,156 @@ const Education = () => {
     }, [])
 
     let AcademyId = window.localStorage.getItem('tutor_user_id');
+    const jsonFields = ['NativeLang', 'NativeLangOtherLang']
+    const dynamicSave = async (key, value) => {
+        if (jsonFields.includes(key)) value = JSON.stringify(value)
+        if (key && value && tutor.AcademyId) {
+            let response = await post_edu({
+                AcademyId: tutor.AcademyId,
+                [key]: value
+            })
+            console.log(response)
+        }
+    }
+
+    const markSecondEduStepCompleted = () => {
+        const fieldsForThirdStep = {
+            level: { validate: true, value: level }, experience: { validate: true, value: experience },
+            uni_bach: { value: uni_bach, validate: level !== 'No Academic Education' },
+            bach_yr: { value: bach_yr, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student') },
+            bach_state: { value: bach_state, validate: (level !== 'No Academic Education' && options[countryForAssociate]) },
+            countryForAssociate: { value: countryForAssociate, validate: level !== 'No Academic Education' },
+            countryForMast: {
+                value: countryForMast, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree')
+            },
+            uni_mast: {
+                value: uni_mast, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree')
+            },
+            mast_yr: {
+                value: mast_yr, validate: (level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree')
+            },
+            mast_state: {
+                value: mast_state, validate: ((level !== 'No Academic Education' && level !== 'Undergraduate Student'
+                    && level !== 'Associate Degree' && level !== 'Bachlor Degree') && options[countryForAssociate])
+            },
+            countryForDoc: { value: countryForDoc, validate: (level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') },
+            doc_uni: { value: doc_uni, validate: (level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') },
+            doctorateGraduateYear: { value: doctorateGraduateYear, validate: (level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') },
+            doctorateState: { value: doctorateState, validate: ((level === 'Doctorate Degree' || level === 'Post Doctorate Degree' || level === 'Professor') && options[countryForAssociate]) },
+            certificate: { validate: false },
+            expiration: { value: expiration, validate: (certificate && certificate !== 'Not Certified') },
+            cert_state: { value: cert_state, validate: ((certificate && certificate !== 'Not Certified') && options[countryForAssociate]) },
+            countryForCert: { value: countryForCert, validate: (certificate && certificate !== 'Not Certified') },
+            NativeLang: { validate: true, value: language }, NativeLangOtherLang: { validate: false },
+            workExperience: { validate: true, value: workExperience },
+            references: { validate: false }
+        }
+        let flag = { value: null, valid: 1 }
+
+        console.log(expiration.length)
+        Object.keys(fieldsForThirdStep).map(fields => {
+            if (fieldsForThirdStep[fields].validate) {
+                const validated = jsonFields.includes(fields) ?
+                    !!Object.keys(fieldsForThirdStep[fields].value).length :
+                    !!fieldsForThirdStep[fields].value?.length;
+
+                console.log(validated, fields, expiration)
+                if (!validated) {
+                    flag.valid = 0;
+                    flag.value = fields
+                }
+            }
+        })
+        return flag
+    }
 
     let saver = async () => {
-        let Step = null;
-        if (!dbValues.AcademyId) {
-            Step = 3;
-        }
-        let response = await upload_edu_form(level,
-            uni_bach,
-            uni_mast,
-            doc_uni,
-            degree,
-            degreeFileContent,
-            certificate,
-            certFileContent,
-            JSON.stringify(language),
-            back_state,
-            mast_state,
-            deg_state,
-            cert_state,
-            [],
-            doctorateState,
-            experience,
-            bach_yr,
-            mast_yr,
-            degree_yr,
-            doctorateGraduateYear,
-            expiration,
-            JSON.stringify(othelang),
-            workExperience,
-            AcademyId,
-            countryForDeg,
-            countryForMast,
-            countryForCert,
-            countryForDoc,
-            countryForAssociate,
-            resumePath,
-            cert_file_name,
-            deg_file_name,
-            references
-        )
-        if (Step) {
-            await post_tutor_setup({
-                Step, fname: tutor.FirstName,
-                lname: tutor.LastName, mname: tutor.MiddleName, userId: tutor.userId
-            })
-            dispatch(setTutor())
-        }
-        return response;
+        let Step = 3;
+        await post_tutor_setup({
+            Step, fname: tutor.FirstName,
+            lname: tutor.LastName, mname: tutor.MiddleName, userId: tutor.userId
+        })
+        dispatch(setTutor())
+        // let response = await upload_edu_form(level,
+        //     uni_bach,
+        //     uni_mast,
+        //     doc_uni,
+        //     degree,
+        //     degreeFileContent,
+        //     certificate,
+        //     certFileContent,
+        //     JSON.stringify(language),
+        //     bach_state,
+        //     mast_state,
+        //     deg_state,
+        //     cert_state,
+        //     [],
+        //     doctorateState,
+        //     experience,
+        //     bach_yr,
+        //     mast_yr,
+        //     degree_yr,
+        //     doctorateGraduateYear,
+        //     expiration,
+        //     JSON.stringify(othelang),
+        //     workExperience,
+        //     AcademyId,
+        //     countryForDeg,
+        //     countryForMast,
+        //     countryForCert,
+        //     countryForDoc,
+        //     countryForAssociate,
+        //     resumePath,
+        //     cert_file_name,
+        //     deg_file_name,
+        //     references
+        // )
     }
 
     const handleEditClick = () => {
         setEditMode(!editMode);
     };
 
-    const handleEditorChange = (value) => {
-        set_workExperience(value);
-    };
-
-    //comparing DB, Local
+    let fieldValues = {
+        EducationalLevel: level,
+        Bach_College: uni_bach,
+        Mast_College: uni_mast,
+        DoctorateCollege: doc_uni,
+        Certificate: certificate,
+        BachCountry: countryForAssociate,
+        CertCountry: countryForCert,
+        MastCountry: countryForMast,
+        DocCountry: countryForDoc,
+        DegCountry: countryForDeg,
+        Bach_College_State: bach_state,
+        Mast_College_State: mast_state,
+        DegreeState: deg_state,
+        CertificateState: cert_state,
+        DoctorateState: doctorateState,
+        EducationalLevelExperience: experience,
+        Bach_College_Year: bach_yr,
+        Mast_College_StateYear: mast_yr,
+        DegreeYear: degree_yr,
+        DoctorateGradYr: doctorateGraduateYear,
+        CertificateExpiration: expiration,
+        WorkExperience: workExperience,
+        Resume: resumePath,
+        ThingsReferences: references,
+        CertFileName: cert_file_name,
+        DegFileName: deg_file_name,
+        NativeLang: language,
+        NativeLangOtherLang: othelang
+    }
+    // comparing DB, Local
     useEffect(() => {
-        if (true) {
-            let fieldValues = {
-                level,
-                uni_bach,
-                uni_mast,
-                doc_uni,
-                degree,
-                certificate,
-                language,
-                countryForAssociate,
-                countryForCert,
-                countryForMast,
-                countryForDoc,
-                countryForDeg,
-                back_state,
-                mast_state,
-                deg_state,
-                cert_state,
-                doctorateState,
-                experience,
-                bach_yr,
-                mast_yr,
-                degree_yr,
-                doctorateGraduateYear,
-                expiration,
-                othelang,
-                workExperience,
-                exp,
-                level_list,
-                certificate_list,
-                d_list,
-                data,
-                degreeFile,
-                degreeFileContent,
-                certificateFile,
-                certFileContent,
-                dataFetched,
-                db_edu_level,
-                db_edu_cert,
-                fetchingEdu,
-                resumePath,
-                references
-            }
-            setUnsavedChanges(unsavedEducationChangesHelper(fieldValues, dbValues))
-        }
-    }, [
-        level,
-        uni_bach,
-        uni_mast,
-        doc_uni,
-        degree,
-        certificate,
-        language,
-        countryForAssociate,
-        countryForCert,
-        countryForMast,
-        countryForDoc,
-        countryForDeg,
-        back_state,
-        mast_state,
-        deg_state,
-        cert_state,
-        doctorateState,
-        experience,
-        bach_yr,
-        mast_yr,
-        degree_yr,
-        doctorateGraduateYear,
-        expiration,
-        othelang,
-        workExperience,
-        degreeFile,
-        degreeFileContent,
-        certificateFile,
-        certFileContent,
-        dataFetched,
-        db_edu_level,
-        db_edu_cert,
-        fetchingEdu,
-        dbValues,
-        resumePath,
-        references
-    ])
+        setUnsavedChanges(compareStates(dbValues, fieldValues))
+    }, [dbValues, fieldValues])
 
     //fetching DB
+
     useEffect(() => {
         !editMode && setFetchingEdu(true)
 
@@ -338,17 +347,20 @@ const Education = () => {
             .then((result) => {
                 if (result?.length) {
                     let data = result[0];
-                    setDbValues(data)
+                    let NativeLang = JSON.parse(data.NativeLang ?? '{}');
+                    let NativeLangOtherLang = JSON.parse(data.NativeLangOtherLang ?? '[]')
+                    setDbValues({ ...data, NativeLang, NativeLangOtherLang });
+
                     set_workExperience(data.WorkExperience)
-                    set_uni_bach(data.College1)
-                    set_mast_uni(data.College2)
+                    set_uni_bach(data.Bach_College)
+                    set_mast_uni(data.Mast_College)
                     set_doc_uni(data.DoctorateCollege)
 
-                    set_language(JSON.parse(data.NativeLang))
-                    set_othelang(JSON.parse(data.NativeLangOtherLang))
+                    set_language(JSON.parse(data.NativeLang ?? '{}'))
+                    set_othelang(JSON.parse(data.NativeLangOtherLang ?? '[]'))
 
-                    set_bach_year(data.College1Year)
-                    set_mast_year(data.College2StateYear)
+                    set_bach_year(data.Bach_College_Year)
+                    set_mast_year(data.Mast_College_StateYear)
                     set_degree_year(data.DegreeYear)
 
                     setCountryForAssoc(data.BachCountry)
@@ -398,7 +410,7 @@ const Education = () => {
                         MastCountry: countryForMast,
                         DocCountry: countryForDoc,
                         DegCountry: countryForDeg,
-                        College1State: back_state,
+                        College1State: bach_state,
                         College2State: mast_state,
                         DegreeState: deg_state,
                         CertificateState: cert_state,
@@ -410,7 +422,9 @@ const Education = () => {
                         DoctorateGradYr: doctorateGraduateYear,
                         CertificateExpiration: expiration,
                         WorkExperience: workExperience,
-                        ThingsReferences: references
+                        ThingsReferences: references,
+                        NativeLangOtherLang: othelang,
+                        NativeLang: language
                     })
                 }
 
@@ -496,10 +510,6 @@ const Education = () => {
             })
     }, [certificate, degree, experience, level])
 
-    let certified = e => {
-        set_certificate(e.target.value)
-    }
-
     const handleDegFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -516,6 +526,21 @@ const Education = () => {
             setDegreeFile(file);
         }
     }
+
+    useEffect(() => {
+        if (degreeFile && level && deg_file_name) {
+            handleUploadDegreeToServer()
+            dynamicSave('DegFileName', deg_file_name)
+
+        }
+    }, [degreeFile, level, deg_file_name])
+
+    useEffect(() => {
+        if (certificateFile && certificate && cert_file_name) {
+            handleUploadCertificateToServer()
+            dynamicSave('CertFileName', cert_file_name)
+        }
+    }, [certificate, cert_file_name, certificateFile])
 
     const handleResumeFileUpload = (event) => {
         const file = event.target.files[0];
@@ -594,35 +619,25 @@ const Education = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        if (workExperience.length === 11 || !workExperience.length) return toast.warning('Work Experiece in Required!')
+        if (!workExperience || workExperience.length === 11 || !workExperience.length) return toast.warning('Work Experiece in Required!')
+
+        if (!markSecondEduStepCompleted().valid)
+            return toast.warning(`Please fill required fields ${markSecondEduStepCompleted().value}`)
+
 
         if (!cert_file_name || !deg_file_name)
-            toast.warning('Since you selected academic education, but You did not upload your diploma, your Profile will stay in Pending status and cannot be activated until you upload the missing documents!')
+            toast.warning('You selected academic education, but did not upload your diploma. Hence,your Profile will stay in "Pending" status and cannot be activated until you upload the missing documents!')
 
         setSaving(true)
-        let res = await saver();
+        tutor.Status === 'pending' && await saver();
         setSaving(false)
-        if (res) {
-            handleUploadDegreeToServer()
-            handleUploadCertificateToServer()
-            // handleUploadResumeToServer();
-            toast.success('Education record saved Successfully');
-        }
-        else {
-            toast.error('Failed to save Record')
-        }
         setEditMode(false)
     }
 
     if (fetchingEdu)
         return <Loading loadingText='Fetching Tutor Eduction...' />
     return (
-        <div style={{ height: "80vh", overflowY: "auto" }}>
-            <div className='tutor-popin'></div>
-            <div className='save-overlay'>
-                <span className='save-loader'></span>
-            </div>
-
+        <div style={{ height: "70vh", overflowY: "auto" }}>
             <div className="container tutor-tab-education">
                 <form action="" onSubmit={handleSave}>
                     <div className="tutor-tab-education-info pt-4">
@@ -643,7 +658,10 @@ const Education = () => {
                                     <select
                                         id="level"
                                         className="form-select m-0"
-                                        onChange={(e) => set_level(e.target.value)}
+                                        onChange={(e) => {
+                                            set_level(e.target.value)
+                                            dynamicSave('EducationalLevel', e.target.value)
+                                        }}
                                         value={level}
                                         required
                                         disabled={!editMode}
@@ -658,7 +676,10 @@ const Education = () => {
                                     <select
                                         id="experience"
                                         className="form-select m-0"
-                                        onChange={(e) => set_experience(e.target.value)}
+                                        onChange={(e) => {
+                                            set_experience(e.target.value)
+                                            dynamicSave('EducationalLevelExperience', e.target.value)
+                                        }}
                                         value={experience}
                                         required
                                         disabled={!editMode}
@@ -669,7 +690,7 @@ const Education = () => {
                             </div>
                         </div>
 
-                        {level !== 'No Academic Education' && level.length ? (
+                        {level && level !== 'No Academic Education' && level.length ? (
                             <>
                                 <div className="row mt-3 p-3 shadow  border shadow">
                                     {
@@ -684,7 +705,7 @@ const Education = () => {
                                             <label className="text-secondary" htmlFor="uni_bach">{(level === 'Associate Degree' ||
                                                 level === 'Undergraduate Student') ?
                                                 'College Name' : 'Bachelor Degree Institute:'}</label>
-                                            <input
+                                            {/* <input
                                                 type="text"
                                                 id="uni_bach"
                                                 className="form-control m-0"
@@ -693,6 +714,17 @@ const Education = () => {
                                                 placeholder="College/University 1"
                                                 required
                                                 disabled={!editMode}
+                                            /> */}
+                                            <DebounceInput
+                                                placeholder="College/University 1"
+                                                required
+                                                disabled={!editMode}
+                                                className="form-control m-0"
+                                                delay={2000}
+                                                value={uni_bach}
+                                                setInputValue={set_uni_bach}
+                                                debouceCallback={() => dynamicSave('Bach_College', uni_bach)}
+                                                onChange={(e) => set_uni_bach(e.target.value)}
                                             />
                                         </div>
 
@@ -701,7 +733,10 @@ const Education = () => {
                                                 <label className="text-secondary">Country for {`${level === 'Associate Degree' ?
                                                     "Associate degree" : "Bachelor"}`}</label>
                                                 <select className='form-select'
-                                                    onChange={(e) => setCountryForAssoc(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setCountryForAssoc(e.target.value)
+                                                        dynamicSave('BachCountry', e.target.value)
+                                                    }}
                                                     value={countryForAssociate}
                                                     disabled={!editMode}
                                                 >
@@ -718,8 +753,13 @@ const Education = () => {
                                                     <select
                                                         id="state1"
                                                         className="form-select m-0 w-100"
-                                                        onChange={(e) => set_bach_state(e.target.value)}
-                                                        value={back_state}
+                                                        onChange={(e) => {
+                                                            set_bach_state(e.target.value)
+                                                            dynamicSave('Bach_College_State', e.target.value)
+                                                        }}
+
+
+                                                        value={bach_state}
                                                         required
                                                         disabled={!editMode}
                                                     >
@@ -741,7 +781,10 @@ const Education = () => {
                                                 <select
                                                     id="yr1"
                                                     className="form-select m-0 w-100"
-                                                    onChange={(e) => set_bach_year(e.target.value)}
+                                                    onChange={(e) => {
+                                                        set_bach_year(e.target.value)
+                                                        dynamicSave('Bach_College_Year', e.target.value)
+                                                    }}
                                                     value={bach_yr}
                                                     required
                                                     disabled={!editMode}
@@ -764,7 +807,7 @@ const Education = () => {
                                             <div className='d-flex justify-content-between'>
                                                 <div className="col-md-4">
                                                     <label className="text-secondary" htmlFor="uni_mast">Master Degree University:</label>
-                                                    <input
+                                                    {/* <input
                                                         type="text"
                                                         id="uni_mast"
                                                         className="form-control m-0"
@@ -773,7 +816,17 @@ const Education = () => {
                                                         placeholder="College/University 2"
                                                         required
                                                         disabled={!editMode}
-
+                                                    /> */}
+                                                    <DebounceInput
+                                                        placeholder="College/University 2"
+                                                        required
+                                                        disabled={!editMode}
+                                                        className="form-control m-0"
+                                                        delay={2000}
+                                                        value={uni_mast}
+                                                        setInputValue={set_mast_uni}
+                                                        debouceCallback={() => dynamicSave('Mast_College', uni_mast)}
+                                                        onChange={(e) => set_mast_uni(e.target.value)}
                                                     />
                                                 </div>
 
@@ -781,7 +834,10 @@ const Education = () => {
                                                     <div>
                                                         <label className="text-secondary">Country for Master.</label>
                                                         <select className='form-select'
-                                                            onChange={(e) => setCountryForMast(e.target.value)}
+                                                            onChange={(e) => {
+                                                                setCountryForMast(e.target.value)
+                                                                dynamicSave('Mast_College_StateYear', e.target.value)
+                                                            }}
                                                             disabled={!editMode}
                                                             value={countryForMast}
                                                         >
@@ -797,11 +853,13 @@ const Education = () => {
                                                             <label className="text-secondary" htmlFor="state1">State/Province:</label>
                                                             <select
                                                                 className="form-select m-0 w-100"
-                                                                onChange={(e) => set_mast_state(e.target.value)}
+                                                                onChange={(e) => {
+                                                                    set_mast_state(e.target.value)
+                                                                    dynamicSave('Mast_College_State', e.target.value)
+                                                                }}
                                                                 value={mast_state}
                                                                 required
                                                                 disabled={!editMode}
-
                                                             >
                                                                 <option value="">Select State</option>
                                                                 {options[countryForMast].map((item) => (
@@ -819,7 +877,10 @@ const Education = () => {
                                                     <select
                                                         id="yr2"
                                                         className="form-select m-0 w-100"
-                                                        onChange={(e) => set_mast_year(e.target.value)}
+                                                        onChange={(e) => {
+                                                            set_mast_state(e.target.value)
+                                                            dynamicSave('Mast_College_StateYear', e.target.value)
+                                                        }}
                                                         value={mast_yr}
                                                         required
                                                         disabled={!editMode}
@@ -844,23 +905,36 @@ const Education = () => {
                                             <div className='d-flex justify-content-between'>
                                                 <div className="col-md-4">
                                                     <label className="text-secondary" htmlFor="uni_mast"> Doctorate Degree university </label>
-                                                    <input
+                                                    {/* <input
                                                         type="text"
-                                                        id="uni_mast"
                                                         className="form-control m-0"
                                                         value={doc_uni}
                                                         onChange={(e) => set_doc_uni(e.target.value)}
                                                         placeholder="College/University 3"
                                                         required
                                                         disabled={!editMode}
+                                                    /> */}
+                                                    <DebounceInput
+                                                        type="text"
+                                                        className="form-control m-0"
+                                                        value={doc_uni}
+                                                        setInputValue={set_doc_uni}
+                                                        placeholder="College/University 3"
+                                                        required
+                                                        disabled={!editMode}
+                                                        debouceCallback={() => dynamicSave('DoctorateCollege', doc_uni)}
                                                     />
+
                                                 </div>
 
                                                 <div className="col-md-3">
                                                     <div>
                                                         <label className="text-secondary">Country For Doctorate</label>
                                                         <select className='form-select'
-                                                            onChange={(e) => setCountryForDoc(e.target.value)}
+                                                            onChange={(e) => {
+                                                                setCountryForDoc(e.target.value)
+                                                                dynamicSave('DocCountry', e.target.value)
+                                                            }}
                                                             disabled={!editMode}
                                                             value={countryForDoc}
                                                         >
@@ -877,7 +951,10 @@ const Education = () => {
                                                             <select
                                                                 id="state1"
                                                                 className="form-select m-0 w-100"
-                                                                onChange={(e) => set_doctorateState(e.target.value)}
+                                                                onChange={(e) => {
+                                                                    set_doctorateState(e.target.value)
+                                                                    dynamicSave('DoctorateState', e.target.value)
+                                                                }}
                                                                 value={doctorateState}
                                                                 required
                                                                 disabled={!editMode}
@@ -898,7 +975,11 @@ const Education = () => {
                                                     <select
                                                         id="yr2"
                                                         className="form-select m-0 w-100"
-                                                        onChange={(e) => setDoctorateGraduateYear(e.target.value)}
+                                                        onChange={(e) => {
+                                                            setDoctorateGraduateYear(e.target.value)
+                                                            dynamicSave('DoctorateGradYr', e.target.value)
+                                                        }}
+
                                                         value={doctorateGraduateYear}
                                                         required
                                                         disabled={!editMode}
@@ -958,7 +1039,10 @@ const Education = () => {
                                                     disabled={!editMode}
                                                     value={countryForDeg}
                                                     required
-                                                    onChange={(e) => setCountryForDeg(e.target.value)}>
+                                                    onChange={(e) => {
+                                                        setCountryForDeg(e.target.value)
+                                                        dynamicSave('DegCountry', e.target.value)
+                                                    }}>
                                                     <option value={''} disabled>Select Country</option>
                                                     {Countries.map((option) =>
                                                         <option value={option.Country}
@@ -972,11 +1056,13 @@ const Education = () => {
                                                     <select
                                                         id="state1"
                                                         className="form-select m-0 w-100"
-                                                        onChange={(e) => set_deg_state(e.target.value)}
+                                                        onChange={(e) => {
+                                                            set_deg_state(e.target.value)
+                                                            dynamicSave('DegreeState', e.target.value)
+                                                        }}
                                                         value={deg_state}
                                                         required
                                                         disabled={!editMode}
-
                                                     >
                                                         <option value="">Select State</option>
                                                         {options[countryForDeg].map((item) => (
@@ -994,7 +1080,10 @@ const Education = () => {
                                             <select
                                                 id="yr3"
                                                 className="form-select m-0 w-100"
-                                                onChange={(e) => set_degree_year(e.target.value)}
+                                                onChange={(e) => {
+                                                    set_degree_year(e.target.value)
+                                                    dynamicSave('DegreeYear', e.target.value)
+                                                }}
                                                 value={degree_yr}
                                                 required
                                                 disabled={!editMode}
@@ -1029,7 +1118,10 @@ const Education = () => {
                                         id="certificate"
                                         name="certificate"
                                         className="form-select m-0"
-                                        onChange={certified}
+                                        onChange={(e) => {
+                                            set_certificate(e.target.value)
+                                            dynamicSave('Certificate', e.target.value)
+                                        }}
                                         placeholder='Select Certificate'
                                         value={certificate}
                                         // required
@@ -1038,7 +1130,7 @@ const Education = () => {
                                         <option value="" disabled>Select Certificate</option>
                                         {certificate_list}
                                     </select>
-                                    {(certificate.length && certificate !== 'Not Certified') ? (
+                                    {(certificate && certificate.length && certificate !== 'Not Certified') ? (
                                         <div className='d-flex justify-content-center align-items-center'>
 
                                             {(cert_file_name?.length) ? (
@@ -1065,14 +1157,17 @@ const Education = () => {
                                         </div>
                                     ) : null}
                                 </div>
-                                {(certificate.length && certificate !== 'Not Certified') ? (
+                                {(certificate && certificate.length && certificate !== 'Not Certified') ? (
                                     <>
                                         <div className="col-md-3">
                                             <div>
                                                 <label className="text-secondary">Country For Certification</label>
                                                 <select className='form-select'
                                                     disabled={!editMode}
-                                                    onChange={(e) => setCountryForCert(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setCountryForCert(e.target.value)
+                                                        dynamicSave('CertCountry', e.target.value)
+                                                    }}
                                                     value={countryForCert}
                                                     required
                                                 >
@@ -1088,7 +1183,10 @@ const Education = () => {
                                                     <label className="text-secondary" htmlFor="state1">State/Province:</label>
                                                     <select
                                                         className="form-select m-0 w-100"
-                                                        onChange={(e) => set_cert_state(e.target.value)}
+                                                        onChange={(e) => {
+                                                            set_cert_state(e.target.value)
+                                                            dynamicSave('CertificateState', e.target.value)
+                                                        }}
                                                         value={cert_state}
                                                         required
                                                         disabled={!editMode}
@@ -1114,6 +1212,7 @@ const Education = () => {
                                                     date.setSeconds(59)
                                                     const originalMoment = moment(date)
                                                     set_expiration(originalMoment)
+                                                    dynamicSave('CertificateExpiration', originalMoment)
                                                 }}
                                                 minDate={new Date()}
                                                 dateFormat="MMM d, yyyy"
@@ -1121,17 +1220,6 @@ const Education = () => {
                                                 readOnly={!editMode}
                                                 placeholder="Expiration Date"
                                             />
-                                            {/* <input
-                                                type="date"
-                                                min={new Date().toISOString().split('T')[0]}
-                                                id="expiration"
-                                                className="form-control m-0"
-                                                value={expiration}
-                                                onBlur={handleBlur}
-                                                onChange={handleDateChange}
-                                                placeholder="Expiration"
-                                                disabled={!editMode}
-                                            /> */}
                                         </div>
                                     </>
                                 ) : null}
@@ -1148,7 +1236,10 @@ const Education = () => {
                                         placeholder="Select Native Languages"
                                         className="language-selector w-100"
                                         id="native-language"
-                                        onChange={(selectedOption) => set_language(selectedOption)}
+                                        onChange={(selectedOption) => {
+                                            set_language(selectedOption)
+                                            dynamicSave('NativeLang', selectedOption)
+                                        }}
                                         defaultValue={language}
                                         value={language}
                                         options={languageOptions}
@@ -1165,12 +1256,18 @@ const Education = () => {
                                         className="language-selector w-100"
                                         id="other-languages"
                                         value={othelang}
-                                        onChange={handleLanguageChange}
+                                        onChange={(selectedOption) => {
+                                            handleLanguageChange(selectedOption)
+                                            dynamicSave('NativeLangOtherLang', selectedOption)
+                                        }}
                                         options={languageOptions}
                                         isDisabled={!editMode} />
-                                </div></div>
+                                </div>
+                            </div>
 
                         </div>
+
+                        <div style={{ height: "100px" }}></div>
                     </div>
                     <div className="tutor-tab-education-experience"
                         style={{ marginTop: "75px" }}>
@@ -1192,9 +1289,22 @@ const Education = () => {
                             </Button>
                         </div>
                         {
-                            !!data.ThingsReferences?.length || addReference &&
+                            (!!dbValues.ThingsReferences?.length || addReference) &&
                             <div className="form-outline my-3" style={{ width: "450px" }}>
-                                <RichTextEditor
+                                <DebounceInput
+                                    delay={2000}
+                                    className="references"
+                                    value={references}
+                                    setInputValue={setReferences}
+                                    readOnly={!editMode}
+                                    debouceCallback={() => dynamicSave('ThingsReferences', references)}
+                                    placeholder={`Tutoring academy recommends using a digital pen made by Wacom for the collaboration tab whiteboard. Basic models are CTL-4100 & 6100. Check their official website www.wacom.com
+                               Cost: $50 or less
+                               `}
+                                    element='rich-editor'
+                                    height='400px'
+                                />
+                                {/* <RichTextEditor
                                     className="references"
                                     value={references}
                                     onChange={(value) => setReferences(value)}
@@ -1203,12 +1313,27 @@ const Education = () => {
                                     Cost: $50 or less
                                     `}
                                     height='400px'
-                                />
+                                /> */}
                             </div>
                         }
                         <div style={{ width: "450px" }}>
 
-                            <UserRichTextEditor
+
+                            <DebounceInput
+                                delay={2000}
+                                className="work-exp"
+                                value={workExperience}
+                                setInputValue={set_workExperience}
+                                readOnly={!editMode}
+                                placeholder="Enter Your Work Experience"
+                                height='800px'
+                                required
+                                debouceCallback={() => dynamicSave('WorkExperience', workExperience)}
+                                element='user-rich-editor'
+                            />
+
+
+                            {/* <UserRichTextEditor
                                 className="work-exp"
                                 value={workExperience}
                                 onChange={handleEditorChange}
@@ -1218,7 +1343,7 @@ const Education = () => {
                                 required
 
                             />
-
+ */}
                         </div>
                     </div>
 

@@ -1,8 +1,11 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert, getAll, findById, findByAnyIdColumn, update, find } = require('../helperfunctions/crud_queries');
+const { insert, getAll, findById, findByAnyIdColumn, update, find, updateById } = require('../helperfunctions/crud_queries');
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
-const moment = require('moment-timezone')
+const moment = require('moment-timezone');
+const sql = require('mssql');
+const capitalizeFirstLetter = require('../constants/helperfunctions.js')
+
 const executeQuery = async (query, res) => {
     try {
         const db = await marom_db(() => { })
@@ -28,19 +31,19 @@ const executeQuery = async (query, res) => {
     }
 };
 
+let upload_setup_info = (req, res) => {
 
-let upload_form_one = (req, res) => {
-
-    let { fname, mname, sname, email, lang, is_18, pwd, cell, grade,
+    let { fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
+        is_18, pwd, cell, grade,
         add1, add2, city, state, zipCode, country,
-        timeZone, parent_fname, parent_lname, parent_email, photo, acadId, parentConsent,
+        timeZone, photo, acadId, parentConsent,
         userId } = req.body;
 
     let UserId = mname?.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] +
         shortId.generate() : fname + '.' + ' ' + sname[0] + shortId.generate();
 
-    let screenName = mname?.length > 0 ? fname + '.' + ' ' + mname[0] + '.' + ' ' + sname[0] :
-        fname + '.' + ' ' + sname[0];
+    let screenName = mname?.length > 0 ? capitalizeFirstLetter(fname) + ' ' + capitalizeFirstLetter(mname[0]) + '. ' + capitalizeFirstLetter(sname[0]) :
+        capitalizeFirstLetter(fname) + '. ' + capitalizeFirstLetter(sname[0]);
 
 
     let action = cb => {
@@ -69,7 +72,7 @@ let upload_form_one = (req, res) => {
                         res.send({ user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Saved Successfully', type: 'save' })
                     })
                     .catch((err) => {
-                        res.send({ user: UserId, screen_name: screenName, bool: false, mssg: 'Data Was Not Saved Successfully Due To Database Malfunction, Please Try Again.' })
+                        res.status(400).send({ user: UserId, screen_name: screenName, bool: false, mssg: 'Data Was Not Saved Successfully Due To Database Malfunction, Please Try Again.' })
                         console.log(err)
 
                     })
@@ -82,17 +85,14 @@ let upload_form_one = (req, res) => {
                 const sql = require('mssql');
                 var poolConnection = await sql.connect(config);
 
-                // let result = poolConnection ? await update_student_data(poolConnection) : 'connection error';
                 update_student_data(poolConnection)
                     .then((result) => {
-                        res.send({ user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Updated Successfully', type: 'update' })
+                        res.status(200).send({ user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Updated Successfully', type: 'update' })
                     })
                     .catch((err) => {
-                        res.send({ user: UserId, screen_name: screenName, bool: false, mssg: 'Data Was Not Updated Successfully Due To Database Malfunction, Please Try Again.' })
+                        res.status(400).send({ user: UserId, screen_name: screenName, bool: false, mssg: 'Data Was Not Updated Successfully Due To Database Malfunction, Please Try Again.' })
                         console.log(err)
                     })
-                //res.send({user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Updated Successfully'})
-
             })
 
         }
@@ -109,13 +109,15 @@ let upload_form_one = (req, res) => {
 
     let insert_student_data = async (poolConnection) => {
         let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName,
-             MiddleName, LastName, Email, Password, Cell, Language,
-             AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT, ParentEmail, 
-             ParentFirstName, 
-            ParentLastName, AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
-        VALUES ('${fname}', '${mname}', '${sname}','${email}','${pwd}','${cell}',
-        '${lang}', '${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}', '${zipCode}',
-        '${country}','${timeZone}','${parent_email}','${parent_fname}','${parent_lname}',\
+             MiddleName, LastName, Email, Cell, Language, SecLan, ParentAEmail, ParentBEmail, 
+             ParentAName, ParentBName,
+             AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT
+             AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
+        VALUES ('${fname}', '${mname}', '${sname}','${email}','${cell}',
+        '${lang}', '${secLan}', '${parentAEmail}', '${parentBEmail}', 
+        '${parentAName}', '${parentBName}','${is_18}', '${grade}', '${add1}','${add2}','${city}','${state}',
+         '${zipCode}',
+        '${country}','${timeZone}',
          '${UserId}','${screenName}','${photo}', 'Pending', '${parentConsent}','${userId}')`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
@@ -128,35 +130,33 @@ let upload_form_one = (req, res) => {
         set Photo = '${photo}', Address1 = '${add1}', Address2 = '${add2}', City = '${city}',
          State = '${state}', ZipCode = '${zipCode}', Country = '${country}', 
           Email = '${email}', Cell = '${cell}', FirstName='${fname}',LastName='${sname}',
-          MiddleName='${mname}',
-        GMT = '${timeZone}', Password = '${pwd}', Language='${lang}', AgeGrade='${is_18}',
-         Grade='${grade}', ParentEmail='${parent_email}', ParentFirstName='${parent_fname}',
-          ParentConsent='${parentConsent}', ParentLastName='${parent_lname}'  
+          MiddleName='${mname}', GMT = '${timeZone}', Language='${lang}', AgeGrade='${is_18}',
+         Grade='${grade}', ParentConsent='${parentConsent}', SecLan = '${secLan}', 
+         ParentAEmail='${parentAEmail}', ParentBEmail='${parentBEmail}', 
+          ParentAName='${parentAName}', ParentBName='${parentBName}', ScreenName= '${screenName}'
           WHERE CONVERT(VARCHAR, AcademyId) = '${acadId}'`)
 
         let result = await records.rowsAffected[0] === 1 ? true : false
         return (result);
     }
-
 }
 
-
 let get_student_setup = (req, res) => {
-    let { AcademyId = null, userId = null } = req.query;
-    console.log(AcademyId, userId)
     marom_db(async (config) => {
         const sql = require('mssql');
 
         var poolConnection = await sql.connect(config);
         if (poolConnection) {
             poolConnection.request().query(
-                findByAnyIdColumn('StudentSetup', req.query, 'varchar')
+                findByAnyIdColumn('StudentSetup', req.query)
             )
                 .then((result) => {
                     res.status(200).send(result.recordset)
                 })
-            //   .catch(err => console.log(err))
-
+                .catch(err => {
+                    console.log(err);
+                    res.status(400).send({ message: "Failed to fetch student record!" })
+                })
         }
 
     })
@@ -187,69 +187,38 @@ let get_student_grade = (req, res) => {
 
 let get_tutor_subject = async (req, res) => {
     try {
+        marom_db(async (config) => {
+            try {
+                let { subject } = req.query;
 
-        let { subject } = req.query;
-        console.log(subject)
-        let book = {}
-        let subjectLength = 0
+                const poolConnection = await sql.connect(config);
+                if (poolConnection) {
+                    const subjects = await poolConnection.request().query(`SELECT 
+                    SubjectRates.*,
+                    edu.*,
+                    TutorSetup.ResponseHrs as responseTime, 
+                    TutorSetup.Status as status,
+                    TutorRates.CancellationPolicy as cancPolicy
+                    FROM SubjectRates
+                    JOIN TutorSetup ON cast(TutorSetup.AcademyId as varchar(max)) = 
+                    cast(SubjectRates.AcademyId as varchar(max))
+                    JOIN TutorRates ON cast(TutorRates.AcademyId as varchar(max)) = 
+                    cast(SubjectRates.AcademyId as varchar(max))
+                    JOIN Education as edu ON
+                    cast(TutorSetup.AcademyId as varchar(max)) =  cast(edu.AcademyId as varchar(max))
+                    WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}';`)
 
-        let subjects = async () => await connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT SubjectRates.*,
-            TutorSetup.ResponseHrs as responseTime, 
-            TutorRates.CancellationPolicy as cancPolicy
-            FROM SubjectRates
-            JOIN TutorSetup ON cast(TutorSetup.AcademyId as varchar(max)) = cast(SubjectRates.AcademyId as varchar(max))
-            JOIN TutorRates ON cast(TutorRates.AcademyId as varchar(max)) = cast(SubjectRates.AcademyId as varchar(max))
-            WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}';`)
-                .then((result) => {
-                    subjectLength = result.recordset.length;
-                    return result.recordset;
-                })
-                .catch(err => console.log(err))
-        )
-
-        let edu = (subjectsBook) => connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  
-        '${subjectsBook.AcademyId}'`)
-                .then((result) => {
-                    return result.recordset
-                })
-            //   .catch(err => console.log(err))
-        )
-
-        let tutor = (subjectsBook) => connecteToDB.then(poolConnection =>
-            poolConnection.request().query(`SELECT TutorScreenname From TutorSetup  WHERE CONVERT(VARCHAR, AcademyId) = 
-         '${subjectsBook.AcademyId}'`)
-                .then(async (result) => {
-                    console.log(result)
-                    return result.recordset
-                })
-            //   .catch(err => console.log(err))
-        )
-
-        async function extratInfo() {
-            let subject = await subjects();
-            if (subject.length > 0) {
-                subject.map((async (item) => {
-                    let tutorData = await tutor(item);
-                    let tutorEducation = await edu(item)
-
-                    book[shortId.generate()] = [(item), ...tutorEducation, ...tutorData];
-                    if (Object.keys(book).length === subjectLength) {
-
-                        let data = Object.values(book)
-                        res.status(200).send(data)
-                    } else {
-                        console.log(Object.keys(book).length, subjectLength)
-                    }
-                }))
-            } else { res.status(200).send([]) }
-        }
-
-        extratInfo()
+                    res.status(200).send(subjects.recordset)
+                }
+            }
+            catch (err) {
+                console.log(err)
+                res.status(400).send({ message: err.message })
+            }
+        })
     } catch (err) {
         console.log(err)
-        res.status(500).send(err)
+        res.status(500).send({ message: err.message })
     }
 }
 
@@ -270,7 +239,7 @@ let upload_student_short_list = async (req, res) => {
                         return result.recordset
 
                     })
-                //   .catch(err => console.log(err))
+                    .catch(err => console.log(err))
             )
 
 
@@ -294,7 +263,7 @@ let upload_student_short_list = async (req, res) => {
                         }
 
                     })
-                //   .catch(err => console.log(err))
+                    .catch(err => console.log(err))
             )
     }
 
@@ -311,64 +280,28 @@ let upload_student_short_list = async (req, res) => {
 
 const get_student_short_list = async (req, res) => {
     try {
-        let tutorUserData = [];
-        let tutorDemoLesson = [];
-        let shortList = async () => {
-            let poolConnection = await connecteToDB;
+        marom_db(async (config) => {
+            let tutorUserData = [];
+            let tutorDemoLesson = [];
+            let poolConnection = await sql.connect(config);
             let result = await poolConnection.request().query(
-                `SELECT SSL.*, TR.*, SR.rate as rate
+                `SELECT SSL.*, TR.*, SR.rate as rate, TS.*
                 FROM StudentShortList SSL
                 left JOIN TutorRates TR ON 
-                CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TR.AcademyId)   
+                    CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TR.AcademyId)   
+                join TutorSetup as TS ON
+                    CONVERT(VARCHAR(MAX), SSL.AcademyId) = CONVERT(VARCHAR(MAX), TS.AcademyId)   
                 inner join SubjectRates as SR ON
-                cast(SR.AcademyId as VARCHAR(MAX)) =  cast( TR.AcademyId as VARCHAR(MAX)) and      
-                cast(SR.subject as VARCHAR(MAX)) =  cast( SSL.Subject as VARCHAR(MAX))   
+                    cast(SR.AcademyId as VARCHAR(MAX)) =  cast( TR.AcademyId as VARCHAR(MAX)) and      
+                    cast(SR.subject as VARCHAR(MAX)) =  cast( SSL.Subject as VARCHAR(MAX))   
                 WHERE cast( SSL.Student as varchar) = cast('${req.params.student}' as varchar) `
             );
-            return result.recordset;
-        };
 
-        let getTutorDemo = async () => {
-            let poolConnection = await connecteToDB;
-            let result = await poolConnection.request().query(
-                'SELECT FreeDemoLesson, AcademyId FROM TutorRates'
-            );
-            tutorDemoLesson.push(result.recordset);
-            return tutorDemoLesson;
-        };
-
-        let getTutorDataViaShortList = async () => {
-            let poolConnection = await connecteToDB;
-            let result = await poolConnection.request().query('SELECT * FROM TutorSetup');
-            tutorUserData.push(result.recordset);
-            return tutorUserData;
-        };
-
-        let studentShortList = await shortList();
-        let tutorProfile = await getTutorDataViaShortList();
-        let demoLesson = await getTutorDemo();
-
-        let studentBook = [];
-
-        studentShortList.map((item) => {
-            let tutorData = tutorProfile[0].filter((tutor) => {
-                return tutor.AcademyId === item.AcademyId[0]
-            })[0];
-            let tutorDemoLesson = demoLesson[0].filter((tutor) => tutor.AcademyId === item.AcademyId[0])[0];
-            let bookName = shortId.generate();
-            if (Object.keys(tutorData ? tutorData : {})?.length) {
-                bookName = {
-                    tutorDemoLesson: tutorDemoLesson,
-                    tutorData: tutorData,
-                    tutorShortList: item,
-                };
-
-                studentBook.push(bookName);
-            }
-        });
-        res.status(200).send(studentBook);
+            res.status(200).send(result.recordset);
+        })
     } catch (err) {
         console.log(err);
+        res.status(400).send({ message: err.message })
     }
 };
 
@@ -403,7 +336,7 @@ let get_my_data = async (req, res) => {
             let record = result.recordset[0] || {}
             if (record.userId) {
                 const { recordset } = await poolConnection.request().query(
-                    findByAnyIdColumn('Users', { SID: record.userId })
+                    findByAnyIdColumn('Users1', { SID: record.userId })
                 )
                 record = { ...record, Email: recordset[0].email }
             }
@@ -890,7 +823,8 @@ function getBookedSlot(req, res) {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     `
-                    SELECT bookedSlots From StudentBookings WHERE CONVERT(VARCHAR, studentId) = '${AcademyId}'
+                    SELECT bookedSlots From StudentBookings 
+                    WHERE CONVERT(VARCHAR, studentId) = '${AcademyId}'
                 `
                 )
                 res.status(200).send(result.recordset)
@@ -904,14 +838,171 @@ function getBookedSlot(req, res) {
     })
 }
 
+const post_student_agreement = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    update('StudentSetup', req.body, req.params)
+                )
+                res.status(200).send(result.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
+const set_code_applied = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+
+                const { recordset: tutorRateRecord } = await poolConnection.request().query(
+                    find('TutorRates', { AcademyId: req.params.tutorId }, 'AND', { AcademyId: 'varchar' })
+                )
+                console.log(tutorRateRecord)
+                if (tutorRateRecord[0].CodeStatus === 'used') throw new Error('Code Already Used!')
+
+                const { recordset: updatedTutorRateRecord } = await poolConnection.request().query(
+                    update('TutorRates', { CodeStatus: 'used' }, { AcademyId: req.params.tutorId }, { AcademyId: 'varchar' })
+                )
+                if (!updatedTutorRateRecord.length) throw new Error('Code does not exist!')
+                const { recordset: updatedStudenTutorCodeStatus } = await poolConnection.request().query(
+                    update('StudentShortList', { CodeApplied: true },
+                        {
+                            AcademyId: req.params.tutorId,
+                            Student: req.params.studentId,
+                            Subject: updatedTutorRateRecord[0].CodeSubject
+                        },
+                        { AcademyId: 'varchar', Student: 'varchar', Subject: 'varchar' })
+                )
+
+                if (!updatedStudenTutorCodeStatus.length) {
+                    const { recordset: SubjectRate } = await poolConnection.request().query(
+                        find('SubjectRates', {
+                            AcademyId: req.params.tutorId,
+                            Subject: updatedTutorRateRecord[0].CodeSubject
+                        }, 'AND', { AcademyId: 'varchar', Subject: 'varchar' })
+                    )
+
+                    console.log(SubjectRate, updatedTutorRateRecord)
+                    if (!SubjectRate[0].rate) throw new Error('Invalid Code!')
+
+                    await poolConnection.request().query(
+                        insert('StudentShortList',
+                            {
+                                CodeApplied: true,
+                                AcademyId: req.params.tutorId,
+                                Student: req.params.studentId,
+                                Subject: updatedTutorRateRecord[0].CodeSubject,
+                                Rate: SubjectRate[0].rate,
+                                ScreenName: req.params.tutorId,
+                                date: new Date().toLocaleString()
+                            },
+                            { AcademyId: 'varchar', Student: 'varchar', Subject: 'varchar', ScreenName: 'varchar' })
+                    )
+                }
+
+                res.status(200).send({ message: 'Code applied status changed succesfully' });
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
+const get_published_ads = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const result = await poolConnection.request().query(
+                    find('TutorAds', { Status: 'published' })
+                )
+                res.status(200).send(result.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
+const get_all_students_sessions_formatted = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const { recordset } = await poolConnection.request().query(
+                    `select sb.*, ss.GMT
+                    from StudentBookings as sb
+                    join StudentSetup as ss on
+                    cast(ss.AcademyId as varchar) = sb.studentId
+                    where sb.studentId = '${req.params.studentId}'
+                    `
+                )
+
+                const offset = parseInt(recordset[0].GMT, 10);
+                let timezones = moment.tz.names().filter(name =>
+                    (moment.tz(name).utcOffset()) === offset * 60);
+                const timeZone = timezones[0] || null
+
+                let reservedSlots = [];
+                let bookedSlots = []
+                recordset.map(record => {
+                    reservedSlots.push(JSON.parse(record.reservedSlots));
+                    bookedSlots.push(JSON.parse(record.bookedSlots))
+                    return
+                })
+
+                // const allSessions
+
+                const allSessions = (reservedSlots.concat(bookedSlots)).flat()
+
+                const currentTime = moment().tz(timeZone)
+                const sortedEvents = allSessions.sort((a, b) => moment(a.start).diff(moment(b.start)));
+                const upcomingSession = sortedEvents.find(event => moment(event.start).isAfter(currentTime)) || {};
+                const timeUntilStart = upcomingSession.id ?
+                    moment(upcomingSession.start).tz(timeZone).to(currentTime, true) : '';
+                let inMins = false
+                if (timeUntilStart.includes('minutes') || timeUntilStart.includes('minute')) {
+                    inMins = true
+                }
+
+                res.status(200).send({ sessions: allSessions, upcomingSession, inMins, upcomingSessionFromNow: timeUntilStart })
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
     post_feedback_questions,
+    set_code_applied,
     update_shortlist,
+    get_all_students_sessions_formatted,
+    post_student_agreement,
     get_feedback_of_questions,
     get_feedback_questions,
-    upload_form_one,
+    upload_setup_info,
     get_student_setup,
     get_student_grade,
+    get_published_ads,
     getBookedSlot,
     get_tutor_subject,
     get_student_short_list,

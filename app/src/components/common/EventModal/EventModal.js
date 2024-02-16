@@ -62,18 +62,12 @@ function EventModal({
 
     const rescheduleEndTime = moment(convertToDate(rescheduleTime)).add(1, 'hours');
 
-    console.log((reservedSlots.concat(bookedSlots)).filter(slot => slot.type === 'intro' || slot.type === 'reserved').length,
-      (reservedSlots.concat(bookedSlots)).filter(slot => slot.type === 'booked').length)
-
     const updatedReservedSlot = (reservedSlots.concat(bookedSlots)).map(slot => {
       if (slot.id === clickedSlot.id && slot.request)
         return { ...slot, request: null, start: rescheduleTime, end: rescheduleEndTime.toDate() }
       else
         return slot
     })
-
-    console.log(updatedReservedSlot.filter(slot => slot.type === 'intro' || slot.type === 'reserved').length,
-      updatedReservedSlot.filter(slot => slot.type === 'booked').length)
 
     const extractedReservedSlots = updatedReservedSlot.filter(slot => slot.type === 'intro' || slot.type === 'reserved');
     const extractedBookedSlots = updatedReservedSlot.filter(slot => slot.type === 'booked')

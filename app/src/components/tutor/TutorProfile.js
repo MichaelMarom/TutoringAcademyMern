@@ -19,6 +19,8 @@ import { FaFilePdf } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import Actions from '../common/Actions';
 import { monthFormatWithYYYY } from '../../constants/constants';
+import { SignOutButton, UserButton, useClerk } from '@clerk/clerk-react';
+import BTN_ICON from '../../images/button__icon.png'
 
 const TutorProfile = () => {
     const params = useParams();
@@ -31,6 +33,7 @@ const TutorProfile = () => {
     const userRole = localStorage.getItem('user_role')
     const [sortedGrades, setSortedGrades] = useState([]);
     const isStudentLoggedIn = location.pathname.split('/')[1] === 'student';
+    const { signOut } = useClerk();
 
     const customSort = (a, b) => {
         if (a === "Academic") {
@@ -98,7 +101,7 @@ const TutorProfile = () => {
     else if (!Object.keys(data).length)
         return <h5 className='text-danger p-5'>In order to view your profile, Please first must to complete uploading your Photo, Video, Diploma or Certification!</h5>
     return (
-        <div style={{ background: "lightGray", height: "93vh", overflowY: "auto" }}>
+        <div style={{ background: "lightGray", height: "83vh", overflowY: "auto" }}>
             <div className='container'>
                 <div className=''>
                     <div className='d-flex align-items-start justify-content-between w-100 mt-4 rounded  bg-white '
@@ -180,7 +183,7 @@ const TutorProfile = () => {
                                     Cancellation Policy -
                                 </div>
                                 <h6 className='m-0'>
-                                    {data.CancellationPolicy ? data.CancellationPolicy :
+                                    {data.CancellationPolicy ? `${data.CancellationPolicy} Hour` :
                                         <span className='text-danger'>not set</span>}
                                 </h6>
                             </div>
@@ -294,6 +297,7 @@ const TutorProfile = () => {
                                         {data.Introduction}
                                     </p>
                                 </div>
+
                             </div>
                         </div>
                         <div className='w-75'>
@@ -357,7 +361,6 @@ const TutorProfile = () => {
 
                                         <div className='px-2 w-75 d-flex justify-content-end'>
                                             {activeTab === 'bach' &&
-
                                                 <div className='d-flex border shadow flex-column w-75  p-4 justify-content-between' >
                                                     <h5 className=' text-center'>Bachelor Info</h5>
 

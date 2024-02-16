@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PROFILE_STATUS, statesColours } from "../../constants/constants";
+import { IoLogOut } from "react-icons/io5";
 
 
 const Header = () => {
@@ -29,8 +30,10 @@ const Header = () => {
         { url: '/tutor/rates', name: 'Motivate' },
         { url: '/tutor/accounting', name: 'Accounting' },
         { url: '/tutor/subjects', name: 'Subjects' },
-        { url: '/tutor/my-students', name: 'My students' },
         { url: '/tutor/scheduling', name: 'Scheduling' },
+        { url: '/tutor/feedback', name: 'Feedback' },
+        { url: '/tutor/my-students', name: 'My students' },
+        { url: '/tutor/Feedback', name: 'Feedback' },
         { url: '/tutor/term-of-use', name: 'Terms Of Use' },
         { url: '/tutor/chat', name: 'Message Board' },
         { url: '/tutor/market-place', name: 'Market place' },
@@ -73,30 +76,27 @@ const Header = () => {
     }
 
     let handle_scroll_right = () => {
-
         let div = document.querySelector('.tutor-tab-header');
         let scroll_elem = div.children[1];
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = w;
-
     }
 
     let handle_scroll_left = () => {
-
         let div = document.querySelector('.tutor-tab-header');
         let scroll_elem = div.children[1];
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = -w
-
     }
 
     return (
         <>
             <div className={`screen-name btn-success rounded  p-2 flex-column`}
                 style={{
-                    display: screen_name === 'null' ? 'none' : 'flex', position: 'fixed',
+                    display: !tutor.TutorScreenname ? 'none' : 'flex', position: 'fixed',
                     top: '2px', zIndex: '999', left: '45px',
-                    background: statesColours[tutorState]
+                    background: statesColours[tutorState]?.bg,
+                    color: statesColours[tutorState]?.color
                 }}>
                 <div style={{ fontWeight: 'bold' }}>{screen_name}</div>
                 <div style={{ fontSize: "12px" }} >
@@ -108,7 +108,7 @@ const Header = () => {
                 <div style={{
                     margin: '0 0 0 0', display
                         : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef',
-                    opacity: '.7', height: '100%', transform: 'skew(-0deg)'
+                    opacity: '.7', height: '100%', transform: 'skew(-0deg)', width: "50px",
                 }} className="scroller-left" onClick={handle_scroll_left}>
                     <div style={{ opacity: '1' }}>
                         <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -117,9 +117,11 @@ const Header = () => {
                     </div>
 
                 </div>
-                <ul id="tutor-header-menus" className={` header`} style={{
+                <ul id="" className={` header`} style={{
                     background: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? '#737476' : 'inherit',
                     pointerEvents: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? 'none' : 'auto',
+                    width: 'calc(100% - 300px)',
+                    margin: '0 200px 0 200px'
                 }}>
                     {tabs.map((tab) => (
                         <li
@@ -133,19 +135,22 @@ const Header = () => {
                     ))}
                 </ul>
 
-                <div className="scroller-right" onClick={handle_scroll_right}></div>
+                <div className="scroller-right" onClick={handle_scroll_right}
+                    style={{
+                        margin: '0 0 0 0', display
+                            : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef',
+                        opacity: '.7', height: '100%', transform: 'skew(-0deg)', width: "50px"
+                    }}></div>
                 <div style={{
-                    margin: '0 0 0 0', background: '#efefef', display
-                        : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
+                    margin: '0 0 0 0', background: '#efefef', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%',
+                    transform: 'skew(-0deg)'
                 }} className="scroller-right" onClick={handle_scroll_right}>
                     <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
 
                 </div>
-
-
-
             </div>
         </>
     );

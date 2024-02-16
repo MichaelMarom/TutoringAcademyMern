@@ -1,20 +1,21 @@
-const { marom_db, connecteToDB } = require('../db');
+const { marom_db } = require('../db');
 const { insert, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const signup = async (req, res) => {
-    const { password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const { password } = req.body;
+    // const hashedPassword = await bcrypt.hash(password, 10);
 
     marom_db(async (config) => {
         try {
             const sql = require('mssql');
             const poolConnection = await sql.connect(config);
+            console.log(req.body)
 
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    insert('Users', { ...req.body, password: hashedPassword })
+                    insert('Users1', req.body)
                 );
                 res.status(200).send(result.recordset);
             }
@@ -33,7 +34,6 @@ const login = async (req, res) => {
         try {
             const sql = require('mssql');
             const poolConnection = await sql.connect(config);
-
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     find('Users', { email: req.body.email })
@@ -69,7 +69,7 @@ const get_user_detail = async (req, res) => {
 
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    findByAnyIdColumn('Users', req.params)
+                    findByAnyIdColumn('Users1', req.params)
                 );
 
                 res.status(200).send(result.recordset[0]);
@@ -135,8 +135,14 @@ const forget_password = async (req, res) => {
     })
 }
 
+const token_auth = (token) => {
+    const data = jwt.verify(token, process.env.JWT_SECRET)
+    console.log(data)
+}
+
 module.exports = {
     login,
+    token_auth,
     get_user_detail,
     forget_password,
     signup,

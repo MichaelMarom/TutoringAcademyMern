@@ -45,7 +45,9 @@ const RichTextEditor = ({ value, onChange, readOnly, placeholder, height = '92vh
   ];
 
   return (
-    <div className="text-editor">
+    <div className="text-editor"
+      style={{ background: readOnly ? "#e9ecef" : "" }}
+    >
       <ReactQuill
         theme="snow"
         modules={modules}
@@ -53,7 +55,7 @@ const RichTextEditor = ({ value, onChange, readOnly, placeholder, height = '92vh
         value={value}
         placeholder={placeholder}
         disabled={readOnly}
-        style={{ height, backgroundColor: readOnly ? "#e9ecef" : "" }}
+        style={{ height, background: readOnly ? "#e9ecef" : "" }}
         onChange={(value) => onChange(value)}
         readOnly={readOnly}
         {...rest}

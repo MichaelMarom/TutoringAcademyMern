@@ -1,4 +1,4 @@
-import SubjectsComp from "../../components/tutor/Subjects";
+import SubjectsComp from "../../components/tutor/Subjects/Subjects";
 import TutorLayout from "../../layouts/TutorLayout";
 
 const Subjects = () => {

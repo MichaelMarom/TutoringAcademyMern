@@ -55,23 +55,20 @@ function TutorCalenderSidebar({
         <div className="tab-content card h-100" style={{ overflowY: "auto" }}>
             <div className='highlight small p-2'> To view feedback, click on past due date lessons that has stars icon.
                 To postpone, or cancel a lesson, click on a futor date session, and follow dialog.</div>
-            <div className='d-flex'>
-
+            <div className='d-flex '>
                 <button
-                    className={`action-btn btn w-50 ${activeTab === 'month' ? 'motn-btn' : 'week-btn'
-                        }`}
+                    className={`action-btn btn w-50 ${activeTab === 'month' ? 'motn-btn' : 'week-btn'}`}
                     style={{
                         boxShadow: `${activeTab === 'month' ? "5px 5px 10px rgba(0, 0, 0, 0.5)" : ""}`
 
                     }}
                     onClick={() => handleTabClick('month')}
-
                 >
                     <div className="button__content">
                         <div className="button__icon">
                             <img src={BTN_ICON} alt={"btn__icon"} />
                         </div>
-                        <p className="button__text">Blocked Week Days</p>
+                        <p className="button__text">Blocked Days</p>
                     </div>
                 </button>
                 <button

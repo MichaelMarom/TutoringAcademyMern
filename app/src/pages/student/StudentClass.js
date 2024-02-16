@@ -1,3 +1,4 @@
+import { Excalidraw } from "@excalidraw/excalidraw";
 import StudentCollabBoard from "../../components/student/StudentCollabBoard";
 import StudentCollabFooter from "../../components/student/StudentCollabFooter";
 import StudentCollabHeader from "../../components/student/StudentCollabHeader";
@@ -5,10 +6,16 @@ import StudentLayout from "../../layouts/StudentLayout";
 
 const StudentClass = () => {
     return (
-        <StudentLayout>
-            <StudentCollabHeader />
-            <StudentCollabBoard />
-            <StudentCollabFooter />
+        <StudentLayout showLegacyFooter={false}>
+            <div className="d-flex" style={{ gap: "2%" }}>
+                <div style={{ position: 'fixed', inset: 0, marginTop: "100px", width: "80%" }}>
+                    <Excalidraw />
+                </div>
+
+                <div className="bg-light rounded" style={{ width: "28%" }}>
+                    <StudentCollabBoard />
+                </div>
+            </div >
         </StudentLayout>
     );
 }

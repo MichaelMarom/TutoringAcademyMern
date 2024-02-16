@@ -322,7 +322,8 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                     <div className='p-3'>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="">SS# (Social Security Number) &nbsp; <Tooltip text="text" /> </label>
+                            <label htmlFor="">SS# (Social Security Number) &nbsp; <Tooltip text="Tutors that are American citizens, should mandatory 
+                            fill their SS# in order to receive annual form 1099." /> </label>
                             <input disabled={!editMode} className='form-control m-0 w-50'
                                 required={currentYearEarning > 600}
                                 onInput={e => set_ssh(e.target.value)}
@@ -332,7 +333,8 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                         </div>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="accumulated-hrs">Accumulated Hours <Tooltip text="text" /></label>
+                            <label htmlFor="accumulated-hrs">Accumulated Hours <Tooltip text="This is the total hours accumulated every
+                             year from the date of your start day" /></label>
                             <input className='form-control m-0' type="text"
                                 value={`${currentYearAccHours}:00`}
                                 style={{ float: 'right', width: '50%' }} disabled />
@@ -347,14 +349,15 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                         </div>
 
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="total-earning">Total Earning {(new Date()).getFullYear()}. <Tooltip text="text" /></label>
+                            <label htmlFor="total-earning">Total Earning {(new Date()).getFullYear()}. <Tooltip text="Calculate your total earnings since Jan 1st." /></label>
                             <input className='form-control m-0' type="text"
                                 value={currentYearEarning.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 id="total-earning"
                                 style={{ float: 'right', width: '50%' }} disabled />
                         </div>
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
-                            <label htmlFor="total-earning">Total Earning Previous Year. <Tooltip text="text" /></label>
+                            <label htmlFor="total-earning">Total Earning Previous Year. <Tooltip text="Calculate your total earning for the previous year. 
+                            This earnings will be shopwn on your 1099 form." /></label>
                             <input className='form-control m-0' type="text"
                                 value={previousYearEarning.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 id="total-earning"

@@ -1,26 +1,42 @@
 import React, { useState, useEffect } from 'react';
+import UserRichTextEditor from './RichTextEditor/UserRichTextEditor';
+import RichTextEditor from './RichTextEditor/RichTextEditor';
 
-const DebounceInput = ({ delay, value, setInputValue, onChange, element, ...rest }) => {
+const DebounceInput = ({ delay, value, setInputValue, onChange, debouceCallback, element = 'input', ...rest }) => {
     // const [inputValue, setInputValue] = useState(value);
     const [debouncedValue, setDebouncedValue] = useState(value);
 
     useEffect(() => {
-        const handler = setTimeout(() => {
-            setInputValue(value);
+        const delayInputTimeoutId = setTimeout(() => {
+            setDebouncedValue(value);
+            debouceCallback()
         }, delay);
-
-        return () => {
-            clearTimeout(handler);
-        };
+        return () => clearTimeout(delayInputTimeoutId);
     }, [value, delay]);
 
     const handleInputChange = (event) => {
         setInputValue(event.target.value);
     };
+    if (element === 'input')
+        return <input className="form-control" type="text" value={value}
+            onChange={handleInputChange}  {...rest} />;
 
-    const Element = element || 'input';
+    if (element == 'user-rich-editor')
+        return <UserRichTextEditor
+            value={value}
+            onChange={(value) => setInputValue(value)}
+            {...rest}
+        />
 
-    return <Element {...rest} value={debouncedValue} onChange={handleInputChange} />;
+
+    if (element === 'rich-editor')
+        return <RichTextEditor
+            value={value}
+            onChange={(value) => setInputValue(value)}
+            {...rest}
+        />
 };
+
+
 
 export default DebounceInput;

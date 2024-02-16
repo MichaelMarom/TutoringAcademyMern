@@ -86,7 +86,7 @@ const verifyToken = async (req, res, next) => {
     }
 };
 
-TUTOR_ROUTES.use(verifyToken);
+// TUTOR_ROUTES.use(verifyToken);
 
 TUTOR_ROUTES.get('/tutor/tutor-status', get_tutor_status)
 TUTOR_ROUTES.get('/tutor/subjects', subjects)

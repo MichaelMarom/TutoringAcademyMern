@@ -387,3 +387,38 @@
   background-clip: text;
   transition: 0.13s ease-in-out;
 }
+
+
+/* //-----------------------------------------------------------------/SmallSideBar---------------------------------- */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -200px;
+  /* Initially hides the sidebar */
+  width: 200px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  transition: right 0.3s ease;
+}
+
+.sidebar.open {
+  right: 0;
+  /* Shows the sidebar when open */
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 10px;
+  right: -30px;
+}
+
+.content {
+  margin-left: 200px;
+  /* Adjust this value to make space for the sidebar */
+  padding: 20px;
+}

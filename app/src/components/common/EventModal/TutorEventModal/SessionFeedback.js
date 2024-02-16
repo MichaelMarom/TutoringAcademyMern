@@ -1,5 +1,5 @@
 import React from 'react'
-import StarRating from '../../../student/Feedback/StarRating'
+import StarRating from '../../StarRating'
 import Loading from '../../Loading'
 
 export const SessionFeedback = ({ clickedSlot, questions, questionLoading }) => {

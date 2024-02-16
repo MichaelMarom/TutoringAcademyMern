@@ -31,7 +31,6 @@ const executeQuery = async (query, res) => {
     }
 };
 
-
 let upload_setup_info = (req, res) => {
 
     let { fname, mname, sname, email, lang, secLan, parentAEmail, parentBEmail, parentAName, parentBName,
@@ -940,10 +939,63 @@ const get_published_ads = async (req, res) => {
     })
 }
 
+const get_all_students_sessions_formatted = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const { recordset } = await poolConnection.request().query(
+                    `select sb.*, ss.GMT
+                    from StudentBookings as sb
+                    join StudentSetup as ss on
+                    cast(ss.AcademyId as varchar) = sb.studentId
+                    where sb.studentId = '${req.params.studentId}'
+                    `
+                )
+
+                const offset = parseInt(recordset[0].GMT, 10);
+                let timezones = moment.tz.names().filter(name =>
+                    (moment.tz(name).utcOffset()) === offset * 60);
+                const timeZone = timezones[0] || null
+
+                let reservedSlots = [];
+                let bookedSlots = []
+                recordset.map(record => {
+                    reservedSlots.push(JSON.parse(record.reservedSlots));
+                    bookedSlots.push(JSON.parse(record.bookedSlots))
+                    return
+                })
+
+                // const allSessions
+
+                const allSessions = (reservedSlots.concat(bookedSlots)).flat()
+
+                const currentTime = moment().tz(timeZone)
+                const sortedEvents = allSessions.sort((a, b) => moment(a.start).diff(moment(b.start)));
+                const upcomingSession = sortedEvents.find(event => moment(event.start).isAfter(currentTime)) || {};
+                const timeUntilStart = upcomingSession.id ?
+                    moment(upcomingSession.start).tz(timeZone).to(currentTime, true) : '';
+                let inMins = false
+                if (timeUntilStart.includes('minutes') || timeUntilStart.includes('minute')) {
+                    inMins = true
+                }
+
+                res.status(200).send({ sessions: allSessions, upcomingSession, inMins, upcomingSessionFromNow: timeUntilStart })
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 module.exports = {
     post_feedback_questions,
     set_code_applied,
     update_shortlist,
+    get_all_students_sessions_formatted,
     post_student_agreement,
     get_feedback_of_questions,
     get_feedback_questions,

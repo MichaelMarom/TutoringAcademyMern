@@ -6,9 +6,8 @@ import StarRating from '../../common/StarRating';
 import { convertToDate } from '../../common/Calendar/Calendar';
 import { useSelector } from 'react-redux';
 import Tooltip from '../../common/ToolTip';
-import { moment } from '../../../config/moment'
 
-function BookedLessons({
+function SessionsTable({
   events,
   handleRowSelect,
   selectedEvent,
@@ -88,4 +87,4 @@ function BookedLessons({
   );
 }
 
-export default BookedLessons;
+export default SessionsTable;

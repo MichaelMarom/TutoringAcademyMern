@@ -67,45 +67,39 @@ const Header = () => {
 
 
     let handle_scroll_right = () => {
-
-        let div = document.querySelector('.student-tab-header');
+        let div = document.querySelector('.tutor-tab-header');
         let scroll_elem = div.children[1];
-        console.log(scroll_elem)
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = w;
-
     }
 
     let handle_scroll_left = () => {
-
-        let div = document.querySelector('.student-tab-header');
+        let div = document.querySelector('.tutor-tab-header');
         let scroll_elem = div.children[1];
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = -w
-
     }
-
 
     let handleTabClick = e => {
         nav(`/student/${e.currentTarget.dataset.url}`)
     }
 
-
     return (
         <>
-            <div className="screen-name btn-primary rounded"
-
+            <div className={`screen-name btn-success rounded  p-2 flex-column`}
                 style={{
-                    display: student.ScreenName ? 'none' : 'flex', position: 'fixed',
-                    top: '15px', zIndex: '999', fontWeight: 'bold', color: '#fff', left: '45px',
-                    padding: '3px 5px 0 5px', height: '30px'
+                    display: 'flex', position: 'fixed',
+                    top: '2px', zIndex: '999', left: '45px',
                 }}>
-                {student.ScreenName}
+                <div style={{ fontWeight: 'bold' }}>{student.ScreenName}</div>
+              
             </div>
-            <div className="student-tab-header shadow-sm">
+
+            <div className="tutor-tab-header shadow-sm">
                 <div style={{
                     margin: '0 0 0 0', display
-                        : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
+                        : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef',
+                    opacity: '.7', height: '100%', transform: 'skew(-0deg)', width: "50px",
                 }} className="scroller-left" onClick={handle_scroll_left}>
                     <div style={{ opacity: '1' }}>
                         <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -114,24 +108,36 @@ const Header = () => {
                     </div>
 
                 </div>
-                <ul className="header">
+                <ul id="" className={` header`} style={{
+                    background:'inherit',
+                    pointerEvents:  'auto',
+                    width: 'calc(100% - 300px)',
+                    margin: '0 200px 0 200px'
+                }}>
                     {tabs.map((tab) => (
                         <li
                             key={tab.url}
                             data-url={tab.url}
                             onClick={handleTabClick}
-                            id={tab.url === activeTab ? 'student-tab-header-list-active' : ''}
+                            id={activeTab.includes(tab.url) ? 'tutor-tab-header-list-active' : ''}
                         >
                             <a>{tab.name}</a>
                         </li>
                     ))}
                 </ul>
-                <div className="scroller-right" onClick={handle_scroll_right}></div>
+
+                <div className="scroller-right" onClick={handle_scroll_right}
+                    style={{
+                        margin: '0 0 0 0', display
+                            : 'flex', alignItems: 'center', justifyContent: 'center', background: '#efefef',
+                        opacity: '.7', height: '100%', transform: 'skew(-0deg)', width: "50px"
+                    }}></div>
                 <div style={{
-                    margin: '0 0 0 0', background: '#efefef', display
-                        : 'flex', alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%', transform: 'skew(-0deg)'
+                    margin: '0 0 0 0', background: '#efefef', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center', opacity: '.7', height: '100%',
+                    transform: 'skew(-0deg)'
                 }} className="scroller-right" onClick={handle_scroll_right}>
-                    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">``
+                    <svg width="30px" height="30px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13 15L16 12M16 12L13 9M16 12H8M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
 

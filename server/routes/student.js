@@ -12,7 +12,7 @@ const { upload_setup_info, get_student_setup, get_student_grade, get_tutor_subje
     get_feedback_questions,
     get_feedback_of_questions,
     post_feedback_questions,
-    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings, post_student_agreement, set_code_applied, get_published_ads } = require('../controllers/student');
+    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings, post_student_agreement, set_code_applied, get_published_ads, get_all_students_sessions_formatted } = require('../controllers/student');
 const { express,
     path,
     fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
@@ -35,9 +35,11 @@ STUDENT_ROUTES.put('/student/setup/agreement/:userId', parser, post_student_agre
 //bookings
 STUDENT_ROUTES.post('/student/booking', parser, post_student_bookings)
 STUDENT_ROUTES.get('/student/tutor/bookings/:tutorId', get_tutor_bookings)
+STUDENT_ROUTES.get('/student/sessions/formatted/:studentId', get_all_students_sessions_formatted)
 STUDENT_ROUTES.get('/student/booking/:studentId/:tutorId', parser, get_student_or_tutor_bookings)
 
 STUDENT_ROUTES.get('/student/booking/:studentId', get_student_bookings)
+
 STUDENT_ROUTES.get('/student/bank/:AcademyId', get_student_bank_details)
 STUDENT_ROUTES.post('/student/bank', parser, post_student_bank_details)
 STUDENT_ROUTES.post('/student/feedback', parser, post_student_feedback)

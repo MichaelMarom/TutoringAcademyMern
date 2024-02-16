@@ -10,6 +10,8 @@ import { showDate } from '../../helperFunctions/timeHelperFunctions'
 import { convertToDate } from '../../components/common/Calendar/Calendar'
 import { post_student_agreement, upload_setup_form } from '../../axios/student'
 import { setStudent } from '../../redux/student_store/studentData'
+import SmallSideBar from '../../components/common/SmallSideBar'
+import { generateUpcomingSessionMessage } from '../../helperFunctions/generalHelperFunctions'
 
 const StudentIntro = () => {
     const { user } = useSelector(state => state.user)
@@ -21,6 +23,8 @@ const StudentIntro = () => {
     const [fetching, setFetching] = useState(true);
     const { student } = useSelector(state => state.student)
     const [agreed, setAgreed] = useState();
+    const { upcomingSessionFromNow, upcomingSession } = useSelector(state => state.studentSessions)
+
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -88,15 +92,13 @@ const StudentIntro = () => {
         setLoading(false)
     }
 
-    console.log(student)
-    const handleEditClick = () => setEditMode(true)
-
     const handleEditorChange = (value) => { setTerms(value) }
 
     if (fetching)
         return <Loading />
     return (
         <StudentLayout showLegacyFooter={false}>
+
             <form onSubmit={user.role === 'admin' ? handleSave : handleSaveAgreement}>
                 <div className='px-4 mt-4 student-terms'>
                     <RichTextEditor

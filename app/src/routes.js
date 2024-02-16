@@ -16,7 +16,7 @@ import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
 import { setShortlist } from "./redux/student_store/shortlist";
-import { get_my_data, get_student_setup_by_userId } from "./axios/student";
+import { formatted_student_sessions, get_my_data, get_student_setup_by_userId } from "./axios/student";
 
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
@@ -30,6 +30,7 @@ import {
 } from '@clerk/clerk-react';
 import { get_user_detail } from "./axios/auth";
 import { redirect_to_login } from "./helperFunctions/auth";
+import { setStudentSessions } from "./redux/student_store/studentSessions";
 
 const App = () => {
   let location = useLocation();
@@ -92,13 +93,19 @@ const App = () => {
   //dispatch
 
   useEffect(() => {
-    if (studentLoggedIn) {
+    if (studentLoggedIn && userId && isSignedIn) {
       moment.tz.setDefault(student.timeZone);
     }
     else {
       moment.tz.setDefault(tutor.timeZone);
     }
-  }, [tutor, student])
+  }, [tutor, student, userId, isSignedIn])
+
+
+  //sessons
+  useEffect(() => {
+    student.AcademyId && dispatch(setStudentSessions(student))
+  }, [student])
 
   const getStudentDetails = async () => {
     if (nullValues.includes(studentUserId)) {

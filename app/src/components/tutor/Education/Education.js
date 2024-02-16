@@ -626,7 +626,7 @@ const Education = () => {
 
 
         if (!cert_file_name || !deg_file_name)
-            toast.warning('Since you selected academic education, but You did not upload your diploma, your Profile will stay in Pending status and cannot be activated until you upload the missing documents!')
+            toast.warning('You selected academic education, but did not upload your diploma. Hence,your Profile will stay in "Pending" status and cannot be activated until you upload the missing documents!')
 
         setSaving(true)
         tutor.Status === 'pending' && await saver();

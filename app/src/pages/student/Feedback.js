@@ -5,13 +5,17 @@ import QuestionFeedback from '../../components/student/Feedback/QuestionFeedback
 import { get_all_feedback_questions, get_feedback_to_question, get_payment_report, post_feedback_to_question } from '../../axios/student';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
 import { wholeDateFormat } from '../../constants/constants';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { postStudentBookings } from '../../redux/student_store/studentBookings';
 import Actions from '../../components/common/Actions';
 import { toast } from 'react-toastify';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
+import { moment } from '../../config/moment'
+import SmallSideBar from '../../components/common/SmallSideBar';
 
 export const Feedback = () => {
+    const { student } = useSelector(state => state.student)
+    const [upcomingSessionNotice, setUpcomingSessionNotice] = useState('')
     const [questions, setQuestions] = useState([]);
     const [comment, setComment] = useState('')
     const [reservedSlots, setReservedSlots] = useState([])
@@ -22,7 +26,7 @@ export const Feedback = () => {
     const [feedbackData, setFeedbackData] = useState([])
     const studentId = localStorage.getItem('student_user_id');
     const [pendingChange, setPendingChange] = useState(null);
-
+    const [upcomingEvent, setUpcomingEvent] = useState({})
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -209,7 +213,6 @@ export const Feedback = () => {
         fetchPaymentReport();
     }, []);
 
-
     useEffect(() => {
         if (selectedEvent.id) {
             setQuestionLoading(true)
@@ -240,6 +243,36 @@ export const Feedback = () => {
 
     }, [selectedEvent])
 
+    // useEffect(() => {
+    //     if (!!feedbackData.length && student.timeZone) {
+    //         const currentTime = moment().tz(student.timeZone)
+    //             // const upcomingEvent = feedbackData.reduce((upcoming, current) => {
+    //             //     return (new Date(current.start) < new Date(upcoming.start) && new Date(current.start) > currentTime) ? current : upcoming;
+    //             // });
+    //             ;
+
+    //         const sortedEvents = feedbackData.sort((a, b) => moment(a.start).diff(moment(b.start)));
+
+    //         // Find the first event whose start time is after the current time
+    //         const upcomingEvent = sortedEvents.find(event => moment(event.start).isAfter(currentTime));
+
+
+    //         console.log(upcomingEvent)
+    //         setUpcomingEvent(upcomingEvent)
+    //     }
+    // }, [feedbackData, student])
+
+    // useEffect(() => {
+    //     const currentTime = moment().tz(student.timeZone || 'America/New_York'); // Current time
+    //     if (upcomingEvent?.start && student.timeZone
+    //         //  && moment(upcomingEvent.start).tz(student.timeZone).isSameOrAfter(currentTime)
+    //     ) {
+    //         const timeUntilStart = moment(upcomingEvent.start).tz(student.timeZone).to(currentTime, true);
+    //         const message = `Your next lesson (${upcomingEvent.subject}) is starting in ${timeUntilStart}.`;
+    //         setUpcomingSessionNotice(message)
+    //     }
+    // }, [student, upcomingEvent]);
+
     return (
         <StudentLayout showLegacyFooter={false}>
             <div className="container mt-1">
@@ -250,7 +283,7 @@ export const Feedback = () => {
                         {feedbackData.length ?
                             <>
                                 <div style={{ fontSize: "14px" }}>
-                                    Lessons blinking by green border are ready for your feedback.
+                                    <span style={{ fontWeight: "bold", fontSize: "16px" }} > Lessons blinking</span> by green border are ready for your feedback.
                                     Please rate your tutor as soon as posible.</div>
                                 <BookedLessons
                                     setEvents={setFeedbackData}

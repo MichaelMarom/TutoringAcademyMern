@@ -17,6 +17,7 @@ import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
 import { get_student_tutor_events } from "../../../axios/student";
+import { setStudentSessions } from "../../../redux/student_store/studentSessions";
 
 const views = {
   WEEK: 'week',
@@ -306,12 +307,6 @@ const ShowCalendar = ({
     (activeTab === views.MONTH) ? setActiveView(views.MONTH) : setActiveView(views.WEEK)
   }, [activeTab])
 
-  useEffect(() => {
-    return () => {
-      toast.success("Saving Block_out slots!")
-    }
-  }, [])
-
   useDebouncedEffect(() => {
     if (dataFetched && !isStudentLoggedIn) {
       updateTutorDisableRecord();
@@ -385,6 +380,7 @@ const ShowCalendar = ({
       let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
+    student.AcademyId && dispatch(setStudentSessions(student))
   }
 
   const handleRemoveReservedSlot = (reservedSlots) => {

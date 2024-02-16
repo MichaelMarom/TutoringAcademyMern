@@ -15,6 +15,7 @@ import Create from "../pages/tutor/Add/Create";
 import Bid from "../pages/tutor/Add/Bid";
 import List from "../pages/tutor/Add/List";
 import TutorClass from "../pages/tutor/TutorClass";
+import TutorFeedback from '../pages/tutor/Feedback'
 
 // students
 import StudentSetup from "../pages/student/StudentSetup";
@@ -67,7 +68,9 @@ const rolePermissions = {
 
     { path: "/tutor/collaboration", component: <TutorClass /> },
     { path: '/tutor/chat', component: <Chat /> },
-    { path: '/tutor/chat/:id', component: <Chat /> }
+    { path: '/tutor/chat/:id', component: <Chat /> },
+    { path: '/tutor/feedback', component: <TutorFeedback /> }
+
   ],
   student: [
     { path: "/student/collaboration", component: <StudentClass /> },

@@ -47,7 +47,7 @@ const LoginPage = () => {
                 await setActive({ session: result.createdSessionId });
                 const token = await getToken({ template: 'tutoring-academy-jwt-template' });
                 if (token) {
-                    localStorage.setItem("access_token", token);
+                    // localStorage.setItem("access_token", token);
                 } else {
                     toast.error("Could not retrieve token!");
                 }
@@ -91,8 +91,9 @@ const LoginPage = () => {
             let fetchUser = async () => {
                 if (token && isLoaded) {
                     const user = await get_user_detail(userId, token)
-                    dispatch(setUser(user))
-                    localStorage.setItem('user', JSON.stringify(user))
+                    dispatch(setUser(user.userDetails))
+                    localStorage.setItem('user', JSON.stringify(user.userDetails))
+                    localStorage.setItem('access_token', user.token)
                     console.log(user);
                     if (user.role) {
                         user.role !== 'admin' ? navigate(`/${user.role}/intro`) :

@@ -1,3 +1,4 @@
+const { verifyToken } = require('../controllers/auth');
 const { subjects,
     post_form_one,
     get_countries,
@@ -69,7 +70,7 @@ TUTOR_ROUTES.get('/tutor/tutor-rate', get_tutor_rates)
 TUTOR_ROUTES.get('/tutor/my-edu', get_my_edu)
 TUTOR_ROUTES.get('/tutor/tutor-bank-details', get_bank_details)
 
-TUTOR_ROUTES.get('/tutor/tutor-setup', parser, get_tutor_setup);
+TUTOR_ROUTES.get('/tutor/tutor-setup', parser, verifyToken,get_tutor_setup);
 
 TUTOR_ROUTES.post('/tutor/payment', parser, upload_tutor_bank);
 TUTOR_ROUTES.post('/tutor/rates/:faculty/:subject/:id', parser, upload_tutor_rates);

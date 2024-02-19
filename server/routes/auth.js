@@ -8,7 +8,7 @@ const AUTH_ROUTERS = express.Router();
 
 AUTH_ROUTERS.post('/auth/login', parser, login);
 AUTH_ROUTERS.post('/auth/signup', parser, signup);
-AUTH_ROUTERS.get('/user/:SID', verifyToken, get_user_detail);
+AUTH_ROUTERS.get('/user/:SID',  get_user_detail);
 AUTH_ROUTERS.get('/setup/:role/:userId', get_setup_detail)
 AUTH_ROUTERS.put('/user/forgetpassword/:email', parser, forget_password)
 

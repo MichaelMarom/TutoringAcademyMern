@@ -5,14 +5,28 @@ const jwt = require('jsonwebtoken');
 const Cookies = require("cookies");
 const clerkClient = require('@clerk/clerk-sdk-node');
 
+
+function generateToken(user) {
+    const payload = {
+        userId: user.SID,
+        email: user.email,
+    };
+    const options = {
+        expiresIn: '7h'
+    };
+    const secretKey = process.env.SECRET_KEY
+    return jwt.sign(payload, secretKey, options);
+}
+
 const verifyToken = async (req, res, next) => {
     if (req.originalUrl === '/auth/signup' || req.originalUrl === '/auth/login'
+        || req?.route?.path === '/user/:SID'
     ) next()
     // const publicKey = process.env.CLERK_SECRET_KEY
     // const cookies = new Cookies(req, res);
     // const sessToken = cookies.get("__session");
     const token = req.headers.authorization.replace('Bearer ', "");
-    const publicKey = process.env.SECRET_KEY
+    const publicKey = process.env.SECRET_KEY;
     // if (sessToken === undefined && (token === undefined || token === 'undefined' || token === 'null')) {
     //     return res.status(401).json({ message: "not signed in" });
     // }
@@ -115,11 +129,12 @@ const get_user_detail = async (req, res) => {
             const poolConnection = await sql.connect(config);
 
             if (poolConnection) {
-                const result = await poolConnection.request().query(
+                const { recordset } = await poolConnection.request().query(
                     findByAnyIdColumn('Users1', req.params)
                 );
+                const token = generateToken(recordset[0])
 
-                res.status(200).send(result.recordset[0]);
+                res.status(200).send({ userDetails: recordset[0], token });
             }
         } catch (err) {
             console.log(err);
@@ -187,17 +202,6 @@ const token_auth = (token) => {
     console.log(data)
 }
 
-function generateToken(user) {
-    const payload = {
-        userId: user.id,
-        email: user.email,
-        // Add more user data as needed
-    };
-    const options = {
-        expiresIn: '7h' // Token expiration time
-    };
-    return jwt.sign(payload, secretKey, options);
-}
 
 
 module.exports = {

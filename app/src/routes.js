@@ -63,7 +63,6 @@ const App = () => {
           data?.response?.data?.message?.includes('malformed')) {
           return redirect_to_login(navigate, signOut)
         }
-
         dispatch(setUser(data));
         localStorage.setItem('user', JSON.stringify(data));
 

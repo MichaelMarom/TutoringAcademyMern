@@ -4,7 +4,7 @@ import { get_tutor_rates, get_tutor_subjects, post_tutor_setup, upload_tutor_rat
 import { IoMdCopy, IoMdRefresh } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import Tooltip from "../common/ToolTip";
-import { copyToClipboard } from "../../helperFunctions/generalHelperFunctions";
+import { compareStates, copyToClipboard } from "../../helperFunctions/generalHelperFunctions";
 import Actions from "../common/Actions";
 import '../../styles/common.css'
 import { toast } from "react-toastify";
@@ -64,8 +64,6 @@ const Rates = () => {
           setClassTeaching(result[0].MultiStudent)
           setDiscountEnabled(result[0].CodeShareable)
           setIntroSessionDiscount(result[0].IntroSessionDiscount)
-          setSubject(result[0].CodeSubject)
-
           let subscriptionPlan = document.querySelector("#subscription-plan");
           ActivateSubscriptionOption === "true"
             ? (subscriptionPlan.checked = true)
@@ -146,22 +144,12 @@ const Rates = () => {
     SubscriptionPlan,
     CodeShareable: discountEnabled,
     MultiStudent: classTeaching,
-    DiscountCode: discountCode,
-  };
-
-  const compareStates = () => {
-    if (!(Object.keys(dbState).length)) return setChangesMade(false)
-    for (const key in currentState) {
-      if (currentState[key] !== dbState?.[key]) {
-        setChangesMade(true);
-        return;
-      }
-    }
-    setChangesMade(false);
+    IntroSessionDiscount: IntroSessionDiscount,
+    // DiscountCode: discountCode,
   };
 
   useEffect(() => {
-    compareStates();
+    setChangesMade(compareStates(dbState, currentState));
     // eslint-disable-next-line
   }, [currentState, dbState]);
 

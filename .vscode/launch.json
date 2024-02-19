@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program",
             "skipFiles": [
-                "${workspaceRoot}/node_modules/**/*.js",
+                "${workspaceRoot}/server/node_modules/**/*.js",
                 "<node_internals>/**/*.js"
             ],
             "program": "${workspaceFolder}\\server\\index.js",

@@ -80,6 +80,9 @@ const Actions = ({
         navigate(`/${currentUser}/${currentTabInfo.back}`)
     }
 
+    console.log((!saveDisabled, (unSavedChanges, loading))
+        , !isNextTabExist, nextDisabled,
+        currentTab === STEPS[tutor.Step], !isStudentSide)
 
     return (
         <div style={actionsStyle}>

@@ -90,13 +90,13 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
         if (userId && isSignedIn) {
             let fetchUser = async () => {
                 if (token && isLoaded) {
-                    const user = await get_user_detail(userId, token)
-                    dispatch(setUser(user))
-                    localStorage.setItem('user', JSON.stringify(user))
-                    console.log(user);
-                    if (user.role) {
-                        user.role !== 'admin' ? navigate(`/${user.role}/intro`) :
-                            navigate(`/${user.role}/tutor-data`)
+                    const userDetails = await get_user_detail(userId, token)
+                    dispatch(setUser(userDetails))
+                    localStorage.setItem('user', JSON.stringify(userDetails))
+                    console.log(userDetails);
+                    if (userDetails.role) {
+                        userDetails.role !== 'admin' ? navigate(`/${userDetails.role}/intro`) :
+                            navigate(`/${userDetails.role}/tutor-data`)
                     }
                 }
             }

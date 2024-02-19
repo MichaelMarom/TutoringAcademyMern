@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { get_user_detail, get_user_setup_detail, login } from '../axios/auth';
+import { get_user_detail, get_user_setup_detail, getToken as tokenApi, login } from '../axios/auth';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../redux/auth_state/auth';
@@ -9,7 +9,7 @@ import '../styles/auth.css'
 import Button from '../components/common/Button';
 import { useSignUp, useAuth, SignUp, SignIn, useSignIn, useSession } from "@clerk/clerk-react";
 import { DEFAULT_URL_AFTER_LOGIN } from '../constants/constants';
-
+import TAButton from '../components/common/TAButton';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -45,12 +45,12 @@ const LoginPage = () => {
             });
             if (result.status === "complete") {
                 await setActive({ session: result.createdSessionId });
-                const token = await getToken({ template: 'tutoring-academy-jwt-template' });
-                if (token) {
-                    // localStorage.setItem("access_token", token);
-                } else {
-                    toast.error("Could not retrieve token!");
-                }
+                // const token = await getToken({ template: 'tutoring-academy-jwt-template' });
+                // if (token) {
+                //     // localStorage.setItem("access_token", token);
+                // } else {
+                //     toast.error("Could not retrieve token!");
+                // }
             }
         }
         catch (err) {
@@ -89,11 +89,15 @@ const LoginPage = () => {
     useEffect(() => {
         if (userId && isSignedIn) {
             let fetchUser = async () => {
-                if (token && isLoaded) {
-                    const user = await get_user_detail(userId, token)
-                    dispatch(setUser(user.userDetails))
-                    localStorage.setItem('user', JSON.stringify(user.userDetails))
-                    localStorage.setItem('access_token', user.token)
+                if (isLoaded) {
+                    const user = await get_user_detail(userId)
+
+                    dispatch(setUser(user))
+                    localStorage.setItem('user', JSON.stringify(user))
+
+                    const token = await tokenApi(user)
+
+                    localStorage.setItem('access_token', token)
                     console.log(user);
                     if (user.role) {
                         user.role !== 'admin' ? navigate(`/${user.role}/intro`) :
@@ -103,7 +107,7 @@ const LoginPage = () => {
             }
             fetchUser()
         }
-    }, [userId, isLoaded, token, isSignedIn])
+    }, [userId, isLoaded, isSignedIn])
 
     return (
         <section>
@@ -161,14 +165,11 @@ const LoginPage = () => {
                                             </div>
                                         </div>
 
-                                        <Button className="btn-primary" type="submit" loading={loading}>
-                                            Login
-                                        </Button>
+                                        <TAButton className="saving-btn blinking-button" type="submit" loading={loading} buttonText='Login' />
 
                                         <div className="text-center">
                                             <p>Don't have an account? <Link to="/tutor/setup">Sign up</Link></p>
                                         </div>
-
                                     </form>
                                 </div>
                                 <ForgetPasswordModal

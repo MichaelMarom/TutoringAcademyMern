@@ -1463,7 +1463,8 @@ let getSessionsDetails = async (req, res) => {
                 }
 
                 const currentYear = moment().year();
-                const sessionsWithinPayDay = sessionWithCommision.filter(session => moment(session.start).isBefore(latestPayday))
+                //remove the session whoes rate is NaN, later we remove them from DB
+                const sessionsWithinPayDay = sessionWithCommision.filter(session => moment(session.start).isBefore(latestPayday) && !isNaN(session.net))
                 // Filter sessions for the current year
                 const currentYearFullfilledSessions = sessionsWithinPayDay.filter((session) =>
                     moment(session.start).year() === currentYear && session.request !== 'delete'

@@ -33,12 +33,11 @@ const Header = () => {
         { url: '/tutor/scheduling', name: 'Scheduling' },
         { url: '/tutor/feedback', name: 'Feedback' },
         { url: '/tutor/my-students', name: 'My students' },
-        { url: '/tutor/feedback', name: 'Feedback' },
         { url: '/tutor/term-of-use', name: 'Terms Of Use' },
         { url: '/tutor/chat', name: 'Message Board' },
         { url: '/tutor/market-place', name: 'Market place' },
         { url: '/tutor/collaboration', name: 'Collaboration' },
-        { url: `/tutor/tutor-profile/${localStorage.getItem("tutor_user_id")}`, name: 'Profile' },
+        { url: `/tutor/tutor-profile/${tutor.AcademyId}`, name: 'Profile' },
     ];
 
     const StatusValues = {
@@ -123,16 +122,18 @@ const Header = () => {
                     width: 'calc(100% - 300px)',
                     margin: '0 200px 0 200px'
                 }}>
-                    {tabs.map((tab) => (
-                        <li
+                    {tabs.map((tab) => {
+                        console.log(encodeURIComponent(tab.url), activeTab)
+                        return (<li
                             key={tab.url}
                             data-url={tab.url}
                             onClick={handleTabClick}
-                            id={activeTab.includes(tab.url) ? 'tutor-tab-header-list-active' : ''}
+                            id={activeTab === (tab.url).replace(/ /g, '%20') ? 'tutor-tab-header-list-active' : ''}
                         >
                             <a>{tab.name}</a>
-                        </li>
-                    ))}
+                        </li>)
+                    }
+                    )}
                 </ul>
 
                 <div className="scroller-right" onClick={handle_scroll_right}

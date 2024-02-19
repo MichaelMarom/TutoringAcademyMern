@@ -9,6 +9,7 @@ const HOLIDAY_ROUTES = require('./routes/holiday')
 const FILE_ROUTER = require('./routes/file')
 const CHAT_ROUTES = require('./routes/chat')
 
+const { verifyToken } = require('./controllers/auth');
 
 const app = express();
 app.use(cors({ origin: '*' }))
@@ -17,6 +18,8 @@ app.use(morgan('tiny'));
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 require('dotenv').config();
+
+// app.use(verifyToken)
 app.use(TUTOR_ROUTES);
 app.use(ADMIN_ROUTES);
 app.use(STUDENT_ROUTES);

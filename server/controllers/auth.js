@@ -8,7 +8,7 @@ const clerkClient = require('@clerk/clerk-sdk-node');
 
 function generateToken(user) {
     const payload = {
-        userId: user.SID,
+        userId: user.id,
         email: user.email,
     };
     const options = {
@@ -132,15 +132,23 @@ const get_user_detail = async (req, res) => {
                 const { recordset } = await poolConnection.request().query(
                     findByAnyIdColumn('Users1', req.params)
                 );
-                const token = generateToken(recordset[0])
 
-                res.status(200).send({ userDetails: recordset[0], token });
+                res.status(200).send(recordset[0]);
             }
         } catch (err) {
             console.log(err);
             res.status(400).send({ message: err.message });
         }
     })
+}
+
+const get_token = async (req, res) => {
+    try {
+        const token = generateToken(req.params);
+        res.status(200).send(token);
+    } catch (err) {
+        res.status(400).send({ message: err.message })
+    }
 }
 
 const get_setup_detail = async (req, res) => {
@@ -209,6 +217,7 @@ module.exports = {
     verifyToken,
     token_auth,
     get_user_detail,
+    get_token,
     forget_password,
     signup,
     get_setup_detail

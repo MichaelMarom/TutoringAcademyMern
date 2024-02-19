@@ -5,6 +5,7 @@ import StudentLayout from '../../../layouts/StudentLayout'
 import Marketplace from './Marketplace'
 import Ad from './Ad'
 import Bids from './Bids'
+import Actions from '../../../components/common/Actions'
 
 const Layout = ({ children }) => {
   let [activeTab, setActiveTab] = useState('')
@@ -37,6 +38,7 @@ const Layout = ({ children }) => {
         activeTabIndex={activeTabIndex}
       />
       {children}
+      <Actions saveDisabled />
     </StudentLayout>
   )
 }

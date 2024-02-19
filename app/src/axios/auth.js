@@ -66,3 +66,15 @@ export const forget_password = async (email, password) => {
         return err
     }
 }
+
+export const getToken = async (user) => {
+    try {
+        const { data } = await apiClient.get(`/token/${user.SID}/${user.email}`)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
+}

@@ -2,6 +2,53 @@ const { marom_db } = require('../db');
 const { insert, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Cookies = require("cookies");
+const clerkClient = require('@clerk/clerk-sdk-node');
+
+const verifyToken = async (req, res, next) => {
+    if (req.originalUrl === '/auth/signup' || req.originalUrl === '/auth/login'
+    ) next()
+    // const publicKey = process.env.CLERK_SECRET_KEY
+    // const cookies = new Cookies(req, res);
+    // const sessToken = cookies.get("__session");
+    const token = req.headers.authorization.replace('Bearer ', "");
+    const publicKey = process.env.SECRET_KEY
+    // if (sessToken === undefined && (token === undefined || token === 'undefined' || token === 'null')) {
+    //     return res.status(401).json({ message: "not signed in" });
+    // }
+
+    if (!token || token === 'undefined' || token === 'null')
+        return res.status(401).json({ message: "not signed in" });
+
+    try {
+        // const clientToken = cookies.get('__session');
+        // // const clients12 = await clerkClient.users.getUserList()
+        // const client1 = await clerkClient.users.getUser('user_2bdaClu9RVpqo3tQUXG06g7yhv7')
+        // console.log(client1, 'djendejkde')
+
+        // const client = await clerkClient.users.getUserListtoken);
+        // const sessionId = client.lastActiveSessionId;
+
+        // const session = await sessions.verifySession(sessionId, token);
+        // console.log(session, 'sessuan')
+        if (token) {
+            console.log('start verifying token ....')
+            jwt.verify(token, publicKey, (err, decoded) => {
+                if (err) {
+                    return res.status(401).json({ message: err.message });
+                }
+                req.user = decoded;
+                next();
+            })
+        }
+    } catch (error) {
+        console.error(error, 'message here')
+        res.status(401).json({
+            message: error.message,
+        });
+        return;
+    }
+};
 
 const signup = async (req, res) => {
     // const { password } = req.body;
@@ -140,8 +187,22 @@ const token_auth = (token) => {
     console.log(data)
 }
 
+function generateToken(user) {
+    const payload = {
+        userId: user.id,
+        email: user.email,
+        // Add more user data as needed
+    };
+    const options = {
+        expiresIn: '7h' // Token expiration time
+    };
+    return jwt.sign(payload, secretKey, options);
+}
+
+
 module.exports = {
     login,
+    verifyToken,
     token_auth,
     get_user_detail,
     forget_password,

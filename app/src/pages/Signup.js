@@ -65,6 +65,7 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (!isLoaded) return
     setLoading(true);
     try {
       await signUp.create({
@@ -197,7 +198,7 @@ const Signup = () => {
                         <option value="student">Student</option>
                         <option value="visitor">Visitor</option>
                         <option value="parent">Parent</option>
-                        <option value="admin">Admin</option> 
+                        <option value="admin">Admin</option>
                       </select>
                       {errors.role && <span className='small text-danger'>{errors.role}</span>}
                     </div>

@@ -33,7 +33,7 @@ const Header = () => {
         { url: '/tutor/scheduling', name: 'Scheduling' },
         { url: '/tutor/feedback', name: 'Feedback' },
         { url: '/tutor/my-students', name: 'My students' },
-        { url: '/tutor/Feedback', name: 'Feedback' },
+        { url: '/tutor/feedback', name: 'Feedback' },
         { url: '/tutor/term-of-use', name: 'Terms Of Use' },
         { url: '/tutor/chat', name: 'Message Board' },
         { url: '/tutor/market-place', name: 'Market place' },

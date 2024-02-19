@@ -14,10 +14,11 @@ import { DEFAULT_URL_AFTER_LOGIN } from '../constants/constants';
 const LoginPage = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem('access_token')
-    const { user } = useSelector(state => state.user)
-    const { signIn, setActive } = useSignIn();
+    useSelector(state => state.user)
+    const { signIn, setActive, isLoaded } = useSignIn();
     const { isSignedIn, getToken, userId } = useAuth()
-    const { isLoaded, session, isSignedIn: sessionSignedIn } = useSession()
+    const { session, isSignedIn: sessionSignedIn } = useSession()
+    console.log(session, isSignedIn, 'session info')
     const [modalOpen, setOpenModel] = useState(false)
 
     const [loginForm, setLoginForm] = useState({
@@ -34,6 +35,8 @@ const LoginPage = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        if (!isLoaded) return
+
         setLoading(true)
         try {
             const result = await signIn.create({
@@ -86,7 +89,7 @@ const LoginPage = () => {
     useEffect(() => {
         if (userId && isSignedIn) {
             let fetchUser = async () => {
-                if (token) {
+                if (token && isLoaded) {
                     const user = await get_user_detail(userId, token)
                     dispatch(setUser(user))
                     localStorage.setItem('user', JSON.stringify(user))
@@ -99,7 +102,7 @@ const LoginPage = () => {
             }
             fetchUser()
         }
-    }, [userId, token, isSignedIn])
+    }, [userId, isLoaded, token, isSignedIn])
 
     return (
         <section>

@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate, useRoutes } from "react-router-dom";
+import { isExpired, decodeToken } from 'react-jwt'
 
 import React from "react";
 
@@ -16,14 +17,12 @@ import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
 import { get_tutor_setup_by_userId } from "./axios/tutor";
 import { setShortlist } from "./redux/student_store/shortlist";
-import { formatted_student_sessions, get_my_data, get_student_setup_by_userId } from "./axios/student";
+import { get_my_data, get_student_setup_by_userId } from "./axios/student";
 
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
 import { setChats } from "./redux/chat/chat";
-import { socket } from "./config/socket";
 import { moment } from './config/moment';
-import TutorProfile from "./pages/tutor/TutorProfile";
 import {
   useClerk, useAuth, useUser,
   SignedIn
@@ -31,6 +30,7 @@ import {
 import { get_user_detail } from "./axios/auth";
 import { redirect_to_login } from "./helperFunctions/auth";
 import { setStudentSessions } from "./redux/student_store/studentSessions";
+import { setTutorSessions } from "./redux/tutor_store/tutorSessions";
 
 const App = () => {
   let location = useLocation();
@@ -54,6 +54,12 @@ const App = () => {
   const nullValues = ['undefined', 'null'];
 
   const screen = location.pathname.split('/')[1]
+  const handleExpiredToken = (result) => {
+    if (result?.response?.data?.message?.includes('expired') ||
+      result?.response?.data?.message?.includes('malformed')) {
+      return redirect_to_login(navigate, signOut)
+    }
+  }
 
   useEffect(() => {
     if (userId && token && isSignedIn) {
@@ -85,6 +91,8 @@ const App = () => {
   useEffect(() => {
     if (user && user.role !== 'admin' && user.SID && isSignedIn)
       get_tutor_setup_by_userId(user.SID).then((result) => {
+        handleExpiredToken(result);
+
         localStorage.setItem("tutor_user_id", result[0]?.AcademyId || null);
       });
   }, [user, isSignedIn]);
@@ -104,7 +112,8 @@ const App = () => {
   //sessons
   useEffect(() => {
     student.AcademyId && dispatch(setStudentSessions(student))
-  }, [student])
+    tutor.AcademyId && dispatch(setTutorSessions(tutor))
+  }, [student, tutor])
 
   const getStudentDetails = async () => {
     if (nullValues.includes(studentUserId)) {
@@ -168,6 +177,17 @@ const App = () => {
       navigate('/tutor/setup')
   }, [location, navigate])
 
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      console.log(isExpired(localStorage.getItem("access_token")))
+      if (isExpired(localStorage.getItem("access_token"))) {
+        navigate('/login')
+        localStorage.clear()
+      }
+    }
+    else { navigate('/login') }
+  }, [])
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -176,7 +196,8 @@ const App = () => {
         <Route key={route.path} path={route.path} element={<SignedIn>{route.element}</SignedIn>} />
       ))}
       <Route path="*" element={<UnAuthorizeRoute />} />
-    </Routes>);
+    </Routes>
+  );
 };
 
 export default App;

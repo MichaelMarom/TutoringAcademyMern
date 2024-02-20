@@ -17,11 +17,13 @@ const Header = () => {
     const { tutor } = useSelector(state => state.tutor);
 
     useEffect(() => {
+        console.log(location.pathname)
         const element = document.getElementById('tutor-tab-header-list-active');
+        console.log(element)
         if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+            element.scrollIntoView({ behavior: 'smooth', block: "center" });
         }
-    }, [location]);
+    }, [location.pathname, activeTab]);
 
     const tabs = [
         { url: '/tutor/intro', name: 'Introduction' },
@@ -123,7 +125,6 @@ const Header = () => {
                     margin: '0 200px 0 200px'
                 }}>
                     {tabs.map((tab) => {
-                        console.log(encodeURIComponent(tab.url), activeTab)
                         return (<li
                             key={tab.url}
                             data-url={tab.url}
@@ -132,8 +133,7 @@ const Header = () => {
                         >
                             <a>{tab.name}</a>
                         </li>)
-                    }
-                    )}
+                    })}
                 </ul>
 
                 <div className="scroller-right" onClick={handle_scroll_right}

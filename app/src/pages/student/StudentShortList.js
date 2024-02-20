@@ -5,8 +5,6 @@ import { generateUpcomingSessionMessage } from "../../helperFunctions/generalHel
 import SmallSideBar from "../../components/common/SmallSideBar";
 
 const StudentShortLists = () => {
-    const { upcomingSessionFromNow, upcomingSession, sessions } = useSelector(state => state.studentSessions)
-    console.log(upcomingSession, upcomingSessionFromNow, sessions)
     return (
         <StudentLayout showLegacyFooter={false}>
             <StudentShortList />

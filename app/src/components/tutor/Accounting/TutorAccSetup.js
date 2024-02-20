@@ -351,7 +351,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
                             <label htmlFor="total-earning">Total Earning {(new Date()).getFullYear()}. <Tooltip text="Calculate your total earnings since Jan 1st." /></label>
                             <input className='form-control m-0' type="text"
-                                value={currentYearEarning.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                value={(currentYearEarning || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 id="total-earning"
                                 style={{ float: 'right', width: '50%' }} disabled />
                         </div>
@@ -359,7 +359,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                             <label htmlFor="total-earning">Total Earning Previous Year. <Tooltip text="Calculate your total earning for the previous year. 
                             This earnings will be shopwn on your 1099 form." /></label>
                             <input className='form-control m-0' type="text"
-                                value={previousYearEarning.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                value={(previousYearEarning || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 id="total-earning"
                                 style={{ float: 'right', width: '50%' }} disabled />
                         </div>

@@ -7,6 +7,7 @@ import { useAuth, useSignIn } from "@clerk/clerk-react";
 import { setUser } from '../../redux/auth_state/auth';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import TAButton from '../common/TAButton'
 
 export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
     const navigate = useNavigate()
@@ -139,12 +140,11 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
                         </div>
 
                         <div className='d-flex justify-content-between'>
-                            <Button className='btn-secondary' handleClick={() => setOpenModel(false)}>
-                                Cancel
-                            </Button>
-                            <Button className='btn-primary' handleClick={sendResetCode} loading={loading}>
-                                Send Code
-                            </Button>
+                            <TAButton buttonText="Close"
+                                handleClick={() => setOpenModel(false)} />
+
+                            <TAButton buttonText="Send Code" className='blinking-button saving-btn' handleClick={sendResetCode} loading={loading} />
+
                         </div>
                     </>
                 }
@@ -190,12 +190,10 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
                         )}
                         <hr className='mt-4' />
                         <div className='d-flex justify-content-between'>
-                            <Button className='btn-secondary' handleClick={() => setOpenModel(false)}>
-                                Cancel
-                            </Button>
-                            <Button className='btn-primary' handleClick={reset} loading={loading}>
-                                Reset
-                            </Button>
+                            <TAButton buttonText="Close"  handleClick={() => setOpenModel(false)} />
+
+                            <TAButton buttonText="Reset" className='saving-btn blinking button' handleClick={reset} loading={loading} />
+
                         </div>
                     </>
                 }

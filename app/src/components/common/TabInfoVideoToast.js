@@ -23,13 +23,17 @@ const TabInfoVideoToast = ({ video }) => {
 
     return (
         <>
-            <Button
-                variant="danger"
-                style={{ position: "fixed", top: '0', right: "2%", zIndex: "999" }}
-                onClick={() => setShowToast(true)}
+            <div className='d-flex justify-content-center align-items-center borer p-1 border-light'
+                style={{ position: "fixed", top: '0', right: "3%", zIndex: "999" }}
             >
-                <BsFillPlayFill size={20} />
-            </Button>
+                <div className='text-light text-sm' style={{fontSize:"12px"}}>View Tutorial</div>
+                <Button
+                    variant="danger"
+                    onClick={() => setShowToast(true)}
+                >
+                    <BsFillPlayFill size={20} />
+                </Button>
+            </div>
             {video &&
                 <Modal show={showToast}
                     handleClose={closeModal} title={'Video'}>

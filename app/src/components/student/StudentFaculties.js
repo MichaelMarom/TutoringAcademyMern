@@ -87,41 +87,47 @@ const StudentFaculties = () => {
             )
 
             let data = doc.map(item => item.dataset.id)
+            const tutorStatus = data[0].split('-')[5]
+            const activeTutor = tutorStatus === 'active';
 
-            if (data[0]) {
-                let res = upload_student_short_list(data);
+            if (activeTutor) {
+                if (data[0]) {
+                    console.log(data[0])
+                    let res = upload_student_short_list(data);
 
-                if (res) {
-                    const tutorSelectedId = data[0].split('-')[0]
-                    create_chat({ User1ID: student.AcademyId, User2ID: tutorSelectedId })
-                        .then(() => { toast.success('You can also chat with selected tutor in MessageBoard Tab!') })
-                        .catch((err => console.log(err)))
+                    if (res) {
+                        const tutorSelectedId = data[0].split('-')[0]
+                        create_chat({ User1ID: student.AcademyId, User2ID: tutorSelectedId })
+                            .then(() => { toast.success('You can also chat with selected tutor in MessageBoard Tab!') })
+                            .catch((err => console.log(err)))
 
-                    setTimeout(() => {
-                        document.querySelector('.save-overlay')?.removeAttribute('id');
-                    }, 1000);
-                    getShortlist()
+                        setTimeout(() => {
+                            document.querySelector('.save-overlay')?.removeAttribute('id');
+                        }, 1000);
+                        getShortlist()
 
-                    toast.success("Your selected record was uploaded to your short list")
-                    setTimeout(() => {
-                        if (document.querySelector('.tutor-popin')) {
+                        toast.success("Your selected record was uploaded to your short list")
+                        setTimeout(() => {
+                            if (document.querySelector('.tutor-popin')) {
+                                document.querySelector('.tutor-popin')?.removeAttribute('id');
+                            }
+                        }, 5000);
+
+                    } else {
+                        setTimeout(() => {
+                            document.querySelector('.save-overlay')?.removeAttribute('id');
+                        }, 1000);
+
+                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
+                        document.querySelector('.tutor-popin').style.background = 'red';
+                        document.querySelector('.tutor-popin').innerHTML = res.mssg
+                        setTimeout(() => {
                             document.querySelector('.tutor-popin')?.removeAttribute('id');
-                        }
-                    }, 5000);
-
-                } else {
-                    setTimeout(() => {
-                        document.querySelector('.save-overlay')?.removeAttribute('id');
-                    }, 1000);
-
-                    document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                    document.querySelector('.tutor-popin').style.background = 'red';
-                    document.querySelector('.tutor-popin').innerHTML = res.mssg
-                    setTimeout(() => {
-                        document.querySelector('.tutor-popin')?.removeAttribute('id');
-                    }, 5000);
+                        }, 5000);
+                    }
                 }
             }
+            else toast.warning('You can only Select Active Tutors')
         }
     }, [checkBoxClicked])
 
@@ -173,8 +179,7 @@ const StudentFaculties = () => {
                 text="Indicate the cancellation period in hours. If you delete your booked session before that, then you will be refunded the full amount" />
         }]
 
-    let handleSavedDeleteData = e => {
-
+    let handleSavedDeleteData = (e, status) => {
         let elem = e.target;
 
         let pElem = elem.parentElement;
@@ -186,7 +191,8 @@ const StudentFaculties = () => {
             getShortlist()
         }
         else {
-            setCheckBoxClicked(elem)
+            if (status === 'active') setCheckBoxClicked(elem)
+            else toast.warning('You can only select Active Tutors')
         }
     }
 
@@ -246,16 +252,18 @@ const StudentFaculties = () => {
 
                                                     return <tr>
                                                         <td style={{ width: multi_student_cols[0].width }} id='student-tutor'
-                                                            data-id={`${item.AcademyId[0]}-${item.subject}-${item.rate}-${item?.AcademyId}-${window.localStorage.getItem('student_user_id')}`}>
+                                                            data-id={`${item.AcademyId[0]}-${item.subject}-${item.rate}-${item?.AcademyId}-${student.AcademyId}-${item.status}`}>
 
-                                                            <input onInput={handleSavedDeleteData} type='checkbox' style={{ height: '20px', width: '20px' }} />
+                                                            <input disabled={item.status !== 'active'} onClick={() => toast.success('hehe')} onInput={(e) => handleSavedDeleteData(e, item.status)} type='checkbox'
+                                                                style={{ height: '20px', width: '20px' }} />
                                                         </td>
 
                                                         <td style={{ width: multi_student_cols[1].width }}>{item.subject}</td>
                                                         <td style={{ width: multi_student_cols[2].width }}>
                                                             <div>
                                                                 {(item.AcademyId[0]).split(".").slice(0, 2).join(".")}
-                                                                <Pill label={item.status} customColor={true} color={statesColours[item.status]}
+                                                                <Pill label={item.status} customColor={true} color={statesColours[item.status].bg}
+                                                                    fontColor={statesColours[item.status].color}
                                                                     width='auto'
                                                                 />
                                                             </div>

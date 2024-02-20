@@ -8,7 +8,6 @@ const StudentLayout = ({ children }) => {
     const { user } = useSelector(state => state.user)
     const { student } = useSelector(state => state.student)
     const { upcomingSessionFromNow, upcomingSession, inMins } = useSelector(state => state.studentSessions)
-    console.log(inMins)
 
 
     if (user.role === 'admin' && !student?.AcademyId)

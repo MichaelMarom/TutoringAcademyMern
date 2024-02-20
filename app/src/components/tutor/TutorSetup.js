@@ -573,7 +573,7 @@ const TutorSetup = () => {
     return <Loading height="80vh" />
   return (
     <form onSubmit={saveTutorSetup}>
-      <div style={{ overflowY: "auto", height: "83vh" }}>
+      <div style={{ overflowY: "auto", height: "76vh" }}>
 
         <div className="d-flex justify-content-between" style={{ gap: "25px", marginLeft: "20px", marginRight: "20px", marginTop: "0" }}>
           <div className="profile-photo-cnt " style={{ width: "15%" }}>

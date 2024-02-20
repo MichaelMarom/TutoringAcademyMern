@@ -41,7 +41,8 @@ const { subjects,
     set_agreements_date_null_for_all,
     get_tutor_against_code,
     get_tutor_offered_subjects,
-    dynamically_post_edu_info } = require('../controllers/tutor');
+    dynamically_post_edu_info,
+    get_all_tutor_sessions_formatted } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -93,6 +94,8 @@ TUTOR_ROUTES.get('/tutor/market-data', verifyToken, get_tutor_market_data)
 
 TUTOR_ROUTES.get('/tutor/get_students/:academyId', verifyToken, get_tutor_students)
 TUTOR_ROUTES.get('/tutor/session/:tutorId', verifyToken, getSessionsDetails)
+TUTOR_ROUTES.get('/tutor/sessions/formatted/:tutorId', verifyToken, get_all_tutor_sessions_formatted)
+
 TUTOR_ROUTES.get('/profile/:tutorId/:studentId', verifyToken, get_tutor_profile_data)
 TUTOR_ROUTES.post('/tutor/market-place', parser, verifyToken, post_tutor_ad)
 TUTOR_ROUTES.get('/tutor/market-place/list/:AcademyId', verifyToken, get_tutor_ads)

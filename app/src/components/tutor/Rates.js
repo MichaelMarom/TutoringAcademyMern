@@ -251,6 +251,94 @@ const Rates = () => {
       <div className="tutor-tab-rate-section" style={{ height: "80vh", overflowY: "auto" }}>
         <form onSubmit={handleSubmit} className="d-flex justify-content-center" style={{ width: "100%", gap: "3%" }}>
           <div className="d-flex flex-column" style={{ width: "30%" }}>
+            <div className="rounded shadow border m-2 p-4" >
+              <div className="dropdown d-flex align-items-center mb-4" style={{ width: "75%" }} >
+                <label>Tutor Cancellation Policy</label>
+                <button
+                  style={{ pointerEvents: editMode ? "auto" : "none" }}
+                  className={`btn ${selectedCancellationPolicy.length ? 'btn-success' : "btn-secondary"} dropdown-toggle my-0 mx-3`}
+                  type="button"
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  {selectedCancellationPolicy.length ? `${selectedCancellationPolicy}hr   ` : " Select"}
+                </button>
+                {isOpen && (
+                  <div className="dropdown-menu show" style={{ left: "90px", top:"43px" }}>
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('4')
+                      setIsOpen(false)
+                    }}>
+                      4hr.
+
+                    </div>
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('8')
+                      setIsOpen(false)
+                    }}>
+                      8hr.
+
+                    </div>
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('12')
+                      setIsOpen(false)
+                    }}>
+                      12hr.
+                    </div>
+
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('24')
+                      setIsOpen(false)
+                    }}>
+                      24hr
+                    </div>
+                    <div className="dropdown-item" onClick={() => {
+                      setSelectedCancPolicy('48')
+                      setIsOpen(false)
+                    }}>
+                      48 hr.
+                    </div>
+                  </div>
+                )}
+                <Tooltip text="How many hours before the lesson, you allow the student to cancel without penalty?" width="200px">
+                  <FaInfoCircle size={20} color="#0096ff" />
+                </Tooltip>
+              </div>
+              <div className="form-check form-switch d-flex gap-3">
+                <input disabled={!editMode}
+                  className="form-check-input "
+                  type="checkbox"
+                  role="switch"
+                  onChange={() => setIntroSessionDiscount(!IntroSessionDiscount)}
+                  checked={IntroSessionDiscount}
+                />
+                <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked">
+                  50% Intro Session
+                </label>
+                <Tooltip text="The academy mandate an |intro| sessions for new student as a 
+                  prerequisite to book further sessions with the tutor. The 50% discount should motivate 
+                  the student to select you."
+                  width="200px">
+                  <FaInfoCircle size={20} color="#0096ff" />
+                </Tooltip>
+              </div>
+              <div className="form-check form-switch d-flex gap-3">
+                <input disabled={!editMode}
+                  className="form-check-input "
+                  type="checkbox"
+                  role="switch"
+                  onChange={() => setConsentRecordingLesson(!ConsentRecordingLesson)}
+                  checked={ConsentRecordingLesson}
+                />
+                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
+                  Consent Recording Session
+                </label>
+                <Tooltip width="200px"
+                  text="We record the lesson for learning purpose (or complains).
+                     Students or parents can view the recorded lesson. You consent to the recording of the lesson with the student. The recording be saved on the academy servers for 30 days, then be deleted.">
+                  <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
+                </Tooltip>
+              </div>
+            </div>
             <div className=" border m-2 shadow rounded p-4" >
               <div
                 style={{
@@ -330,94 +418,7 @@ const Rates = () => {
               </div>
 
             </div>
-            <div className="rounded shadow border m-2 p-4" >
-              <div className="dropdown d-flex align-items-center mb-4" style={{ width: "75%" }} >
-                <label>Tutor Cancellation Policy</label>
-                <button
-                  style={{ pointerEvents: editMode ? "auto" : "none" }}
-                  className="btn btn-success dropdown-toggle my-0 mx-3"
-                  type="button"
-                  onClick={() => setIsOpen(!isOpen)}
-                >
-                  {selectedCancellationPolicy.length ? `${selectedCancellationPolicy}hr   ` : " Select"}
-                </button>
-                {isOpen && (
-                  <div className="dropdown-menu show" style={{ left: "90px" }}>
-                    <div className="dropdown-item" onClick={() => {
-                      setSelectedCancPolicy('4')
-                      setIsOpen(false)
-                    }}>
-                      4hr.
 
-                    </div>
-                    <div className="dropdown-item" onClick={() => {
-                      setSelectedCancPolicy('8')
-                      setIsOpen(false)
-                    }}>
-                      8hr.
-
-                    </div>
-                    <div className="dropdown-item" onClick={() => {
-                      setSelectedCancPolicy('12')
-                      setIsOpen(false)
-                    }}>
-                      12hr.
-                    </div>
-
-                    <div className="dropdown-item" onClick={() => {
-                      setSelectedCancPolicy('24')
-                      setIsOpen(false)
-                    }}>
-                      24hr
-                    </div>
-                    <div className="dropdown-item" onClick={() => {
-                      setSelectedCancPolicy('48')
-                      setIsOpen(false)
-                    }}>
-                      48 hr.
-                    </div>
-                  </div>
-                )}
-                <Tooltip text="How many hours before the lesson, you allow the student to cancel without penalty?" width="200px">
-                  <FaInfoCircle size={20} color="#0096ff" />
-                </Tooltip>
-              </div>
-              <div className="form-check form-switch d-flex gap-3">
-                <input disabled={!editMode}
-                  className="form-check-input "
-                  type="checkbox"
-                  role="switch"
-                  onChange={() => setIntroSessionDiscount(!IntroSessionDiscount)}
-                  checked={IntroSessionDiscount}
-                />
-                <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked">
-                  50% Intro Session
-                </label>
-                <Tooltip text="The academy mandate an |intro| sessions for new student as a 
-                  prerequisite to book further sessions with the tutor. The 50% discount should motivate 
-                  the student to select you."
-                  width="200px">
-                  <FaInfoCircle size={20} color="#0096ff" />
-                </Tooltip>
-              </div>
-              <div className="form-check form-switch d-flex gap-3">
-                <input disabled={!editMode}
-                  className="form-check-input "
-                  type="checkbox"
-                  role="switch"
-                  onChange={() => setConsentRecordingLesson(!ConsentRecordingLesson)}
-                  checked={ConsentRecordingLesson}
-                />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
-                  Consent Recording Session
-                </label>
-                <Tooltip width="200px"
-                  text="We record the lesson for learning purpose (or complains).
-                     Students or parents can view the recorded lesson. You consent to the recording of the lesson with the student. The recording be saved on the academy servers for 30 days, then be deleted.">
-                  <FaInfoCircle size={20} color="#0096ff" className=" mr-3" />
-                </Tooltip>
-              </div>
-            </div>
           </div>
           <div className="d-flex flex-column" style={{ width: "30%" }}>
             <div className="p-4  float-end rounded shadow border m-2 ">
@@ -520,7 +521,7 @@ const Rates = () => {
                   onChange={() => setClassTeaching(!classTeaching)}
                   checked={classTeaching}
                 />
-                <label className="form-check-label" htmlFor="flexSwitchCheckChecked">
+                <label className="form-check-label w-75 " htmlFor="flexSwitchCheckChecked">
                   My hourly Charge for teaching a public or private school class (up to 30 students).
                   Only tutors that fill up this field are being shown to schools.
                 </label>

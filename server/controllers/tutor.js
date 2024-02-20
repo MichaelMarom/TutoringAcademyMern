@@ -1489,6 +1489,62 @@ let getSessionsDetails = async (req, res) => {
     })
 }
 
+const get_all_tutor_sessions_formatted = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const { recordset } = await poolConnection.request().query(
+                    `select sb.*, TS.GMT
+                    from StudentBookings as sb
+                    join TutorSetup as TS on
+                    cast(TS.AcademyId as varchar) = sb.tutorId
+                    where sb.tutorId = '${req.params.tutorId}'
+                    `
+                )
+                console.log(recordset, 'hehehe')
+
+                if (recordset[0]) {
+                    const offset = parseInt(recordset[0].GMT, 10);
+                    let timezones = moment.tz.names().filter(name =>
+                        (moment.tz(name).utcOffset()) === offset * 60);
+                    const timeZone = timezones[0] || null
+
+                    let reservedSlots = [];
+                    let bookedSlots = []
+                    recordset.map(record => {
+                        reservedSlots.push(JSON.parse(record.reservedSlots));
+                        bookedSlots.push(JSON.parse(record.bookedSlots))
+                        return
+                    })
+
+                    const allSessions = (reservedSlots.concat(bookedSlots)).flat()
+
+                    const currentTime = moment().tz(timeZone)
+                    const sortedEvents = allSessions.sort((a, b) => moment(a.start).diff(moment(b.start)));
+                    const upcomingSession = sortedEvents.find(event => moment(event.start).isAfter(currentTime)) || {};
+                    const timeUntilStart = upcomingSession.id ?
+                        moment(upcomingSession.start).tz(timeZone).to(currentTime, true) : '';
+                    let inMins = false
+                    if (timeUntilStart.includes('minutes') || timeUntilStart.includes('minute')) {
+                        inMins = true
+                    }
+
+                    res.status(200).send({ sessions: allSessions, upcomingSession, inMins, upcomingSessionFromNow: timeUntilStart })
+                }
+                else {
+                    res.status(200).send({ sessions: [], upcomingSession: {}, inMins: false, upcomingSessionFromNow: '' })
+                }
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
 let last_pay_day = async (req, res) => {
     marom_db(async (config) => {
         try {
@@ -1799,6 +1855,7 @@ module.exports = {
     set_agreements_date_null_for_all,
     get_ad,
     put_ad,
+    get_all_tutor_sessions_formatted,
     get_tutor_ads,
     dynamically_post_edu_info,
     remove_subject_rates,

@@ -21,6 +21,7 @@ import tutorReducer from './tutor_store/tutorData'
 import videoReducer from './tutor_store/video'
 import chatReducer from './chat/chat';
 import studentSessionsReducer from './student_store/studentSessions.js';
+import tutorSessionsReducer from './tutor_store/tutorSessions.js';
 
 let store = configureStore({
   reducer: {
@@ -37,6 +38,7 @@ let store = configureStore({
     video: videoReducer,
     lineWidth: thicknessReducer,
     color: colorLineReducer,
+    tutorSessions: tutorSessionsReducer,
     eraserWidth: eraserReducer,
     paint: paintReducer,
     tool: toolReducer,

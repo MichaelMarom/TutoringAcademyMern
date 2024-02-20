@@ -2,8 +2,6 @@ const { marom_db } = require('../db');
 const { insert, find, findByAnyIdColumn, update } = require('../helperfunctions/crud_queries');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Cookies = require("cookies");
-const clerkClient = require('@clerk/clerk-sdk-node');
 
 
 function generateToken(user) {
@@ -12,7 +10,7 @@ function generateToken(user) {
         email: user.email,
     };
     const options = {
-        expiresIn: '7h'
+        expiresIn: '3h'
     };
     const secretKey = process.env.SECRET_KEY
     return jwt.sign(payload, secretKey, options);
@@ -32,7 +30,7 @@ const verifyToken = async (req, res, next) => {
     // }
 
     if (!token || token === 'undefined' || token === 'null')
-        return res.status(401).json({ message: "not signed in" });
+        return res.status(401).json({ message: "Not Authorized" });
 
     try {
         // const clientToken = cookies.get('__session');
@@ -49,16 +47,16 @@ const verifyToken = async (req, res, next) => {
             console.log('start verifying token ....')
             jwt.verify(token, publicKey, (err, decoded) => {
                 if (err) {
-                    return res.status(401).json({ message: err.message });
+                    return res.status(401).json({ response: err.message, message: "Not Authorized" });
                 }
                 req.user = decoded;
                 next();
             })
         }
     } catch (error) {
-        console.error(error, 'message here')
         res.status(401).json({
-            message: error.message,
+            message: 'Not Authorized',
+            reason: error.message
         });
         return;
     }

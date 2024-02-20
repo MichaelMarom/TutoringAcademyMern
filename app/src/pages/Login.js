@@ -168,7 +168,7 @@ const LoginPage = () => {
                                         <TAButton className="saving-btn blinking-button" type="submit" loading={loading} buttonText='Login' />
 
                                         <div className="text-center">
-                                            <p>Don't have an account? <Link to="/tutor/setup">Sign up</Link></p>
+                                            <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
                                         </div>
                                     </form>
                                 </div>

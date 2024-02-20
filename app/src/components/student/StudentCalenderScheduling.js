@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import ShowCalendar from '../common/Calendar/Calendar'
 import { useSelector } from 'react-redux';
-import { formatName } from '../../helperFunctions/generalHelperFunctions';
+import { capitalizeFirstLetter, formatName } from '../../helperFunctions/generalHelperFunctions';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { get_my_data, update_student_shortlist } from '../../axios/student';
 import { useDispatch } from 'react-redux';
 import { setStudent } from '../../redux/student_store/studentData';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+import moment from 'moment'
 
 const StudentCalenderScheduling = () => {
   const dispatch = useDispatch()
@@ -98,22 +98,21 @@ const StudentCalenderScheduling = () => {
         <div className={`${selectedTutor.activateSubscriptionOption ? "w-75 " : "w-100"} align-items-center justify-content-between mt-3 d-flex row flex-row m-2`}
         >
           <div className='d-flex col-3 card m-2'>
-            <div className='card-body'>
+            <div className='card-body d-flex flex-column'>
               <h4 className='d-inline mr-2 card-title'>
-                Tutor:
+                Tutor: {capitalizeFirstLetter(formatName(selectedTutor.firstName, selectedTutor.lastName))}
               </h4>
-              <h6 className='card-subtitle  text-start'>
-                {formatName(selectedTutor.firstName, selectedTutor.lastName)}</h6>
-              <div className='d-inline ml-2 card-text'>
+              <div className='card-subtitle d-inline ml-2 card-text'>
                 {tutorTime}
               </div>
             </div>
           </div>
 
-          <div className='col-4'>
+          <div className='col-4 text-center'>
             <h5 className={`d-inline mr-2 card ${getTimeDifferenceClass(calculateTimeDifference())} px-1`}>
               Time zones Difference: {calculateTimeDifference() > 0 ? `+${calculateTimeDifference()}` : calculateTimeDifference()}
             </h5>
+            <h6>Greenwich UTC: {moment().utc().format('hh:mm a')}</h6>
 
           </div>
           <div className='d-flex col-3 card m-2'>

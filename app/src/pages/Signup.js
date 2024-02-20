@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useSignUp, useAuth, SignUp, SignIn, useUser } from "@clerk/clerk-react";
 import Button from '../components/common/Button';
 
+import TAButton from '../components/common/TAButton'
 const Signup = () => {
   const [signupFormValues, setSignupFormValues] = useState({
     email: '',
@@ -14,6 +15,7 @@ const Signup = () => {
   });
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying]=useState(false)
   const navigate = useNavigate()
   const { isLoaded, signUp, setActive } = useSignUp();
   const { user } = useUser();
@@ -86,7 +88,7 @@ const Signup = () => {
   };
 
   const handleVerification = async (e) => {
-    setLoading(true);
+    setVerifying(true);
     e.preventDefault();
     if (!isLoaded) {
       return;
@@ -121,7 +123,7 @@ const Signup = () => {
     } catch (err) {
       // setErrors(err.errors);
     } finally {
-      setLoading(false);
+      setVerifying(false);
       setPendingVerification(false);
     }
   };
@@ -203,23 +205,13 @@ const Signup = () => {
                       {errors.role && <span className='small text-danger'>{errors.role}</span>}
                     </div>
 
-                    <button type="submit" className="action-btn btn btn-block mb-4">
-                      {loading ? (
-                        <div className="spinner-border text-primary" role="status">
-                          <span className="visually-hidden">Loading...</span>
-                        </div>
-                      ) : (
-                        <div className="button__content">
-                          <p className="button__text">Sign up</p>
-                        </div>
-                      )}
-                    </button>
+                    <TAButton type="submit" loading={loading} buttonText={'Sign Up'} className="saving-btn blinking-button mb-4" />
 
                     <div className="text-center">
                       <p>Already have an account? <Link to="/login">Login</Link></p>
                     </div>
 
-                    <div className="text-center">
+                    {/* <div className="text-center">
                       <p>or sign up with:</p>
                       <button type="button" className="btn btn-link btn-floating mx-1">
                         <FaFacebook />
@@ -236,15 +228,14 @@ const Signup = () => {
                       <button type="button" className="btn btn-link btn-floating mx-1">
                         <FaGithub />
                       </button>
-                    </div>
+                    </div> */}
                   </form>
                   {pendingVerification && (
                     <div>
-                      <form>
-                        <input type='text' onBlur={() => { }} onChange={(e) => setCode(e.target.value)} />
-                        <Button handleClick={handleVerification}>
-                          Verify Email
-                        </Button>
+                      <form className='d-flex justify-content-between'>
+                        <input type='text' onBlur={() => { }} 
+                        onChange={(e) => setCode(e.target.value)} className='form-control' />
+                        <TAButton buttonText={"Verify Email"} loading={verifying} handleClick={handleVerification} />
                       </form>
                     </div>
                   )}

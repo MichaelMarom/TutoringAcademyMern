@@ -20,7 +20,7 @@ const SmallSideBar = ({ message = '', inMins }) => {
                     position: 'fixed',
                     top: '50px',
                     right: 0,
-                    zIndex: 1000,
+                    zIndex: 1006,
                     height: "100%",
                     overflowX: 'hidden',
                 }}

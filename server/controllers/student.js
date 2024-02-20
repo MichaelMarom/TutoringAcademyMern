@@ -226,7 +226,7 @@ let upload_student_short_list = async (req, res) => {
 
     let book = []
     let { items } = req.body;
-
+    //1 0 4
     let checkDuplicates = async (subject, AcademyId, Student) => {
 
         let response = await connecteToDB
@@ -277,12 +277,9 @@ let upload_student_short_list = async (req, res) => {
     })
 }
 
-
 const get_student_short_list = async (req, res) => {
     try {
         marom_db(async (config) => {
-            let tutorUserData = [];
-            let tutorDemoLesson = [];
             let poolConnection = await sql.connect(config);
             let result = await poolConnection.request().query(
                 `SELECT SSL.*, TR.*, SR.rate as rate, TS.*
@@ -294,7 +291,9 @@ const get_student_short_list = async (req, res) => {
                 inner join SubjectRates as SR ON
                     cast(SR.AcademyId as VARCHAR(MAX)) =  cast( TR.AcademyId as VARCHAR(MAX)) and      
                     cast(SR.subject as VARCHAR(MAX)) =  cast( SSL.Subject as VARCHAR(MAX))   
-                WHERE cast( SSL.Student as varchar) = cast('${req.params.student}' as varchar) `
+                WHERE cast( SSL.Student as varchar) = cast('${req.params.student}' as varchar) AND
+                TS.Status = 'active'
+                `
             );
 
             res.status(200).send(result.recordset);
@@ -307,7 +306,10 @@ const get_student_short_list = async (req, res) => {
 
 const update_shortlist = async (req, res) => {
     try {
-        const query = update("StudentShortList", req.body, req.params, { AcademyId: "varchar", Student: "varchar", Subject: "varchar" })
+        const query = update("StudentShortList", req.body, req.params, {
+            AcademyId: "varchar",
+            Student: "varchar", Subject: "varchar"
+        })
         const result = await executeQuery(query, res);
         if (result?.recordset?.length === 0) {
             throw new Error('Update failed: Record not found');
@@ -319,7 +321,6 @@ const update_shortlist = async (req, res) => {
 
     }
 }
-
 
 let get_my_data = async (req, res) => {
     let { AcademyId } = req.query;
@@ -954,34 +955,39 @@ const get_all_students_sessions_formatted = async (req, res) => {
                     `
                 )
 
-                const offset = parseInt(recordset[0].GMT, 10);
-                let timezones = moment.tz.names().filter(name =>
-                    (moment.tz(name).utcOffset()) === offset * 60);
-                const timeZone = timezones[0] || null
+                if (recordset[0]) {
+                    const offset = parseInt(recordset[0].GMT, 10);
+                    let timezones = moment.tz.names().filter(name =>
+                        (moment.tz(name).utcOffset()) === offset * 60);
+                    const timeZone = timezones[0] || null
 
-                let reservedSlots = [];
-                let bookedSlots = []
-                recordset.map(record => {
-                    reservedSlots.push(JSON.parse(record.reservedSlots));
-                    bookedSlots.push(JSON.parse(record.bookedSlots))
-                    return
-                })
+                    let reservedSlots = [];
+                    let bookedSlots = []
+                    recordset.map(record => {
+                        reservedSlots.push(JSON.parse(record.reservedSlots));
+                        bookedSlots.push(JSON.parse(record.bookedSlots))
+                        return
+                    })
 
-                // const allSessions
+                    // const allSessions
 
-                const allSessions = (reservedSlots.concat(bookedSlots)).flat()
+                    const allSessions = (reservedSlots.concat(bookedSlots)).flat()
 
-                const currentTime = moment().tz(timeZone)
-                const sortedEvents = allSessions.sort((a, b) => moment(a.start).diff(moment(b.start)));
-                const upcomingSession = sortedEvents.find(event => moment(event.start).isAfter(currentTime)) || {};
-                const timeUntilStart = upcomingSession.id ?
-                    moment(upcomingSession.start).tz(timeZone).to(currentTime, true) : '';
-                let inMins = false
-                if (timeUntilStart.includes('minutes') || timeUntilStart.includes('minute')) {
-                    inMins = true
+                    const currentTime = moment().tz(timeZone)
+                    const sortedEvents = allSessions.sort((a, b) => moment(a.start).diff(moment(b.start)));
+                    const upcomingSession = sortedEvents.find(event => moment(event.start).isAfter(currentTime)) || {};
+                    const timeUntilStart = upcomingSession.id ?
+                        moment(upcomingSession.start).tz(timeZone).to(currentTime, true) : '';
+                    let inMins = false
+                    if (timeUntilStart.includes('minutes') || timeUntilStart.includes('minute')) {
+                        inMins = true
+                    }
+
+                    res.status(200).send({ sessions: allSessions, upcomingSession, inMins, upcomingSessionFromNow: timeUntilStart })
                 }
-
-                res.status(200).send({ sessions: allSessions, upcomingSession, inMins, upcomingSessionFromNow: timeUntilStart })
+                else {
+                    res.status(200).send({ sessions: [], upcomingSession: {}, inMins: false, upcomingSessionFromNow: '' })
+                }
             }
         }
         catch (err) {

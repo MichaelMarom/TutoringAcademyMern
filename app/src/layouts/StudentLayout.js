@@ -1,5 +1,5 @@
 import React from 'react'
-import Header from '../components/student/Header'
+import Header from '../layouts/student/Header'
 import { useSelector } from 'react-redux'
 import SmallSideBar from '../components/common/SmallSideBar'
 import { generateUpcomingSessionMessage } from '../helperFunctions/generalHelperFunctions'

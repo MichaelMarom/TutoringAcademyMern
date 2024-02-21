@@ -1,20 +1,38 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PROFILE_STATUS, statesColours } from "../../constants/constants";
-import { IoLogOut } from "react-icons/io5";
+import { useClerk } from "@clerk/clerk-react";
+import Tooltip from "../../components/common/ToolTip";
+import { FaSignOutAlt } from "react-icons/fa";
+import { setUser } from "../../redux/auth_state/auth";
+import { setTutor } from "../../redux/tutor_store/tutorData";
+import { setStudent } from "../../redux/student_store/studentData";
+import { setShortlist } from "../../redux/student_store/shortlist";
 
 
 const Header = () => {
+    const { signOut } = useClerk();
 
     let nav = useNavigate()
     let location = useLocation()
     const [activeTab, setActiveTab] = useState('intro');
-
+    const dispatch = useDispatch()
     let [screen_name, set_screen_name] = useState(window.localStorage.getItem('tutor_screen_name'));
 
     let [tutorState, setTutorState] = useState('Pending')
     const { tutor } = useSelector(state => state.tutor);
+    const handleSignOut = () => {
+        localStorage.clear()
+        dispatch(setUser({}))
+        dispatch(setTutor({}))
+        dispatch(setStudent({}))
+        dispatch(setShortlist())
+        //setTutor tonull
+        //setStudent tonull
+
+        nav('/login')
+    }
 
     useEffect(() => {
         console.log(location.pathname)
@@ -92,10 +110,11 @@ const Header = () => {
 
     return (
         <>
-            <div className={`screen-name btn-success rounded  p-2 flex-column`}
+            <div className={`screen-name btn-success rounded  p-1 flex-column`}
                 style={{
+                    fontSize: "14px",
                     display: !tutor.TutorScreenname ? 'none' : 'flex', position: 'fixed',
-                    top: '2px', zIndex: '999', left: '45px',
+                    top: '1px', zIndex: '999', left: '3%',
                     background: statesColours[tutorState]?.bg,
                     color: statesColours[tutorState]?.color
                 }}>
@@ -122,7 +141,7 @@ const Header = () => {
                     background: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? '#737476' : 'inherit',
                     pointerEvents: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? 'none' : 'auto',
                     width: 'calc(100% - 300px)',
-                    margin: '0 200px 0 200px'
+                    margin: '0 20px 0 200px'
                 }}>
                     {tabs.map((tab) => {
                         return (<li
@@ -135,7 +154,14 @@ const Header = () => {
                         </li>)
                     })}
                 </ul>
-
+                <div className="d-flex border rounded p-1 justify-content-center align-items-center " 
+                style={{ marginRight: "230px", cursor: "pointer" }}
+                    onClick={() => signOut(() => handleSignOut())}>
+                    <p className="text-danger m-0">Signout</p>
+                    <Tooltip text={"signout"} direction="bottomright">
+                        <FaSignOutAlt color="red" />
+                    </Tooltip>
+                </div>
                 <div className="scroller-right" onClick={handle_scroll_right}
                     style={{
                         margin: '0 0 0 0', display

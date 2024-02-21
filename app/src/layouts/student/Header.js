@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getBookedSlot } from "../../axios/student";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { FaSignOutAlt } from "react-icons/fa";
+import Tooltip from "../../components/common/ToolTip";
+import { useClerk } from "@clerk/clerk-react";
+import { setUser } from "../../redux/auth_state/auth";
+import { setTutor } from "../../redux/tutor_store/tutorData";
+import { setStudent } from "../../redux/student_store/studentData";
+import { setShortlist } from "../../redux/student_store/shortlist";
 
 
 const Header = () => {
+    const { signOut } = useClerk();
 
+    const dispatch = useDispatch()
     let location = useLocation()
     const { student } = useSelector(state => state.student)
     const tabs = [
@@ -79,6 +88,18 @@ const Header = () => {
         let w = scroll_elem.offsetWidth;
         scroll_elem.scrollLeft = -w
     }
+    const handleSignOut = () => {
+        localStorage.clear()
+        dispatch(setUser({}))
+
+        dispatch(setTutor({}))
+        dispatch(setStudent({}))
+        dispatch(setShortlist())
+        //setTutor tonull
+        //setStudent tonull
+        nav('/login')
+    }
+
 
     let handleTabClick = e => {
         nav(`/student/${e.currentTarget.dataset.url}`)
@@ -86,13 +107,14 @@ const Header = () => {
 
     return (
         <>
-            <div className={`screen-name btn-success rounded  p-2 flex-column`}
+            <div className={`screen-name btn-success rounded  p-1 flex-column`}
                 style={{
+                    fontSize: "14px",
                     display: 'flex', position: 'fixed',
-                    top: '2px', zIndex: '999', left: '45px',
+                    top: '1px', zIndex: '999', left: '3%',
                 }}>
                 <div style={{ fontWeight: 'bold' }}>{student.ScreenName}</div>
-              
+
             </div>
 
             <div className="tutor-tab-header shadow-sm">
@@ -109,8 +131,8 @@ const Header = () => {
 
                 </div>
                 <ul id="" className={` header`} style={{
-                    background:'inherit',
-                    pointerEvents:  'auto',
+                    background: 'inherit',
+                    pointerEvents: 'auto',
                     width: 'calc(100% - 300px)',
                     margin: '0 200px 0 200px'
                 }}>
@@ -125,7 +147,13 @@ const Header = () => {
                         </li>
                     ))}
                 </ul>
-
+                <div  className="d-flex border rounded p-1 justify-content-center align-items-center " style={{ marginRight: "60px", cursor: "pointer" }}
+                onClick={() => signOut(() => handleSignOut())}>
+                    <p className="text-danger m-0">Signout</p>
+                    <Tooltip text={"signout"} direction="bottomright">
+                        <FaSignOutAlt color="red"  />
+                    </Tooltip>
+                </div>
                 <div className="scroller-right" onClick={handle_scroll_right}
                     style={{
                         margin: '0 0 0 0', display

@@ -1846,6 +1846,22 @@ const get_tutor_against_code = async (req, res) => {
     })
 }
 
+const get_feedback_data = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const result = await poolConnection.request().query()
+
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
+
 module.exports = {
     get_tutor_profile_data,
     get_tutor_against_code,

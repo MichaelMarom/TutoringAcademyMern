@@ -29,9 +29,10 @@ const TabInfoVideoToast = ({ video }) => {
                 <div className='text-light text-sm' style={{fontSize:"12px"}}>View Tutorial</div>
                 <Button
                     variant="danger"
+                    className='btn-sm'
                     onClick={() => setShowToast(true)}
                 >
-                    <BsFillPlayFill size={20} />
+                    <BsFillPlayFill size={16} />
                 </Button>
             </div>
             {video &&

@@ -1,13 +1,23 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Tooltip from "../common/ToolTip";
+import { FaSignOutAlt } from "react-icons/fa";
+import { useClerk } from "@clerk/clerk-react";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/auth_state/auth";
+import { setTutor } from "../../redux/tutor_store/tutorData";
+import { setStudent } from "../../redux/student_store/studentData";
+import { setShortlist } from "../../redux/student_store/shortlist";
 
 
 const Header = () => {
+    const { signOut } = useClerk();
 
 
     let nav = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch()
 
     const [activeTab, setActiveTab] = useState('');
 
@@ -39,6 +49,17 @@ const Header = () => {
         set_screen_name(name)
     }, []);
 
+    const handleSignOut = () => {
+        localStorage.clear()
+        dispatch(setUser({}))
+        
+        dispatch(setTutor({}))
+        dispatch(setStudent({}))
+        dispatch(setShortlist())
+        //setTutor tonull
+        //setStudent tonull
+        nav('/login')
+    }
 
     return (
         <>
@@ -55,6 +76,11 @@ const Header = () => {
                         </li>
                     ))}
                 </ul>
+                <div style={{ marginRight: "230px", cursor: "pointer" }}>
+                    <Tooltip text={"signout"} direction="bottomright">
+                        <FaSignOutAlt color="white" onClick={() => signOut(() => handleSignOut())} />
+                    </Tooltip>
+                </div>
             </div>
         </>
     );

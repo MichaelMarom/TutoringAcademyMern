@@ -21,7 +21,7 @@ const SubMenu = ({ faculty, selectedFaculty, setSelectedFaculty }) => {
     }
 
     return (
-        <div className="tutor-tab-subject-data-tabs">
+        <div className="tutor-tab-subject-data-tabs m-1">
             <div style={{
                 margin: '0 0 0 0', display
                     : 'flex', alignItems: 'center', justifyContent: 'center', background:

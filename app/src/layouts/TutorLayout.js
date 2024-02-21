@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import Header from '../components/tutor/Header'
+import Header from '../layouts/tutor/Header'
 import { useSelector } from 'react-redux'
 import Steps from '../components/tutor/Steps'
 import SmallSideBar from '../components/common/SmallSideBar'

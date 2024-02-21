@@ -18,6 +18,7 @@ import { statesColours } from '../../constants/constants';
 import { get_faculty } from '../../axios/tutor';
 import SubMenu from '../common/SubMenu';
 import Loading from '../common/Loading';
+import { BiInfoCircle } from 'react-icons/bi';
 
 const StudentFaculties = () => {
     const dispatch = useDispatch()
@@ -27,6 +28,8 @@ const StudentFaculties = () => {
     const [faculties, set_faculties] = useState([]);
     const [selectedFaculty, setSelectedFaculty] = useState(1);
     const [fetchedTutorSubjectRecord, setFetchedTutorSubjectRecord] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [selectedTutors, setSelectedTutors] = useState([])
 
     useEffect(() => {
         const fetchTutorSubject = async () => {
@@ -60,6 +63,7 @@ const StudentFaculties = () => {
         });
         setResponse(result);
     }
+
     useEffect(() => {
         getTutorSubject()
     }, [selectedFaculty])
@@ -77,64 +81,13 @@ const StudentFaculties = () => {
         });
         dispatch(setShortlist(result))
     }
-
     useEffect(() => {
-        if (checkBoxClicked.type?.length) {
-            document.querySelector('.save-overlay')?.setAttribute('id', 'save-overlay')
-            let list = [...document.querySelectorAll('#student-tutor')];
-            let doc = list.filter(item =>
-                item.children[0].checked === true
-            )
-
-            let data = doc.map(item => item.dataset.id)
-            const tutorStatus = data[0].split('-')[5]
-            const activeTutor = tutorStatus === 'active';
-
-            if (activeTutor) {
-                if (data[0]) {
-                    console.log(data[0])
-                    let res = upload_student_short_list(data);
-
-                    if (res) {
-                        const tutorSelectedId = data[0].split('-')[0]
-                        create_chat({ User1ID: student.AcademyId, User2ID: tutorSelectedId })
-                            .then(() => { toast.success('You can also chat with selected tutor in MessageBoard Tab!') })
-                            .catch((err => console.log(err)))
-
-                        setTimeout(() => {
-                            document.querySelector('.save-overlay')?.removeAttribute('id');
-                        }, 1000);
-                        getShortlist()
-
-                        toast.success("Your selected record was uploaded to your short list")
-                        setTimeout(() => {
-                            if (document.querySelector('.tutor-popin')) {
-                                document.querySelector('.tutor-popin')?.removeAttribute('id');
-                            }
-                        }, 5000);
-
-                    } else {
-                        setTimeout(() => {
-                            document.querySelector('.save-overlay')?.removeAttribute('id');
-                        }, 1000);
-
-                        document.querySelector('.tutor-popin')?.setAttribute('id', 'tutor-popin');
-                        document.querySelector('.tutor-popin').style.background = 'red';
-                        document.querySelector('.tutor-popin').innerHTML = res.mssg
-                        setTimeout(() => {
-                            document.querySelector('.tutor-popin')?.removeAttribute('id');
-                        }, 5000);
-                    }
-                }
-            }
-            else toast.warning('You can only Select Active Tutors')
-        }
-    }, [checkBoxClicked])
-
-    useEffect(() => {
-        get_student_short_list_data(window.localStorage.getItem('student_user_id'))
+        console.log('triggered')
+        get_student_short_list_data(student.AcademyId)
             .then((result) => {
                 let list = [...document.querySelectorAll('#student-tutor')];
+                console.log(list, result)
+                setSelectedTutors(result)
                 if (result.length) {
                     result.map(item => {
                         let elem = list.filter(res => res.dataset.id.split('-')[0] === item.AcademyId && res.dataset.id.split('-')[1] === item.Subject)
@@ -145,8 +98,7 @@ const StudentFaculties = () => {
                 }
             })
             .catch((err) => console.log(err))
-    }, [response])
-
+    }, [response, checkBoxClicked, student])
 
     let multi_student_cols = [
         {
@@ -163,7 +115,7 @@ const StudentFaculties = () => {
         { Header: 'Tutor', width: "7%", },
         { Header: 'Experience', width: "7%", },
         { Header: 'Certification', width: "7%", },
-        { Header: 'State', width: "7%", },
+        { Header: 'Certificate Country', width: "7%", },
         { Header: 'Expiration', width: "7%", },
         { Header: 'Rate', width: "7%", },
         {
@@ -179,19 +131,37 @@ const StudentFaculties = () => {
                 text="Indicate the cancellation period in hours. If you delete your booked session before that, then you will be refunded the full amount" />
         }]
 
-    let handleSavedDeleteData = (e, status) => {
+    let handleSavedDeleteData = async (e, status, body) => {
+        setLoading(true)
         let elem = e.target;
 
         let pElem = elem.parentElement;
         let id = pElem.dataset;
-
         if (!elem.checked) {
             toast.error("This record was removed from your shortlist")
             socket.emit('studentIllShorList', { id });
             getShortlist()
+            setCheckBoxClicked(elem)
+            setLoading(false)
         }
         else {
-            if (status === 'active') setCheckBoxClicked(elem)
+            if (status === 'active') {
+                setTimeout(async () => {
+                    let res = await upload_student_short_list(body);
+                    if (!!res?.length) {
+                        setCheckBoxClicked(elem)
+
+                        toast.success("Your selected subject has been listed in the Shortlist tab! Select the tab to view it.", { pauseOnHover: true })
+
+                        await create_chat({ User1ID: body.Student, User2ID: body.AcademyId })
+                        toast.info('You can chat with the selected tutor in the Message Board Tab!')
+                        getShortlist()
+                        setLoading(false)
+
+                        elem.checked = true;
+                    }
+                }, 2000)
+            }
             else toast.warning('You can only select Active Tutors')
         }
     }
@@ -214,12 +184,12 @@ const StudentFaculties = () => {
                     <SubMenu faculty={faculties} selectedFaculty={selectedFaculty} setSelectedFaculty={setSelectedFaculty} />
 
                     <div className="highlight m-0" style={{ width: '100%' }}>
-                        There are 31 faculties containing 400+ subjects to select from. From the sub menu above, select the faculty of interest.
-                        Then checkbox from the table below the Tutor(s) of interest. Your selected tutors be shown in the next "Short List" tab to compare
-                        from the list. Then on the SHORT LIST tab, click on BOOK LESSON button to view tutor calendar.
+                        There are 39 faculties containing 600+ subjects to select from. From the sub menu above, select the faculty of interest.
+                        Then checkbox from the table below the Tutor(s) of interest. Your selected tutors to be shown in the "Short List" tab, allows you to compare
+                        from the list. Then from the SHORT LIST tab, click on the BOOK LESSON button to view your preferred tutor's calendar.
                     </div>
 
-                    {fetchedTutorSubjectRecord ?
+                    {(fetchedTutorSubjectRecord && !loading) ?
                         response?.length ?
                             <>
                                 <div className='d-flex rounded justify-content-between
@@ -247,14 +217,20 @@ const StudentFaculties = () => {
 
                                         <tbody>
                                             {
-
                                                 response.map((item) => {
-
                                                     return <tr>
-                                                        <td style={{ width: multi_student_cols[0].width }} id='student-tutor'
-                                                            data-id={`${item.AcademyId[0]}-${item.subject}-${item.rate}-${item?.AcademyId}-${student.AcademyId}-${item.status}`}>
+                                                        <td style={{ width: multi_student_cols[0].width }} id={`student-tutor`}
+                                                            data-id={`${item.AcademyId[0]}-${item.subject}-${item.rate}-${item?.AcademyId}-${student.AcademyId}-${item.status}`}
+                                                        >
 
-                                                            <input disabled={item.status !== 'active'} onClick={() => toast.success('hehe')} onInput={(e) => handleSavedDeleteData(e, item.status)} type='checkbox'
+                                                            <input disabled={item.status !== 'active' || loading} onChange={(e) =>
+                                                                handleSavedDeleteData(e, item.status, {
+                                                                    Student: student.AcademyId, Rate: item.rate, date: new Date(),
+                                                                    AcademyId: item.AcademyId[0], Subject: item.subject
+                                                                })} type='checkbox' checked={
+                                                                    !!selectedTutors.find(tutor =>
+                                                                        tutor.Subject === item.subject && tutor.AcademyId == item.AcademyId[0] &&
+                                                                        tutor.Student === student.AcademyId)?.AcademyId}
                                                                 style={{ height: '20px', width: '20px' }} />
                                                         </td>
 
@@ -275,7 +251,7 @@ const StudentFaculties = () => {
                                                             {item.Certificate}
                                                         </td>
                                                         <td style={{ width: multi_student_cols[5].width }}>
-                                                            {item.CertificateState}
+                                                            {item.CertCountry}
                                                         </td>
                                                         <td style={{ width: multi_student_cols[6].width }}>
                                                             {item.CertificateExpiration?.length ?

@@ -72,7 +72,7 @@ const TutorTable = () => {
         }
     }
     if (loading)
-        return <Loading loadingText='Fetching New Subjects...' />
+        return <Loading  />
     return (
 
         <div className="tables" style={{ height: '100%', width: '100%', overflow: 'auto', padding: '5px' }}>

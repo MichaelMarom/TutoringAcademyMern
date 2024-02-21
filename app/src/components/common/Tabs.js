@@ -16,7 +16,7 @@ const Tabs = ({ links, activeTab, setActiveTab, activeTabIndex, setActiveTabInde
     return (
         <div className="tutor-acct-tab-menu"
             style={{
-                height: '50px', padding: '10px', cursor: 'pointer', width: '100%',
+                height: '30px', cursor: 'pointer', width: '100%',
                 background: '#212F3D', display: 'flex', alignItems: 'center',
                 justifyContent: 'left', marginTop: '5px'
             }}

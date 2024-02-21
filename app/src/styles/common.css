@@ -121,7 +121,7 @@
 }
 
 .rbc-current-time-indicator:before {
-  content: 'My Time';
+  content: 'Tutor Time';
   font-size: 10px;
   bottom: 2px;
   position: absolute;
@@ -159,6 +159,11 @@
 
 .custom-toast-container {
   bottom: 100px
+}
+
+.react-toastify-icon.toast-info svg {
+  fill: white;
+  /* Change to your desired color */
 }
 
 .setup-private-info .Toastify__close-button>svg {
@@ -433,4 +438,31 @@
   margin-left: 200px;
   /* Adjust this value to make space for the sidebar */
   padding: 20px;
+}
+
+
+
+
+/**************************-------------------- scrollbar ---------------**************************************/
+::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #47c176;
+  border-radius: 200px;
+  /* background: rgb(117, 117, 117); */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

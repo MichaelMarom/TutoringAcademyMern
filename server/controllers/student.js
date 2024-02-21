@@ -223,57 +223,25 @@ let get_tutor_subject = async (req, res) => {
 }
 
 let upload_student_short_list = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const { Subject, Student, AcademyId } = req.body;
+            const poolConnection = await sql.connect(config);
 
-    let book = []
-    let { items } = req.body;
-    //1 0 4
-    let checkDuplicates = async (subject, AcademyId, Student) => {
+            const result = await poolConnection.request().query(
+                find('StudentShortList', { Subject, Student, AcademyId }, 'And',
+                    { Subject: 'varchar', Student: 'varchar', AcademyId: 'varchar' }))
 
-        let response = await connecteToDB
-            .then((poolConnection) =>
-                poolConnection.request().query(`SELECT * from StudentShortList 
-                WHERE CONVERT(VARCHAR, Student)  =  '${Student}' AND
-                 CONVERT(VARCHAR, AcademyId) =  '${AcademyId}' AND CONVERT(VARCHAR, Subject) =  '${subject}'`)
-                    .then((result) => {
-
-                        return result.recordset
-
-                    })
-                    .catch(err => console.log(err))
-            )
-
-
-        return response.length > 0 ? false : true;
-    }
-
-    let uploadData = (list) => {
-        connecteToDB
-            .then((poolConnection) =>
-                poolConnection.request().query(`INSERT INTO StudentShortList 
-                (Subject,AcademyId,date,ScreenName,Rate,Student) values('${list[1]}', '${list[0]}',
-                 '${Date().toString()}', '${list[3]}', '${list[2]}', '${list[4]}')`)
-                    .then((result) => {
-
-                        book.push(result.rowsAffected[0]);
-
-                        if (book.subjectLength === items) {
-
-                            res.send(result.rowsAffected[0] === 1 ? true : false)
-
-                        }
-
-                    })
-                    .catch(err => console.log(err))
-            )
-    }
-
-
-    items.map(async (item) => {
-        console.log(item, 'inside items');
-        let list = item.split('-');
-
-        let bool = await checkDuplicates(list[1], list[0], list[4])
-        if (bool) { uploadData(list) }
+            if (!result.recordset.length) {
+                const { recordset } = await poolConnection.request().query(
+                    insert('StudentShortList', req.body)
+                )
+                res.status(200).send(recordset)
+            }
+            res.status(200).send(result.recordset)
+        } catch (err) {
+            res.status(400).send({ message: "Failed To Add the Record", reason: err.message })
+        }
     })
 }
 
@@ -660,7 +628,6 @@ const get_student_feedback = async (req, res) => {
                 const result = await poolConnection.request().query(
                     findByAnyIdColumn('Feedback', req.params, 'Varchar')
                 );
-
                 res.status(200).send(result.recordset);
             }
         } catch (err) {

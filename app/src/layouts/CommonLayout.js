@@ -1,6 +1,6 @@
 import React from 'react'
-import TutorHeader from '../components/tutor/Header'
-import Header from '../components/student/Header'
+import TutorHeader from '../layouts/tutor/Header'
+import Header from '../layouts/student/Header'
 import SmallSideBar from '../components/common/SmallSideBar'
 import { generateUpcomingSessionMessage } from '../helperFunctions/generalHelperFunctions'
 import { useSelector } from 'react-redux'

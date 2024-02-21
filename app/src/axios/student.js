@@ -118,20 +118,15 @@ export let get_tutor_subject = async (subject) => {
     }
 }
 
-export let upload_student_short_list = (items) => {
-
-    return new Promise((resolve, reject) => {
-
-
-        apiClient.post('/student/short-list', { items })
-            .then((result) => {
-                resolve(result.data)
-            })
-            .catch((err) => {
-                // reject(err)
-            })
-
-    })
+export let upload_student_short_list = async (body) => {
+    try {
+        const result = await apiClient.post('/student/short-list', body)
+        return result.data
+    }
+    catch (err) {
+        showErrorToast(err)
+        return err
+    }
 }
 
 export let get_student_short_list = async (student) => {

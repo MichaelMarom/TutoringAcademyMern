@@ -656,29 +656,6 @@
         justify-content: center;
     }
 
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    /* Track */
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 6px;
-    }
-
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-        background: #47c176;
-        border-radius: 200px;
-        /* background: rgb(117, 117, 117); */
-    }
-
-    /* Handle on hover */
-    ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-    }
-
-
 }
 
 /* //countdown */

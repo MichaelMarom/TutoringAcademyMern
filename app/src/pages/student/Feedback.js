@@ -10,12 +10,9 @@ import { postStudentBookings } from '../../redux/student_store/studentBookings';
 import Actions from '../../components/common/Actions';
 import { toast } from 'react-toastify';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
-import { moment } from '../../config/moment'
-import SmallSideBar from '../../components/common/SmallSideBar';
 
 export const Feedback = () => {
     const { student } = useSelector(state => state.student)
-    const [upcomingSessionNotice, setUpcomingSessionNotice] = useState('')
     const [questions, setQuestions] = useState([]);
     const [comment, setComment] = useState('')
     const [reservedSlots, setReservedSlots] = useState([])
@@ -26,7 +23,6 @@ export const Feedback = () => {
     const [feedbackData, setFeedbackData] = useState([])
     const studentId = localStorage.getItem('student_user_id');
     const [pendingChange, setPendingChange] = useState(null);
-    const [upcomingEvent, setUpcomingEvent] = useState({})
     const dispatch = useDispatch()
 
     useEffect(() => {

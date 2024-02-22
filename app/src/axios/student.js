@@ -266,9 +266,9 @@ export const get_all_feedback_questions = async () => {
     }
 }
 
-export const get_feedback_to_question = async (sessionId, tutorId, studentId) => {
+export const get_feedback_to_question = async (sessionId, tutorId, studentId, isstudentgiver = 1) => {
     try {
-        const { data } = await apiClient.get(`/questions/${studentId}/${tutorId}/${sessionId}`);
+        const { data } = await apiClient.get(`/questions/${studentId}/${tutorId}/${sessionId}/${isstudentgiver}`);
         return data;
     } catch (err) {
         showErrorToast(err)
@@ -277,13 +277,24 @@ export const get_feedback_to_question = async (sessionId, tutorId, studentId) =>
     }
 }
 
-export const post_feedback_to_question = async (sessionId, tutorId, studentId, feedbackQuestionId, rating) => {
+/**
+ * 
+ * @param {String} sessionId session id
+ * @param {String} tutorId tutor Id
+ * @param {String} studentId student id
+ * @param {String} feedbackQuestionId feedback que4stion id (from feedbackQuestions)
+ * @param {Int} rating rating in number till 5
+ * @param {Boolean} givenByStudent is feedback given by student or tutor
+ * @returns 
+ */
+export const post_feedback_to_question = async (sessionId, tutorId, studentId, feedbackQuestionId, rating, givenByStudent = 1) => {
     const body = {
         SessionId: sessionId,
         FeedbackQuestionsId: feedbackQuestionId,
         rating,
         TutorId: tutorId,
-        StudentId: studentId
+        StudentId: studentId,
+        IsStudentGiver: givenByStudent
     }
     try {
         const { data } = await apiClient.post(`/questions`, body);

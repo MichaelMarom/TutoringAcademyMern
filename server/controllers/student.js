@@ -733,7 +733,8 @@ const get_feedback_of_questions = async (req, res) => {
                   JOIN feedbackQuestions fq ON f.feedbackQuestionsId = fq.SID
                   WHERE f.StudentId = '${req.params.StudentId}'
                   AND f.TutorId = '${req.params.TutorId}'
-                  AND f.SessionId = '${req.params.SessionId}'`
+                  AND f.SessionId = '${req.params.SessionId}' 
+                  AND f.IsStudentGiver = ${req.params.isstudentgiver}`
                 );
 
                 res.status(200).send(result.recordset);

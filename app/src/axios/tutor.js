@@ -70,7 +70,17 @@ export let get_subject = (id) => {
     })
 }
 
-
+export const get_tutor_feedback_questions = async () => {
+    try {
+        const { data } = await apiClient.get(`/tutor/feedback/questions`);
+        return data;
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
+}
 
 export let get_faculty = () => {
 
@@ -87,8 +97,6 @@ export let get_faculty = () => {
             })
             .catch(error => {
                 showErrorToast(error)
-
-                // reject(error)
             })
 
     })
@@ -243,13 +251,13 @@ export let upload_setup_form = (fname, uname, mname, lname, email, cell, acadId,
     })
 }
 
-export const post_edu = async(body) => {
+export const post_edu = async (body) => {
     try {
         const data = await apiClient.post('/tutor/edu', body)
         return data
     }
     catch (error) {
-        showErrorToast(error)   
+        showErrorToast(error)
         return error
     }
 }
@@ -278,6 +286,18 @@ export let upload_tutor_rates_form = (MutiStudentHourlyRate, CancellationPolicy,
 export const formatted_tutor_sessions = async (tutorId) => {
     try {
         const { data } = await apiClient.get(`/tutor/sessions/formatted/${tutorId}`);
+        return data;
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
+}
+
+export const feedback_records = async (tutorId) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/feedbacks/${tutorId}`);
         return data;
     }
     catch (err) {

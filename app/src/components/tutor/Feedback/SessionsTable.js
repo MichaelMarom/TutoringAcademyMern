@@ -9,9 +9,8 @@ import Tooltip from '../../common/ToolTip';
 
 function SessionsTable({
   events,
-  handleRowSelect,
+  setSelectedEvent,
   selectedEvent,
-  setEvents
 }) {
   const { shortlist } = useSelector(state => state.shortlist)
   const [eventsWithPhoto, setEventsWithPhoto] = useState([])
@@ -52,7 +51,6 @@ function SessionsTable({
           <th>Photo</th>
           <th scope="col" className='col-md-3'>Date</th>
           <th scope="col" className='col-md-2'>Lesson</th>
-          <th scope="col">Subject</th>
           <th scope="col" className='col-md-3'>Rating</th>
           <th scope="col">Comment</th>
           <th scope="col">Action</th>
@@ -62,23 +60,22 @@ function SessionsTable({
         {sortedEvents.map((event, index) => (
           <tr key={index}>
             <td>
-              <Tooltip text={event.tutorId}>
-                <img src={event.photo} alt={event.tutorId} height={60} width={60} />
+              <Tooltip text={event.studentId}>
+                <img src={event.photo} alt={event.studentId} height={60} width={60} />
               </Tooltip>
             </td>
             <td>{showDate(convertToDate(event.start), wholeDateFormat)}</td>
-            <td>{event.subject}</td>
-            <td>{event.title}</td>
+            <td>{event.subject}({event.type})</td>
 
-            <td><StarRating rating={event.rating} /></td>
+            <td><StarRating rating={event.tutorRating} /></td>
             <td>
-              <Comment comment={event.comment} />
+              <Comment comment={event.tutorComment} />
             </td>
 
             <td>
               <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'} `}
-                style={{ animation: (event.feedbackEligible && !event.rating) ? 'blinking 1s infinite' : 'none' }}
-                onClick={() => handleRowSelect(event)} disabled={!event.feedbackEligible}>Select</button>
+                style={{ animation: (event.tutorFeedbackEligible && !event.tutorRating) ? 'blinking 1s infinite' : 'none' }}
+                onClick={() => setSelectedEvent(event)} disabled={!event.tutorFeedbackEligible}>Select</button>
             </td>
           </tr>
         ))}

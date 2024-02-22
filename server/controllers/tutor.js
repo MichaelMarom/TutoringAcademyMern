@@ -1849,9 +1849,62 @@ const get_tutor_against_code = async (req, res) => {
 const get_feedback_data = async (req, res) => {
     marom_db(async (config) => {
         try {
+            const { tutorId } = req.params
             const poolConnection = await sql.connect(config)
-            const result = await poolConnection.request().query()
+            const result = await poolConnection.request().query(`
+            SELECT 
+            ST.Photo, 
+            SB.studentId AS studentId,
+            SB.tutorId AS tutorId,
+            SB.reservedSlots AS reservedSlots,
+            SB.bookedSlots AS bookedSlots
+             FROM StudentBookings AS SB
+             inner join StudentSetup AS ST On
+             cast( ST.AcademyId as varchar) = CAST(SB.studentId as varchar(max))
+             WHERE SB.tutorId = CAST('${tutorId}' as varchar(max));`)
 
+            let sessions = [];
+
+            result.recordset.map(record => {
+                const reservedSlots = JSON.parse(record.reservedSlots)
+                const bookedSlots = JSON.parse(record.bookedSlots)
+
+                sessions.push(reservedSlots.concat(bookedSlots))
+            })
+
+            const allSessions = sessions.flat();
+            const sessionsWithPhotos = allSessions.map(session => {
+                const studentFound = result.recordset.find(record => record.studentId === session.studentId)
+                if (moment(session.end).isBefore(moment())) {
+                    session = {
+                        ...session,
+                        tutorFeedbackEligible: true
+                    }
+                }
+                if (studentFound) {
+                    return { ...session, photo: studentFound.Photo }
+                }
+                return session
+            })
+            res.status(200).send(sessionsWithPhotos)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
+
+const get_tutor_feedback_questions = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const { recordset } = await poolConnection.request().query(
+                find('FeedbackQuestions', { ForStudents: 0 })
+            )
+            res.status(200).send(recordset)
         }
         catch (err) {
             res.status(400).send({
@@ -1871,6 +1924,8 @@ module.exports = {
     set_agreements_date_null_for_all,
     get_ad,
     put_ad,
+    get_feedback_data,
+    get_tutor_feedback_questions,
     get_all_tutor_sessions_formatted,
     get_tutor_ads,
     dynamically_post_edu_info,

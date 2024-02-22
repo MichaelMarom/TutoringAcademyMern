@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PROFILE_STATUS, statesColours } from "../../constants/constants";
-import { useClerk } from "@clerk/clerk-react";
+import { useClerk, useSession } from "@clerk/clerk-react";
 import Tooltip from "../../components/common/ToolTip";
 import { FaSignOutAlt } from "react-icons/fa";
 import { setUser } from "../../redux/auth_state/auth";
@@ -13,7 +13,7 @@ import { setShortlist } from "../../redux/student_store/shortlist";
 
 const Header = () => {
     const { signOut } = useClerk();
-
+    const { isSignedIn, userId } = useSession()
     let nav = useNavigate()
     let location = useLocation()
     const [activeTab, setActiveTab] = useState('intro');
@@ -110,7 +110,7 @@ const Header = () => {
 
     return (
         <>
-            <div className={`screen-name btn-success rounded  p-1 flex-column`}
+            <div className={`screen-name btn-success rounded  p-1 flex-column align-items-center`}
                 style={{
                     fontSize: "14px",
                     display: !tutor.TutorScreenname ? 'none' : 'flex', position: 'fixed',
@@ -119,7 +119,7 @@ const Header = () => {
                     color: statesColours[tutorState]?.color
                 }}>
                 <div style={{ fontWeight: 'bold' }}>{screen_name}</div>
-                <div style={{ fontSize: "12px" }} >
+                <div style={{ fontSize: "12px", fontWeight: "700" }} >
                     {StatusValues[tutor.Status]}
                 </div>
             </div>
@@ -141,7 +141,7 @@ const Header = () => {
                     background: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? '#737476' : 'inherit',
                     pointerEvents: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? 'none' : 'auto',
                     width: 'calc(100% - 300px)',
-                    margin: '0 20px 0 200px'
+                    margin: '0 200px '
                 }}>
                     {tabs.map((tab) => {
                         return (<li
@@ -154,8 +154,8 @@ const Header = () => {
                         </li>)
                     })}
                 </ul>
-                <div className="d-flex border rounded p-1 justify-content-center align-items-center " 
-                style={{ marginRight: "230px", cursor: "pointer" }}
+                <div className="d-flex border rounded p-1 justify-content-center align-items-center "
+                    style={{ marginRight: "60px", cursor: "pointer" }}
                     onClick={() => signOut(() => handleSignOut())}>
                     <p className="text-danger m-0">Signout</p>
                     <Tooltip text={"signout"} direction="bottomright">

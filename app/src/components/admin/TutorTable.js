@@ -19,6 +19,9 @@ const TutorTable = () => {
     const [updatingStatus, setUpdatingStatus] = useState(false)
 
     useEffect(() => {
+        console.log('inside tutor data')
+    }, [])
+    useEffect(() => {
         get_tutor_data()
             .then((result) => {
                 set_data(result);

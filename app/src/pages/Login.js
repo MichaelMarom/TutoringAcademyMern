@@ -14,7 +14,7 @@ import TAButton from '../components/common/TAButton';
 const LoginPage = () => {
     const navigate = useNavigate();
     const token = localStorage.getItem('access_token')
-    useSelector(state => state.user)
+    const { user } = useSelector(state => state.user)
     const { signIn, setActive, isLoaded } = useSignIn();
     const { isSignedIn, getToken, userId } = useAuth()
     const { session, isSignedIn: sessionSignedIn } = useSession()
@@ -30,13 +30,14 @@ const LoginPage = () => {
 
     // useEffect(() => {
     //     console.log(isSignedIn, user, isLoaded, session, sessionSignedIn)
-    //     isSignedIn && navigate(DEFAULT_URL_AFTER_LOGIN['tutor'])
+    //     isSignedIn && user.role && navigate(DEFAULT_URL_AFTER_LOGIN[user.role])
     // }, [isSignedIn, user])
 
     const handleLogin = async (e) => {
         e.preventDefault();
         if (!isLoaded) return
-
+        isSignedIn && user.role && navigate(DEFAULT_URL_AFTER_LOGIN[user.role])
+        console.log(isSignedIn, user, sessionSignedIn)
         setLoading(true)
         try {
             const result = await signIn.create({
@@ -54,8 +55,17 @@ const LoginPage = () => {
             }
         }
         catch (err) {
-            console.log(err.errors[0].message)
-            toast.error(err.errors[0].message || err.message)
+            let user = localStorage.getItem('user')
+            if (user) user = JSON.parse(user)
+            dispatch(setUser(user))
+            console.log(err.errors[0].message, user.role)
+            if (err.errors[0].code.includes('session_exists')) {
+                fetchUser(user.SID)
+                // navigate(DEFAULT_URL_AFTER_LOGIN[user.role])
+                // toast.error('Please Signout First, If you want to Login!')
+            }
+            else
+                toast.error(err.errors[0].message || err.message)
         }
         // const result = await login(loginForm);
         localStorage.removeItem('tutor_user_id')
@@ -86,26 +96,26 @@ const LoginPage = () => {
         setLoading(false)
     };
 
+    let fetchUser = async (userId) => {
+        if (isLoaded) {
+            const user = await get_user_detail(userId)
+
+            dispatch(setUser(user))
+            localStorage.setItem('user', JSON.stringify(user))
+
+            const token = await tokenApi(user)
+
+            localStorage.setItem('access_token', token)
+            console.log(user);
+            if (user.role) {
+                navigate(DEFAULT_URL_AFTER_LOGIN[user.role])
+            }
+        }
+    }
+
     useEffect(() => {
         if (userId && isSignedIn) {
-            let fetchUser = async () => {
-                if (isLoaded) {
-                    const user = await get_user_detail(userId)
-
-                    dispatch(setUser(user))
-                    localStorage.setItem('user', JSON.stringify(user))
-
-                    const token = await tokenApi(user)
-
-                    localStorage.setItem('access_token', token)
-                    console.log(user);
-                    if (user.role) {
-                        user.role !== 'admin' ? navigate(`/${user.role}/intro`) :
-                            navigate(`/${user.role}/tutor-data`)
-                    }
-                }
-            }
-            fetchUser()
+            fetchUser(userId)
         }
     }, [userId, isLoaded, isSignedIn])
 

@@ -44,7 +44,7 @@ const SmallSideBar = ({ message = '', inMins }) => {
                                 style={{ animation: inMins ? 'blinking 1s infinite' : 'none' }}
                                 color={inMins ? 'limegreen' : 'white'} size={32} /></div>
                         {<div className='p-2 text-bg-secondary w-100 h-100 rounded border'>
-                            {message.length ? message : 'No Upcoming Events!'}
+                            {message.length ? message : 'No Upcoming Events in the next 24 hours!'}
                         </div>}
                     </div>
                 </div>

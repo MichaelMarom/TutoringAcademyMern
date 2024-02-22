@@ -42,7 +42,9 @@ const { subjects,
     get_tutor_against_code,
     get_tutor_offered_subjects,
     dynamically_post_edu_info,
-    get_all_tutor_sessions_formatted } = require('../controllers/tutor');
+    get_all_tutor_sessions_formatted,
+    get_feedback_data,
+    get_tutor_feedback_questions } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -72,6 +74,8 @@ TUTOR_ROUTES.get('/tutor/my-edu', verifyToken, get_my_edu)
 TUTOR_ROUTES.get('/tutor/tutor-bank-details', verifyToken, get_bank_details)
 
 TUTOR_ROUTES.get('/tutor/tutor-setup', parser, verifyToken, get_tutor_setup);
+TUTOR_ROUTES.get('/tutor/feedbacks/:tutorId', parser, verifyToken, get_feedback_data);
+TUTOR_ROUTES.get('/tutor/feedback/questions', verifyToken, get_tutor_feedback_questions)
 
 TUTOR_ROUTES.post('/tutor/payment', parser, verifyToken, upload_tutor_bank);
 TUTOR_ROUTES.post('/tutor/rates/:faculty/:subject/:id', parser, verifyToken, upload_tutor_rates);

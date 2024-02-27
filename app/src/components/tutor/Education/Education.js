@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 
-import { get_certificates, get_degree, get_experience, get_level, get_my_edu, get_state, post_edu, post_tutor_setup, upload_edu_form, upload_form_two } from '../../../axios/tutor';
+import { get_certificates, get_degree, get_experience, get_level, 
+    get_my_edu, get_state, post_edu, post_tutor_setup, upload_edu_form, upload_form_two } from '../../../axios/tutor';
 import career from '../../../images/Experience-photo50.jpg';
 
 import { moment } from '../../../config/moment'
@@ -836,7 +837,7 @@ const Education = () => {
                                                         <select className='form-select'
                                                             onChange={(e) => {
                                                                 setCountryForMast(e.target.value)
-                                                                dynamicSave('Mast_College_StateYear', e.target.value)
+                                                                dynamicSave('MastCountry', e.target.value)
                                                             }}
                                                             disabled={!editMode}
                                                             value={countryForMast}
@@ -878,7 +879,7 @@ const Education = () => {
                                                         id="yr2"
                                                         className="form-select m-0 w-100"
                                                         onChange={(e) => {
-                                                            set_mast_state(e.target.value)
+                                                            set_mast_year(e.target.value)
                                                             dynamicSave('Mast_College_StateYear', e.target.value)
                                                         }}
                                                         value={mast_yr}

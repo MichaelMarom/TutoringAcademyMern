@@ -7,6 +7,8 @@ import CustomEvent from '../../components/common/Calendar/Event';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
 import { useSelector } from 'react-redux';
 import Actions from '../../components/common/Actions';
+import { TutorFeedbackModal } from '../../components/student/CalenderTab/TutorFeedbackModal';
+import Loading from '../../components/common/Loading';
 
 
 export const Schedules = () => {
@@ -15,6 +17,10 @@ export const Schedules = () => {
     const [bookedSlots, setBookedSlots] = useState([]);
     const [timeZone, setTimeZone] = useState('America/New_York');
     const { student } = useSelector(state => state.student)
+    const [clickedSlot, setClickedSlot] = useState({})
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading]=useState(false);
+    const isStudentLoggedIn = student.AcademyId
 
     useEffect(() => {
         moment.tz.setDefault(timeZone);
@@ -30,16 +36,26 @@ export const Schedules = () => {
 
     useEffect(() => {
         const fetchEvents = async () => {
+            setLoading(true)
             const data = await get_student_events(studentId);
+            setLoading(false)
+
             const reservedSlotsArray = data.map(item => JSON.parse(item.reservedSlots)).flat();
             const bookedSlotsArray = data.map(item => JSON.parse(item.bookedSlots)).flat();
-            console.log(reservedSlotsArray, bookedSlotsArray)
             setReservedSlots(reservedSlotsArray);
             setBookedSlots(bookedSlotsArray);
         }
         fetchEvents();
     }, [studentId])
 
+    const handleEventClick = (event) => {
+        setClickedSlot(event)
+        const pastEvent = convertToDate(event.end).getTime() < (new Date()).getTime();
+        console.log(event, student, isStudentLoggedIn && !pastEvent)
+        if (isStudentLoggedIn && pastEvent) {
+            setIsModalOpen(true);
+        }
+    };
 
     const convertToGmt = (date) => {
         let updatedDate = moment(convertToDate(date)).tz(timeZone).toDate();
@@ -71,33 +87,43 @@ export const Schedules = () => {
     };
 
     const localizer = momentLocalizer(moment);
+    if(loading)
+    return <Loading />
     return (
         <StudentLayout showLegacyFooter={false}>
-            <h4 className='text-center m-3'>Your Schedule</h4>
-            <div className='m-3' style={{ height: "65vh" }}>
-                <Calendar
-                    localizer={localizer}
-                    events={(reservedSlots.concat(bookedSlots)).map((event) => ({
-                        ...event,
-                        start: convertToGmt(event.start),
-                        end: convertToGmt(event.end),
-                    }))}
-                    components={{
-                        event: event => (
-                            <CustomEvent
-                                {...event}
-                                reservedSlots={reservedSlots}
-                                isStudentLoggedIn={true}
-                                handleSetReservedSlots={() => { }}
-                            />
-                        )
-                    }}
-                    eventPropGetter={eventPropGetter}
-                    startAccessor="start"
-                    endAccessor="end"
-                    style={{ minHeight: "100%" }}
-                />
+            <div>
+                <h4 className='text-center m-3'>Your Schedule</h4>
+                <div className='m-3' style={{ height: "65vh" }}>
+                    <Calendar
+                        localizer={localizer}
+                        events={(reservedSlots.concat(bookedSlots)).map((event) => ({
+                            ...event,
+                            start: convertToGmt(event.start),
+                            end: convertToGmt(event.end),
+                        }))}
+                        components={{
+                            event: event => (
+                                <CustomEvent
+                                    {...event}
+                                    reservedSlots={reservedSlots}
+                                    isStudentLoggedIn={true}
+                                    handleEventClick={handleEventClick}
+                                    handleSetReservedSlots={() => { }}
+                                />
+                            )
+                        }}
+                        eventPropGetter={eventPropGetter}
+                        startAccessor="start"
+                        endAccessor="end"
+                        style={{ minHeight: "100%" }}
+                    />
+                </div>
             </div>
+            <TutorFeedbackModal
+                isOpen={isModalOpen}
+                clickedSlot={clickedSlot}
+                onClose={()=>setIsModalOpen(false)}
+            />
             <Actions saveDisabled />
         </StudentLayout >
     );

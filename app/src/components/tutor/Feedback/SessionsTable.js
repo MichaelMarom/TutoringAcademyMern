@@ -6,6 +6,7 @@ import StarRating from '../../common/StarRating';
 import { convertToDate } from '../../common/Calendar/Calendar';
 import { useSelector } from 'react-redux';
 import Tooltip from '../../common/ToolTip';
+import TAButton from '../../common/TAButton'
 
 function SessionsTable({
   events,
@@ -73,9 +74,14 @@ function SessionsTable({
             </td>
 
             <td>
-              <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'} `}
+              
+            <TAButton className={``} buttonText={'Select'}
+            style={{ animation: (event.tutorFeedbackEligible && !event.tutorRating) ? 'blinking 1s infinite' : 'none' }}
+              onClick={() => setSelectedEvent(event)} disabled={!event.tutorFeedbackEligible}
+              />
+              {/* <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'} `}
                 style={{ animation: (event.tutorFeedbackEligible && !event.tutorRating) ? 'blinking 1s infinite' : 'none' }}
-                onClick={() => setSelectedEvent(event)} disabled={!event.tutorFeedbackEligible}>Select</button>
+                onClick={() => setSelectedEvent(event)} disabled={!event.tutorFeedbackEligible}>Select</button> */}
             </td>
           </tr>
         ))}

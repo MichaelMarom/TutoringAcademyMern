@@ -12,7 +12,6 @@ export const TutorEventModal = ({ isOpen, onClose, clickedSlot, handlePostpone, 
     const [questionLoading, setQuestionLoading] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false)
 
-
     useEffect(() => {
         if (clickedSlot.id) {
             setQuestionLoading(true)
@@ -40,7 +39,9 @@ export const TutorEventModal = ({ isOpen, onClose, clickedSlot, handlePostpone, 
             <div className="">
                 <div className="modal-header">
                     <div className='text-center' style={{ width: '90%' }}>
-                        <p className="modal-title fs-5" style={{ fontSize: "14px", fontWeight: "700" }}>{showDate(clickedSlot.start, wholeDateFormat)} - {clickedSlot.studentName}</p>
+                        <p className="modal-title fs-5" style={{ fontSize: "14px", fontWeight: "700" }}>
+                            {showDate(clickedSlot.start, wholeDateFormat)} - {clickedSlot.studentName}
+                        </p>
                     </div>
                 </div>
                 {

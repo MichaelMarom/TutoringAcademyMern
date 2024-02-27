@@ -10,6 +10,8 @@ import { get_feedback_to_question, post_feedback_to_question } from '../../axios
 import { postStudentBookings } from '../../redux/student_store/studentBookings';
 import { toast } from 'react-toastify';
 import Actions from '../../components/common/Actions';
+import Tooltip from '../../components/common/ToolTip';
+import Loading from '../../components/common/Loading';
 
 const Feedback = () => {
     const dispatch = useDispatch()
@@ -20,6 +22,8 @@ const Feedback = () => {
     const [questions, setQuestions] = useState([])
     const [pendingChange, setPendingChange] = useState(null);
     const { tutor } = useSelector(state => state.tutor)
+    const {isLoading}=useSelector(state=> state.bookings)
+    const [fetchingSessions, setFetchingFeedbackSessions]=useState(false)
 
     useEffect(() => {
         const getALlFeedbackQuestion = async () => {
@@ -32,7 +36,10 @@ const Feedback = () => {
 
     useEffect(() => {
         const getFeedback = async () => {
+            setFetchingFeedbackSessions(true)
             const records = tutor.AcademyId ? await feedback_records(tutor.AcademyId) : []
+            setFetchingFeedbackSessions(false)
+
             setFeedbackData(records)
         }
         getFeedback()
@@ -58,10 +65,14 @@ const Feedback = () => {
                 return slot
             })
 
+            const removedPhotoSessions = updatedSlots.map(sessions=> {
+                    const { ['photo']: omittedKey, ...rest } = sessions;
+                    return rest;
+                })
             dispatch(postStudentBookings({
                 studentId: selectedEvent.studentId, tutorId: tutor.AcademyId,
-                bookedSlots: updatedSlots.filter(slot => slot.type === 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId),
-                reservedSlots: updatedSlots.filter(slot => slot.type !== 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId)
+                bookedSlots: removedPhotoSessions.filter(slot => slot.type === 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId),
+                reservedSlots: removedPhotoSessions.filter(slot => slot.type !== 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId)
             }));
             setFeedbackData(feedbackData.map(slot => {
                 if (slot.id === selectedEvent.id) {
@@ -82,15 +93,37 @@ const Feedback = () => {
             }
             return slot
         })
-
+        const removedPhotoSessions = updatedSlots.map(sessions=> {
+            const { ['photo']: omittedKey, ...rest } = sessions;
+            return rest;
+        })
         const data = dispatch(postStudentBookings({
             studentId: selectedEvent.studentId, tutorId: tutor.AcademyId,
-            bookedSlots: updatedSlots.filter(slot => slot.id === 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId),
-            reservedSlots: updatedSlots.filter(slot => slot.id !== 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId)
+            bookedSlots: removedPhotoSessions.filter(slot => slot.id === 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId),
+            reservedSlots: removedPhotoSessions.filter(slot => slot.id !== 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId)
         }));
         data?.response?.status === 400 && toast.error("Error while saving the data");
     }
 
+    useEffect(() => {
+        console.log(isLoading)
+        // Show loading toast when loadingState is true
+        if (isLoading) {
+          toast.info('Loading...', {
+            autoClose: false,
+            closeOnClick: false,
+            closeButton: false,
+            draggable: false,
+            pauseOnHover: false,
+            progress: undefined,
+            bodyClassName: 'loading-toast-body',
+          });
+        } else {
+          // Hide the loading toast when isLoading is false
+          toast.dismiss();
+        }
+      }, [isLoading]);
+    
     const handleTextChange = (event) => {
         const updatedValue = event.target.value;
         setComment(updatedValue);
@@ -101,7 +134,7 @@ const Feedback = () => {
 
         const timeout = setTimeout(() => {
             handleDynamicSave(updatedValue);
-        }, 1000);
+        }, 2000);
 
         setPendingChange(timeout);
     };
@@ -130,12 +163,14 @@ const Feedback = () => {
                 setQuestionLoading(false)
             }
             fetchFeedbackToQuestion()
+            setComment(selectedEvent.tutorComment?selectedEvent.tutorComment:'')
         }
+        else setComment('')
         setQuestions(questions.map(question => ({ ...question, star: null })))
-        setComment('')
     }, [selectedEvent.id])
 
-
+    if(fetchingSessions)
+      return  <Loading />
     return (
         <TutorLayout>
             <div className="container mt-1">
@@ -173,10 +208,12 @@ const Feedback = () => {
                                 <div className="form-group">
                                     <label htmlFor="exampleTextarea">
                                         Please write a short description of your impression about this lesson
+                                    <Tooltip  
+                                    text={"Instructions how to grade freehand notes."}/>
                                     </label>
 
                                     <textarea className="form-control" id="exampleTextarea" rows="4"
-                                        value={selectedEvent.tutorComment ? selectedEvent.tutorComment : comment}
+                                        value={comment}
                                         onChange={handleTextChange} />
                                 </div>
                             </div>

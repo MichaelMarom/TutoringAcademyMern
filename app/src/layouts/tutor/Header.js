@@ -9,6 +9,7 @@ import { setUser } from "../../redux/auth_state/auth";
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import { setStudent } from "../../redux/student_store/studentData";
 import { setShortlist } from "../../redux/student_store/shortlist";
+import { applyMiddleware } from "redux";
 
 
 const Header = () => {

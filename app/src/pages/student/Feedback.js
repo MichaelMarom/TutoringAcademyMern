@@ -10,6 +10,7 @@ import { postStudentBookings } from '../../redux/student_store/studentBookings';
 import Actions from '../../components/common/Actions';
 import { toast } from 'react-toastify';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
+import Loading from '../../components/common/Loading';
 
 export const Feedback = () => {
     const { student } = useSelector(state => state.student)
@@ -23,6 +24,7 @@ export const Feedback = () => {
     const [feedbackData, setFeedbackData] = useState([])
     const studentId = localStorage.getItem('student_user_id');
     const [pendingChange, setPendingChange] = useState(null);
+    const [loading, setLoading]=useState(false)
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -193,7 +195,10 @@ export const Feedback = () => {
 
     useEffect(() => {
         const fetchPaymentReport = async () => {
+            setLoading(true)
             const data = await get_payment_report(studentId);
+            setLoading(false)
+          
             const uniqueData = data.reduce((unique, item) => {
                 if (unique?.some(detail => detail.tutorId === item.tutorId)) {
                     return unique
@@ -269,6 +274,8 @@ export const Feedback = () => {
     //     }
     // }, [student, upcomingEvent]);
 
+    if(loading)
+        return <Loading />
     return (
         <StudentLayout showLegacyFooter={false}>
             <div className="container mt-1">

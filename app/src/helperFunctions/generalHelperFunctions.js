@@ -35,7 +35,8 @@ export const copyToClipboard = (text) => {
 };
 
 export const convertTutorIdToName = (academyId) => {
-  return academyId.split('.')[0] + " " + academyId.split('.')[1][1]
+  return academyId ?
+    academyId.split('.')[0] + " " + academyId.split('.')[1][1] : ''
 }
 
 function isArrayStringEqual(array, strArray) {

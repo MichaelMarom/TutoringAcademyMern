@@ -117,9 +117,14 @@ function CustomEvent({
                             Deleted
                         </div>
                     }
-                    {event.rating &&
+                    {!isStudentLoggedIn && event.rating &&
                         <div >
                             <StarRating rating={event.rating} />
+                        </div>
+                    }
+                    {isStudentLoggedIn && event.tutorRating &&
+                        <div >
+                            <StarRating rating={event.tutorRating} />
                         </div>
                     }
                 </div>

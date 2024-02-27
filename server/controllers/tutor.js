@@ -238,7 +238,7 @@ let post_edu_form = async (req, res) => {
 
 
     let duplicate = await connecteToDB.then(async (poolConnection) => {
-        return await poolConnection.request().query(`SELECT * From Education 
+        return await poolConnection.request().query(`SELECT * From Education1
          WHERE CONVERT(VARCHAR, AcademyId) =  '${user_id}'`)
             .then((result) => {
                 return result.recordset
@@ -258,7 +258,7 @@ let post_edu_form = async (req, res) => {
             if (poolConnection) {
 
                 var resultSet = request.query(
-                    ` INSERT INTO "Education" (EducationalLevel, EducationalLevelExperience, College1, 
+                    ` INSERT INTO "Education1" (EducationalLevel, EducationalLevelExperience, College1, 
                             College1State, College1Year, College2, College2State, College2StateYear, 
                             DoctorateCollege, DoctorateState, DoctorateGradYr, Degree,DegreeFile, DegreeState, 
                             DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, 
@@ -305,7 +305,7 @@ let post_edu_form = async (req, res) => {
             if (poolConnection) {
                 var resultSet = request.query(
                     `
-                        UPDATE  "Education" SET EducationalLevel = '${level}', EducationalLevelExperience = '${experience}',
+                        UPDATE  "Education1" SET EducationalLevel = '${level}', EducationalLevelExperience = '${experience}',
                          College1 = '${university1}', DoctorateCollege = '${university3}',DoctorateState = '${doctorateState}', 
                          DoctorateGradYr='${doctorateGraduateYear}',
                         College1State = '${state2}', College1Year = '${graduagteYr1}', College2 ='${university2}',
@@ -631,7 +631,7 @@ let get_user_data = (req, res) => {
             poolConnection.request().query(
                 `
                     SELECT EducationalLevel, EducationalLevelExperience, Certificate, CertificateState, 
-                    CertificateExpiration, AcademyId  From Education  WHERE CONVERT(VARCHAR(max), AcademyId) = 
+                    CertificateExpiration, AcademyId  From Education1  WHERE CONVERT(VARCHAR(max), AcademyId) = 
                     '${user_id}'
                 `
             )
@@ -833,7 +833,7 @@ let get_my_data = async (req, res) => {
             const sql = require('mssql');
             var poolConnection = await sql.connect(config);
 
-            poolConnection.request().query(`SELECT * from Education WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
+            poolConnection.request().query(`SELECT * from Education1 WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}' `)
                 .then((result) => {
                     books.push(result.recordsets);
                     resolve()
@@ -1247,43 +1247,11 @@ let get_tutor_market_data = async (req, res) => {
     let { id } = req.query;
 
     let Education = async () => await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From Education WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
+        poolConnection.request().query(`SELECT * From Education1 WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
             .then((result) => {
-
                 return (result.recordset);
             })
-        // .catch(err => console.log(err))
-
     )
-
-    // let Exprience = await connecteToDB.then(poolConnection =>
-    //     poolConnection.request().query(`SELECT * From Experience `)
-    //         .then((result) => {
-
-    //             return (result.recordset);
-    //         })
-    //     // .catch(err => console.log(err))
-
-    // )
-
-    // let EducationalLevel = await connecteToDB.then(poolConnection =>
-    //     poolConnection.request().query(`SELECT * From EducationalLevel `)
-    //         .then((result) => {
-
-    //             return (result.recordset);
-    //         })
-    //     // .catch(err => console.log(err))
-    // )
-
-    // let CertificateTypes = await connecteToDB.then(poolConnection =>
-    //     poolConnection.request().query(`SELECT * FROM CertificateTypes `)
-    //         .then((result) => {
-
-    //             return (result.recordset);
-    //         })
-    //     // .catch(err => console.log(err))
-
-    // )
 
     let Subjects = async () => await connecteToDB.then(poolConnection =>
         poolConnection.request().query(`SELECT * FROM SubjectRates WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
@@ -1293,25 +1261,6 @@ let get_tutor_market_data = async (req, res) => {
             .catch(err => console.log(err))
     )
 
-    // let Faculty = await connecteToDB.then(poolConnection =>
-    //     poolConnection.request().query(`SELECT * FROM Faculty `)
-    //         .then((result) => {
-
-    //             return (result.recordset);
-    //         })
-    //     // .catch(err => console.log(err))
-    //     // .catch(err => console.log(err))
-    // )
-
-    // let GMT = await connecteToDB.then(poolConnection =>
-    //     poolConnection.request().query(`SELECT * FROM GMT`)
-    //         .then((result) => {
-
-    //             return (result.recordset);
-    //         })
-    //     // .catch(err => console.log(err))
-    //     // .catch(err => console.log(err))
-    // )
     try {
         res.status(200).send({
             Education: await Education(),
@@ -1617,9 +1566,9 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(te.EducationalLevel AS VARCHAR(MAX)) as EducationalLevel,
                         CAST(te.EducationalLevelExperience AS VARCHAR(MAX)) EducationLevelExp,
                         CAST(te.BachCountry AS VARCHAR(MAX)) AS BachCountry,
-                        CAST(te.College1 AS VARCHAR(MAX)) AS College1,
-                        CAST(te.College1State AS VARCHAR(MAX)) AS College1State,
-                        CAST(te.College1Year AS VARCHAR(MAX)) AS BachYear,
+                        CAST(te.Bach_College AS VARCHAR(MAX)) AS College1,
+                        CAST(te.Bach_College_State AS VARCHAR(MAX)) AS College1State,
+                        CAST(te.Bach_College_Year AS VARCHAR(MAX)) AS BachYear,
                         CAST(te.CertCountry AS VARCHAR(MAX)) AS CertCountry,
                         CAST(te.Certificate AS VARCHAR(MAX)) AS Certificate,
                         CAST(te.CertificateExpiration AS VARCHAR(MAX)) AS CertificateExpiration,
@@ -1635,9 +1584,9 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(te.DegreeYear AS VARCHAR(MAX)) as DegYr,
                         CAST(te.DegCountry AS VARCHAR(MAX)) as DegCountry,
                         CAST(te.MastCountry AS VARCHAR(MAX)) as MastCountry,
-                        CAST(te.College2 AS VARCHAR(MAX)) as MastCollege,
-                        CAST(te.College2State AS VARCHAR(MAX)) as MastState,
-                        CAST(te.College2StateYear AS VARCHAR(MAX)) as MastYr,
+                        CAST(te.Mast_College AS VARCHAR(MAX)) as MastCollege,
+                        CAST(te.Mast_College_State AS VARCHAR(MAX)) as MastState,
+                        CAST(te.Mast_College_StateYear AS VARCHAR(MAX)) as MastYr,
                         CAST(te.Resume AS VARCHAR(MAX)) As Resume,
                         CAST(te.CertFileName AS VARCHAR(MAX)) As CertFileName,
                         CAST(te.DegFileName AS VARCHAR(MAX)) As DegFileName,
@@ -1661,7 +1610,7 @@ const get_tutor_profile_data = async (req, res) => {
                     FROM
                         TutorSetup AS ts
                     LEFT JOIN
-                        Education AS te ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(te.AcademyId AS VARCHAR(MAX))
+                        Education1 AS te ON CAST(ts.AcademyId AS VARCHAR(MAX)) = CAST(te.AcademyId AS VARCHAR(MAX))
                     LEFT JOIN
                         Chat AS tc ON CAST(ts.AcademyId AS VARCHAR) = tc.User2ID 
                         AND CAST(tc.User1ID AS VARCHAR) = '${req.params.studentId}'
@@ -1695,9 +1644,9 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(te.EducationalLevel AS VARCHAR(MAX)),
                         CAST(te.EducationalLevelExperience AS VARCHAR(MAX)),
                         CAST(te.BachCountry AS VARCHAR(MAX)),
-                        CAST(te.College1 AS VARCHAR(MAX)),
-                        CAST(te.College1State AS VARCHAR(MAX)),
-                        CAST(te.College1Year AS VARCHAR(MAX)),
+                        CAST(te.Bach_College AS VARCHAR(MAX)),
+                        CAST(te.Bach_College_State AS VARCHAR(MAX)),
+                        CAST(te.Bach_College_Year AS VARCHAR(MAX)),
                         CAST(te.CertCountry AS VARCHAR(MAX)),
                         CAST(te.Certificate AS VARCHAR(MAX)),
                         CAST(te.CertificateExpiration AS VARCHAR(MAX)),
@@ -1712,22 +1661,20 @@ const get_tutor_profile_data = async (req, res) => {
                         CAST(te.DegreeYear AS VARCHAR(MAX)),
                         CAST(te.DegCountry AS VARCHAR(MAX)),
                         CAST(te.MastCountry AS VARCHAR(MAX)),
-                        CAST(te.College2 AS VARCHAR(MAX)),
-                        CAST(te.College2State AS VARCHAR(MAX)),
-                        CAST(te.College2StateYear AS VARCHAR(MAX)),
+                        CAST(te.Mast_College AS VARCHAR(MAX)),
+                        CAST(te.Mast_College_State AS VARCHAR(MAX)),
+                        CAST(te.Mast_College_StateYear AS VARCHAR(MAX)),
                         CAST(te.Resume AS VARCHAR(MAX)) ,
                         CAST(te.CertFileName AS VARCHAR(MAX)),
                         CAST(te.DegFileName AS VARCHAR(MAX)) ,
 
                         CAST(tr.IntroSessionDiscount AS VARCHAR(MAX)),
                         CAST(tr.CancellationPolicy AS VARCHAR(MAX))
-
                     `
                 );
                 const record = result.recordset[0] || null;
                 if (!record) return res.status(200).send({})
-                const formattedResult =
-                {
+                const formattedResult = {
                     ...record, Subjects: JSON.parse(record.Subjects.length ?
                         record.Subjects : '[]'),
                     OtherLang: JSON.parse(record.OtherLang ?? '[]'), NativeLang: JSON.parse(record.NativeLang ?? '[]')

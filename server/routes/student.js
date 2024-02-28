@@ -13,7 +13,7 @@ const { upload_setup_info, get_student_setup, get_student_grade, get_tutor_subje
     get_feedback_questions,
     get_feedback_of_questions,
     post_feedback_questions,
-    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings, post_student_agreement, set_code_applied, get_published_ads, get_all_students_sessions_formatted } = require('../controllers/student');
+    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings, post_student_agreement, set_code_applied, get_published_ads, get_all_students_sessions_formatted, ad_to_shortlist, get_shortlist_ads } = require('../controllers/student');
 const { express, parser } = require('../modules');
 
 const STUDENT_ROUTES = express.Router();
@@ -46,11 +46,13 @@ STUDENT_ROUTES.get('/student/feedback/:ShortlistId', get_student_feedback)
 STUDENT_ROUTES.get('/student/booked-slot', verifyToken, getBookedSlot)
 
 STUDENT_ROUTES.get('/student/payment-report/:studentId', verifyToken, payment_report)
-STUDENT_ROUTES.get('/questions/list', verifyToken, get_feedback_questions)
+STUDENT_ROUTES.get('/questions/list/:isStudentLoggedIn', verifyToken, get_feedback_questions)
 STUDENT_ROUTES.get('/questions/:StudentId/:TutorId/:SessionId/:isstudentgiver', verifyToken, get_feedback_of_questions)
 STUDENT_ROUTES.post('/questions', parser, verifyToken, post_feedback_questions);
 STUDENT_ROUTES.put('/code-applied/:studentId/:tutorId', parser, verifyToken, set_code_applied)
 STUDENT_ROUTES.get('/student/ads', verifyToken, get_published_ads)
+STUDENT_ROUTES.post('/student/ads/shortlist', parser, verifyToken, ad_to_shortlist)
+STUDENT_ROUTES.get('/student/ads/shortlist/list/:studentId', verifyToken, get_shortlist_ads)
 
 
 module.exports = {

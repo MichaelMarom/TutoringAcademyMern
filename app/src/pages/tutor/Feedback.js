@@ -22,8 +22,8 @@ const Feedback = () => {
     const [questions, setQuestions] = useState([])
     const [pendingChange, setPendingChange] = useState(null);
     const { tutor } = useSelector(state => state.tutor)
-    const {isLoading}=useSelector(state=> state.bookings)
-    const [fetchingSessions, setFetchingFeedbackSessions]=useState(false)
+    const { isLoading } = useSelector(state => state.bookings)
+    const [fetchingSessions, setFetchingFeedbackSessions] = useState(false)
 
     useEffect(() => {
         const getALlFeedbackQuestion = async () => {
@@ -65,10 +65,10 @@ const Feedback = () => {
                 return slot
             })
 
-            const removedPhotoSessions = updatedSlots.map(sessions=> {
-                    const { ['photo']: omittedKey, ...rest } = sessions;
-                    return rest;
-                })
+            const removedPhotoSessions = updatedSlots.map(sessions => {
+                const { ['photo']: omittedKey, ...rest } = sessions;
+                return rest;
+            })
             dispatch(postStudentBookings({
                 studentId: selectedEvent.studentId, tutorId: tutor.AcademyId,
                 bookedSlots: removedPhotoSessions.filter(slot => slot.type === 'booked' && slot.studentId === selectedEvent.studentId && slot.tutorId === tutor.AcademyId),
@@ -93,7 +93,7 @@ const Feedback = () => {
             }
             return slot
         })
-        const removedPhotoSessions = updatedSlots.map(sessions=> {
+        const removedPhotoSessions = updatedSlots.map(sessions => {
             const { ['photo']: omittedKey, ...rest } = sessions;
             return rest;
         })
@@ -109,21 +109,21 @@ const Feedback = () => {
         console.log(isLoading)
         // Show loading toast when loadingState is true
         if (isLoading) {
-          toast.info('Loading...', {
-            autoClose: false,
-            closeOnClick: false,
-            closeButton: false,
-            draggable: false,
-            pauseOnHover: false,
-            progress: undefined,
-            bodyClassName: 'loading-toast-body',
-          });
+            toast.info('Loading...', {
+                autoClose: false,
+                closeOnClick: false,
+                closeButton: false,
+                draggable: false,
+                pauseOnHover: false,
+                progress: undefined,
+                bodyClassName: 'loading-toast-body',
+            });
         } else {
-          // Hide the loading toast when isLoading is false
-          toast.dismiss();
+            // Hide the loading toast when isLoading is false
+            toast.dismiss();
         }
-      }, [isLoading]);
-    
+    }, [isLoading]);
+
     const handleTextChange = (event) => {
         const updatedValue = event.target.value;
         setComment(updatedValue);
@@ -163,20 +163,19 @@ const Feedback = () => {
                 setQuestionLoading(false)
             }
             fetchFeedbackToQuestion()
-            setComment(selectedEvent.tutorComment?selectedEvent.tutorComment:'')
+            setComment(selectedEvent.tutorComment ? selectedEvent.tutorComment : '')
         }
         else setComment('')
         setQuestions(questions.map(question => ({ ...question, star: null })))
     }, [selectedEvent.id])
 
-    if(fetchingSessions)
-      return  <Loading />
+    if (fetchingSessions)
+        return <Loading />
     return (
         <TutorLayout>
             <div className="container mt-1">
                 <div className="py-2 row" >
-                    <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}
-                        style={{ maxHeight: "80vh", overflowY: "auto" }}>
+                    <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`} >
                         <h2>Booked Lessons</h2>
                         {feedbackData.length ?
                             <>
@@ -197,7 +196,7 @@ const Feedback = () => {
                     </div>
                     {
                         selectedEvent.id &&
-                        <div className="col-md-4 " style={{ height: "70vh", overflowY: "auto" }}>
+                        <div className="col-md-4 " style={{ height: "75vh", overflowY: "auto" }} >
                             <h4>Feedback on {showDate(selectedEvent.start, wholeDateFormat)} Session</h4>
                             <div className="questions">
                                 <QuestionFeedback
@@ -208,8 +207,8 @@ const Feedback = () => {
                                 <div className="form-group">
                                     <label htmlFor="exampleTextarea">
                                         Please write a short description of your impression about this lesson
-                                    <Tooltip  
-                                    text={"Instructions how to grade freehand notes."}/>
+                                        <Tooltip
+                                            text={"Instructions how to grade freehand notes."} />
                                     </label>
 
                                     <textarea className="form-control" id="exampleTextarea" rows="4"

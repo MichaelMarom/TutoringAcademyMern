@@ -708,7 +708,7 @@ const get_feedback_questions = async (req, res) => {
 
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    getAll('FeedbackQuestions')
+                    find('FeedbackQuestions', { ForStudents: req.params.isStudentLoggedIn })
                 );
 
                 res.status(200).send(result.recordset);
@@ -896,7 +896,9 @@ const get_published_ads = async (req, res) => {
             const poolConnection = await sql.connect(config);
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    find('TutorAds', { Status: 'published' })
+                    `select TA.*, TS.Photo from TutorAds as TA join
+                  TutorSetup as TS on cast(TS.AcademyId as varchar) = TA.AcademyId
+                    `
                 )
                 res.status(200).send(result.recordset)
             }
@@ -904,6 +906,53 @@ const get_published_ads = async (req, res) => {
         catch (err) {
             console.log(err)
             res.status(400).send({ message: err.message })
+        }
+    })
+}
+
+const ad_to_shortlist = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const { recordset } = await poolConnection.request().query(
+                find('AdShortlist', req.body)
+            )
+            if (!recordset.length) {
+                const { recordset } = await poolConnection.request().query(
+                    insert('AdShortlist', req.body)
+                )
+                res.status(200).send(recordset)
+            }
+            res.status(200).send(recordset)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
+
+const get_shortlist_ads = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const { recordset } = await poolConnection.request().query(
+                `select TA.*, TS.Photo from AdShortlist as ASL join 
+                TutorAds as TA on
+                TA.Id = ASL.AdId join
+                TutorSetup as TS on 
+                cast(TS.AcademyId as varchar) = TA.AcademyId
+                where ASL.StudentId = '${req.params.studentId}'`
+            )
+            res.status(200).send(recordset)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
         }
     })
 }
@@ -989,8 +1038,10 @@ module.exports = {
     get_student_or_tutor_bookings,
     get_tutor_bookings,
     get_student_bank_details,
+    get_shortlist_ads,
     post_student_bank_details,
     get_student_feedback,
     post_student_feedback,
-    payment_report
+    payment_report,
+    ad_to_shortlist
 }

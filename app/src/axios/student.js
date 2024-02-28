@@ -255,9 +255,9 @@ export const get_payment_report = async (studentId) => {
     }
 }
 
-export const get_all_feedback_questions = async () => {
+export const get_all_feedback_questions = async (isStudentLoggedIn = 1) => {
     try {
-        const { data } = await apiClient.get('/questions/list');
+        const { data } = await apiClient.get(`/questions/list/${isStudentLoggedIn}`);
         return data;
     } catch (err) {
         showErrorToast(err)
@@ -345,6 +345,33 @@ export const code_applied = async (studentId, tutorId) => {
 export const fetch_published_ads = async () => {
     try {
         const { data } = await apiClient.get('/student/ads');
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}
+
+export const add_to_shortlist = async (adId, studentId) => {
+    try {
+        const { data } = await apiClient.post('/student/ads/shortlist', {
+            AdId: adId,
+            StudentId: studentId
+        });
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}
+
+export const get_shortlist_ads = async (studentId) => {
+    try {
+        const { data } = await apiClient.get(`/student/ads/shortlist/list/${studentId}`);
         return data
     }
     catch (e) {

@@ -49,7 +49,6 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
             });
     }
 
-
     async function reset(e) {
         e.preventDefault();
         if (password !== confirmPassword) return;
@@ -104,7 +103,6 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
             fetchUser()
         }
     }, [userId, isLoaded, token, isSignedIn])
-
 
     const handlePasswordChange = async () => {
         setLoading(true)

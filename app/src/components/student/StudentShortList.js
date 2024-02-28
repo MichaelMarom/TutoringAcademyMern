@@ -13,6 +13,7 @@ import { moment } from '../../config/moment'
 import BTN_ICON from '../../images/button__icon.png'
 
 import Pill from '../common/Pill'
+import { useEffect, useState } from 'react';
 
 
 const StudentShortList = () => {
@@ -20,6 +21,7 @@ const StudentShortList = () => {
     const dispatch = useDispatch()
     const { shortlist: response, isLoading: shortlistLoading } = useSelector(state => state.shortlist)
     const { student } = useSelector(state => state.student)
+    const [sortedResponse, setSortedResponse] = useState([])
     const handleNavigateToSchedule = async (item) => {
         dispatch(setTutor({
             id: item.SID[0],
@@ -119,7 +121,18 @@ const StudentShortList = () => {
         }
 
     ]
-
+    useEffect(() => {
+        if (response.length > 0) {
+          // Create a new array with the sorted data
+          const sortedArray = [...response].sort((a, b) => {
+            if (a.CodeApplied && !b.CodeApplied) return -1;
+            if (!a.CodeApplied && b.CodeApplied) return 1;
+            return 0;
+          });
+          setSortedResponse(sortedArray);
+        }
+      }, [response]);
+      
     let redirect_to_tutor_profile = (id) => {
         navigate(`/student/tutor-profile/${id}`)
     }
@@ -166,7 +179,7 @@ const StudentShortList = () => {
                 </div>
                 <div className="tables" style={{ height: '53vh', width: '100%', overflowY: "auto" }}>
                     <table>
-                        {response.length ?
+                        {sortedResponse.length ?
                             <thead className='d-none'>
                                 <tr>
                                     {multi_student_cols.map(item =>
@@ -176,9 +189,9 @@ const StudentShortList = () => {
                             </thead> : null}
                         <tbody>
                             {
-                                response.length > 0
+                                sortedResponse.length > 0
                                     ?
-                                    response.map((item, index) => {
+                                    sortedResponse.map((item, index) => {
                                         const rate = item.rate;
                                         return (
                                             <tr key={index}>

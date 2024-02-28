@@ -170,7 +170,7 @@ const LoginPage = () => {
                                             />
                                         </div>
                                         <div className='w-100 d-flex justify-content-end text-primary'>
-                                            <div onClick={() => setOpenModel(true)}>
+                                            <div style={{cursor:"pointer"}} onClick={() => setOpenModel(true)}>
                                                 forgot password?
                                             </div>
                                         </div>

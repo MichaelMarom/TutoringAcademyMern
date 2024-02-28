@@ -3,11 +3,11 @@ import BTN_ICON from '../../images/button__icon.png'
 
 function Button({ loading = false, type = "button", handleClick = () => { },
     buttonText, className = '', ...otherProps }) {
-console.log(otherProps)
     return (
         <button
+            style={{ cursor: "poniter", ...otherProps.style }}
             className={`action-btn btn save-btn ${className}`}
-            disabled={true}
+            disabled={loading || otherProps.disabled}
             type={type}
             onClick={handleClick}
             {...otherProps}

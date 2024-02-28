@@ -17,7 +17,6 @@ const Layout = ({ children }) => {
       setActiveTabIndex={setActiveTabIndex} />)
   }, [])
 
-
   const tabs = [
     { label: `MarketPlace`, component: <Marketplace />, link: '/student/market-place' },
     {
@@ -25,7 +24,7 @@ const Layout = ({ children }) => {
       link: '/student/market-place/ad'
     },
     {
-      label: 'Tutor Bid\'s', component: <Bids />,
+      label: 'Shortlist', component: <Bids />,
       link: '/student/market-place/bid'
     },
   ];

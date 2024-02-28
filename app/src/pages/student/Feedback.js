@@ -28,11 +28,11 @@ export const Feedback = () => {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        const getALlFeedbackQuestion = async () => {
+        const getAllFeedbackQuestion = async () => {
             const data = await get_all_feedback_questions();
             setQuestions(data)
         }
-        getALlFeedbackQuestion();
+        getAllFeedbackQuestion();
 
     }, [])
 
@@ -41,9 +41,9 @@ export const Feedback = () => {
         const questionIndex = updatedQuestions.findIndex((question) => question.SID === id);
 
         if (questionIndex !== -1) {
-            await post_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId, id, star);
             updatedQuestions[questionIndex].star = star;
             setQuestions([...updatedQuestions]);
+            await post_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId, id, star);
             if (selectedEvent.type === 'booked') {
                 const updatedBookedSlots = bookedSlots.map(slot => {
                     if (slot.id === selectedEvent.id) {
@@ -280,8 +280,7 @@ export const Feedback = () => {
         <StudentLayout showLegacyFooter={false}>
             <div className="container mt-1">
                 <div className="py-2 row" >
-                    <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}
-                        style={{ maxHeight: "68vh", overflowY: "auto" }}>
+                    <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>
                         <h2>Booked Lessons</h2>
                         {feedbackData.length ?
                             <>

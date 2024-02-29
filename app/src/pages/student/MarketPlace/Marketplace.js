@@ -42,11 +42,14 @@ const Marketplace = () => {
                                 className='ad  click-effect-elem  shadow-sm p-2  d-flex justify-content-between align-items-center'
                                 style={{ gap: "20px" }} >
                                 <div>
+                                    <div className='d-flex align-items-center'>
                                     {item.Published_At &&
                                         <p className=' m-0 text-decoration-underline ' >
                                             {showDate(moment(item.Published_At).toDate())}
                                         </p>
                                     }
+                                    <Pill label={item.Subject} width='200px' color='success' />
+                                        </div>
                                     <h5 className='click-elem m-0 text-decoration-underline' >
                                         {item.AdHeader}
                                     </h5>

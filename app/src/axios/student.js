@@ -380,3 +380,15 @@ export const get_shortlist_ads = async (studentId) => {
         return e
     }
 }
+
+export const deleteAdFromShortlist = async(adId, studentId)=>{
+    try {
+        const { data } = await apiClient.delete(`/student/ads/shortlist/${adId}/${studentId}`);
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}

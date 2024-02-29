@@ -898,6 +898,7 @@ const get_published_ads = async (req, res) => {
                 const result = await poolConnection.request().query(
                     `select TA.*, TS.Photo from TutorAds as TA join
                   TutorSetup as TS on cast(TS.AcademyId as varchar) = TA.AcademyId
+                  where TS.Status = 'active' and TA.Published_At is not null
                     `
                 )
                 res.status(200).send(result.recordset)
@@ -947,6 +948,24 @@ const get_shortlist_ads = async (req, res) => {
                 where ASL.StudentId = '${req.params.studentId}'`
             )
             res.status(200).send(recordset)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
+
+const delete_ad_from_shortlist = async(req, res)=>{
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const data= await poolConnection.request().query(
+                `delete from AdShortlist where StudentId = '${req.params.studentId}' and AdId = ${req.params.adId}`
+            )
+            res.status(200).send(data)
         }
         catch (err) {
             res.status(400).send({
@@ -1016,6 +1035,7 @@ const get_all_students_sessions_formatted = async (req, res) => {
 
 module.exports = {
     post_feedback_questions,
+    delete_ad_from_shortlist,
     set_code_applied,
     update_shortlist,
     get_all_students_sessions_formatted,

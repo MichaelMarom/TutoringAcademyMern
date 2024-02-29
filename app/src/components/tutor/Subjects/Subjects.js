@@ -179,7 +179,9 @@ const Subjects = () => {
             <CenteredModal
                 show={showAddNewSubjModal}
                 handleClose={handleModalClose}
-                title={'To Search If your subject exist , please type it on above field'}
+                title={!subjectExistInFaculties.length && phase !== 'search' && !!newSubjectData.length ?
+            'Add New Suggested Subject':
+            'To Search If your subject exist , please type it in below field'}
             >
                 <form onSubmit={checkRequestExist}>
 
@@ -196,14 +198,21 @@ const Subjects = () => {
                             className='form-control'
                             required
                         />
-                        {!subjectExistInFaculties.length && !!newSubjectData.length &&
-                            !!newSubjectReasonData.length &&
-                            <select className='form-select'
+                        {
+                            !subjectExistInFaculties.length && phase !== 'search' && !!newSubjectData.length && <div style={{ fontSize: "12px" }}>
+                                <p>This Subject does not exist.
+                                    To add the subject, select also the fauclty to be considered.
+                                </p>
+                            <select className='form-select mb-1'
                                 required onChange={e => setNewSubjectFacultyData(e.target.value)} type='text' >
                                 <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
                                 {newSubjectFaculty}
                             </select>
+                            </div>
                         }
+                        {/* {!subjectExistInFaculties.length && !!newSubjectData.length &&
+                            !!newSubjectReasonData.length &&
+                        } */}
 
                         {!subjectExistInFaculties.length && phase === 'add' && <textarea
                             style={{ height: "200px" }}
@@ -212,20 +221,16 @@ const Subjects = () => {
                             onChange={e => setNewSubjectReasonData(e.target.value)}
                             placeholder='Explain why this subject should be added, and your ability, and experience of tutoring it.(max 700 characters)' />}
                         {
-                            !!subjectExistInFaculties.length ?
-                                <div className='border p-2 shadow rounded'>
-                                    <h6>The Subject found in the Faculty below.</h6>
-                                    <div className='d-flex align-items-center flex-wrap'>
-                                        {subjectExistInFaculties.map(faculty =>
-                                            <Pill label={faculty} width='200px' />
-                                        )}
-                                    </div>
-                                </div> :
-                                phase !== 'search' && <div className='border p-2 shadow rounded'>
-                                    <p>This Subject does not exist.
-                                        To add the subject, select also the fauclty to be considered.
-                                    </p>
+                            !!subjectExistInFaculties.length &&
+                            <div className='border p-2 shadow rounded'>
+                                <h6>The Subject found in the Faculty below.</h6>
+                                <div className='d-flex align-items-center flex-wrap'>
+                                    {subjectExistInFaculties.map(faculty =>
+                                        <Pill label={faculty} width='200px' />
+                                    )}
                                 </div>
+                            </div>
+
                         }
                     </div>
                     <div className="mt-4 d-flex justify-content-between">

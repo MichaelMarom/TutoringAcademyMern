@@ -412,33 +412,27 @@ let post_tutor_rates_form = (req, res) => {
                     )
                 } else {
                     result = await poolConnection.request().query(
-                        `
-                            INSERT INTO "TutorRates"
+                        ` INSERT INTO "TutorRates"
                             (MutiStudentHourlyRate,CancellationPolicy,FreeDemoLesson,
                                 ConsentRecordingLesson,ActivateSubscriptionOption,
                                 SubscriptionPlan,AcademyId, DiscountCode, CodeSubject,
-,                                 MultiStudent,
+                                                                 MultiStudent,
                                 CodeShareable,IntroSessionDiscount, CodeStatus)
                             VALUES ( '${MutiStudentHourlyRate}', 
                             '${CancellationPolicy}','${FreeDemoLesson}',
                             '${ConsentRecordingLesson}','${ActivateSubscriptionOption}',
                             '${SubscriptionPlan}','${AcademyId}','${DiscountCode}', '${CodeSubject}',${MultiStudent ? 1 : 0},
                             ${CodeShareable ? 1 : 0},${IntroSessionDiscount ? 1 : 0},
-                            '${CodeStatus}')
-                            `
+                            '${CodeStatus}')  `
                     )
                 }
 
-                result.rowsAffected[0] === 1
-                    ?
-                    res.send({ bool: true, mssg: 'Data Was Successfully Saved' })
-                    :
-                    res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
-            }
+                    res.status(200).send({ bool: true, mssg: 'Data Was Successfully Saved' })
+                    }
         }
         catch (err) {
             console.log(err)
-            res.send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
+            res.status(400).send({ bool: false, mssg: 'Data Was Not Successfully Saved' })
         }
     })
 }
@@ -1017,7 +1011,7 @@ let get_tutor_setup = (req, res) => {
                     const { recordset } = await poolConnection.request().query(
                         findByAnyIdColumn('Users1', { SID: record.userId })
                     )
-                    record = { ...record, Email: recordset[0].email }
+                    record = { ...record, Email: recordset?.[0]?.email || '' }
                 }
                 const offset = parseInt(record.GMT, 10);
                 let timezones = moment.tz.names().filter(name =>

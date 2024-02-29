@@ -103,9 +103,6 @@ const TutorSetup = () => {
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
   const [nameFieldsDisabled, setNameFieldsDisabled] = useState(false);
-  const location = useLocation()
-  const screen = location.pathname.split('/')[1];
-  const AcademyId = localStorage.getItem('tutor_user_id')
 
   useEffect(() => {
     if (convertToDate(tutor.EndVacation).getTime() < new Date().getTime() && tutor.VacationMode) {

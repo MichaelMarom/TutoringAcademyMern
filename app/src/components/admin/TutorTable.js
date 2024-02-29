@@ -80,8 +80,8 @@ const TutorTable = () => {
                                 </td>
 
                                 <td data-src={null} className='col-1' onDoubleClick={() => {
-                                    item.Status === PROFILE_STATUS.CLOSED ?
-                                        toast.warning('You cannot view Closed tutor Profile!') :
+                                    // item.Status === PROFILE_STATUS.CLOSED ?
+                                    //     toast.warning('You cannot view Closed tutor Profile!') :
                                         redirect_to_tutor_setup(item.AcademyId, item.TutorScreenname)
                                 }}>
                                     <img src={item.Photo}

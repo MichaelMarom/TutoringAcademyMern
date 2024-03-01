@@ -156,7 +156,6 @@ const TutorSetup = () => {
     }
     else
       setTutorGrades([...tutorGrades, grade]);
-
   };
 
   //upload photo
@@ -283,8 +282,8 @@ const TutorSetup = () => {
       return toast.warning("please enter the correct phone number");
     }
     if (!video || !photo)
-      toast.warning(`Since You did not upload your photo or Video, 
-    your Profile will stay in Pending status, and can not be activated until you upload the missing items!`)
+      toast.warning(`You did not upload your photo or Video, therefore 
+    your Profile will stay in 'Pending' status, and can not be activated until you upload the missing items!`)
     if (!tutorGrades?.length > 0) {
       return toast.warning("Please select at least one grade");
     }
@@ -377,8 +376,6 @@ const TutorSetup = () => {
 
     countries.unshift(countries_select_head);
     setCountryList(countries);
-
-
 
     let list = GMT.map((item) => (
       <option

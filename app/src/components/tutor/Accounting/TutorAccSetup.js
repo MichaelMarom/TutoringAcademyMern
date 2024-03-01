@@ -163,7 +163,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
     }, [dbValues, acct_name, acct_type, acct, bank_name, ssh, email, routing, payment_option])
 
     return (
-        <div className="d-flex" style={{ height: "80vh" }}>
+        <div className="d-flex" style={{ height: "72vh", overflowY:"auto" }}>
 
             <div className="d-flex col-md-3 border h-100 p-2">
 
@@ -175,7 +175,8 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
                     <div className='p-3'>
                         <div className='d-flex align-items-center mb-2 justify-content-between'>
                             <h6 className='m-0 text-start '>Tutor's Start Day (First tutoring lesson)</h6>
-                            <p className="border px-4  py-2 rounded m-2 col-4">{showDate(sessions?.[sessions.length - 1]?.start, monthFormatWithYYYY)}</p>
+                            <p className="border px-4  py-2 rounded m-2 col-4">{ !!sessions.length ?  
+                            showDate(sessions?.[sessions.length - 1]?.start, monthFormatWithYYYY) :'N/A'}</p>
                         </div>
 
                         <Acad_Commission />

@@ -122,7 +122,7 @@ export const post_termsOfUse = async (data) => {
     }
 };
 
-export const get_adminConstants = async (id=1) => {
+export const get_adminConstants = async (id = 1) => {
     try {
         const response = await apiClient.get(`/admin/get-constants/${id}`);
         return response;
@@ -132,9 +132,14 @@ export const get_adminConstants = async (id=1) => {
     }
 };
 
-export const send_sms = async () => {
+/**
+ * 
+ * @param {Array} body array of emails
+ * @returns 
+ */
+export const send_sms = async (body) => {
     try {
-        const data = await apiClient.post('/send-message')
+        const data = await apiClient.post('/send-message', body)
         return data
     }
     catch (err) {

@@ -25,8 +25,9 @@ const CreateComponent = ({ setActiveTab }) => {
     const [loading, setLoading] = useState(false)
     const AcademyId = localStorage.getItem('tutor_user_id');
     const [unSavedChanges, setUnSavedChanges] = useState(false);
+    console.log(tutor)
 
-    const [addText, setAddText] = useState(`Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
+    const [addText, setAddText] = useState(`Hello Students. My screen name is ${tutor.TutorScreenname ? capitalizeFirstLetter(tutor.TutorScreenname): ''}, 
     I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
     I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
     I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
@@ -46,11 +47,12 @@ const CreateComponent = ({ setActiveTab }) => {
     }, [])
 
     useEffect(() => {
-        setAddText(`Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
+        if(tutor.AcademyId){
+            setAddText(`Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
         I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
         I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
         I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
-        There you can look at my calendar-scheduling for availability, and book your lesson.`)
+        There you can look at my calendar-scheduling for availability, and book your lesson.`)}
     }, [subject, tutor, education, grades])
 
     const handleClickPill = (grade) => {
@@ -180,7 +182,7 @@ const CreateComponent = ({ setActiveTab }) => {
 
                                     <div className="d-flex  " style={{ width: "100%", overflowX: "auto", overflowY: "hidden" }}>
                                         {
-                                            JSON.parse(tutor.Grades ?? '[]').map(grade =>
+                                            JSON.parse(tutor?.Grades ?? '[]').map(grade =>
                                                 <div style={{ width: "115px", margin: "2px" }} onClick={() => handleClickPill(grade)}>
                                                     <Pill
                                                         label={grade}
@@ -199,7 +201,7 @@ const CreateComponent = ({ setActiveTab }) => {
                                         <Pill label={JSON.parse(education.NativeLang).value} hasIcon={false} color="success" />
                                     </div>
                                     {
-                                        JSON.parse(education.NativeLangOtherLang).map(lang =>
+                                        JSON.parse(education.NativeLangOtherLang|| '[]').map(lang =>
                                             <div style={{ width: "100px", margin: "2px" }}>
                                                 <Pill label={lang.value} hasIcon={false} />
                                             </div>)
@@ -216,7 +218,7 @@ const CreateComponent = ({ setActiveTab }) => {
                                     value={subject}>
                                     <option value={''} disabled>Select</option>
 
-                                    {subjects.map((item, index) =>
+                                    {(subjects || []).map((item, index) =>
                                         <option key={index} value={item.subject}>{item.subject}</option>
                                     )}
                                 </select>

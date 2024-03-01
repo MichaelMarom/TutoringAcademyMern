@@ -11,6 +11,7 @@ import FlipCountdown from '@rumess/react-flip-countdown';
 import { toast } from 'react-toastify'
 import { MdCancel } from "react-icons/md";
 import Tooltip from '../common/ToolTip';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 
 const StudentAside = () => {
@@ -177,10 +178,49 @@ const StudentAside = () => {
         navigate(`/student/feedback`)
     }
 
+    const children = ({ remainingTime }) => {
+        const minutes = Math.floor(remainingTime / 60)
+        const seconds = remainingTime % 60
+      
+        return ( <div>
+        {minutes<=49 &&   <p className='m-0' style={{fontSize:"12px"}}>Lesson</p>} 
+
+            {minutes}:{seconds}
+            {(minutes<=49&& minutes>3) && <p className='m-0'  style={{fontSize:"12px"}}>Started</p> }
+        {minutes<=3 &&   <p className='m-0 blinking-button text-danger' style={{fontSize:"12px"}}>Ending</p>} 
+
+             
+        </div> )
+      }
+
     return (
         <>
             <div className="StudentAside">
-                {showCounter ? <div className='d-flex justify-content-between align-items-start border shadow p-2 rounded'>
+
+            <div className='text-center countdown'> 
+            <CountdownCircleTimer
+                isPlaying
+                duration={52*60}
+                size={100}
+                strokeWidth={14}
+                colors={['#ff0000', '#008000', '#ff0000', '#ff0000']}
+                colorsTime={[52*60, 50*60,3*60,0]}
+            >
+                {children}
+            </CountdownCircleTimer>
+                {/* <FlipCountdown
+                    size={'small'}
+                    hideDay
+                    hideHour
+                    hideMonth
+                    hideYear
+                    minuteTitle='Minutes'
+                    secondTitle='Seconds'
+                    endAtZero
+                    onTimeUp={handleTimeUp}
+                    endAt={moment().add('minutes', 53).toDate()} /> */}
+            </div>
+                {/* {showCounter ? <div className='d-flex justify-content-between align-items-start border shadow p-2 rounded'>
                     <div>
                         <FlipCountdown
                             size={'small'}
@@ -196,14 +236,12 @@ const StudentAside = () => {
                     </div>
                     <div>
                         <button onClick={() => setShowCOunter(false)} className='btn btn-secondary m-0'> Hide Counter</button>
-                        {/* <Tooltip text={'Hide Counter'} direction='bottomleft'> */}
-                        {/* <MdCancel color='limegreen' onClick={() => setShowCOunter(false)} /> */}
-                        {/* </Tooltip> */}
+                   
                     </div>
                 </div>
                     :
                     <button onClick={() => setShowCOunter(true)} className='btn btn-secondary'> Show Counter</button>
-                }
+                } */}
 
 
 

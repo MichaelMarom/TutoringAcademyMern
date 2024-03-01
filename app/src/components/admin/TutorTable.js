@@ -33,7 +33,7 @@ const TutorTable = () => {
     }, [])
 
     let handleStatusChange = async (id, status, currentStatus) => {
-        await send_sms();
+       
         if (currentStatus === 'pending')
             return toast.warning('You can only change  Status of "Under-Review" Tutors!')
         if (currentStatus === status) return toast.warning(`You already on "${status}" Status`)

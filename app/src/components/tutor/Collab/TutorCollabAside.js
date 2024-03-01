@@ -10,6 +10,7 @@ import FlipCountdown from '@rumess/react-flip-countdown';
 import { moment } from '../../../config/moment'
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 const TutorAside = () => {
     const navigate = useNavigate();
@@ -154,11 +155,36 @@ const TutorAside = () => {
         navigate(`/tutor/setup`)
     }
 
-    return (
-        <div className="TutorAside shadow-sm" style={{ top: "43%" }}>
+    const children = ({ remainingTime }) => {
+        const minutes = Math.floor(remainingTime / 60)
+        const seconds = remainingTime % 60
+      
+        return ( <div>
+        {minutes<=49 &&   <p className='m-0' style={{fontSize:"12px"}}>Lesson</p>} 
 
-            <div>
-                <FlipCountdown
+            {minutes}:{seconds}
+            {(minutes<=49&& minutes>3) && <p className='m-0'  style={{fontSize:"12px"}}>Started</p> }
+        {minutes<=3 &&   <p className='m-0 blinking-button text-danger' style={{fontSize:"12px"}}>Ending</p>} 
+
+             
+        </div> )
+      }
+
+    return (
+        <div className="TutorAside shadow-sm" style={{ top: "37%" }}>
+
+            <div className='text-center countdown'> 
+            <CountdownCircleTimer
+                isPlaying
+                duration={52*60}
+                size={100}
+                strokeWidth={14}
+                colors={['#ff0000', '#008000', '#ff0000', '#ff0000']}
+                colorsTime={[52*60, 50*60,3*60,0]}
+            >
+                {children}
+            </CountdownCircleTimer>
+                {/* <FlipCountdown
                     size={'small'}
                     hideDay
                     hideHour
@@ -168,7 +194,7 @@ const TutorAside = () => {
                     secondTitle='Seconds'
                     endAtZero
                     onTimeUp={handleTimeUp}
-                    endAt={moment().add('minutes', 53).toDate()} />
+                    endAt={moment().add('minutes', 53).toDate()} /> */}
             </div>
 
             <div className="TutorAsideVideoCnt">

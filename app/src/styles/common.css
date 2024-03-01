@@ -469,3 +469,8 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+.countdown div{
+  left:30%
+}
+

@@ -539,7 +539,6 @@ export let upload_tutor_bank = (email, acct_name, acct_type, bank_name, acct, ro
     })
 }
 
-
 export let get_tutor_setup = (AcademyId) => {
     return new Promise((resolve, reject) => {
 
@@ -818,6 +817,18 @@ export const get_tutor_against_code = async (code) => {
         return data;
     }
     catch (err) {
+        showErrorToast(err)
+        return err
+    }
+}
+
+export const delete_ad = async (id) => {
+    try {
+        const data = apiClient.delete(`/tutor/ad/${id}`)
+        return data;
+    }
+    catch (err) {
+        showErrorToast(err)
         return err
     }
 }

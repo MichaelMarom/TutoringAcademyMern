@@ -12,12 +12,13 @@ const Pill = ({ label, editable, hasIcon = true, icon, color = "primary", width 
                 background: color,
                 color: fontColor
             }}
-            className={` m-2 rounded-pill p-2 d-flex align-items-center 
+            className={` m-2 rounded-pill p-2 d-flex align-items-center d-inline-block
             justify-content-between border shadow ${customColor ? '' : `text-bg-${color}`} `}
             onClick={onClick}
         >
             <p className={`m-0 ${!hasIcon ? 'w-100' : "w-75"}`} style={{
                 fontSize: "14px",
+                whiteSpace: 'nowrap',
                 textAlign: !hasIcon ? 'center' : 'start'
             }}> {label}</p>
             {hasIcon && icon}

@@ -176,11 +176,11 @@ const TutorAside = () => {
             <div className='text-center countdown'> 
             <CountdownCircleTimer
                 isPlaying
-                duration={52*60}
-                size={100}
-                strokeWidth={14}
+                duration={53*60}
+                size={90}
+                strokeWidth={13}
                 colors={['#ff0000', '#008000', '#ff0000', '#ff0000']}
-                colorsTime={[52*60, 50*60,3*60,0]}
+                colorsTime={[53*60, 50*60, 3*60, 0]}
             >
                 {children}
             </CountdownCircleTimer>

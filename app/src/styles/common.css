@@ -121,9 +121,9 @@
 }
 
 .rbc-current-time-indicator:before {
-  content: 'Tutor Time';
-  font-size: 10px;
-  bottom: 2px;
+  content: 'Tutor UTC Time';
+  font-size: 12px;
+  bottom: 3px;
   position: absolute;
 }
 

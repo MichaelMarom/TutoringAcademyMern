@@ -11,7 +11,7 @@ import { RxCross2 } from 'react-icons/rx'
 import { GoPlus } from 'react-icons/go'
 import { FaTrashCan } from 'react-icons/fa6'
 import { moment } from '../../../config/moment'
-import { fetch_ad, fetch_tutor_ads, get_tutor_market_data, put_ad } from '../../../axios/tutor'
+import { delete_ad, fetch_ad, fetch_tutor_ads, get_tutor_market_data, put_ad } from '../../../axios/tutor'
 import { useNavigate, useParams } from 'react-router-dom'
 import Loading from '../../../components/common/Loading'
 import Actions from '../../../components/common/Actions'
@@ -96,9 +96,9 @@ const Edit = () => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
-        if (!grades.length) return toast.warning('Please select atleast one grade!')
+        if (!grades.length) return toast.warning('Please select at least one school grade!')
         const ads = await fetch_tutor_ads(AcademyId)
-        if (ads.filter(ad => ad.Subject === subject).length >= 2) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published!')
+        if (ads.filter(ad => ad.Subject === subject).length >= 2) return toast.warning('You can Publish 1 Ad per Subject every 7 days. this subject is already published!')
 
         const data = params.id && await put_ad(params.id, {
             AcademyId,
@@ -120,7 +120,16 @@ const Edit = () => {
         setEditMode(false)
         setChangesMade(false)
         navigate(`/tutor/market-place/list`)
-        toast.success('Data Saved Successfully');
+        toast.success('Ad Published Succesfully, Please Visit Saved Ad Tab to view Published Ads');
+    }
+
+    const handleDeleteAd = async () => {
+        try {
+            const data = await delete_ad(params.id)
+            navigate('/tutor/market-place/list')
+            toast.success('Ad Successfully deleted.')
+        }
+        catch (err) { }
     }
 
     if (fetching || !tutor.AcademyId || !education?.EducationalLevel?.length)
@@ -131,20 +140,9 @@ const Edit = () => {
                 <form onSubmit={handleUpdate}>
                     <div className="container mt-4">
                         <div className="d-flex justify-content-between align-items-center mb-2">
-                            {dbValues.Status !== 'published' ?
-                                <div className="form-switch form-check w-25" style={{ marginBottom: "-10px" }}>
-                                    <input disabled={!editMode || notEditableAfterPublish}
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        role="switch"
-                                        checked={state === 'published'}
-                                        onChange={() => setState('published')}
-                                    />
-                                    <label htmlFor="reportAd"><b>
-                                        Publish Add</b></label>
-                                </div> : <b className='border p-2 m-2'>
-                                    This ad appears until {showDate(moment(convertToDate(dbValues.Published_At)).add(7, 'days').toDate())}
-                                </b>
+                            {dbValues.Status === 'published' && <b className='border p-2 m-2 text-primary blinking-button'>
+                                This ad appears until {showDate(moment(convertToDate(dbValues.Published_At)).add(7, 'days').toDate())}
+                            </b>
                             }
                             <div className="highlight m-0" >
                                 This is the place where you can promote yourself by publishing your private ad for all students to watch. If you tutor multi subjects, you can select one subject at the time by changing the header.
@@ -153,9 +151,22 @@ const Edit = () => {
                         </div>
 
                         <div className="rounded border shadow p-2">
-                            <div className=" d-flex w-100 justify-content-start align-items-center mb-4"
+                            <div className=" d-flex w-100 justify-content-end align-items-end mb-4"
                                 style={{ gap: "10px" }}>
-                                <div className=" d-flex align-items-center"
+                                <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start align-items-center ">
+                                    <label htmlFor="">Subject</label>
+                                    <select disabled={!editMode || notEditableAfterPublish} className="form-select"
+                                        required
+                                        onChange={(e) => setSubject(e.target.value)}
+                                        value={subject}>
+                                        <option value={''} disabled>Subject</option>
+
+                                        {subjects.map((item, index) =>
+                                            <option key={index} value={item.subject}>{item.subject}</option>
+                                        )}
+                                    </select>
+                                </div>
+                                <div className=" d-flex align-items-end"
                                     style={{ gap: "10px", width: "90%" }}>
                                     <label className="fs-3 ">Ad's Header</label>
                                     <input disabled={!editMode || notEditableAfterPublish}
@@ -177,7 +188,7 @@ const Edit = () => {
                                 </div>
                                 <div className="d-flex align-items-center justify-content-end"
                                     style={{ width: "10%", gap: "20px" }}>
-                                    <div className="click-effect-elem rounded-circle p-3"
+                                    <div className="click-effect-elem rounded-circle p-3" onClick={handleDeleteAd}
                                         style={{ cursor: "pointer", background: "lightGray" }}>
                                         <FaTrashCan size={32} />
                                     </div>
@@ -188,7 +199,7 @@ const Edit = () => {
 
                                 <div style={{ width: "100%" }}
                                     className=" mb-2 d-flex flex-column justify-content-start border p-2">
-                                    <label htmlFor="">Tutor Teaching Grade</label>
+                                    <label htmlFor="">Tutor Teaching Grade(s)</label>
                                     <div className="w-100 d-flex justify-content-between">
 
                                         <div className="d-flex  " style={{ width: "100%", overflowX: "auto", overflowY: "hidden" }}>
@@ -212,27 +223,13 @@ const Edit = () => {
                                             <Pill label={JSON.parse(education.NativeLang).value} hasIcon={false} color="success" />
                                         </div>
                                         {
-                                            JSON.parse(education.NativeLangOtherLang).map(lang =>
+                                            JSON.parse(education.NativeLangOtherLang || '[]').map(lang =>
                                                 <div style={{ width: "100px", margin: "2px" }}>
                                                     <Pill label={lang.value} hasIcon={false} />
                                                 </div>)
                                         }
                                     </div>
 
-                                </div>
-
-                                <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
-                                    <label htmlFor="">Subject</label>
-                                    <select disabled={!editMode || notEditableAfterPublish} className="form-select"
-                                        required
-                                        onChange={(e) => setSubject(e.target.value)}
-                                        value={subject}>
-                                        <option value={''} disabled>Subject</option>
-
-                                        {subjects.map((item, index) =>
-                                            <option key={index} value={item.subject}>{item.subject}</option>
-                                        )}
-                                    </select>
                                 </div>
 
                                 <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">

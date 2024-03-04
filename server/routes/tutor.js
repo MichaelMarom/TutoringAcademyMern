@@ -44,7 +44,8 @@ const { subjects,
     dynamically_post_edu_info,
     get_all_tutor_sessions_formatted,
     get_feedback_data,
-    get_tutor_feedback_questions } = require('../controllers/tutor');
+    get_tutor_feedback_questions, 
+    delete_ad} = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -105,6 +106,7 @@ TUTOR_ROUTES.post('/tutor/market-place', parser, verifyToken, post_tutor_ad)
 TUTOR_ROUTES.get('/tutor/market-place/list/:AcademyId', verifyToken, get_tutor_ads)
 TUTOR_ROUTES.get('/tutor/ad/:Id', verifyToken, get_ad)
 TUTOR_ROUTES.put('/tutor/ad/:Id', parser, verifyToken, put_ad)
+TUTOR_ROUTES.delete('/tutor/ad/:Id', parser, verifyToken, delete_ad)
 TUTOR_ROUTES.get('/tutor/rate/:code', verifyToken, get_tutor_against_code)
 
 module.exports = {

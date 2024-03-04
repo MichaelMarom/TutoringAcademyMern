@@ -27,7 +27,7 @@ const CreateComponent = ({ setActiveTab }) => {
     const [unSavedChanges, setUnSavedChanges] = useState(false);
     console.log(tutor)
 
-    const [addText, setAddText] = useState(`Hello Students. My screen name is ${tutor.TutorScreenname ? capitalizeFirstLetter(tutor.TutorScreenname): ''}, 
+    const [addText, setAddText] = useState(`Hello Students. My screen name is ${tutor.TutorScreenname ? capitalizeFirstLetter(tutor.TutorScreenname) : ''}, 
     I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
     I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
     I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
@@ -47,12 +47,13 @@ const CreateComponent = ({ setActiveTab }) => {
     }, [])
 
     useEffect(() => {
-        if(tutor.AcademyId){
+        if (tutor.AcademyId) {
             setAddText(`Hello Students. My screen name is ${capitalizeFirstLetter(tutor.TutorScreenname)}, 
         I teach ${subject.length ? subject : "......"}  for ${grades.length ? grades.map(elem => '[' + elem + ']') : '.....'}. 
         I am ${education ? education?.EducationalLevel : '...'} with experience of ${education ? education?.EducationalLevelExperience : '...'}. 
         I live in ${tutor.Country}, time zone ${tutor.GMT}.  Click here to view my profile for my work experience, certificates, and Diploma.
-        There you can look at my calendar-scheduling for availability, and book your lesson.`)}
+        There you can look at my calendar-scheduling for availability, and book your lesson.`)
+        }
     }, [subject, tutor, education, grades])
 
     const handleClickPill = (grade) => {
@@ -65,7 +66,7 @@ const CreateComponent = ({ setActiveTab }) => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        if (!grades.length) return toast.warning('Please select atleast one grade!')
+        if (!grades.length) return toast.warning('Please select at least one school grade!')
         setLoading(true)
         const ads = await fetch_tutor_ads(AcademyId)
         setLoading(false)
@@ -81,7 +82,9 @@ const CreateComponent = ({ setActiveTab }) => {
             Country: tutor.Country,
             EducationalLevel: education.EducationalLevel,
             Languages: education.NativeLang,
-            Grades: grades
+            Grades: grades,
+            Published_At: new Date(),
+            Status: 'published'
         })
         setSubject('')
         setGrades([])
@@ -125,7 +128,7 @@ const CreateComponent = ({ setActiveTab }) => {
             <form onSubmit={handleSave}>
                 <div className="container mt-4">
                     <div className="d-flex justify-content-between">
-                        <div className="form-switch form-check w-25" style={{ marginBottom: "-10px" }}>
+                        {/* <div className="form-switch form-check w-25" style={{ marginBottom: "-10px" }}>
                             <input className="form-check-input"
                                 type="checkbox"
                                 role="switch"
@@ -135,18 +138,30 @@ const CreateComponent = ({ setActiveTab }) => {
                                 onClick={() => toast.warning('You can publish only if you saved the ad before!')}>
                                 <b>Publish This Ad</b>
                             </label>
-                        </div>
-                        <div className="highlight w-75" >
+                        </div> */}
+                        <div className="highlight w-100" >
                             This is the place where you can promote yourself by publishing your private ad for all students to watch. If you tutor multi subjects, you can select one subject at the time by changing the header.
                         </div>
-
                     </div>
 
                     <div className="rounded border shadow p-2">
-                        <div className=" d-flex w-100 justify-content-start align-items-center mb-4"
+                        <div className=" d-flex w-100 justify-content-start align-items-end mb-4"
                             style={{ gap: "10px" }}>
+                            <div style={{ width: "300px" }} className="d-flex align-items-center flex-column justify-content-start ">
+                                <label htmlFor="">Subject</label>
+                                <select className="form-select shadow"
+                                    required
+                                    onChange={(e) => setSubject(e.target.value)}
+                                    value={subject}>
+                                    <option value={''} disabled>Select</option>
+
+                                    {(subjects || []).map((item, index) =>
+                                        <option key={index} value={item.subject}>{item.subject}</option>
+                                    )}
+                                </select>
+                            </div>
                             <div className=" d-flex align-items-center"
-                                style={{ gap: "10px", width: "90%" }}>
+                                style={{ gap: "10px", width: "60%" }}>
                                 <label className="fs-3 ">Ad's Header</label>
                                 <input
                                     className="form-control  shadow m-0"
@@ -177,7 +192,7 @@ const CreateComponent = ({ setActiveTab }) => {
                             style={{ gap: "10px" }}>
                             <div style={{ width: "100%" }}
                                 className=" mb-2 d-flex flex-column justify-content-between border p-2">
-                                <label htmlFor="">Tutor Teaching Grade</label>
+                                <label htmlFor="">Tutor Teaching Grade(s)</label>
                                 <div className="w-100 d-flex justify-content-between">
 
                                     <div className="d-flex  " style={{ width: "100%", overflowX: "auto", overflowY: "hidden" }}>
@@ -201,7 +216,7 @@ const CreateComponent = ({ setActiveTab }) => {
                                         <Pill label={JSON.parse(education.NativeLang).value} hasIcon={false} color="success" />
                                     </div>
                                     {
-                                        JSON.parse(education.NativeLangOtherLang|| '[]').map(lang =>
+                                        JSON.parse(education.NativeLangOtherLang || '[]').map(lang =>
                                             <div style={{ width: "100px", margin: "2px" }}>
                                                 <Pill label={lang.value} hasIcon={false} />
                                             </div>)
@@ -210,24 +225,12 @@ const CreateComponent = ({ setActiveTab }) => {
 
                             </div>
 
-                            <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
-                                <label htmlFor="">Subject</label>
-                                <select className="form-select shadow"
-                                    required
-                                    onChange={(e) => setSubject(e.target.value)}
-                                    value={subject}>
-                                    <option value={''} disabled>Select</option>
 
-                                    {(subjects || []).map((item, index) =>
-                                        <option key={index} value={item.subject}>{item.subject}</option>
-                                    )}
-                                </select>
-                            </div>
 
                             <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                 <label htmlFor="">Educational Level</label>
-                                <input type="text" className="form-control" 
-                                value={education.EducationalLevel} disabled />
+                                <input type="text" className="form-control"
+                                    value={education.EducationalLevel} disabled />
                             </div>
 
                             <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
@@ -278,7 +281,7 @@ const CreateComponent = ({ setActiveTab }) => {
                     unSavedChanges={unSavedChanges}
                 />
             </form>
-        </div >
+        </div>
     );
 }
 

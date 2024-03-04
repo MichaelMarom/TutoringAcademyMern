@@ -30,7 +30,7 @@ const verifyToken = async (req, res, next) => {
     // }
 
     if (!token || token === 'undefined' || token === 'null')
-        return res.status(401).json({ message: "Not Authorized" });
+        return res.status(401).json({ message: "The security token was expired, please login again." });
 
     try {
         // const clientToken = cookies.get('__session');
@@ -47,7 +47,7 @@ const verifyToken = async (req, res, next) => {
             console.log('start verifying token ....')
             jwt.verify(token, publicKey, (err, decoded) => {
                 if (err) {
-                    return res.status(401).json({ response: err.message, message: "Not Authorized" });
+                    return res.status(401).json({ response: err.message, message: "The security token was expired, please login again." });
                 }
                 req.user = decoded;
                 next();
@@ -55,7 +55,7 @@ const verifyToken = async (req, res, next) => {
         }
     } catch (error) {
         res.status(401).json({
-            message: 'Not Authorized',
+            message: 'The security token was expired, please login again.',
             reason: error.message
         });
         return;

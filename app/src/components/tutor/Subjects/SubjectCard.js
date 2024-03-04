@@ -51,7 +51,7 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
         setGrades([])
         setEditable(false);
         await remove_subject_rates(id)
-        toast.success('The subject is successfully removed from your teaching list!')
+        toast.success('The subject was removed from your teaching list successfully!')
     }
 
     const handleSave = async (e) => {

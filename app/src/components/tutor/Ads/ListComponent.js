@@ -30,18 +30,24 @@ const ListComponent = ({ setActiveTab, setActiveTabIndex }) => {
                     }
                     } className=' click-effect-elem rounded shadow-sm p-2 border m-1 d-flex ' style={{ gap: "20px" }} >
                         {item.Published_At &&
-                            <p className=' m-0 text-decoration-underline ' >
+                            <p className=' m-0 text-decoration-underline ' style={{width:"100px"}} >
                                 {showDate(moment(item.Published_At).toDate())}
                             </p>
                         }
-                        <h5 className='click-elem m-0 text-decoration-underline' >
-                            {item.AdHeader}
-                        </h5>
-                        {item.Published_At &&
+                         {item.Published_At &&
                             <div className='' style={{ width: '100px' }}>
-                                <Pill label={'published'} color='success' />
+                                <Pill label={'published'} color='success' hasIcon={false} />
                             </div>
                         }
+                         {item.Subject &&
+                            <div className='' >
+                                <Pill label={item.Subject} hasIcon={false} color='primary' width='auto' />
+                            </div>
+                        }
+                        <h5 className='click-elem m-0 text-decoration-underline d-inline-block' >
+                            {item.AdHeader}
+                        </h5>
+                       
                     </div>
                 )}
 

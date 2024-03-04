@@ -427,8 +427,8 @@ let post_tutor_rates_form = (req, res) => {
                     )
                 }
 
-                    res.status(200).send({ bool: true, mssg: 'Data Was Successfully Saved' })
-                    }
+                res.status(200).send({ bool: true, mssg: 'Data Was Successfully Saved' })
+            }
         }
         catch (err) {
             console.log(err)
@@ -1856,11 +1856,29 @@ const get_tutor_feedback_questions = async (req, res) => {
     })
 }
 
+const delete_ad = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const { recordset } = await poolConnection.request().query(
+                `Delete from TutorAds where Id = ${req.params.Id}`
+            )
+            res.status(200).send(recordset)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
 
 
 module.exports = {
     get_tutor_profile_data,
     get_tutor_against_code,
+    delete_ad,
     get_tutor_offered_subjects,
     getSessionsDetails,
     post_tutor_ad,

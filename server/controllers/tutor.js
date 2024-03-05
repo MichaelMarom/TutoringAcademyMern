@@ -1237,33 +1237,26 @@ const set_agreements_date_null_for_all = (req, res) => {
 }
 
 let get_tutor_market_data = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            let { id } = req.query;
+            const poolConnection = await sql.connect(config);
+            let Education = await poolConnection.request().query(`SELECT * From Education1 WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
 
-    let { id } = req.query;
+            let Subjects = await poolConnection.request().query(`SELECT * FROM SubjectRates WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
 
-    let Education = async () => await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From Education1 WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
-            .then((result) => {
-                return (result.recordset);
+            res.status(200).send({
+                Education: Education.recordset,
+                Subjects: Subjects.recordset
             })
-    )
-
-    let Subjects = async () => await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM SubjectRates WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
-            .then((result) => {
-                return (result.recordset);
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error completing the Request",
+                reason: err.message
             })
-            .catch(err => console.log(err))
-    )
-
-    try {
-        res.status(200).send({
-            Education: await Education(),
-            Subjects: await Subjects()
-        })
-    }
-    catch (e) {
-        res.status(400).send({ message: e.message })
-    }
+        }
+    })
 }
 
 let get_tutor_students = async (req, res) => {

@@ -10,6 +10,19 @@ const sql = require('mssql');
 const COMMISSION_DATA = require('../constants/tutor');
 const educationSchema = require('../schema/tutor/education');
 
+const { DefaultAzureCredential } = require("@azure/identity");
+const { QueueServiceClient } = require("@azure/storage-queue");
+const account = "rsfunctionapp9740";
+const credential = new DefaultAzureCredential();
+
+const queueServiceClient = new QueueServiceClient(
+    `https://${account}.queue.core.windows.net`,
+    credential
+);
+// const queueConnectionString = process.env.AzureWebJobsStorage; 
+// const queueServiceClient = QueueServiceClient.fromConnectionString(queueConnectionString); 
+// const queueClient = queueServiceClient.getQueueClient("adsqueue"); 
+
 
 let post_new_subject = (req, res) => {
 
@@ -1439,7 +1452,6 @@ const get_all_tutor_sessions_formatted = async (req, res) => {
                     where sb.tutorId = '${req.params.tutorId}'
                     `
                 )
-                console.log(recordset, 'hehehe')
 
                 if (recordset[0]) {
                     const offset = parseInt(recordset[0].GMT, 10);
@@ -1679,6 +1691,14 @@ const get_tutor_profile_data = async (req, res) => {
 const post_tutor_ad = async (req, res) => {
     marom_db(async (config) => {
         try {
+            const queueName = "rsfunctionapp9740";
+            const queueClient = queueServiceClient.getQueueClient(queueName);
+            // Send a message into the queue using the sendMessage method.
+            const sendMessageResponse = await queueClient.sendMessage("Hello World!");
+            console.log(
+                `Sent message successfully, service assigned message Id: ${sendMessageResponse.messageId}, service assigned request Id: ${sendMessageResponse.requestId}`
+            );
+
             const poolConnection = await sql.connect(config);
             const result = await poolConnection.request().query(insert('TutorAds', req.body))
             res.status(200).send(result.recordset[0]);

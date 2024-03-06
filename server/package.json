@@ -20,6 +20,8 @@
   "dependencies": {
     "@azure/communication-sms": "^1.1.0",
     "@azure/functions": "^4.3.0",
+    "@azure/identity": "^4.0.1",
+    "@azure/storage-queue": "^12.16.0",
     "@clerk/clerk-js": "^4.70.0",
     "@clerk/clerk-sdk-node": "^4.13.9",
     "axios": "^1.6.2",

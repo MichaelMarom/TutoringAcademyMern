@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "BE Debugger",
             "skipFiles": [
                 "${workspaceRoot}/server/node_modules/**/*.js",
                 "<node_internals>/**/*.js"
@@ -22,6 +22,9 @@
                 "HOLIDAY_ABS_API_KEY": "ae677858abf044338858283038b06056",
                 "SERVER_URL": "http://localhost:9876",
                 "SECRET_KEY": "mysecretkey123$$@@#!",
+                "AZURE_TENANT_ID": "2f0ab4b2-8835-413d-a8d8-022eca41708d",
+                "AZURE_CLIENT_ID": "b8ed890e-fd31-49a0-8239-9e986d67468a",
+                "AZURE_CLIENT_SECRET": "yLA8Q~UvjVxKD3l.w~hY7Wcn_0EmCRUKuv32QaKu",
                 "CLERK_SECRET_KEY": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7hBgNQubOaYJf8/le9+\nHzAQ7Jd1pcdDFxHRV4aSDQDMrwpR4q6OZA8XVaKDAS5YgxM01t/Dq2ooQV7MxrXt\nqYD+FKmF9hBXmMpAZEijdrW7JdMyEN/qeWtM9g6qjRsIf/eh/fKY0r3EYcknxRZE\nz3nEI49DzV1RwJn6oF0R2GSDCI+whs2cfEPTjYUaNcS2M+DawyCRGqIxdA0ZnRy4\nz9BezsT3pgcD/RhNkMMoCcF5dO9WSzRIRlU72aaFuOZUmfMxdqGcSjDnWzR19mqt\nboLdNuHclpzYT3iEbDs7GjRBj9sexq0m0w/aC1RAHIJjqUfMf5GY5hdkJ8/cT+yF\n2wIDAQAB\n-----END PUBLIC KEY-----",
                 "COMMUNICATION_SERVICES_CONNECTION_STRING": " endpoint=https://smstutoingacademy.unitedstates.communication.azure.com/;accesskey=1lnFDblTzTOwzwYK0hoZ80AeLfhhYpxFo0CqwoKNBie2ra3yJtz6oAJzLC5sBdSp0jx5d+XjLfnwMSX/7eWvMg=="
             }

@@ -26,10 +26,10 @@ const Layout = ({ children }) => {
             link: '/tutor/market-place/list'
         },
         {
-            label: 'Create Ad', component: <Ads setActiveTab={setActiveTab} />,
+            label: 'Create your Ad', component: <Ads setActiveTab={setActiveTab} />,
             link: '/tutor/market-place'
         },
-        { label: `Tutor's bid`, component: null, link: '/tutor/market-place/bid' },
+        { label: `Short List`, component: null, link: '/tutor/market-place/bid' },
     ];
 
     return (

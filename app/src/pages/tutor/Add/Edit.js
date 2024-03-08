@@ -28,7 +28,7 @@ const Edit = () => {
     let [education, set_education] = useState({})
     const [subjects, set_subjects] = useState([])
     const [fetching, setFetching] = useState(false);
-    const [state, setState] = useState(null)
+    const [status, setStatus] = useState(null)
     const [subject, setSubject] = useState('');
     const [grades, setGrades] = useState([])
     const AcademyId = localStorage.getItem('tutor_user_id');
@@ -61,7 +61,7 @@ const Edit = () => {
                     setSubject(result.Subject)
                     setHeader(result.AdHeader)
                     setAddText(result.AdText)
-                    setState(result.Status)
+                    setStatus(result.Status)
                     setNotEditableAfterPublish(result.Status === 'published')
                     setDBValues({
                         Grades: JSON.parse(result.Grades),
@@ -112,8 +112,8 @@ const Edit = () => {
             EducationalLevel: education.EducationalLevel,
             Languages: education.NativeLang,
             Grades: JSON.stringify(grades),
-            Status: !editMode ? 'published' : null,
-            Published_At: !editMode ? new Date() : null
+            Status: 'published',
+            Published_At: new Date()
         })
 
         if (data?.response?.data?.message) return toast.error(data.response.data.message)
@@ -147,7 +147,6 @@ const Edit = () => {
                             <div className="highlight m-0" >
                                 This is the place where you can promote yourself by publishing your private ad for all students to watch. If you tutor multi subjects, you can select one subject at the time by changing the header.
                             </div>
-
                         </div>
 
                         <div className="rounded border shadow p-2">
@@ -155,7 +154,7 @@ const Edit = () => {
                                 style={{ gap: "10px" }}>
                                 <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start align-items-center ">
                                     <label htmlFor="">Subject</label>
-                                    <select disabled={!editMode || notEditableAfterPublish} className="form-select"
+                                    <select disabled={true} className="form-select"
                                         required
                                         onChange={(e) => setSubject(e.target.value)}
                                         value={subject}>
@@ -169,7 +168,7 @@ const Edit = () => {
                                 <div className=" d-flex align-items-end"
                                     style={{ gap: "10px", width: "90%" }}>
                                     <label className="fs-3 ">Ad's Header</label>
-                                    <input disabled={!editMode || notEditableAfterPublish}
+                                    <input disabled={true}
                                         className="form-control  shadow m-0"
                                         style={{ width: "60%" }}
                                         type="text"
@@ -205,10 +204,11 @@ const Edit = () => {
                                         <div className="d-flex  " style={{ width: "100%", overflowX: "auto", overflowY: "hidden" }}>
                                             {
                                                 JSON.parse(tutor.Grades ?? '[]').map(grade =>
-                                                    <div style={{ width: "115px", margin: "2px" }} onClick={() => handleClickPill(grade)}>
+                                                    <div style={{ width: "115px", margin: "2px" }}
+                                                    >
                                                         <Pill
                                                             label={grade}
-                                                            hasIcon={true} icon={grades.find(item => item === grade) ? <RxCross2 /> : <GoPlus />}
+                                                            hasIcon={status === 'expired' ? false : true} icon={grades.find(item => item === grade) ? <RxCross2 /> : <GoPlus />}
                                                             color={grades.find(item => item === grade) ? "success" : "primary"} />
                                                     </div>)
                                             }
@@ -234,23 +234,23 @@ const Edit = () => {
 
                                 <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                     <label htmlFor="">Educational Level</label>
-                                    <input disabled={!editMode || notEditableAfterPublish} type="text" className="form-control" value={education.EducationalLevel} />
+                                    <input disabled={true} type="text" className="form-control" value={education.EducationalLevel} />
                                 </div>
 
                                 <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                     <label htmlFor="">Teaching Experience</label>
-                                    <input disabled={!editMode || notEditableAfterPublish} className="form-control" type="text" value={education.EducationalLevelExperience} />
+                                    <input disabled={true} className="form-control" type="text" value={education.EducationalLevelExperience} />
                                 </div>
 
                                 {!!education.Certificate.length && <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                     <label htmlFor="">Tutor's Certificate</label>
-                                    <input disabled={!editMode || notEditableAfterPublish} className="form-control" type="text" value={education.Certificate} />
+                                    <input disabled={true} className="form-control" type="text" value={education.Certificate} />
                                 </div>}
 
                                 <div style={{ width: "300px" }} className="d-flex flex-column justify-content-start ">
                                     <label htmlFor="">Country</label>
 
-                                    <input disabled={!editMode || notEditableAfterPublish} className="form-control"
+                                    <input disabled={true} className="form-control"
                                         value={tutor.Country} />
                                 </div>
 
@@ -258,7 +258,7 @@ const Edit = () => {
                                     className="d-flex flex-column justify-content-start ">
                                     <label htmlFor="">GMT</label>
 
-                                    <input disabled={!editMode || notEditableAfterPublish} className="form-control"
+                                    <input disabled={true} className="form-control"
                                         value={tutor.GMT}
                                     />
 
@@ -286,7 +286,7 @@ const Edit = () => {
                         saveDisabled={!editMode && notEditableAfterPublish}
                         onEdit={() => setEditMode(true)}
                         unSavedChanges={changesMade}
-                        SaveText={editMode ? 'Save' : 'Publish'}
+                        SaveText={status === 'expired' ? 'RePublish' : 'Publish'}
                     />
                 </form>
             </div >

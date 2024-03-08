@@ -71,7 +71,7 @@ const CreateComponent = ({ setActiveTab }) => {
         const ads = await fetch_tutor_ads(AcademyId)
         setLoading(false)
         if (ads.find(ad => ad.Subject === subject)) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published!')
-        await post_tutor_ad({
+        const data = await post_tutor_ad({
             AcademyId,
             AdText: addText,
             AdHeader: header,
@@ -86,6 +86,9 @@ const CreateComponent = ({ setActiveTab }) => {
             Published_At: new Date(),
             Status: 'published'
         })
+        if (data?.response?.data?.message) {
+            return toast.error(data?.response?.data?.message)
+        }
         setSubject('')
         setGrades([])
         setHeader('')

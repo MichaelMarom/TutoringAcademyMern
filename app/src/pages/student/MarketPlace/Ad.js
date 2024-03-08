@@ -1,240 +1,248 @@
 import { useEffect, useState } from "react";
 import { get_student_market_data } from "../../../axios/student";
 import Layout from "./Layout";
+import { useSelector } from "react-redux";
+import UserRichTextEditor from "../../../components/common/RichTextEditor/UserRichTextEditor";
+import { CERTIFICATES, EXPERIENCE, GMT, LEVEL, languages } from "../../../constants/constants";
+import ReactSelect from "react-select";
 
 const Ads = () => {
-
-    let [screen_name, set_screen_name] = useState('')
-    let [grade, set_grade] = useState('')
-    let [lang, set_lang] = useState('')
-    let [country, set_country] = useState('')
-
-
-    let [education_list, set_education_list] = useState([])
-    let [exprience_list, set_exprience_list] = useState([])
-    let [certificate_list, set_certificate_list] = useState([])
-    let [utc_list, set_utc_list] = useState([])
-    let [faculty_list, set_faculty_list] = useState([])
-    let [lang_list, set_lang_list] = useState('')
-    let [subject_list, set_subject_list] = useState([])
-    let [gmt_list, set_gmt_list] = useState([])
-
-    let [education, set_education] = useState([])
-    let [exprience, set_exprience] = useState([])
-    let [certificate, set_certificate] = useState([])
-    let [utc, set_utc] = useState([])
-    let [faculty, set_faculty] = useState([])
-    let [subject, set_subject] = useState([])
+    const { student } = useSelector(state => state.student)
+    const [header, setHeader] = useState('')
+    const [errors, setErrors] = useState({})
+    const [adText, setAdText] = useState('')
+    const [subjects, setSubjects] = useState([])
+    const [subject, setSubject] = useState('')
+    const [faculties, setFaculties] = useState([])
+    const [level, setLevel] = useState('')
+    const [experience, setExperience] = useState('')
+    const [language, setLanguage] = useState([])
+    const [timeZone, setTimezone] = useState('')
+    const [certificate, setCertificate] = useState('')
 
     let [activeFaculty, setActiveFaculty] = useState('')
-
-
-    let [price_max, set_price_max] = useState(0)
-    //let [range_max, set_range_max] = useState(range_min)
-
+    const languageOptions = languages.map((language) => ({
+        value: language,
+        label: language,
+    }));
 
     useEffect(() => {
         console.log(activeFaculty)
 
-        let list = subject.filter(item => item.FacultyId == activeFaculty)
+        // let list = subject.filter(item => item.FacultyId == activeFaculty)
 
-        set_subject_list(list)
+        // set_subject_list(list)
     }, [activeFaculty])
 
-
     useEffect(() => {
-
-        if (window.localStorage.getItem('student_user_id') !== null) {
-            get_student_market_data(window.localStorage.getItem('student_user_id'))
+        if (student.AcademyId) {
+            get_student_market_data(student.AcademyId)
                 .then(({ StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT }) => {
-                    set_screen_name(StudentData[0].ScreenName)
-                    set_grade(StudentData[0].Grade)
-                    set_country(StudentData[0].Country)
-                    set_lang(StudentData[0].Language)
-                    set_gmt_list(GMT)
-
-                    set_education_list(EducationalLevel)
-                    set_certificate_list(CertificateTypes)
-                    set_exprience_list(Exprience)
-                    set_subject(Subjects)
-                    set_subject_list([])
-                    set_faculty_list(Faculty)
-
-
-
-
+                    setSubject(Subjects)
                 })
                 .catch(err => console.log(err))
         }
-    }, [])
+    }, [student])
 
-    useEffect(() => {
-        document.querySelector('#price-max').value = eval(price_max) + 1
-    }, [price_max])
-
-
+    console.log(student)
     return (
         <Layout>
-            <div className="student-market-place-cnt">
-
-
-                <div className="student-market-place-report-ad">
-                    <input style={{ width: '20px', height: '20px', margin: '0' }} type="checkbox" name="" id="reportAd" />
-                    &nbsp;
-                    <label htmlFor="reportAd"><b>Publish This Ad</b></label>
-                </div>
-
-
-
-                <br />
-
-                <div className="student-market-place-body">
-
-
-                    <div className="student-market-place-body-form">
-                        <div className="input-cnt">
-                            <label htmlFor="">My Screen ID</label>
-                            <input defaultValue={screen_name} type="text" name="" id="Ad" />
-                        </div>
-
-                        <div className="input-cnt">
-                            <label htmlFor="">My School Grade</label>
-                            <input defaultValue={grade} type="text" name="" id="Ad" />
-                        </div>
-
-                        <div className="input-cnt">
-                            <label htmlFor="">My Country</label>
-                            <input defaultValue={country} type="text" name="" id="Ad" />
-                        </div>
-
-                        <div className="input-cnt">
-                            <label htmlFor="">My Language</label>
-
-                            <input defaultValue={lang} type="text" name="" id="Ad" />
-                        </div>
-
-
-                        <div className="input-cnt" style={{ marginBottom: '15px' }}>
-                            <label htmlFor="">Need Help From Faculty</label>
-                            <select onInput={e => setActiveFaculty(e.target.value.split('-')[1])}>
-                                <option value={''}>Select Faculty</option>
-                                {
-                                    faculty_list.map(item => {
-                                        return (
-                                            <option value={`${item.Faculty}-${item.Id}`}>{item.Faculty}</option>
-                                        )
-                                    })
+            <div className="" style={{ height: "70vh", overflowY: "auto" }}>
+                <div className="container">
+                    <div className=" d-flex justify-content-center align-items-end mb-2"
+                        style={{ width: "90%", gap: '3%' }}>
+                        <label className="fs-3 ">Ad's Header</label>
+                        <input
+                            className="form-control  shadow m-0"
+                            style={{ width: "60%", }}
+                            type="text"
+                            required
+                            placeholder="Type here a catchy message to attract tutors"
+                            value={header}
+                            onChange={(e) => {
+                                if (e.target.value.length < 121) {
+                                    delete errors.header;
+                                    setErrors(errors)
+                                    return setHeader(e.target.value)
                                 }
-                            </select>
-                        </div>
-
-                        <div className="input-cnt" style={{ marginBottom: '15px' }}>
-                            <label htmlFor="">Subject</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-                                    subject_list.map(item => {
-                                        return (
-                                            <option value={item.SubjectName}>{item.SubjectName}</option>
-                                        )
-                                    })
-                                }
-                            </select>
-                        </div>
-
-                        <div className="input-cnt" style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
-                            <label htmlFor="">Price Range</label>
-                            <input style={{ width: '30%' }} onInput={e => set_price_max(e.target.value)} defaultValue={0} min={0} type="number" name="" id="Ad" />
-                            &nbsp; <b>To</b> &nbsp;
-                            <input style={{ width: '30%' }} min={eval(price_max) + 1} defaultValue={eval(price_max) + 1} type="number" name="" id="price-max" />
-                        </div>
-
+                                setErrors({ ...errors, header: "Max Limit 120 characters" })
+                            }} />
+                        {errors.header && <p className="text-sm text-danger m-0">{errors.header} </p>}
                     </div>
+                    <div className="d-flex justify-content-center" style={{ gap: "2%" }}>
+                        <div className="border p-2 shadow " style={{ width: "40%" }} >
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Grade</label>
+                                <input disabled={false}
+                                    className="form-control  shadow m-0"
+                                    style={{ maxWidth: "300px" }}
+                                    type="text"
+                                    required
+                                    value={student.Grade}
+                                />
+                            </div>
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Country</label>
+                                <input disabled={false}
+                                    className="form-control  shadow m-0"
+                                    style={{ maxWidth: "300px" }}
+                                    type="text"
+                                    required
+                                    value={student.Country}
+                                />
+                            </div>
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">GMT</label>
+                                <input disabled={false}
+                                    className="form-control  shadow m-0"
+                                    style={{ maxWidth: "300px" }}
+                                    type="text"
+                                    required
+                                    value={student.GMT} />
+                            </div>
+                            <div className=" d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Language</label>
+                                <input disabled={false}
+                                    className="form-control  shadow m-0"
+                                    style={{ maxWidth: "300px" }}
+                                    type="text"
+                                    required
+                                    value={student.Language}
+                                />
+                            </div>
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Faculty</label>
+                                <select className="form-select" style={{ maxWidth: "300px" }}
+                                    required
+                                    onChange={(e) => setSubject(e.target.value)}
+                                    value={subject}>
+                                    <option value={''} disabled>Select</option>
 
+                                    {subjects.map((item, index) =>
+                                        <option key={index} value={item.subject}>{item.subject}</option>
+                                    )}
+                                </select>
+                                {errors.header && <p className="text-sm text-danger m-0">{errors.header} </p>}
+                            </div>
+                            <div className=" d-flex justify-content-between  align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Subject</label>
+                                <select className="form-select" style={{ maxWidth: "300px" }}
+                                    required
+                                    onChange={(e) => setSubject(e.target.value)}
+                                    value={subject}>
+                                    <option value={''} disabled>Select</option>
 
-
-                    <div className="student-market-place-btm-form">
-                        <h4>Tutor's Requirements</h4>
-                        <div className="input-cnt" style={{ marginBottom: '15px' }}>
-                            <label htmlFor="">Educational Level</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-                                    education_list.map(item => {
-                                        return (
-                                            <option value={item.Level}>{item.Level}</option>
-                                        )
-                                    })
-                                }
-                            </select>
+                                    {subjects.map((item, index) =>
+                                        <option key={index} value={item.subject}>{item.subject}</option>
+                                    )}
+                                </select>
+                            </div>
                         </div>
+                        <div className="border p-2 shadow " style={{ width: "40%" }}>
+                            <h4>Tutor Requirments</h4>
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Education Level</label>
+                                <select className="form-select" style={{ maxWidth: "300px" }}
+                                    required
+                                    onChange={(e) => setLevel(e.target.value)}
+                                    value={level}>
+                                    <option value={''} disabled>Select</option>
 
+                                    {LEVEL.map((item, index) =>
+                                        <option key={index} value={item}>{item}</option>
+                                    )}
+                                    <option value={'any'} >Any</option>
 
-                        <div className="input-cnt" style={{ marginBottom: '15px' }}>
-                            <label htmlFor="">Teaching Experience</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-                                    exprience_list.map(item => {
-                                        return (
-                                            <option value={item.TutorExperience}>{item.TutorExperience}</option>
-                                        )
-                                    })
-                                }
-                            </select>
+                                </select>
+                            </div>
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Experience</label>
+                                <select className="form-select" style={{ maxWidth: "300px" }}
+                                    required
+                                    onChange={(e) => setExperience(e.target.value)}
+                                    value={experience}>
+                                    <option value={''} disabled>Select</option>
+
+                                    {EXPERIENCE.map((item, index) =>
+                                        <option key={index} value={item}>{item}</option>
+                                    )}
+                                    <option value={'any'} >Any</option>
+
+                                </select>
+                            </div>
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Certificate</label>
+                                <select className="form-select" style={{ maxWidth: "300px" }}
+                                    required
+                                    onChange={(e) => setCertificate(e.target.value)}
+                                    value={certificate}>
+                                    <option value={''} disabled>Select</option>
+
+                                    {CERTIFICATES.map((item, index) =>
+                                        <option key={index} value={item}>{item}</option>
+                                    )}
+                                    <option value={'any'} >Any</option>
+
+                                </select>
+                            </div>
+                            <div className=" d-flex justify-content-between  align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Language</label>
+                                <div className="w-100" style={{ maxWidth: "300px" }}>
+                                    <ReactSelect
+                                        isMulti
+                                        placeholder="Select other language(s)"
+                                        className="language-selector w-100"
+                                        id="other-languages"
+                                        value={language}
+                                        onChange={(selectedOption) => {
+                                            setLanguage(selectedOption)
+                                        }}
+                                        options={languageOptions}
+                                        isDisabled={false} />
+                                </div>
+
+                            </div>
+                            <div className="d-flex justify-content-between align-items-start m-1"
+                                style={{ width: "90%" }}>
+                                <label className="">Timezone</label>
+                                <select className="form-select" style={{ maxWidth: "300px" }}
+                                    required
+                                    onChange={(e) => setTimezone(e.target.value)}
+                                    value={timeZone}>
+                                    <option value={''} disabled>Select</option>
+
+                                    {GMT.map((item, index) =>
+                                        <option key={index} value={item.GMT}>{item.GMT}</option>
+                                    )}
+                                    <option value={'any'} >Any</option>
+
+                                </select>
+                            </div>
                         </div>
-
-                        <div className="input-cnt" style={{ marginBottom: '15px' }}>
-                            <label htmlFor="">Tutor's Certificate</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-                                    certificate_list.map(item => {
-                                        return (
-                                            <option value={item.CertificateType}>{item.CertificateType}</option>
-                                        )
-                                    })
-                                }
-                            </select>
-                        </div>
-
-
-                        <div className="input-cnt" style={{ marginBottom: '15px' }}>
-                            <label htmlFor="">Tutor's Language</label>
-                            <select>
-                                <option value={''}>Select</option>
-                                {
-
-                                }
-                            </select>
-                        </div>
-
-                        <div className="input-cnt" style={{ marginBottom: '15px' }}>
-                            <label htmlFor="">UTC (Tutor's time zone)</label>
-
-                            <input style={{ width: '300px' }} min={0} max={12} defaultValue={0} type="number" name="" id="Ad" />
-
-                        </div>
-
-
-                        <textarea style={{ height: '100px', width: '400px' }}></textarea>
-
                     </div>
-
-
-                    <div className="student-market-place-buttons">
-                        <div className="input-cnt">
-                            <input style={{ width: '20px', height: '20px', margin: '0' }} type="checkbox" name="" id="" />
-                            &nbsp;&nbsp;
-                            <label htmlFor=""><b>Let the system find my tutor</b></label>
+                    <div className="p-4 border rounded  shadow-lg my-4">
+                        <div className="highlight">
+                            The text below was generated generically by the computer. You can change the text to fit your personality. The ad will appear for 7 days for the selected subject. If you tutor multi subjects, you can publish a different ad for each subject.
                         </div>
-
-                        <div className="student-market-place-btns">
-                            <button style={{ background: 'red', color: '#fff' }}>Delete Ad</button>
-                            <button style={{ background: 'Green', color: '#fff' }}>Submit Ad</button>
-                        </div>
+                        <UserRichTextEditor
+                            disabled={false}
+                            readOnly={false}
+                            required
+                            className="w-100  fs-5 mb-4 "
+                            height={"200px"} value={adText}
+                            onChange={(value) => setAdText(value)}
+                            placeholder={'Write You\'r Ad here '} />
                     </div>
-
                 </div>
             </div>
         </Layout>

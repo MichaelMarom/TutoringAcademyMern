@@ -354,6 +354,57 @@ export const GMT = [
     "Time Zone": "Baker Island"
   }
 ]
+export const LEVEL = [
+  "No Academic Education",
+  "Undergraduate Student",
+  "Associate Degree",
+  "Bachelor Degree",
+  "Master Degree",
+  "Doctorate Degree",
+  "Post Doctorate Degree",
+  "Professor",
+]
+
+export const EXPERIENCE = [
+  "1 Yr      ",
+  "2 Yrs     ",
+  "3 Yrs     ",
+  "4 Yrs     ",
+  "5 Yrs     ",
+  "6-9 Yrs   ",
+  "10-14 Yrs ",
+  "15-19 Yrs ",
+  "20+       "
+]
+
+export const CERTIFICATES = [
+  "Not Certified",
+  "Early Childhood Education",
+  "Elementry Education",
+  "Secondry Education",
+  "Graduate",
+  "Initial certificate",
+  "Provisional Certificate",
+  "Professional certificate",
+  "Limited Professional certificate",
+  "Retired Educator certificate",
+  "<<<PROGRAMING CERTIFICATES>>>",
+  "AWS Certified Developer Associate",
+  "AWS Certified Solutions Associate",
+  "C & C++ Certificattion",
+  "OCAJP Oracle Certified Associate Java",
+  "R Programming Certification",
+  "CCA Spark and Hadop Developer",
+  "CMBDA Oracle Database Certification",
+  "Comp TIA Security",
+  "CELTA",
+  "Computer Science",
+  "ESL/ELL",
+  "SCIENCE",
+  "Gifted",
+  "Special Education",
+  "Other",
+  "High School"]
 
 export const GRADES = [
   {

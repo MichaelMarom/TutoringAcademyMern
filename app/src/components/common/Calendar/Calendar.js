@@ -348,7 +348,7 @@ const ShowCalendar = ({
       return;
     }
     if ((selectedSlots.length && selectedSlots[0].type === 'reserved') && reservedSlots.length > 6) {
-      toast.warning("Cannot Reserve more than 6 slots")
+      toast.warning("You Can Reserve no more than 6 slots")
       return;
     }
     const updatedSelectedSlots = selectedSlots?.map((slot) => {
@@ -424,7 +424,7 @@ const ShowCalendar = ({
       convertToDate(event.start).getTime() === clickedDate.getTime() || convertToDate(event.end).getTime() === slotInfo.end.getTime()));
 
     if (!isStudentRoute && !disableColor) { toast.warning("Please select color before disabling slots!"); return }
-    if (isEventAlreadyExist && slotInfo.action === "doubleClick") { toast.warning("Event already exist for the selected slot. Please select another slot to continue!"); return }
+    if (isEventAlreadyExist && slotInfo.action === "doubleClick") { toast.warning("This time slot already reserved. Please select from white slots to continue!"); return }
     if (clickedUpperSlot && activeView != views.MONTH) return;
     if (clickedDate.getTime() < (new Date()).getTime() && slotInfo.action === "doubleClick") {
       toast.warning(`Cannot ${!isStudentLoggedIn ? 'Disable/Enable ' : "Book/Reserve"} Older Slots`);

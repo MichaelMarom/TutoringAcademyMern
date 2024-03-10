@@ -20,7 +20,7 @@ const config = {
 };
 
 app.timer('newtriggerexpre', {
-    schedule: '* 0 0 * * *',
+    schedule: '0 0 0 * * *',
     handler: (myTimer, context) => {
         getTutorAds(context)
             .then(data => {

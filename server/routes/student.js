@@ -13,7 +13,7 @@ const { upload_setup_info, get_student_setup, get_student_grade, get_tutor_subje
     get_feedback_questions,
     get_feedback_of_questions,
     post_feedback_questions,
-    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings, post_student_agreement, set_code_applied, get_published_ads, get_all_students_sessions_formatted, ad_to_shortlist, get_shortlist_ads, delete_ad_from_shortlist } = require('../controllers/student');
+    update_shortlist, get_student_bookings, getBookedSlot, get_tutor_bookings, get_student_or_tutor_bookings, post_student_agreement, set_code_applied, get_published_ads, get_all_students_sessions_formatted, ad_to_shortlist, get_shortlist_ads, delete_ad_from_shortlist, post_student_ad } = require('../controllers/student');
 const { express, parser } = require('../modules');
 
 const STUDENT_ROUTES = express.Router();
@@ -28,6 +28,7 @@ STUDENT_ROUTES.put('/student/short-list/:AcademyId/:Student/:Subject', parser, v
 
 STUDENT_ROUTES.get('/student/short-list-data', verifyToken, get_student_short_list_data)
 STUDENT_ROUTES.get('/student/market-data', verifyToken, get_student_market_data)
+STUDENT_ROUTES.post('/student/ad', parser, verifyToken, post_student_ad)
 STUDENT_ROUTES.post('/student/setup', parser, verifyToken, upload_setup_info)
 STUDENT_ROUTES.put('/student/setup/agreement/:userId', parser, verifyToken, post_student_agreement)
 
@@ -53,7 +54,7 @@ STUDENT_ROUTES.put('/code-applied/:studentId/:tutorId', parser, verifyToken, set
 STUDENT_ROUTES.get('/student/ads', verifyToken, get_published_ads)
 STUDENT_ROUTES.post('/student/ads/shortlist', parser, verifyToken, ad_to_shortlist)
 STUDENT_ROUTES.get('/student/ads/shortlist/list/:studentId', verifyToken, get_shortlist_ads)
-STUDENT_ROUTES.delete('/student/ads/shortlist/:adId/:studentId', parser,verifyToken,delete_ad_from_shortlist )
+STUDENT_ROUTES.delete('/student/ads/shortlist/:adId/:studentId', parser, verifyToken, delete_ad_from_shortlist)
 
 module.exports = {
     STUDENT_ROUTES

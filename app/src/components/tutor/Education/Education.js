@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 
-import { get_certificates, get_degree, get_experience, get_level, 
-    get_my_edu, get_state, post_edu, post_tutor_setup, upload_edu_form, upload_form_two } from '../../../axios/tutor';
+import {
+    get_certificates, get_degree, get_experience, get_level,
+    get_my_edu, get_state, post_edu, post_tutor_setup, upload_edu_form, upload_form_two
+} from '../../../axios/tutor';
 import career from '../../../images/Experience-photo50.jpg';
 
 import { moment } from '../../../config/moment'
@@ -13,7 +15,7 @@ import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { deleteFileOnServer, getPreviousFilePathFromDB, upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
-import { AUST_STATES, CAN_STATES, Countries, UK_STATES, US_STATES, languages } from '../../../constants/constants'
+import { AUST_STATES, CAN_STATES, CERTIFICATES, Countries, EXPERIENCE, LEVEL, UK_STATES, US_STATES, languages } from '../../../constants/constants'
 import { compareStates, getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
 import RichTextEditor from '../../common/RichTextEditor/RichTextEditor';
 import PDFViewer from './PDFViewer'
@@ -441,74 +443,54 @@ const Education = () => {
     }, [])
 
     useEffect(() => {
+        let experiences = EXPERIENCE.map((item) =>
+            <option key={item} className={item} value={item}>{item}</option>
+        );
+        let head = <option value='' disabled>Select</option>
 
-        get_experience()
-            .then((data) => {
-                let list = data.recordset.map((item) =>
-                    <option key={item.TutorExperience} className={item.TutorExperience} value={item.TutorExperience}>{item.TutorExperience}</option>
-                );
-                let head = <option value=''>TutorExperience</option>
+        experiences.unshift(head);
+        set_exp(experiences)
 
-                list.unshift(head);
-                set_exp(list)
+        // get_state()
+        //     .then(({ recordset }) => {
+        //         recordset.map(item => item.State);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
 
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        // get_degree()
+        //     .then((data) => {
+        //         let list = data.recordset.map((item) =>
+        //             <option key={item.Degree}
+        //                 className={item.Degree} style={{
+        //                     height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+        //                     borderRadius: '0'
+        //                 }} value={item.Degree}>{item.Degree}</option>
+        //         );
+        //         let head = <option key='null' style={{
+        //             height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+        //             borderRadius: '0'
+        //         }} value=''>Degree</option>
 
-        get_state()
-            .then(({ recordset }) => {
-                recordset.map(item => item.State);
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        //         // list.unshift(head);
 
-        get_degree()
-            .then((data) => {
-                let list = data.recordset.map((item) =>
-                    <option key={item.Degree}
-                        className={item.Degree} style={{
-                            height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
-                            borderRadius: '0'
-                        }} value={item.Degree}>{item.Degree}</option>
-                );
-                let head = <option key='null' style={{
-                    height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
-                    borderRadius: '0'
-                }} value=''>Degree</option>
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
 
-                list.unshift(head);
+        let eduLevels = LEVEL.map((item) =>
+            <option key={item} className={item} value={item}>{item}</option>
+        );
+        set_level_list(eduLevels)
 
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        let certificatesOptions = CERTIFICATES.map((item) =>
+            <option key={item} className={item} value={item}>{item}</option>
+        );
+        set_certificate_list(certificatesOptions)
 
-        get_level()
-            .then((data) => {
-                let list = data.recordset.map((item) =>
-                    <option key={item.Level} className={item.Level} value={item.Level}>{item.Level}</option>
-                );
-                set_level_list(list)
 
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-
-        get_certificates()
-            .then((data) => {
-                let list = data.recordset.map((item) =>
-                    <option key={item.CertificateType} className={item.CertificateType} value={item.CertificateType}>{item.CertificateType}</option>
-                );
-                set_certificate_list(list)
-
-            })
-            .catch((err) => {
-                console.log(err)
-            })
     }, [certificate, degree, experience, level])
 
     const handleDegFileUpload = (event) => {
@@ -620,14 +602,14 @@ const Education = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        if (!workExperience || workExperience.length === 11 || !workExperience.length) return toast.warning('Work Experiece in Required!')
+        if (!workExperience || workExperience.length === 11 || !workExperience.length) return toast.warning('Work Experiece is Required!')
 
         if (!markSecondEduStepCompleted().valid)
             return toast.warning(`Please fill required fields ${markSecondEduStepCompleted().value}`)
 
 
         if (!cert_file_name || !deg_file_name)
-            toast.warning('You selected academic education, but did not upload your diploma. Hence,your Profile will stay in "Pending" status and cannot be activated until you upload the missing documents!')
+            toast.warning('You selected academic education, but did not upload your diploma. Hence,your Profile will stay in "Pending" status and cannot be activated until you upload your diploma!')
 
         setSaving(true)
         tutor.Status === 'pending' && await saver();

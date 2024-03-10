@@ -70,7 +70,7 @@ const CreateComponent = ({ setActiveTab }) => {
         setLoading(true)
         const ads = await fetch_tutor_ads(AcademyId)
         setLoading(false)
-        if (ads.find(ad => ad.Subject === subject)) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published!')
+        if (ads.find(ad => ad.Subject === subject)) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published in the last 7 days!')
         const data = await post_tutor_ad({
             AcademyId,
             AdText: addText,
@@ -281,6 +281,7 @@ const CreateComponent = ({ setActiveTab }) => {
 
                 <Actions
                     loading={loading}
+                    SaveText="Publish"
                     unSavedChanges={unSavedChanges}
                 />
             </form>

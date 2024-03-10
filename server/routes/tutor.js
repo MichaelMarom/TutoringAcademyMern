@@ -44,8 +44,9 @@ const { subjects,
     dynamically_post_edu_info,
     get_all_tutor_sessions_formatted,
     get_feedback_data,
-    get_tutor_feedback_questions, 
-    delete_ad} = require('../controllers/tutor');
+    get_tutor_feedback_questions,
+    delete_ad,
+    get_faculty_subjects } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -69,6 +70,7 @@ TUTOR_ROUTES.get('/tutor/education', verifyToken, get_user_data)
 TUTOR_ROUTES.get('/tutor/response', verifyToken, get_response)
 TUTOR_ROUTES.get('/tutor/my-data', verifyToken, get_my_data)
 TUTOR_ROUTES.get('/tutor/my-rate', verifyToken, get_rates)
+TUTOR_ROUTES.get('/subject/:facultyId', verifyToken, get_faculty_subjects)
 TUTOR_ROUTES.get('/tutor/subjects/:id', verifyToken, get_tutor_offered_subjects)
 TUTOR_ROUTES.get('/tutor/tutor-rate', verifyToken, get_tutor_rates)
 TUTOR_ROUTES.get('/tutor/my-edu', verifyToken, get_my_edu)

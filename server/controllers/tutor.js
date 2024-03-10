@@ -888,7 +888,21 @@ let get_my_data = async (req, res) => {
 
 }
 
-
+const get_faculty_subjects = async (req, res) => {
+    marom_db(async (config) => {
+        const { facultyId } = req.params
+        try {
+            const poolConnection = await sql.connect(config);
+            const { recordset } = await poolConnection.request().query(`
+                SELECT SubjectName from Subjects where FacultyId = '${facultyId}' 
+            `)
+            res.status(200).send(recordset)
+        }
+        catch (err) {
+            res.status(400).send({ message: "Error completing the response", reason: err.message })
+        }
+    })
+}
 let get_rates = (req, res) => {
     let { AcademyId, facultyId, subject } = req.query;
     marom_db(async (config) => {
@@ -898,13 +912,16 @@ let get_rates = (req, res) => {
             var poolConnection = await sql.connect(config);
             if (poolConnection) {
                 const result = await poolConnection.request().query(
-                    `Select sb.SubjectName as subject, sb.FacultyId as facultyId, sr.rate, sr.AcademyId, 
+                    `Select sb.SubjectName as subject, sb.FacultyId as facultyId,
+                     sr.rate, sr.AcademyId, 
                     sr.grades as grades, sr.SID,
                     sb.CreatedOn FROM Subjects as sb
-                    LEFT JOIN SubjectRates as sr ON  cast(sr.subject  as varchar(max))=
+                    LEFT JOIN SubjectRates as sr ON  
+                    cast(sr.subject  as varchar(max))=
                     cast( sb.SubjectName as varchar(max)) and 
                     cast( sr.faculty as varchar(max))= 
-                      cast(sb.FacultyId as varchar(max)) and cast( sr.AcademyId  as varchar)= '${AcademyId}'
+                      cast(sb.FacultyId as varchar(max)) and 
+                      cast( sr.AcademyId  as varchar)= '${AcademyId}'
                     where sb.FacultyId = ${facultyId}
                 `
                 )
@@ -915,7 +932,6 @@ let get_rates = (req, res) => {
             console.log(err)
             res.status(400).send({ message: err.message })
         }
-
     })
 }
 
@@ -1691,13 +1707,13 @@ const get_tutor_profile_data = async (req, res) => {
 const post_tutor_ad = async (req, res) => {
     marom_db(async (config) => {
         try {
-            const queueName = "rsfunctionapp9740";
-            const queueClient = queueServiceClient.getQueueClient(queueName);
-            // Send a message into the queue using the sendMessage method.
-            const sendMessageResponse = await queueClient.sendMessage("Hello World!");
-            console.log(
-                `Sent message successfully, service assigned message Id: ${sendMessageResponse.messageId}, service assigned request Id: ${sendMessageResponse.requestId}`
-            );
+            // const queueName = "rsfunctionapp9740";
+            // const queueClient = queueServiceClient.getQueueClient(queueName);
+            // // Send a message into the queue using the sendMessage method.
+            // const sendMessageResponse = await queueClient.sendMessage("Hello World!");
+            // console.log(
+            //     `Sent message successfully, service assigned message Id: ${sendMessageResponse.messageId}, service assigned request Id: ${sendMessageResponse.requestId}`
+            // );
 
             const poolConnection = await sql.connect(config);
             const result = await poolConnection.request().query(insert('TutorAds', req.body))
@@ -1935,5 +1951,6 @@ module.exports = {
     storeEvents,
     fetchStudentsBookings,
     storeCalenderTutorRecord,
-    get_tutor_status
+    get_tutor_status,
+    get_faculty_subjects
 }

@@ -4,6 +4,7 @@ import { get_shortlist_ads } from '../../../axios/student'
 import { useSelector } from 'react-redux'
 import ShortlistAdCard from './ShortlistAdCard'
 import { convertTutorIdToName } from '../../../helperFunctions/generalHelperFunctions'
+import Actions from '../../../components/common/Actions'
 
 const Bids = () => {
   const { student } = useSelector(state => state.student)
@@ -29,6 +30,7 @@ const Bids = () => {
           />
         )}
       </div>
+      <Actions saveDisabled />
     </Layout>
 
   )

@@ -37,7 +37,6 @@ const Layout = ({ children }) => {
         activeTabIndex={activeTabIndex}
       />
       {children}
-      <Actions saveDisabled />
     </StudentLayout>
   )
 }

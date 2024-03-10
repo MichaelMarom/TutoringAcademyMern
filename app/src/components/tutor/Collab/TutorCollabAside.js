@@ -151,7 +151,7 @@ const TutorAside = () => {
     }, [location, peerId])
 
     const handleTimeUp = () => {
-        toast.warning('Session Time is Up!');
+        toast.warning('Session Time is ended!');
         navigate(`/tutor/setup`)
     }
 

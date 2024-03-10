@@ -12,6 +12,7 @@ import Avatar from '../../../components/common/Avatar';
 import Pill from '../../../components/common/Pill';
 import GradePills from '../../../components/tutor/GradePills';
 import { convertTutorIdToName } from '../../../helperFunctions/generalHelperFunctions';
+import Actions from '../../../components/common/Actions';
 
 const Marketplace = () => {
     const [ad, setAds] = useState([]);
@@ -43,13 +44,13 @@ const Marketplace = () => {
                                 style={{ gap: "20px" }} >
                                 <div>
                                     <div className='d-flex align-items-center'>
-                                    {item.Published_At &&
-                                        <p className=' m-0 text-decoration-underline ' >
-                                            {showDate(moment(item.Published_At).toDate())}
-                                        </p>
-                                    }
-                                    <Pill label={item.Subject} width='200px' color='success' />
-                                        </div>
+                                        {item.Published_At &&
+                                            <p className=' m-0 text-decoration-underline ' >
+                                                {showDate(moment(item.Published_At).toDate())}
+                                            </p>
+                                        }
+                                        <Pill label={item.Subject} width='200px' color='success' />
+                                    </div>
                                     <h5 className='click-elem m-0 text-decoration-underline' >
                                         {item.AdHeader}
                                     </h5>
@@ -91,6 +92,7 @@ const Marketplace = () => {
                     )}
                 </div>
             </div>
+            <Actions saveDisabled />
         </Layout>
     )
 }

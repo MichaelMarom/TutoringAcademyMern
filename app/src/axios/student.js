@@ -92,8 +92,6 @@ export let get_student_grade = () => {
 export let get_student_market_data = (id) => {
 
     return new Promise((resolve, reject) => {
-
-
         apiClient.get('/student/market-data', { params: { id } })
             .then((result) => {
                 resolve(result.data)
@@ -103,6 +101,40 @@ export let get_student_market_data = (id) => {
             })
 
     })
+}
+
+/**
+ * 
+ * @param {Object} body {
+    Id,
+    AcademyId,
+    Create_At,
+    AdText,
+    AdHeader ,
+    Subject ,
+    FacultyId,
+    TutorCertificate ,
+    TutorExperience,
+    TutorGMT,
+    TutorEduLevel,
+    TutorLanguages,
+    Country,
+    Language,
+    Grade,
+    Status,
+    Published_At 
+}
+ */
+export const post_student_ad = async (body) => {
+    try {
+        const { data } = await apiClient.post('/student/ad', body)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
 }
 
 export let get_tutor_subject = async (subject) => {
@@ -381,7 +413,7 @@ export const get_shortlist_ads = async (studentId) => {
     }
 }
 
-export const deleteAdFromShortlist = async(adId, studentId)=>{
+export const deleteAdFromShortlist = async (adId, studentId) => {
     try {
         const { data } = await apiClient.delete(`/student/ads/shortlist/${adId}/${studentId}`);
         return data

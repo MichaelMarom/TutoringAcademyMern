@@ -52,7 +52,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
         const fields = { SSH: { value: ssh, pattern: /^\d{3}-\d{2}-\d{4}$/ } };
 
         if (fields.SSH.value?.length && !fields.SSH.pattern.test(fields.SSH.value)) {
-            toast.warning('Please follow XXX-XX-XXXX pattern for SSH');
+            toast.warning('Please follow XXX-XX-XXXX format for Social Security Number');
             return false
         }
         return true

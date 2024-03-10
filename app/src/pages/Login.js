@@ -58,9 +58,9 @@ const LoginPage = () => {
             let user = localStorage.getItem('user')
             if (user) user = JSON.parse(user)
             dispatch(setUser(user))
-            console.log(err.errors[0].message, user.role)
+            console.log(err.errors[0].message, user?.role)
             if (err.errors[0].code.includes('session_exists')) {
-                fetchUser(user.SID)
+                fetchUser(user?.SID)
                 // navigate(DEFAULT_URL_AFTER_LOGIN[user.role])
                 // toast.error('Please Signout First, If you want to Login!')
             }
@@ -106,8 +106,7 @@ const LoginPage = () => {
             const token = await tokenApi(user)
 
             localStorage.setItem('access_token', token)
-            console.log(user);
-            if (user.role) {
+            if (user?.role) {
                 navigate(DEFAULT_URL_AFTER_LOGIN[user.role])
             }
         }

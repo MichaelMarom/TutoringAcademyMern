@@ -47,7 +47,7 @@ const App = () => {
   const storedUser = localStorage.getItem("user");
   const studentUserId = localStorage.getItem('student_user_id')
   const tutorUserId = localStorage.getItem('tutor_user_id')
-  const studentLoggedIn = user.role === 'student';
+  const studentLoggedIn = user?.role === 'student';
   const loggedInUserDetail = studentLoggedIn ? student : tutor;
   const role = studentLoggedIn ? 'student' : 'tutor';
   const { shortlist, isLoading } = useSelector(state => state.shortlist)

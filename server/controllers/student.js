@@ -1,10 +1,11 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert, getAll, findById, findByAnyIdColumn, update, find, updateById } = require('../helperfunctions/crud_queries');
+const { insert, getAll, findById, findByAnyIdColumn, update, find, updateById, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
 const moment = require('moment-timezone');
 const sql = require('mssql');
 const capitalizeFirstLetter = require('../constants/helperfunctions.js')
+const studentAd = require('../schema/student/studentAd.js')
 
 const executeQuery = async (query, res) => {
     try {
@@ -371,123 +372,66 @@ let get_student_short_list_data = (req, res) => {
 
 }
 
-let get_student_market_data = async (req, res) => {
+const post_student_ad = async (req, res) => {
+    try {
+        marom_db(async (config) => {
+            try {
+                const poolConnection = await sql.connect(config);
+                const request = poolConnection.request();
 
-    let { id } = req.query;
+                Object.keys(req.body).forEach(key => {
+                    request.input(key, studentAd[key], req.body[key]);
+                });
 
+                const result = await poolConnection.request()
+                    .query(parameterizedInsertQuery('StudentAds', req.body).query);
 
-    let StudentData = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From StudentSetup WHERE CONVERT(VARCHAR, AcademyId) =  '${id}'`)
-            .then((result) => {
-
-                return (result.recordset);
-            })
-        //   .catch(err => console.log(err))
-        //   .catch(err => console.log(err))
-    )
-
-    let Exprience = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM Experience`)
-            .then((result) => {
-
-                return (result.recordset);
-            })
-        //   .catch(err => console.log(err))
-    )
-
-    let EducationalLevel = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM EducationalLevel`)
-            .then((result) => {
-
-                return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
-        //   .catch(err => console.log(err))
-        //   .catch(err => console.log(err))
-    )
-
-    let CertificateTypes = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM CertificateTypes`)
-            .then((result) => {
-
-                return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
-        //   .catch(err => console.log(err))
-        //   .catch(err => console.log(err))
-    )
-
-    let Subjects = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT Id,FacultyId,SubjectName FROM Subjects`)
-            .then((result) => {
-
-                return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
-        //   .catch(err => console.log(err))
-        //   .catch(err => console.log(err))
-    )
-
-    let Faculty = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM Faculty`)
-            .then((result) => {
-
-                return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
-        //   .catch(err => console.log(err))
-        //   .catch(err => console.log(err))
-    )
-
-    let GMT = await connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * FROM GMT`)
-            .then((result) => {
-
-                return (result.recordset);
-                //res.status(200).send()
-                //console.log(result)
-                //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
-            })
-        //   .catch(err => console.log(err))
-        //   .catch(err => console.log(err))
-    )
-
-    new Promise((resolve, reject) => {
-        resolve(StudentData)
-    })
-        .then((StudentData) => {
-            return { StudentData, Exprience }
+                res.status(200).send(result)
+            } catch (err) {
+                res.status(400).send({
+                    message: "Error Completing the Request",
+                    reason: err.message
+                })
+            }
         })
-        .then(({ StudentData, Exprience }) => {
-            return { StudentData, EducationalLevel, Exprience }
+    }
+    catch (err) {
+        res.status(400).send({
+            message: "Error Completing the Request",
+            reason: err.message
         })
-        .then(({ StudentData, EducationalLevel, Exprience }) => {
-            return { StudentData, EducationalLevel, Exprience, CertificateTypes }
-        })
-        .then(({ StudentData, EducationalLevel, Exprience, CertificateTypes }) => {
-            return { StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects }
-        })
-        .then(({ StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
-            return { StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty }
-        })
-        .then(({ StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects }) => {
-            return { StudentData, EducationalLevel, Exprience, CertificateTypes, Subjects, Faculty, GMT }
-        })
-        .then((result) => {
-            res.send(result)
-        })
-
-
+    }
 }
 
+let get_student_market_data = async (req, res) => {
+    try {
+        marom_db(async (config) => {
+            try {
+                const poolConnection = await sql.connect(config);
+                const { recordset } = await poolConnection.request()
+                    .query(`SELECT * FROM Faculty `);
+                recordset.sort((a, b) => {
+                    if (a.Faculty < b.Faculty) return -1;
+                    if (a.Faculty > b.Faculty) return 1;
+                    return 0;
+                });
+
+                res.status(200).send(recordset)
+            } catch (err) {
+                res.status(400).send({
+                    message: "Error Completing the Request",
+                    reason: err.message
+                })
+            }
+        })
+    }
+    catch (err) {
+        res.status(400).send({
+            message: "Error Completing the Request",
+            reason: err.message
+        })
+    }
+}
 
 const post_student_bookings = async (req, res) => {
     const { tutorId, studentId } = req.body;
@@ -958,11 +902,11 @@ const get_shortlist_ads = async (req, res) => {
     })
 }
 
-const delete_ad_from_shortlist = async(req, res)=>{
+const delete_ad_from_shortlist = async (req, res) => {
     marom_db(async (config) => {
         try {
             const poolConnection = await sql.connect(config)
-            const data= await poolConnection.request().query(
+            const data = await poolConnection.request().query(
                 `delete from AdShortlist where StudentId = '${req.params.studentId}' and AdId = ${req.params.adId}`
             )
             res.status(200).send(data)
@@ -1036,6 +980,7 @@ const get_all_students_sessions_formatted = async (req, res) => {
 module.exports = {
     post_feedback_questions,
     delete_ad_from_shortlist,
+    post_student_ad,
     set_code_applied,
     update_shortlist,
     get_all_students_sessions_formatted,

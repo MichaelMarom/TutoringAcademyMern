@@ -162,7 +162,7 @@ const StudentFaculties = () => {
                     }
                 }, 2000)
             }
-            else toast.warning('You can only select Active Tutors')
+            else toast.warning('You can select only Active Tutors')
         }
     }
 

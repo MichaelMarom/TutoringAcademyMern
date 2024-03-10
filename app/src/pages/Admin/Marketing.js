@@ -68,8 +68,8 @@ const Marketing = () => {
       return row.phone
     })
     console.log(numbers)
-    if (!numbers.length) toast.warning('Please select phone num,ber to send sms')
-    if (!message.length) toast.warning('Please type some message to snd to numberts')
+    if (!numbers.length) toast.warning('Please select phone number to send sms')
+    if (!message.length) toast.warning('Please type your message to SMS')
     if (messageType === 'sms') { await send_sms({ numbers, message }); }
   }
 

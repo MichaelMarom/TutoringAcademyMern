@@ -98,7 +98,7 @@ const Edit = () => {
         e.preventDefault();
         if (!grades.length) return toast.warning('Please select at least one school grade!')
         const ads = await fetch_tutor_ads(AcademyId)
-        if (ads.filter(ad => ad.Subject === subject).length >= 2) return toast.warning('You can Publish 1 Ad per Subject every 7 days. this subject is already published!')
+        if (ads.filter(ad => ad.Subject === subject).length >= 2) return toast.warning('You can Publish 1 Ad per Subject every 7 days. this subjectwas already published in the past 7 days!')
 
         const data = params.id && await put_ad(params.id, {
             AcademyId,

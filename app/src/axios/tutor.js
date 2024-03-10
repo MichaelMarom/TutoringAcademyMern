@@ -458,7 +458,16 @@ export const get_tutor_subjects = async (id) => {
         return err
     }
 }
-
+export const get_faculty_subject = async (id) => {
+    try {
+        const { data } = await apiClient.get(`/subject/${id}`)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        return err
+    }
+}
 
 export let get_rates = (AcademyId, facultyId) => {
     return new Promise((resolve, reject) => {

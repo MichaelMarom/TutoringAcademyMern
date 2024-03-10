@@ -19,8 +19,6 @@ const ShortlistAdCard = ({ photo, name, adText, id, setAdDeleted, tutorId, subje
         setCode(Countries.find(item => item.Country === country)?.Code?.toLocaleLowerCase())
     }, [country])
 
-    console.log(Countries.find(item => item.Country === country)?.Code, country)
-
     return (
         <div className='  col-md-4 '>
 
@@ -28,7 +26,7 @@ const ShortlistAdCard = ({ photo, name, adText, id, setAdDeleted, tutorId, subje
 
                 <div className='position-absolute top-0 start-0 p-1 cursor-pointer' onClick={handleDeleteAd}><MdCancel size={25} color='limegreen' /> </div>
                 <Avatar avatarSrc={photo} size='100px' showOnlineStatus={false} />
-                <div className='d-flex top-0 start-0 p-1 ' style={{gap:"5px"}}>
+                <div className='d-flex top-0 start-0 p-1 ' style={{ gap: "5px" }}>
                     <h6 className='mr-2'>{name}</h6>
                     <img
                         src={`https://flagcdn.com/w20/${code}.png`}

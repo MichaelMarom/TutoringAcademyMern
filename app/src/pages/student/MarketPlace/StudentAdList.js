@@ -37,7 +37,7 @@ const StudentAdList = () => {
                 <div className='container'>
                     {ads.map(item =>
                         <div onClick={() => {
-                            navigate(`/tutor/market-place/${item.Id}`)
+                            navigate(`/student/market-place/ad/${item.Id}`)
                         }
                         } className=' click-effect-elem rounded shadow-sm p-2 border m-1 d-flex ' style={{ gap: "20px" }} >
                             {item.Published_At &&

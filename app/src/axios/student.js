@@ -135,6 +135,49 @@ export const post_student_ad = async (body) => {
         return err
     }
 }
+/**
+ * @param {String} id Id of Ad
+ * @param {Object} body {
+    AcademyId,
+    AdText,
+    AdHeader ,
+    Subject ,
+    FacultyId,
+    TutorCertificate ,
+    TutorExperience,
+    TutorGMT,
+    TutorEduLevel,
+    TutorLanguages,
+    Country,
+    Language,
+    Grade,
+    GMT,
+    Status,
+    Published_At 
+} */
+export const put_ad = async (id, body) => {
+    try {
+        const { data } = await apiClient.put(`/student/ad/${id}`, body)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
+}
+
+export const get_ad = async (id) => {
+    try {
+        const { data } = await apiClient.get(`/student/ad/${id}`)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
+}
 
 export const fetch_student_ads = async (id) => {
     try {

@@ -1729,8 +1729,9 @@ const get_tutor_ads = async (req, res) => {
     marom_db(async (config) => {
         try {
             const poolConnection = await sql.connect(config);
-            const result = await poolConnection.request().query(find('TutorAds', req.params))
-            res.status(200).send(result.recordset);
+            const { recordset } = await poolConnection.request().query(find('TutorAds', req.params))
+            recordset.sort((a, b) => (new Date(b.Published_At) - new Date(a.Published_At)))
+            res.status(200).send(recordset);
         }
         catch (e) {
             res.status(400).send({ message: e.message })

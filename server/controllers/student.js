@@ -1,5 +1,5 @@
 const { marom_db, connecteToDB } = require('../db');
-const { insert, getAll, findById, findByAnyIdColumn, update, find, updateById, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
+const { insert, getAll, findById, findByAnyIdColumn, update, find, updateById, parameterizedInsertQuery, parameteriedUpdateQuery } = require('../helperfunctions/crud_queries');
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 require('dotenv').config();
 const moment = require('moment-timezone');
@@ -413,8 +413,7 @@ const get_student_ads = async (req, res) => {
                 const { recordset } = await request.query(
                     find('StudentAds', { AcademyId: req.params.id }));
 
-
-                    // recordset.sort(record=>{record.})
+                recordset.sort((a, b) => (new Date(b.Published_At) - new Date(a.Published_At)))
 
                 res.status(200).send(recordset)
             } catch (err) {
@@ -461,6 +460,41 @@ let get_student_market_data = async (req, res) => {
             reason: err.message
         })
     }
+}
+
+const get_ad = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            const result = await poolConnection.request().
+                query(findByAnyIdColumn('StudentAds', { Id: req.params.id }))
+            res.status(200).send(result.recordset[0]);
+        }
+        catch (e) {
+            res.status(400).send({ message: e.message })
+        }
+    })
+}
+
+const put_ad = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config);
+            const request = poolConnection.request();
+            request.input('Id', studentAd['Id'], req.params.id)
+
+            Object.keys(req.body).map(key => {
+                request.input(key, studentAd[key], req.body[key])
+            })
+            const result = await request.query(parameteriedUpdateQuery('StudentAds', req.body, { Id: req.params.id }, false).query)
+
+            res.status(200).send(result.recordset);
+        }
+        catch (e) {
+            console.error(e.message)
+            res.status(400).send({ message: e.message })
+        }
+    })
 }
 
 const post_student_bookings = async (req, res) => {
@@ -869,13 +903,15 @@ const get_published_ads = async (req, res) => {
             const sql = require('mssql')
             const poolConnection = await sql.connect(config);
             if (poolConnection) {
-                const result = await poolConnection.request().query(
+                const { recordset } = await poolConnection.request().query(
                     `select TA.*, TS.Photo from TutorAds as TA join
                   TutorSetup as TS on cast(TS.AcademyId as varchar) = TA.AcademyId
-                  where TS.Status = 'active' and TA.Published_At is not null
-                    `
-                )
-                res.status(200).send(result.recordset)
+                  where TS.Status = 'active' and TA.Published_At is not null   `)
+
+                recordset.sort((a, b) => (new Date(b.Published_At) - new Date(a.Published_At)))
+
+                res.status(200).send(recordset)
+
             }
         }
         catch (err) {
@@ -921,6 +957,8 @@ const get_shortlist_ads = async (req, res) => {
                 cast(TS.AcademyId as varchar) = TA.AcademyId
                 where ASL.StudentId = '${req.params.studentId}'`
             )
+            recordset.sort((a, b) => (new Date(b.Published_At) - new Date(a.Published_At)))
+
             res.status(200).send(recordset)
         }
         catch (err) {
@@ -1039,5 +1077,7 @@ module.exports = {
     get_student_feedback,
     post_student_feedback,
     payment_report,
-    ad_to_shortlist
+    ad_to_shortlist,
+    get_ad,
+    put_ad
 }

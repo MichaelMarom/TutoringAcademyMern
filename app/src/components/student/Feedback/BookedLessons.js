@@ -99,7 +99,7 @@ function BookedLessons({
           </thead>
           <tbody>
             {sortedEvents.map((event, index) => (
-              <tr key={index}>
+              <tr key={index} style={{ color: event.type === 'intro' ? 'blue' : 'inherit' }}>
                 <td style={{ width: Header[0].width }}>
                   <Tooltip text={event.tutorId}>
                     <img src={event.photo} alt={event.tutorId} height={60} width={60} />

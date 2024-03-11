@@ -106,9 +106,7 @@ export let get_student_market_data = (id) => {
 /**
  * 
  * @param {Object} body {
-    Id,
     AcademyId,
-    Create_At,
     AdText,
     AdHeader ,
     Subject ,
@@ -121,6 +119,7 @@ export let get_student_market_data = (id) => {
     Country,
     Language,
     Grade,
+    GMT,
     Status,
     Published_At 
 }
@@ -128,6 +127,18 @@ export let get_student_market_data = (id) => {
 export const post_student_ad = async (body) => {
     try {
         const { data } = await apiClient.post('/student/ad', body)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+        console.log(err)
+        return err
+    }
+}
+
+export const fetch_student_ads = async (id) => {
+    try {
+        const { data } = await apiClient.get(`/student/ad/${id}/list`)
         return data
     }
     catch (err) {

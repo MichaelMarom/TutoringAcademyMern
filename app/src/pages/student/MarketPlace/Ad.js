@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { get_student_market_data } from "../../../axios/student";
+import { get_student_market_data, post_student_ad } from "../../../axios/student";
 import Layout from "./Layout";
 import { useSelector } from "react-redux";
 import UserRichTextEditor from "../../../components/common/RichTextEditor/UserRichTextEditor";
@@ -8,6 +8,7 @@ import ReactSelect from "react-select";
 import { toast } from "react-toastify";
 import { get_faculty_subject } from "../../../axios/tutor";
 import Actions from "../../../components/common/Actions";
+import { useNavigate } from "react-router-dom";
 
 const Ads = () => {
     const { student } = useSelector(state => state.student)
@@ -22,15 +23,18 @@ const Ads = () => {
     const [language, setLanguage] = useState([])
     const [timeZone, setTimezone] = useState('')
     const [certificate, setCertificate] = useState('')
+    const [loading, setLoading] = useState(false)
 
     let [activeFaculty, setActiveFaculty] = useState('')
+
     const languageOptions = languages.map((language) => ({
         value: language,
         label: language,
     }));
 
+    const navigate = useNavigate()
+
     useEffect(() => {
-        console.log(experience.length, subject.length, language.length)
         if (student.AcademyId) {
             setAdText(`Hello teachers,
         My name is ${student.ScreenName}.
@@ -56,17 +60,28 @@ const Ads = () => {
         if (student.AcademyId) {
             get_student_market_data(student.AcademyId)
                 .then(faculties => {
-                    console.log(faculties)
-
                     setFaculties(faculties)
                 })
                 .catch(err => toast.error(err.message))
         }
     }, [student])
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+        if (!subject.length) return toast.warning('Please Select Subject for posting Ad!')
+        setLoading(true)
+        const data = await post_student_ad({
+            AcademyId: student.AcademyId, AdText: adText, AdHeader: header,
+            Subject: subject, FacultyId: activeFaculty, TutorCertificate: certificate,
+            TutorExperience: experience, TutorGMT: timeZone, TutorEduLevel: level, TutorLanguages: JSON.stringify(language),
+            Country: student.Country, Language: student.Language, Grade: student.Grade,
+            GMT: student.GMT, Status: 'published', Published_At: new Date()
+        });
+        setLoading(false)
+
+        if (!data?.response?.data?.message?.length) {
+            navigate('/student/market-place/list')
+        }
     }
 
     return (
@@ -96,6 +111,34 @@ const Ads = () => {
                         </div>
                         <div className="d-flex justify-content-center" style={{ gap: "2%" }}>
                             <div className="border p-2 shadow " style={{ width: "40%" }} >
+                                <div className="d-flex justify-content-between align-items-start m-1"
+                                    style={{ width: "90%" }}>
+                                    <label className="">Faculty</label>
+                                    <select className="form-select" style={{ maxWidth: "300px" }}
+                                        required
+                                        onChange={(e) => setActiveFaculty(e.target.value)}
+                                        value={activeFaculty}>
+                                        <option value={''} disabled>Select</option>
+
+                                        {faculties.map((item, index) =>
+                                            <option key={index} value={item.Id}>{item.Faculty}</option>
+                                        )}
+                                    </select>
+                                </div>
+                                {!!activeFaculty.length && <div className=" d-flex justify-content-between  align-items-center m-1"
+                                    style={{ width: "90%" }}>
+                                    <label className="">Subject</label>
+                                    {subjects.length ? <select className="form-select" style={{ maxWidth: "300px" }}
+                                        required
+                                        onChange={(e) => setSubject(e.target.value)}
+                                        value={subject}>
+                                        <option value={''} disabled>Select</option>
+
+                                        {subjects.map((item, index) =>
+                                            <option key={index} value={item.SubjectName}>{item.SubjectName}</option>
+                                        )}
+                                    </select> : <div className="text-danger" style={{ fontSize: "14px" }}>No subjects registered in the selected faculty </div>}
+                                </div>}
                                 <div className="d-flex justify-content-between align-items-start m-1"
                                     style={{ width: "90%" }}>
                                     <label className="">Grade</label>
@@ -139,35 +182,7 @@ const Ads = () => {
                                         value={student.Language}
                                     />
                                 </div>
-                                <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
-                                    <label className="">Faculty</label>
-                                    <select className="form-select" style={{ maxWidth: "300px" }}
-                                        required
-                                        onChange={(e) => setActiveFaculty(e.target.value)}
-                                        value={activeFaculty}>
-                                        <option value={''} disabled>Select</option>
 
-                                        {faculties.map((item, index) =>
-                                            <option key={index} value={item.Id}>{item.Faculty}</option>
-                                        )}
-                                    </select>
-                                </div>
-                                {!!activeFaculty.length && <div className=" d-flex justify-content-between  align-items-center m-1"
-                                    style={{ width: "90%" }}>
-                                    <label className="">Subject</label>
-                                    {subjects.length ? <select className="form-select" style={{ maxWidth: "300px" }}
-                                        required
-                                        onChange={(e) => setSubject(e.target.value)}
-                                        value={subject}>
-                                        <option value={''} disabled>Select</option>
-
-                                        {subjects.map((item, index) =>
-                                            <option key={index} value={item.SubjectName}>{item.SubjectName}</option>
-                                        )}
-                                    </select> : <div className="text-danger" style={{ fontSize: "14px" }}>No subjects registered in the selected faculty </div>}
-                                </div>
-                                }
                             </div>
                             <div className="border p-2 shadow " style={{ width: "40%" }}>
                                 <h4>Tutor Requirments</h4>
@@ -274,6 +289,7 @@ const Ads = () => {
                     <Actions
                         SaveText="Publish"
                         editDisabled
+                        loading={loading}
                     />
                 </form>
             </div>

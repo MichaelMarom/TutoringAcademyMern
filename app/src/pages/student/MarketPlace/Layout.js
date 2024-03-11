@@ -6,6 +6,7 @@ import Marketplace from './Marketplace'
 import Ad from './Ad'
 import Bids from './Bids'
 import Actions from '../../../components/common/Actions'
+import StudentAdList from './StudentAdList'
 
 const Layout = ({ children }) => {
   let [activeTab, setActiveTab] = useState('')
@@ -19,6 +20,10 @@ const Layout = ({ children }) => {
 
   const tabs = [
     { label: `MarketPlace`, component: <Marketplace />, link: '/student/market-place' },
+    {
+      label: 'Saved Ads', component: <StudentAdList />,
+      link: '/student/market-place/list'
+    },
     {
       label: 'Advertise', component: <Ad />,
       link: '/student/market-place/ad'

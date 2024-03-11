@@ -383,10 +383,40 @@ const post_student_ad = async (req, res) => {
                     request.input(key, studentAd[key], req.body[key]);
                 });
 
-                const result = await poolConnection.request()
+                const result = await request
                     .query(parameterizedInsertQuery('StudentAds', req.body).query);
 
-                res.status(200).send(result)
+                res.status(200).send(result.recordset[0])
+            } catch (err) {
+                res.status(400).send({
+                    message: "Error Completing the Request",
+                    reason: err.message
+                })
+            }
+        })
+    }
+    catch (err) {
+        res.status(400).send({
+            message: "Error Completing the Request",
+            reason: err.message
+        })
+    }
+}
+
+const get_student_ads = async (req, res) => {
+    try {
+        marom_db(async (config) => {
+            try {
+                const poolConnection = await sql.connect(config);
+                const request = poolConnection.request();
+
+                const { recordset } = await request.query(
+                    find('StudentAds', { AcademyId: req.params.id }));
+
+
+                    // recordset.sort(record=>{record.})
+
+                res.status(200).send(recordset)
             } catch (err) {
                 res.status(400).send({
                     message: "Error Completing the Request",
@@ -1003,6 +1033,7 @@ module.exports = {
     get_student_or_tutor_bookings,
     get_tutor_bookings,
     get_student_bank_details,
+    get_student_ads,
     get_shortlist_ads,
     post_student_bank_details,
     get_student_feedback,

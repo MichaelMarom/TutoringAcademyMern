@@ -18,6 +18,7 @@ import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
 import { get_student_tutor_events } from "../../../axios/student";
 import { setStudentSessions } from "../../../redux/student_store/studentSessions";
+import { FeedbackMissing } from "./ToastMessages";
 
 const views = {
   WEEK: 'week',
@@ -337,15 +338,28 @@ const ShowCalendar = ({
       dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...clickedSlot, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== clickedSlot.id) }));
       return
     }
+    //intro session not conducted
     if (reservedSlots?.some(slot => {
       return slot.type === 'intro'
         && slot.subject === selectedTutor.subject
         && slot.studentId === student.AcademyId
-        && (slot.end.getTime() > (new Date()).getTime() ||
+        && (slot.end.getTime() > (new Date()).getTime())
+    })) {
+      toast.warning(`Your intro session must be conducted first for the "${selectedTutor.subject}" LESSON`)
+      return;
+    }
+    //feedback missing
+    if (reservedSlots?.some(slot => {
+      return slot.type === 'intro'
+        && slot.subject === selectedTutor.subject
+        && slot.studentId === student.AcademyId
+        && (slot.end.getTime() < (new Date()).getTime() &&
           (!slot.rating))
     })) {
-      toast.warning(`We are sorry, your intro session must be conducted and rated first for the "${selectedTutor.subject}" LESSON`)
-      return;
+      return toast.warning(<FeedbackMissing
+        handleButtonClick={() => navigate('/student/feedback')} 
+        subject={selectedTutor.subject} 
+        buttonText={'Feedback'} />, { autoClose: false, });
     }
     if ((selectedSlots.length && selectedSlots[0].type === 'reserved') && reservedSlots.length > 6) {
       toast.warning("You Can Reserve no more than 6 slots")

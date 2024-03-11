@@ -3,7 +3,7 @@ const sql = require('mssql');
 const studentAdsSchema = {
     AcademyId: sql.VarChar(255),
     Create_At: sql.DateTime,
-    AdText: sql.VarChar(255),
+    AdText: sql.VarChar(sql.MAX),
     AdHeader: sql.VarChar(255),
     Subject: sql.VarChar(255),
     FacultyId: sql.Int,

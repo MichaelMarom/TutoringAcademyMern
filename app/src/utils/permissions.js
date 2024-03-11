@@ -45,6 +45,8 @@ import Chat from "../pages/Chat";
 import Marketplace from "../pages/student/MarketPlace/Marketplace";
 import Bids from "../pages/student/MarketPlace/Bids";
 import Ads from "../pages/student/MarketPlace/Ad";
+import StudentAdList from "../pages/student/MarketPlace/StudentAdList";
+import EditAd from "../pages/student/MarketPlace/EditAd";
 
 
 const rolePermissions = {
@@ -92,6 +94,8 @@ const rolePermissions = {
     { path: "/student/tutor-profile/:id", component: <TutorProfile /> },
     { path: "/student/market-place/bid", component: <Bids /> },
     { path: "/student/market-place/ad", component: <Ads /> },
+    { path: "/student/market-place/list", component: <StudentAdList /> },
+    { path: "/student/market-place/ad/:id", component: <EditAd /> },
   ],
   admin: [
     { path: "/admin/tutor-data", component: <TutorTable /> },

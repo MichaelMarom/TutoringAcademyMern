@@ -9,9 +9,12 @@ import { toast } from "react-toastify";
 import { get_faculty_subject } from "../../../axios/tutor";
 import Actions from "../../../components/common/Actions";
 import { useNavigate } from "react-router-dom";
+import { compareStates } from "../../../helperFunctions/generalHelperFunctions";
 
 const Ads = () => {
     const { student } = useSelector(state => state.student)
+
+    const [unSavedChanges, setUnSavedChanges] = useState(false);
     const [header, setHeader] = useState('')
     const [errors, setErrors] = useState({})
     const [adText, setAdText] = useState('')
@@ -26,6 +29,30 @@ const Ads = () => {
     const [loading, setLoading] = useState(false)
 
     let [activeFaculty, setActiveFaculty] = useState('')
+
+    const currentState = {
+        AdHeader: header,
+        Subject: subject,
+        FacultyId: activeFaculty,
+        TutorCertificate: certificate,
+        TutorExperience: experience,
+        TutorGMT: timeZone,
+        TutorEduLevel: level,
+        TutorLanguages: language,
+    }
+
+    useEffect(() => {
+        setUnSavedChanges(compareStates({
+            AdHeader: '',
+            Subject: '',
+            FacultyId: '',
+            TutorCertificate: '',
+            TutorExperience: '',
+            TutorGMT: '',
+            TutorEduLevel: '',
+            TutorLanguages: [],
+        }, currentState))
+    }, [currentState])
 
     const languageOptions = languages.map((language) => ({
         value: language,
@@ -289,6 +316,7 @@ const Ads = () => {
                     <Actions
                         SaveText="Publish"
                         editDisabled
+                        unSavedChanges={unSavedChanges}
                         loading={loading}
                     />
                 </form>

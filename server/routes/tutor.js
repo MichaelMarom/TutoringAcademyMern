@@ -32,7 +32,6 @@ const { subjects,
     getSessionsDetails,
     last_pay_day,
     get_tutor_profile_data,
-    post_edu_form,
     remove_subject_rates,
     post_tutor_ad,
     get_tutor_ads,
@@ -85,7 +84,6 @@ TUTOR_ROUTES.post('/tutor/rates/:faculty/:subject/:id', parser, verifyToken, upl
 TUTOR_ROUTES.delete('/subject-rate/:id', parser, verifyToken, remove_subject_rates);
 
 TUTOR_ROUTES.post('/tutor/form-one', parser, verifyToken, post_form_one);
-// TUTOR_ROUTES.post('/tutor/edu', parser,  verifyToken, post_edu_form);
 TUTOR_ROUTES.post('/tutor/edu', parser, verifyToken, dynamically_post_edu_info);
 
 TUTOR_ROUTES.post('/tutor/tutor-rates', parser, verifyToken, post_tutor_rates_form);

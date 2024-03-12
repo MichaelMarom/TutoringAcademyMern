@@ -359,17 +359,16 @@ let get_my_data = async (req, res) => {
 }
 
 let get_student_short_list_data = (req, res) => {
-
-    connecteToDB.then(poolConnection =>
-        poolConnection.request().query(`SELECT * From StudentShortList WHERE CONVERT(VARCHAR, Student) =  '${req.query.id}'`)
+    marom_db(async (config) => {
+        const poolConnection = await sql.connect(config)
+        poolConnection.request().query(`SELECT * From StudentShortList WHERE CONVERT(VARCHAR, Student) = '${req.query.id}'`)
             .then((result) => {
-
                 res.send(result.recordset);
             })
-        //   .catch(err => console.log(err))
-    )
-
-
+            .catch(err => {
+                res.status(400).send({ message: "Error Completing the Request", reason: err.message })
+            })
+    })
 }
 
 const post_student_ad = async (req, res) => {
@@ -486,7 +485,8 @@ const put_ad = async (req, res) => {
             Object.keys(req.body).map(key => {
                 request.input(key, studentAd[key], req.body[key])
             })
-            const result = await request.query(parameteriedUpdateQuery('StudentAds', req.body, { Id: req.params.id }, false).query)
+            const result = await request.query(parameteriedUpdateQuery('StudentAds',
+                req.body, { Id: req.params.id }, false).query)
 
             res.status(200).send(result.recordset);
         }
@@ -499,81 +499,92 @@ const put_ad = async (req, res) => {
 
 const post_student_bookings = async (req, res) => {
     const { tutorId, studentId } = req.body;
-    if (tutorId && studentId) {
-        connecteToDB.then(poolConnection =>
+    marom_db(async (config) => {
+        const poolConnection = await sql.connect(config);
+        if (tutorId && studentId) {
             poolConnection.request().query(
                 find('StudentBookings', { studentId, tutorId })
             )
                 .then((result) => {
                     if (result.recordset.length) {
-                        connecteToDB.then(poolConnection =>
-                            poolConnection.request().query(
-                                update('StudentBookings', req.body,
-                                    { studentId: req.body.studentId, tutorId: req.body.tutorId }
-                                )
+                        poolConnection.request().query(
+                            update('StudentBookings', req.body,
+                                { studentId: req.body.studentId, tutorId: req.body.tutorId }
                             )
-                                .then((result) => res.send(result.recordset))
-                            //   .catch(err => console.log(err))
                         )
-
+                            .then((result) => res.send(result.recordset))
+                            .catch(err => console.log(err))
                     }
                     else {
-                        connecteToDB.then(poolConnection =>
-                            poolConnection.request().query(
-                                insert('StudentBookings', req.body)
-                            )
-                                .then((result) => {
-                                    res.send(result.recordset);
-                                })
-                            //   .catch(err => console.log(err))
+                        poolConnection.request().query(
+                            insert('StudentBookings', req.body)
                         )
+                            .then((result) => {
+                                res.status(200).send(result.recordset);
+                            })
+                            .catch(err => {
+                                res.status(400).send({
+                                    message: 'Error Completing the Request', reason: err.message
+                                });
+                            })
                     }
                 })
-            //   .catch(err => console.log(err))
-        )
-    }
-    else {
-        res.status(400).send({ message: `missing params tutorId/studentId` })
-    }
+                .catch(err => {
+                    res.status(400).send({ message: 'Error Completing the Request', reason: err.message })
+                })
+        }
+        else {
+            res.status(400).send({ message: `missing params tutorId/studentId` })
+        }
+    })
 }
 
 const get_student_or_tutor_bookings = async (req, res) => {
-    const { tutorId, studentId } = req.params;
-    connecteToDB.then(poolConnection =>
+    marom_db(async (config) => {
+        const { tutorId, studentId } = req.params;
+        const poolConnection = await sql.connect(config)
         poolConnection.request().query(
             find('StudentBookings', { studentId, tutorId }, 'OR')
         )
             .then((result) => {
                 res.send(result.recordset);
             })
-        //   .catch(err => console.log(err))
-    )
+            .catch(err => {
+                res.statsu(400).send({ message: 'Error Completing the Request', reason: err.message })
+            })
+    })
 }
 
 const get_student_bookings = async (req, res) => {
-    const { studentId } = req.params;
-    connecteToDB.then(poolConnection =>
+    marom_db(async (config) => {
+        const { studentId } = req.params;
+        const poolConnection = await sql.connect(config);
         poolConnection.request().query(
             find('StudentBookings', { studentId })
         )
             .then((result) => {
-                res.send(result.recordset);
+                res.status(200).send(result.recordset);
             })
-        //   .catch(err => console.log(err))
-    )
+            .catch(err => {
+                res.status(400).send({ message: "Error Completing the Request", reason: err.message })
+            })
+    })
 }
 
 const get_tutor_bookings = async (req, res) => {
-    const { tutorId } = req.params;
-    connecteToDB.then(poolConnection =>
+    marom_db(async (config) => {
+        const { tutorId } = req.params;
+        const poolConnection = await sql.connect(config);
         poolConnection.request().query(
             find('StudentBookings', { tutorId })
         )
             .then((result) => {
                 res.send(result.recordset);
             })
-        //   .catch(err => console.log(err))
-    )
+            .catch(err => {
+                res.status(400).send({ message: "Error Completing the Request", reason: err.message })
+            })
+    })
 }
 
 const get_student_bank_details = async (req, res) => {

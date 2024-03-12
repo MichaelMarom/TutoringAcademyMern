@@ -10,9 +10,12 @@ import Actions from '../../../components/common/Actions';
 import UserRichTextEditor from '../../../components/common/RichTextEditor/UserRichTextEditor';
 import ReactSelect from 'react-select';
 import { showDate } from '../../../helperFunctions/timeHelperFunctions';
+import { compareStates } from '../../../helperFunctions/generalHelperFunctions';
 
 const EditAd = () => {
     const params = useParams();
+    const [unSavedChanges, setUnSavedChanges] = useState(false);
+    const [dbValues, setDbValues] = useState({})
     const { student } = useSelector(state => state.student)
     const [header, setHeader] = useState('')
     const [errors, setErrors] = useState({})
@@ -27,6 +30,7 @@ const EditAd = () => {
     const [certificate, setCertificate] = useState('')
     const [loading, setLoading] = useState(false)
     const [status, setStatus] = useState('')
+    const [dataFetched, setDataFetched] = useState(false)
     const [publishDate, setPublishDate] = useState(null)
 
     let [activeFaculty, setActiveFaculty] = useState('')
@@ -36,7 +40,22 @@ const EditAd = () => {
         label: language,
     }));
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    const currentState = {
+        AdHeader: header,
+        Subject: subject,
+        FacultyId: activeFaculty,
+        TutorCertificate: certificate,
+        TutorExperience: experience,
+        TutorGMT: timeZone,
+        TutorEduLevel: level,
+        TutorLanguages: JSON.stringify(language),
+    }
+
+    useEffect(() => {
+        setUnSavedChanges(compareStates(dbValues, currentState))
+    }, [currentState, dbValues])
 
     useEffect(() => {
         if (student.AcademyId) {
@@ -52,12 +71,20 @@ const EditAd = () => {
     }, [student, subject, language, experience, timeZone])
 
     useEffect(() => {
-        setSubject('')
+        console.log(subject, activeFaculty, subjects)
+    }, [subject, activeFaculty, subjects])
+
+    useEffect(() => {
+        if (dbValues.FacultyId !== parseInt(activeFaculty) && dataFetched) {
+            console.log(dbValues.FacultyId, activeFaculty)
+            setSubject('')
+        }
         if (activeFaculty.length) {
             get_faculty_subject(activeFaculty)
                 .then(result => setSubjects(result))
                 .catch(err => toast.error(err.message))
         }
+
     }, [activeFaculty])
 
     useEffect(() => {
@@ -72,6 +99,7 @@ const EditAd = () => {
 
     useEffect(() => {
         get_ad(params.id).then(data => {
+            setDbValues(data)
             setHeader(data.AdHeader)
             setAdText(data.AdText)
             setTimezone(data.TutorGMT)
@@ -79,10 +107,11 @@ const EditAd = () => {
             setLevel(data.TutorEduLevel)
             setLanguage(JSON.parse(data.TutorLanguages))
             setCertificate(data.TutorCertificate)
-            setActiveFaculty(data.FacultyId)
+            setActiveFaculty(`${data.FacultyId}`)
             setSubject(data.Subject)
             setStatus(data.Status)
             setPublishDate(data.Published_At)
+            setDataFetched(true)
         })
     }, [params.id])
 
@@ -148,19 +177,20 @@ const EditAd = () => {
                                         )}
                                     </select>
                                 </div>
-                                {!!activeFaculty.length && <div className=" d-flex justify-content-between  align-items-center m-1"
+                                {(!!activeFaculty.length) && <div className=" d-flex justify-content-between  align-items-center m-1"
                                     style={{ width: "90%" }}>
                                     <label className="">Subject</label>
-                                    {subjects.length ? <select className="form-select" style={{ maxWidth: "300px" }}
-                                        required
-                                        onChange={(e) => setSubject(e.target.value)}
-                                        value={subject}>
-                                        <option value={''} disabled>Select</option>
+                                    {subjects.length ?
+                                        <select className="form-select" style={{ maxWidth: "300px" }}
+                                            required
+                                            onChange={(e) => setSubject(e.target.value)}
+                                            value={subject}>
+                                            <option value={''} disabled>Select</option>
 
-                                        {subjects.map((item, index) =>
-                                            <option key={index} value={item.SubjectName}>{item.SubjectName}</option>
-                                        )}
-                                    </select> : <div className="text-danger" style={{ fontSize: "14px" }}>No subjects registered in the selected faculty </div>}
+                                            {subjects.map((item, index) =>
+                                                <option key={index} value={item.SubjectName}>{item.SubjectName}</option>
+                                            )}
+                                        </select> : <div className="text-danger" style={{ fontSize: "14px" }}>No subjects registered in the selected faculty </div>}
                                 </div>}
                                 <div className="d-flex justify-content-between align-items-start m-1"
                                     style={{ width: "90%" }}>
@@ -275,7 +305,6 @@ const EditAd = () => {
                                             options={languageOptions}
                                             isDisabled={false} />
                                     </div>
-
                                 </div>
                                 <div className="d-flex justify-content-between align-items-start m-1"
                                     style={{ width: "90%" }}>
@@ -311,6 +340,7 @@ const EditAd = () => {
                     </div>
                     <Actions
                         SaveText="RePublish"
+                        unSavedChanges={unSavedChanges}
                         editDisabled
                         // saveDisabled={status === 'published'}
                         loading={loading}

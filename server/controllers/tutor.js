@@ -239,124 +239,6 @@ let post_form_one = (req, res) => {
 
 }
 
-let post_edu_form = async (req, res) => {
-
-    let { level, university1, university2, university3, degree, degreeFile, certificate, certificateFile,
-        language, state2, state3, state4, state5, state6, doctorateState, experience, graduagteYr1, graduagteYr2,
-        graduagteYr3, doctorateGraduateYear, expiration, otherang, workExperience, user_id, countryForDeg,
-        countryForMast,
-        countryForCert,
-        countryForDoc,
-        countryForAssociate, resume, cert_file_name, deg_file_name, references } = req.body;
-
-
-    let duplicate = await connecteToDB.then(async (poolConnection) => {
-        return await poolConnection.request().query(`SELECT * From Education1
-         WHERE CONVERT(VARCHAR, AcademyId) =  '${user_id}'`)
-            .then((result) => {
-                return result.recordset
-            })
-            .catch(err => console.log(err))
-    });
-
-    if (!duplicate.length) {
-        marom_db(async (config) => {
-            const sql = require('mssql');
-
-            var poolConnection = await sql.connect(config);
-            const request = poolConnection.request();
-            request.input('WorkExperience', sql.NVarChar(sql.MAX), workExperience);
-            request.input('ThingsReferences', sql.NVarChar(sql.MAX), references);
-
-            if (poolConnection) {
-
-                var resultSet = request.query(
-                    ` INSERT INTO "Education1" (EducationalLevel, EducationalLevelExperience, College1, 
-                            College1State, College1Year, College2, College2State, College2StateYear, 
-                            DoctorateCollege, DoctorateState, DoctorateGradYr, Degree,DegreeFile, DegreeState, 
-                            DegreeYear, Certificate,CertificateFile, CertificateState, CertificateExpiration, 
-                            NativeLang, NativeLangState, NativeLangOtherLang, WorkExperience, AcademyId,DegCountry,
-                            MastCountry,CertCountry, DocCountry, BachCountry,Resume,CertFileName, 
-                            DegFileName, ThingsReferences)
-                        VALUES ('${level}', '${experience}', '${university1}',
-                        '${state2}','${graduagteYr1}','${university2}','${state3}','${graduagteYr2}',
-                        '${university3}','${doctorateState}','${doctorateState}','${degree}', '${degreeFile}','${state4}',
-                        '${graduagteYr3}','${certificate}','${certificateFile}','${state5}','${expiration}',
-                        '${language}','${state6}','${otherang}',@WorkExperience, '${user_id}',
-                        '${countryForDeg}','${countryForMast}',
-                        '${countryForCert}','${countryForDoc}','${countryForAssociate}','${resume}', 
-                        '${cert_file_name}','${deg_file_name}', @ThingsReferences) `
-                )
-
-                resultSet.then((result) => {
-
-                    result.rowsAffected[0] === 1
-                        ?
-                        res.send(true)
-                        :
-                        res.send(false)
-
-                })
-                    .catch((err) => {
-                        console.log(err);
-                        res.send(false)
-                    })
-
-            }
-
-        })
-    } else {
-        marom_db(async (config) => {
-            const sql = require('mssql');
-            console.log('uploading data...')
-
-            var poolConnection = await sql.connect(config);
-            const request = poolConnection.request();
-            request.input('WorkExperience', sql.NVarChar(sql.MAX), workExperience);
-            request.input('ThingsReferences', sql.NVarChar(sql.MAX), references);
-
-            if (poolConnection) {
-                var resultSet = request.query(
-                    `
-                        UPDATE  "Education1" SET EducationalLevel = '${level}', EducationalLevelExperience = '${experience}',
-                         College1 = '${university1}', DoctorateCollege = '${university3}',DoctorateState = '${doctorateState}', 
-                         DoctorateGradYr='${doctorateGraduateYear}',
-                        College1State = '${state2}', College1Year = '${graduagteYr1}', College2 ='${university2}',
-                         College2State = '${state3}', College2StateYear = '${graduagteYr2}', Degree = '${degree}',
-                         DegreeState ='${state4}', DegreeYear = '${graduagteYr3}', Certificate = '${certificate}',
-                          CertificateState = '${state5}', CertificateExpiration = '${expiration}', NativeLang = '${language}', 
-                          NativeLangState = '${state6}', NativeLangOtherLang = '${otherang}', WorkExperience = @WorkExperience,
-                          CertificateFile = '${certificateFile}', DegreeFile='${degreeFile}',DegCountry='${countryForDeg}',
-                         MastCountry= '${countryForMast}',
-                         CertCountry= '${countryForCert}',
-                          DocCountry='${countryForDoc}',
-                          BachCountry='${countryForAssociate}',
-                          Resume='${resume}', CertFileName= '${cert_file_name}',DegFileName= '${deg_file_name}',
-                          ThingsReferences=@ThingsReferences
-                          WHERE CONVERT(VARCHAR, AcademyId) = '${user_id}'
-                        `
-                )
-
-                resultSet.then((result) => {
-
-                    result.rowsAffected[0] === 1
-                        ?
-                        res.send(true)
-                        :
-                        res.send(false)
-
-                })
-                    .catch((err) => {
-                        console.log(err);
-                        res.send(false)
-                    })
-
-            }
-
-        })
-    }
-}
-
 const dynamically_post_edu_info = (req, res) => {
     marom_db(async (config) => {
         try {
@@ -1929,7 +1811,6 @@ module.exports = {
     post_tutor_setup,
     faculties,
     post_form_one,
-    post_edu_form,
     post_tutor_rates_form,
     get_countries,
     get_gmt,

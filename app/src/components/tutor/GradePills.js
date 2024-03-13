@@ -23,7 +23,7 @@ const GradePills = ({ grade, editable, setGrades, grades, hasIcon = true }) => {
             ${!grades.find(item => item === grade) ? 'text-bg-primary' : 'text-bg-success'}`}
             onClick={handleToggle}
         >
-            <p className='m-0' style={{ fontSize: "14px" }}> {grade}</p>
+            <p className='m-0' style={{ fontSize: "14px", whiteSpace: 'nowrap' }}> {grade}</p>
             {hasIcon && (grades.find(item => item === grade) ? <BsX /> : <BsPlus />)}
         </div>
     );

@@ -13,6 +13,7 @@ import TutorProfile from "../pages/tutor/TutorProfile";
 import Edit from "../pages/tutor/Add/Edit";
 import Create from "../pages/tutor/Add/Create";
 import Bid from "../pages/tutor/Add/Bid";
+import StudentPublicProfile from '../pages/tutor/StudentProfile'
 import List from "../pages/tutor/Add/List";
 import TutorClass from "../pages/tutor/TutorClass";
 import TutorFeedback from '../pages/tutor/Feedback'
@@ -54,6 +55,7 @@ const rolePermissions = {
     { path: "/tutor/intro", component: <Intro /> },
     { path: "/tutor/setup", component: <TutorSetup /> },
     { path: "/tutor/education", component: <Education /> },
+    { path: '/tutor/student-profile/:AcademyId', component: <StudentPublicProfile /> },
     { path: "/tutor/rates", component: <Rates /> },
     { path: "/tutor/accounting", component: <Accounting /> },
     { path: "/tutor/subjects", component: <Subjects /> },

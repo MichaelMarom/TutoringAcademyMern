@@ -799,6 +799,56 @@ export const fetch_tutor_ads = async (id) => {
     }
 }
 
+export const fetch_students_published_ads = async () => {
+    try {
+        const { data } = await apiClient.get(`/tutor/market-place/classified`)
+        return data;
+    }
+    catch (error) {
+        console.log(error)
+        return error
+    }
+}
+
+export const deleteAdFromShortlist = async (adId, tutorId) => {
+    try {
+        const { data } = await apiClient.delete(`/tutor/${tutorId}/market-place/shortlist/${adId}`);
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}
+
+export const add_to_shortlist = async (adId, studentId) => {
+    try {
+        const { data } = await apiClient.post('/tutor/market-place/shortlist', {
+            StudentAdId: adId,
+            TutorId: studentId
+        });
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}
+
+export const get_shortlist_ads = async (tutorId) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/market-place/shortlist/${tutorId}/list`);
+        return data
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}
+
 export const fetch_ad = async (id) => {
     try {
         const { data } = await apiClient.get(`/tutor/ad/${id}`)

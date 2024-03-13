@@ -78,7 +78,7 @@ const SubjectCard = ({ subject, rateVal, gradesVal, faculty, id }) => {
             <form onSubmit={handleSave}
                 className=' d-flex justify-content-between align-items-center'>
 
-                <div className='d-flex col-6'>
+                <div className='d-flex col-6 flex-wrap'>
                     {options.map(option =>
                         <GradePills editable={editable} grade={option.value} setGrades={setGrades} grades={grades} />)
                     }

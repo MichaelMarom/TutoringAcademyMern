@@ -13,7 +13,7 @@ const Marketing = () => {
   const [headers, setHeaders] = useState([]);
   const [data, setData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([])
-  const [messageType, setMessageType] = useState('');
+  const [messageType, setMessageType] = useState('sms');
   const [message, setMessage] = useState('')
 
   const handleFileChange = (e) => {
@@ -80,7 +80,9 @@ const Marketing = () => {
         {file && (
           <div className='d-flex'>
             <div className='d-flex flex-column ' style={{ width: "60%" }}>
-              <h3>Data:</h3>
+             <div> <h3>Data:</h3> 
+             <div></div>
+             </div>
               <div style={{ overflow: "auto", height: "70vh" }}>
                 <table className='' style={{ overflow: "auto" }}>
                   <thead>
@@ -152,8 +154,10 @@ const Marketing = () => {
                     </label>
                   </div>
                 </div>
-                <label className='d-inline'>Message</label>
-                <p className='text-sm text-secondary text-end d-inline w-75' style={{ fontSize: "12px", color: "gray" }}> {message.length} </p>
+                <div className='d-flex justify-content-between'>
+                  <label className='d-inline'>Message</label>
+                  <p className='text-sm text-secondary text-end d-inline w-75' style={{ fontSize: "12px", color: "gray" }}> {message.length} </p>
+                </div>
                 <textarea className='form-control' value={message} placeholder='Type message that you need to send to student or tutor' style={{ height: "200px", width: "100%" }}
                   onChange={(e) => e.target.value.length < 145 && setMessage(e.target.value)} />
                 {message.length > 143 && <p className='text-danger w-100 text-end' style={{ fontSize: "12px" }}>Maximum limit 144 characters</p>}

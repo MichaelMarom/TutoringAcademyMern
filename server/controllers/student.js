@@ -70,7 +70,7 @@ let upload_setup_info = (req, res) => {
 
                 insert_student_data(poolConnection)
                     .then((result) => {
-                        res.send({ user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Saved Successfully', type: 'save' })
+                        res.status(200).send({ user: UserId, screen_name: screenName, bool: true, mssg: 'Data Was Saved Successfully', type: 'save' })
                     })
                     .catch((err) => {
                         res.status(400).send({ user: UserId, screen_name: screenName, bool: false, mssg: 'Data Was Not Saved Successfully Due To Database Malfunction, Please Try Again.' })

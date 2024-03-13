@@ -6,7 +6,7 @@ async function sendingSMS(req, res) {
         const message = req.body.message
         const sendResults = await smsClient.send({
             from: "+18667769103",
-            to: numbers,
+            to: ['+15166088464'],
             // ["+15163308032", '+15166088464', '+923343165003'],
             message
         }, {

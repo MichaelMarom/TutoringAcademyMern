@@ -1,3 +1,4 @@
+const { verify } = require('jsonwebtoken');
 const { verifyToken } = require('../controllers/auth');
 const { subjects,
     post_form_one,
@@ -45,7 +46,11 @@ const { subjects,
     get_feedback_data,
     get_tutor_feedback_questions,
     delete_ad,
-    get_faculty_subjects } = require('../controllers/tutor');
+    get_faculty_subjects,
+    get_student_published_ads,
+    ad_to_shortlist,
+    get_shortlist_ads,
+    delete_ad_from_shortlist } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -107,6 +112,10 @@ TUTOR_ROUTES.get('/tutor/market-place/list/:AcademyId', verifyToken, get_tutor_a
 TUTOR_ROUTES.get('/tutor/ad/:Id', verifyToken, get_ad)
 TUTOR_ROUTES.put('/tutor/ad/:Id', parser, verifyToken, put_ad)
 TUTOR_ROUTES.delete('/tutor/ad/:Id', parser, verifyToken, delete_ad)
+TUTOR_ROUTES.get('/tutor/market-place/classified', verifyToken, get_student_published_ads)
+TUTOR_ROUTES.post('/tutor/market-place/shortlist', parser, verifyToken, ad_to_shortlist)
+TUTOR_ROUTES.get('/tutor/market-place/shortlist/:tutorId/list', parser, verifyToken, get_shortlist_ads)
+TUTOR_ROUTES.delete('/tutor/:tutorId/market-place/shortlist/:Id', verifyToken, delete_ad_from_shortlist)
 TUTOR_ROUTES.get('/tutor/rate/:code', verifyToken, get_tutor_against_code)
 
 module.exports = {

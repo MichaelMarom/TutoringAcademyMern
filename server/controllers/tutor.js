@@ -1786,7 +1786,98 @@ const delete_ad = async (req, res) => {
     })
 }
 
+const get_student_published_ads = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const sql = require('mssql')
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const { recordset } = await poolConnection.request().query(
+                    `select SA.*, SS.Photo from StudentAds as SA join
+                  StudentSetup as SS on cast(SS.AcademyId as varchar) = SA.AcademyId
+                  where  SA.Published_At is not null   `)
+                // SS.Status = 'active' and
+                recordset.sort((a, b) => (new Date(b.Published_At) - new Date(a.Published_At)))
 
+                res.status(200).send(recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+}
+
+const delete_ad_from_shortlist = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const data = await poolConnection.request().query(
+                `delete from TutorShortlistAd where TutorId = '${req.params.tutorId}' and 
+                StudentAdId = ${req.params.Id}`
+            )
+            res.status(200).send(data)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
+
+const ad_to_shortlist = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const { recordset } = await poolConnection.request().query(
+                find('TutorShortlistAd', req.body)
+            )
+            if (!recordset.length) {
+                const { recordset } = await poolConnection.request().query(
+                    insert('TutorShortlistAd', req.body)
+                )
+                res.status(200).send(recordset)
+            }
+            res.status(200).send(recordset)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
+
+const get_shortlist_ads = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const poolConnection = await sql.connect(config)
+            const { recordset } = await poolConnection.request().query(
+                `select SA.*, SS.Photo 
+                from 
+                TutorShortlistAd as TSA join 
+                StudentAds as SA on
+                SA.Id = TSA.StudentAdId join
+                StudentSetup as SS on 
+                cast(SS.AcademyId as varchar) = SA.AcademyId
+                where TSA.TutorId = '${req.params.tutorId}'`
+            )
+            recordset.sort((a, b) => (new Date(b.Published_At) - new Date(a.Published_At)))
+
+            res.status(200).send(recordset)
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
 module.exports = {
     get_tutor_profile_data,
     get_tutor_against_code,
@@ -1796,6 +1887,7 @@ module.exports = {
     post_tutor_ad,
     set_agreements_date_null_for_all,
     get_ad,
+    get_student_published_ads,
     put_ad,
     get_feedback_data,
     get_tutor_feedback_questions,
@@ -1805,6 +1897,7 @@ module.exports = {
     remove_subject_rates,
     subject_already_exist,
     last_pay_day,
+    ad_to_shortlist,
     subjects,
     get_tutor_market_data,
     get_tutor_students,
@@ -1816,10 +1909,12 @@ module.exports = {
     get_gmt,
     post_new_subject,
     get_state,
+    get_shortlist_ads,
     get_experience,
     get_degree,
     get_level,
     get_certificates,
+    delete_ad_from_shortlist,
     get_user_data,
     get_response,
     upload_tutor_rates,

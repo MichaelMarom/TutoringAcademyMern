@@ -23,7 +23,8 @@ const Bids = () => {
     <Layout>
       <div className='d-flex m-1 flex-wrap' style={{ height: "74vh", overflowY: "auto" }}>
         {ads.map(ad =>
-          <ShortlistAdCard photo={ad.Photo} adText={ad.AdText}
+          <ShortlistAdCard
+           photo={ad.Photo} adText={ad.AdText}
             name={convertTutorIdToName(ad.AcademyId)} id={ad.Id} setAdDeleted={setAdDeleted} subject={ad.Subject}
             country={ad.Country}
             tutorId={ad.AcademyId}

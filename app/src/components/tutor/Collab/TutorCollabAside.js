@@ -3,7 +3,7 @@ import screenLarge from '../../../images/screen-full-svgrepo-com.svg';
 import screenNormal from '../../../images/screen-normal-svgrepo-com.svg'
 import muteSvg from '../../../images/mute-svgrepo-com.svg'
 import DiableVideoImage from '../../../images/video-recorder-off-svgrepo-com.svg';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { socket } from '../../../config/socket';
 import { Peer } from 'peerjs';
 import FlipCountdown from '@rumess/react-flip-countdown';
@@ -14,7 +14,12 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 const TutorAside = () => {
     const navigate = useNavigate();
-    let [mssg, setMssg] = useState('hi');
+    const [messages, setMessages] = useState([])
+    const [arrivalMsg, setArrivalMsg] = useState(null);
+    const { student } = useSelector(state => state.student)
+
+    let [mssg, setMssg] = useState('');
+    const params = useParams();
     let [mssgList, setMssgList] = useState([]);
     let location = useLocation();
     let [peerId, setPeerId] = useState('')
@@ -24,20 +29,47 @@ const TutorAside = () => {
     let [visuals, setVisuals] = useState(true)
     const { tutor } = useSelector(state => state.tutor);
 
-    let handleChat = e => {
-        if (mssg !== null) {
-            let mssg_cnt =
-
-                <div className="TutorMessageCnt">
-                    <div className='TutorMessageCntContent'>
-                        {mssg}
-                    </div>
-                </div>
-
-            setMssgList(item => [...item, mssg_cnt])
-            document.querySelector('#TutorChatTextarea').value = '';
+    console.log(messages)
+    useEffect(() => {
+        if (socket) {
+            socket.on("session-msg-recieve", (msgObj) => {
+                console.log('recived, hehehh', msgObj)
+                setArrivalMsg(msgObj);
+            });
         }
+    }, [])
+    useEffect(() => {
+        arrivalMsg && arrivalMsg.sessionId === params.id && setMessages((prev) => [...prev, { ...arrivalMsg }]);
+    }, [arrivalMsg, params]);
 
+    useEffect(() => {
+        // if (loggedInUserDetail.AcademyId && selectedChat.id) {
+        params.id && tutor.AcademyId && socket.emit("session-add-user", params.id);
+        // }
+
+    }, [tutor, params]);
+    const sendMessage = async () => {
+        let text = mssg
+        setMssg('')
+        if (text.trim() !== '') {
+            const newMessage = {
+                sessionId: params.id,
+                userId: tutor.AcademyId || student.AcademyId,
+                date: new Date(),
+                text,
+            }
+            setMessages([...messages, newMessage]);
+            // const body = {
+            //     Text: text,
+            //     Date: new Date(),
+            //     Sender: loggedInUserDetail.AcademyId,
+            //     ChatID: selectedChat.id
+            // };
+
+            // await post_message(body)
+            // delete newMessage.photo;
+            socket.emit("session-send-msg", newMessage);
+        }
     }
 
     let handleVideoResize = e => {
@@ -150,40 +182,40 @@ const TutorAside = () => {
 
     }, [location, peerId])
 
-    const handleTimeUp = () => {
-        toast.warning('Session Time is ended!');
-        navigate(`/tutor/setup`)
-    }
+    // const handleTimeUp = () => {
+    //     toast.warning('Session Time is ended!');
+    //     navigate(`/tutor/setup`)
+    // }
 
     const children = ({ remainingTime }) => {
         const minutes = Math.floor(remainingTime / 60)
         const seconds = remainingTime % 60
-      
-        return ( <div>
-        {minutes<=49 &&   <p className='m-0' style={{fontSize:"12px"}}>Lesson</p>} 
 
-            {minutes}:{seconds}
-            {(minutes<=49&& minutes>3) && <p className='m-0'  style={{fontSize:"12px"}}>Started</p> }
-        {minutes<=3 &&   <p className='m-0 blinking-button text-danger' style={{fontSize:"12px"}}>Ending</p>} 
-
-             
-        </div> )
-      }
+        return (
+            <div>
+                {minutes <= 49 && <p className='m-0' style={{ fontSize: "12px" }}>Lesson</p>}
+                {minutes}:{seconds}
+                {(minutes <= 49 && minutes > 3) && <p className='m-0' style={{ fontSize: "12px" }}>Started</p>}
+                {minutes <= 3 && <p className='m-0 blinking-button text-danger' style={{ fontSize: "12px" }}>Ending</p>}
+            </div>
+        )
+    }
 
     return (
-        <div className="TutorAside shadow-sm" style={{ top: "37%" }}>
+        <div className="TutorAside shadow-sm" style={{ top: "37%", width: "16rem" }}>
 
-            <div className='text-center countdown'> 
-            <CountdownCircleTimer
-                isPlaying
-                duration={53*60}
-                size={90}
-                strokeWidth={13}
-                colors={['#ff0000', '#008000', '#ff0000', '#ff0000']}
-                colorsTime={[53*60, 50*60, 3*60, 0]}
-            >
-                {children}
-            </CountdownCircleTimer>
+            <div className='text-center countdown'>
+                <CountdownCircleTimer
+                    isPlaying
+                    duration={53 * 60}
+                    size={90}
+                    isSmoothColorTransition={false}
+                    strokeWidth={13}
+                    colors={['#FFFF00', '#32CD32', '#ff0000', '#ff0000']}
+                    colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
+                >
+                    {children}
+                </CountdownCircleTimer>
                 {/* <FlipCountdown
                     size={'small'}
                     hideDay
@@ -218,24 +250,31 @@ const TutorAside = () => {
                 </ul>
             </div>
 
-            <div className="TutorAsideChatCnt">
-                <div className="TutorAsideChatBox">
+            <div className="TutorAsideChatCnt" style={{ background: 'rgb(225 238 242)', height: "100%" }}>
+                <div className="TutorAsideChatBox" style={{ background: 'rgb(225 238 242)' }}>
 
-                    {
-                        mssgList
+                    {messages.map(msg => <div className="TutorMessageCnt">
+                        <div className='TutorMessageCntContent' style={{ padding: "4px" }}>
+                            {msg.text}
+                        </div>
+                    </div>)
                     }
 
                 </div>
-                <div className="TutorAsideChatControl" style={{ background: '#fff' }}>
+                <div className="TutorAsideChatControl" style={{ background: 'rgb(225 238 242)' }}>
                     <span style={{ width: '80%', height: '80%', float: 'left', background: '#fff' }}>
 
                         <textarea type="text" id='TutorChatTextarea'
-                            style={{ width: '100%', borderRadius: '5px', border: 'none', display: 'flex', alignItems: 'center', background: '#f9f9f9', height: '40px', padding: '10px 5px 5px 5px', fontFamily: 'serif', fontSize: 'medium', outline: 'none', resize: 'none' }} onInput={e => setMssg(e.target.value)} placeholder='Type Your Message Here'></textarea>
+                            style={{
+                                width: '100%', borderRadius: '5px', border: 'none', display: 'flex',
+                                alignItems: 'center', background: '#f9f9f9', height: '40px', padding: '10px 5px 5px 5px', fontFamily: 'serif', fontSize: 'medium', outline: 'none', resize: 'none'
+                            }} onInput={e => setMssg(e.target.value)} value={mssg}
+                            placeholder='Type Your Message Here'></textarea>
 
                     </span>
                     <span style={{ width: '20%', height: '70%', float: 'right', background: '#fff' }}>
-                        <button className="m-0"
-                            style={{ height: '40px', width: '90%' }} onClick={handleChat}>
+                        <button className="btn btn-success p-0 m-0"
+                            style={{ height: '40px', width: '90%' }} onClick={sendMessage}>
                             send
                         </button>
                     </span>

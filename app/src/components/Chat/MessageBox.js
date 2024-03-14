@@ -21,7 +21,7 @@ const MessageBox = ({ message }) => {
             </span>
             <div className="ks-body">
                 <div className="ks-header">
-                    <span className="ks-name">{message.name}</span>
+                    <span className="ks-name">{message.screenName}</span>
                     <span className="ks-datetime">{showDate(message.date, wholeDateFormat)}</span>
                 </div>
                 <div className="ks-message">{message.text}</div>

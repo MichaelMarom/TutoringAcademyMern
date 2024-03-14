@@ -17,6 +17,7 @@ export const get_chats = async (loggedInUserId, role) => {
 
 export const get_chat_message = async (chatId) => {
     try {
+        console.log(chatId)
         const { data } = await apiClient.get(`/messages/${chatId}`);
         return data
     }

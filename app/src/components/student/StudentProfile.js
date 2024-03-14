@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { get_my_data } from '../../axios/student';
 import moment from 'moment-timezone'
 import { useSelector } from 'react-redux';
 import Avatar from '../common/Avatar';

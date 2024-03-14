@@ -13,6 +13,8 @@ import { setShortlist } from "../../redux/student_store/shortlist";
 
 const Header = () => {
     const { signOut } = useClerk();
+    let nav = useNavigate()
+    const [activeTab, setActiveTab] = useState('')
 
     const dispatch = useDispatch()
     let location = useLocation()
@@ -59,19 +61,15 @@ const Header = () => {
             })
     }, [])
 
-    let nav = useNavigate()
-    const [activeTab, setActiveTab] = useState('')
-
     useEffect(() => {
-        const element = document.getElementById('student-tab-header-list-active');
+        const element = document.getElementById('tutor-tab-header-list-active');
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
         }
     }, [location.pathname, activeTab]);
 
     useEffect(() => {
-        const currentTab = location.pathname.split('/').pop();
-        setActiveTab(currentTab)
+        setActiveTab(location.pathname)
     }, [location])
 
 
@@ -141,17 +139,20 @@ const Header = () => {
                             key={tab.url}
                             data-url={tab.url}
                             onClick={handleTabClick}
-                            id={activeTab.includes(tab.url) ? 'tutor-tab-header-list-active' : ''}
+                            id={(activeTab.includes(tab.url) ||
+                                (activeTab.split('/').length > 3 &&
+                                    activeTab.split('/')[2] === tab.url))
+                                ? 'tutor-tab-header-list-active' : ''}
                         >
                             <a>{tab.name}</a>
                         </li>
                     ))}
                 </ul>
-                <div  className="d-flex border rounded p-1 justify-content-center align-items-center " style={{ marginRight: "60px", cursor: "pointer" }}
-                onClick={() => signOut(() => handleSignOut())}>
+                <div className="d-flex border rounded p-1 justify-content-center align-items-center " style={{ marginRight: "60px", cursor: "pointer" }}
+                    onClick={() => signOut(() => handleSignOut())}>
                     <p className="text-danger m-0">Signout</p>
                     <Tooltip text={"signout"} direction="bottomright">
-                        <FaSignOutAlt color="red"  />
+                        <FaSignOutAlt color="red" />
                     </Tooltip>
                 </div>
                 <div className="scroller-right" onClick={handle_scroll_right}

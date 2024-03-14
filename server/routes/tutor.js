@@ -50,7 +50,8 @@ const { subjects,
     get_student_published_ads,
     ad_to_shortlist,
     get_shortlist_ads,
-    delete_ad_from_shortlist } = require('../controllers/tutor');
+    delete_ad_from_shortlist,
+    get_student_public_profile_data } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -117,6 +118,7 @@ TUTOR_ROUTES.post('/tutor/market-place/shortlist', parser, verifyToken, ad_to_sh
 TUTOR_ROUTES.get('/tutor/market-place/shortlist/:tutorId/list', parser, verifyToken, get_shortlist_ads)
 TUTOR_ROUTES.delete('/tutor/:tutorId/market-place/shortlist/:Id', verifyToken, delete_ad_from_shortlist)
 TUTOR_ROUTES.get('/tutor/rate/:code', verifyToken, get_tutor_against_code)
+TUTOR_ROUTES.get('/tutor/:tutorId/profile/:studentId', verifyToken, get_student_public_profile_data)
 
 module.exports = {
     TUTOR_ROUTES

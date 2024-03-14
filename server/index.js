@@ -99,10 +99,21 @@ io.on('connection', socket => {
         console.log('User', socket.id, ' joined room ', roomId)
     });
 
+    socket.on("session-add-user", (sessionId) => {
+        socket.join(sessionId)
+        console.log('User', socket.id, ' joined room ', sessionId)
+    });
+
     socket.on("send-msg", (data) => {
         const { to, text, room } = data
         console.log(`Message:${text} sent from room:${room} to ${to}`);
         socket.to(room).emit("msg-recieve", data);
+    });
+
+    socket.on("session-send-msg", (data) => {
+        const { text, sessionId } = data;
+        console.log(`From session Message:${text}, sent from ${sessionId}`);
+        socket.to(sessionId).emit("session-msg-recieve", data);
     });
 
     socket.on('online', (id, role) => {
@@ -113,6 +124,8 @@ io.on('connection', socket => {
     socket.on('offline', (id) => {
         io.emit("offline", id);
     })
+
+
 
 
     socket.on('canvas-start', (pX, pY, color, thickness, fill) => {
@@ -174,7 +187,6 @@ io.on('connection', socket => {
         socket.broadcast.emit('accessRestricted')
     });
 
-
     socket.on('canvas-move', (tool, cX, cY, oX, oY, pX, pY) => {
         socket.broadcast.emit('canvas-move', cX, cY, oX, oY, pX, pY)
 
@@ -184,7 +196,6 @@ io.on('connection', socket => {
         socket.broadcast.emit('canvas-end', {})
 
     });
-
 
     socket.on('permissiontoUseBoardTools', id => {
         socket.broadcast.emit('permissiontoUseBoardTools', id)
@@ -325,8 +336,6 @@ io.on('connection', socket => {
 
 
 var { PeerServer } = require("peer");
-const axios = require('axios');
-const { use } = require('./routes/chat');
 var myPeerServer = PeerServer({ port: 8080 });
 
 myPeerServer.on("connection", function ({ id }) {
@@ -336,8 +345,6 @@ myPeerServer.on("connection", function ({ id }) {
 myPeerServer.on("disconnect", function ({ id }) {
     console.log(id + " has disconnected from the PeerServer");
 });
-
-
 
 process.on('unhandledRejection', (reason, promise) => {
     console.log('Unhandled Rejection at:', reason.stack || reason)

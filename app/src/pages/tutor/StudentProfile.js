@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react'
 import TutorLayout from '../../layouts/TutorLayout'
 import StudentProfileCnt from '../../components/student/StudentProfile'
 import Avatar from '../../components/common/Avatar'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { get_my_data } from '../../axios/student'
 import { moment } from '../../config/moment'
 import { capitalizeFirstLetter } from '../../helperFunctions/generalHelperFunctions'
 import { FaCheckCircle } from 'react-icons/fa'
 import { IoWarning } from 'react-icons/io5'
+import TAButton from '../../components/common/TAButton'
+import { create_chat } from '../../axios/chat'
+import { useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
+import { student_public_profile } from '../../axios/tutor'
 
 function calcTime() {
     let utcDateTime = moment().utc()
@@ -18,20 +23,35 @@ function calcTime() {
 const StudentProfile = () => {
     const [student, setStudent] = useState({})
     const params = useParams();
+    const navigate = useNavigate()
+    const { tutor } = useSelector(state => state.tutor)
 
     useEffect(() => {
-        params.AcademyId && get_my_data(params.AcademyId).then(result => {
-            setStudent(result[1][0][0])
+        params.AcademyId && tutor.AcademyId && student_public_profile(params.AcademyId, tutor.AcademyId).then(result => {
+            setStudent(result)
         })
 
-    }, [params.AcademyId])
+    }, [params.AcademyId, tutor])
 
+    const handleContact = async () => {
+        if (student.ChatID) {
+            navigate(`/tutor/chat/${student.ChatID}`)
+        }
+        else if (!tutor.AcademyId) return toast.error("Please login as tutor to see student public profile")
+        else {
+            const result = await create_chat({ User1ID: params.AcademyId, User2ID: tutor.AcademyId });
+            navigate(`/tutor/chat/${result[0]?.ChatID}`)
+        }
+    }
+    if (!tutor.AcademyId)
+        return <div className='text-danger m-4'> Please Log in as Tutor to see Student Public Profile!</div>
     return (
         <TutorLayout>
             <div className='d-flex flex-column container justify-content-center align-items-center' style={{ gap: "20px" }}>
                 <div className='m-2'><b className='small'>{calcTime()}</b></div>
-                <div className='d-flex'>
+                <div className='d-flex flex-column align-items-center'>
                     <Avatar avatarSrc={student.Photo} size='200px' positionInPixle='20px' online={student.Online} indicSize='20px' />
+                    {student.ChatID} <TAButton buttonText={'Contact'} handleClick={handleContact} />
                 </div>
 
                 <div className='d-flex' style={{ width: "700px", gap: "2%" }}>

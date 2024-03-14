@@ -181,34 +181,35 @@ const StudentAside = () => {
     const children = ({ remainingTime }) => {
         const minutes = Math.floor(remainingTime / 60)
         const seconds = remainingTime % 60
-      
-        return ( <div>
-        {minutes<=49 &&   <p className='m-0' style={{fontSize:"12px"}}>Lesson</p>} 
+
+        return (<div>
+            {minutes <= 49 && <p className='m-0' style={{ fontSize: "12px" }}>Lesson</p>}
 
             {minutes}:{seconds}
-            {(minutes<=49&& minutes>3) && <p className='m-0'  style={{fontSize:"12px"}}>Started</p> }
-        {minutes<=3 &&   <p className='m-0 blinking-button text-danger' style={{fontSize:"12px"}}>Ending</p>} 
+            {(minutes <= 49 && minutes > 3) && <p className='m-0' style={{ fontSize: "12px" }}>Started</p>}
+            {minutes <= 3 && <p className='m-0 blinking-button text-danger' style={{ fontSize: "12px" }}>Ending</p>}
 
-             
-        </div> )
-      }
+
+        </div>)
+    }
 
     return (
         <>
             <div className="StudentAside">
 
-            <div className='text-center countdown'> 
-            <CountdownCircleTimer
-                isPlaying
-                duration={53*60}
-                size={90}
-                strokeWidth={13}
-                colors={['#ff0000', '#008000', '#ff0000', '#ff0000']}
-                colorsTime={[53*60, 50*60, 3*60, 0]}
-            >
-                {children}
-            </CountdownCircleTimer>
-                {/* <FlipCountdown
+                <div className='text-center countdown'>
+                    <CountdownCircleTimer
+                        isPlaying
+                        duration={53 * 60}
+                        size={90}
+                        strokeWidth={13}
+                        isSmoothColorTransition={false}
+                        colors={['#FFFF00', '#32CD32', '#ff0000', '#ff0000']}
+                        colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
+                    >
+                        {children}
+                    </CountdownCircleTimer>
+                    {/* <FlipCountdown
                     size={'small'}
                     hideDay
                     hideHour
@@ -219,7 +220,7 @@ const StudentAside = () => {
                     endAtZero
                     onTimeUp={handleTimeUp}
                     endAt={moment().add('minutes', 53).toDate()} /> */}
-            </div>
+                </div>
                 {/* {showCounter ? <div className='d-flex justify-content-between align-items-start border shadow p-2 rounded'>
                     <div>
                         <FlipCountdown
@@ -254,7 +255,6 @@ const StudentAside = () => {
                         </li>
                         <li className="disable-visuals" onClick={e => handleVidActions(e)}>
                             <img src={DiableVideoImage} style={{ height: '25px', width: '25px' }} alt="..." />
-
                         </li>
 
                         <li className="disable-visuals" onClick={e => handleAudioActions(e)}>
@@ -265,20 +265,20 @@ const StudentAside = () => {
                 </div>
 
 
-                <div className="StudentAsideChatCnt">
-                    <div className="StudentAsideChatBox">
+                <div className="StudentAsideChatCnt" style={{ background: 'rgb(225 238 242)' }}>
+                    <div className="StudentAsideChatBox" style={{ background: 'rgb(225 238 242)' }}>
                         {
                             mssgList
                         }
                     </div>
-                    <div className="StudentAsideChatControl" style={{ background: '#fff' }}>
+                    <div className="StudentAsideChatControl" style={{ background: 'rgb(225 238 242)' }}>
                         <span style={{ width: '80%', height: '80%', float: 'left', background: '#fff' }}>
 
                             <textarea type="text" id='StudentChatTextarea' style={{ width: '100%', borderRadius: '5px', border: 'none', display: 'flex', alignItems: 'center', background: '#f9f9f9', height: '40px', padding: '10px 5px 5px 5px', fontFamily: 'serif', fontSize: 'medium', outline: 'none', resize: 'none' }} onInput={e => setMssg(e.target.value)} placeholder='Type Your Message Here'></textarea>
 
                         </span>
                         <span style={{ width: '20%', height: '70%', float: 'right', background: '#fff' }}>
-                            <button style={{ height: '40px', width: '90%' }} onClick={handleChat}>
+                            <button className='btn btn-success m-0 p-0' style={{ height: '40px', width: '90%' }} onClick={handleChat}>
                                 send
                             </button>
                         </span>

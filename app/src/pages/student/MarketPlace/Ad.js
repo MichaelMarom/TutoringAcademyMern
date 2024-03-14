@@ -10,6 +10,7 @@ import { get_faculty_subject } from "../../../axios/tutor";
 import Actions from "../../../components/common/Actions";
 import { useNavigate } from "react-router-dom";
 import { compareStates } from "../../../helperFunctions/generalHelperFunctions";
+import Tooltip from "../../../components/common/ToolTip";
 
 const Ads = () => {
     const { student } = useSelector(state => state.student)
@@ -69,7 +70,7 @@ const Ads = () => {
         I am looking for a tutor who can teach me <b>${subject.length ? subject : '(SELECTED SUBJECT HERE)'}</b>, 
         who has teaching experience of <b>${experience.length ? experience : '(SELECTED TUTOR EXPERIENCE)'}</b> years, 
         and speaks <b>${language.length ? language.map(item => item.value) : "(SELECTED LANGUAGE(s) HERE)"}</b>. 
-        And preferable from time zones like mine +/- <b>${timeZone.length ? timeZone : "(SELECTED TIMEZONE HERE)"}</b>. 
+        And preferable from time zones like mine <b>${timeZone.length ? timeZone : "(SELECTED TIMEZONE HERE)"}</b>. 
         Please contact me as soon as possible.`)
         }
     }, [student, subject, language, experience, timeZone])
@@ -139,7 +140,7 @@ const Ads = () => {
                         <div className="d-flex justify-content-center" style={{ gap: "2%" }}>
                             <div className="border p-2 shadow " style={{ width: "40%" }} >
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Faculty</label>
                                     <select className="form-select" style={{ maxWidth: "300px" }}
                                         required
@@ -153,7 +154,7 @@ const Ads = () => {
                                     </select>
                                 </div>
                                 {!!activeFaculty.length && <div className=" d-flex justify-content-between  align-items-center m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Subject</label>
                                     {subjects.length ? <select className="form-select" style={{ maxWidth: "300px" }}
                                         required
@@ -167,7 +168,7 @@ const Ads = () => {
                                     </select> : <div className="text-danger" style={{ fontSize: "14px" }}>No subjects registered in the selected faculty </div>}
                                 </div>}
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Grade</label>
                                     <input disabled
                                         className="form-control  shadow m-0"
@@ -178,7 +179,7 @@ const Ads = () => {
                                     />
                                 </div>
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Country</label>
                                     <input disabled
                                         className="form-control  shadow m-0"
@@ -189,7 +190,7 @@ const Ads = () => {
                                     />
                                 </div>
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">GMT</label>
                                     <input disabled
                                         className="form-control  shadow m-0"
@@ -199,7 +200,7 @@ const Ads = () => {
                                         value={student.GMT} />
                                 </div>
                                 <div className=" d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Language</label>
                                     <input disabled
                                         className="form-control  shadow m-0"
@@ -214,7 +215,7 @@ const Ads = () => {
                             <div className="border p-2 shadow " style={{ width: "40%" }}>
                                 <h4>Tutor Requirments</h4>
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Education Level</label>
                                     <select className="form-select" style={{ maxWidth: "300px" }}
                                         required
@@ -230,7 +231,7 @@ const Ads = () => {
                                     </select>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Experience</label>
                                     <select className="form-select" style={{ maxWidth: "300px" }}
                                         required
@@ -246,7 +247,7 @@ const Ads = () => {
                                     </select>
                                 </div>
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Certificate</label>
                                     <select className="form-select" style={{ maxWidth: "300px" }}
                                         required
@@ -264,7 +265,7 @@ const Ads = () => {
                                     </select>
                                 </div>
                                 <div className=" d-flex justify-content-between  align-items-start m-1"
-                                    style={{ width: "90%" }}>
+                                    style={{ width: "100%" }}>
                                     <label className="">Language</label>
                                     <div className="w-100" style={{ maxWidth: "300px" }}>
                                         <ReactSelect
@@ -282,16 +283,16 @@ const Ads = () => {
 
                                 </div>
                                 <div className="d-flex justify-content-between align-items-start m-1"
-                                    style={{ width: "90%" }}>
-                                    <label className="">Timezone</label>
+                                    style={{ width: "100%" }}>
+                                    <label className="">Timezone Differnce <Tooltip text={'time zone diff'} /> </label>
                                     <select className="form-select" style={{ maxWidth: "300px" }}
                                         required
                                         onChange={(e) => setTimezone(e.target.value)}
                                         value={timeZone}>
                                         <option value={''} disabled>Select</option>
 
-                                        {GMT.map((item, index) =>
-                                            <option key={index} value={item.GMT}>{item.GMT}</option>
+                                        {["+/- 0","+/- 1", "+/- 2", "+/- 3", "+/- 4", "+/- 5"].map((item, index) =>
+                                            <option key={index} value={item}>{item}</option>
                                         )}
                                         <option value={'any'} >Any</option>
 

@@ -19,8 +19,6 @@ import { FaFilePdf } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import Actions from '../common/Actions';
 import { monthFormatWithYYYY } from '../../constants/constants';
-import { SignOutButton, UserButton, useClerk } from '@clerk/clerk-react';
-import BTN_ICON from '../../images/button__icon.png'
 
 const TutorProfile = () => {
     const params = useParams();
@@ -33,7 +31,6 @@ const TutorProfile = () => {
     const userRole = localStorage.getItem('user_role')
     const [sortedGrades, setSortedGrades] = useState([]);
     const isStudentLoggedIn = location.pathname.split('/')[1] === 'student';
-    const { signOut } = useClerk();
 
     const customSort = (a, b) => {
         if (a === "Academic") {
@@ -64,7 +61,7 @@ const TutorProfile = () => {
     }
 
     const handleScheduleClick = () => {
-        if (!studentId) return toast.error("You need to selct 1 student from students-list!")
+        if (!studentId) return toast.error("You need to select 1 student from students-list!")
         navigate(`/student/short-list`)
     }
 

@@ -239,11 +239,11 @@ export let get_my_data = (AcademyId) => {
             })
             .catch((err) => {
                 console.log(err)
-                toast.error(err?.response?.data?.message || "Error Completing the request")
-                // // reject(err)
+                showErrorToast(err?.response?.data?.message || "Error Completing the request")
             })
     })
 }
+
 
 export let get_student_short_list_data = (id) => {
 

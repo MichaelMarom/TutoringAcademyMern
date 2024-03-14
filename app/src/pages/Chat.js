@@ -15,6 +15,7 @@ import { setChats } from '../redux/chat/chat';
 import Actions from '../components/common/Actions';
 import Loading from '../components/common/Loading';
 import Recomendation from '../components/Chat/Recomendation';
+import { setEraserWidthTo } from '../redux/student_store/Eraser';
 
 function Chat() {
     const [selectedChat, setSelectedChat] = useState({});
@@ -32,7 +33,6 @@ function Chat() {
     const [fetchingMessages, setFetchingMessages] = useState(false)
     const loggedInRole = studentLoggedIn ? 'student' : 'tutor';
     const dispatch = useDispatch()
-
 
     useEffect(() => {
         const setStatus = async () => {
@@ -54,7 +54,6 @@ function Chat() {
     }, [loggedInUserDetail])
 
     useEffect(() => {
-
         if (loggedInUserDetail.AcademyId && selectedChat.id) {
             socket.emit("add-user", selectedChat.id);
         }
@@ -64,7 +63,7 @@ function Chat() {
     const sendMessage = async (text) => {
         if (text.trim() !== '') {
             const newMessage = {
-                name: `${capitalizeFirstLetter(loggedInUserDetail.FirstName)} ${capitalizeFirstLetter(loggedInUserDetail.LastName)}`,
+                screenName: selectedChat.screenName,
                 senderId: loggedInUserDetail.AcademyId,
                 date: new Date(),
                 text,
@@ -137,7 +136,7 @@ function Chat() {
     }, [params.id, shortlist, chats]);
 
     if (isLoading)
-        return <Loading height='100vh' loadingText='Fetching Chats' />
+        return <Loading height='100vh' />
     return (
         <CommonLayout role={loggedInRole}
             showLegacyFooter={false}>

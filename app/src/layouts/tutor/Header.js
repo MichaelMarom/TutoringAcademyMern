@@ -2,19 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { PROFILE_STATUS, statesColours } from "../../constants/constants";
-import { useClerk, useSession } from "@clerk/clerk-react";
+import { useClerk } from "@clerk/clerk-react";
 import Tooltip from "../../components/common/ToolTip";
 import { FaSignOutAlt } from "react-icons/fa";
 import { setUser } from "../../redux/auth_state/auth";
 import { setTutor } from "../../redux/tutor_store/tutorData";
 import { setStudent } from "../../redux/student_store/studentData";
 import { setShortlist } from "../../redux/student_store/shortlist";
-import { applyMiddleware } from "redux";
-
 
 const Header = () => {
     const { signOut } = useClerk();
-    const { isSignedIn, userId } = useSession()
     let nav = useNavigate()
     let location = useLocation()
     const [activeTab, setActiveTab] = useState('intro');
@@ -36,9 +33,7 @@ const Header = () => {
     }
 
     useEffect(() => {
-        console.log(location.pathname)
         const element = document.getElementById('tutor-tab-header-list-active');
-        console.log(element)
         if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: "center" });
         }
@@ -136,8 +131,8 @@ const Header = () => {
                             <path d="M11 9L8 12M8 12L11 15M8 12H16M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </div>
-
                 </div>
+
                 <ul id="" className={` header`} style={{
                     background: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? '#737476' : 'inherit',
                     pointerEvents: tutor.Status === PROFILE_STATUS.PENDING || !tutor.AcademyId ? 'none' : 'auto',
@@ -149,7 +144,7 @@ const Header = () => {
                             key={tab.url}
                             data-url={tab.url}
                             onClick={handleTabClick}
-                            id={activeTab === (tab.url).replace(/ /g, '%20') ? 'tutor-tab-header-list-active' : ''}
+                            id={(activeTab === (tab.url).replace(/ /g, '%20') || (activeTab.split('/').length > 3 && activeTab.split('/').slice(0, -1).join() === tab.url.split('/').slice(0, -1).join())) ? 'tutor-tab-header-list-active' : ''}
                         >
                             <a>{tab.name}</a>
                         </li>)

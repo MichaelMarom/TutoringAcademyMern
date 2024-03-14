@@ -16,6 +16,7 @@ const LoginPage = () => {
     const token = localStorage.getItem('access_token')
     const { user } = useSelector(state => state.user)
     const { signIn, setActive, isLoaded } = useSignIn();
+    const [showPassword, setShowPassword] = useState(false)
     const { isSignedIn, getToken, userId } = useAuth()
     const { session, isSignedIn: sessionSignedIn } = useSession()
     console.log(session, isSignedIn, 'session info')
@@ -160,16 +161,26 @@ const LoginPage = () => {
                                         <div className="form-outline mb-4">
                                             <input
                                                 required
-                                                type="password"
+                                                type={showPassword ? "text" : "password"}
                                                 id="form3Example4"
                                                 className="form-control"
                                                 placeholder="Password"
                                                 value={loginForm.password}
                                                 onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                                             />
+                                            <div className=" mt-2" style={{ marginBottom: "-10px" }}>
+                                                <input
+                                                    className="form-check-input"
+                                                    type="checkbox"
+                                                    role="switch"
+                                                    onChange={() => setShowPassword(!showPassword)}
+                                                    checked={showPassword}
+                                                />
+                                                <label style={{ marginLeft: "5px" }}>Show password</label>
+                                            </div>
                                         </div>
                                         <div className='w-100 d-flex justify-content-end text-primary'>
-                                            <div style={{cursor:"pointer"}} onClick={() => setOpenModel(true)}>
+                                            <div style={{ cursor: "pointer" }} onClick={() => setOpenModel(true)}>
                                                 forgot password?
                                             </div>
                                         </div>

@@ -15,12 +15,16 @@ const fetch_chats = async (req, res) => {
             if (poolConnection) {
                 const result = await poolConnection.request().query(
                     req.params.role === 'student' ?
-                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId, ch.User1ID,ch.UnRead, ch.User2ID, 
+                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId, ts.TutorScreenname as screenName, 
+                        ch.User1ID,ch.UnRead, ch.User2ID, 
                         ts.Photo, ts.FirstName, ts.LastName,
-                    ts.Online from Chat as ch join TutorSetup as ts on ts.AcademyId = ch.User2ID
+                    ts.Online from 
+                    Chat as ch join TutorSetup as ts on ts.AcademyId = ch.User2ID
                      WHERE User1ID = '${req.params.userId}' OR User2ID = '${req.params.userId}'` :
-                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId,ch.User1ID,ch.UnRead, ch.User2ID, ts.Photo, 
-                        ts.FirstName, ts.LastName,ts.Online from Chat as ch join StudentSetup as ts on 
+                        `Select ch.ChatID, ch.LastSeen, ts.AcademyId,ch.User1ID,ch.UnRead, ts.ScreenName as screenName,
+                        ch.User2ID, ts.Photo, 
+                        ts.FirstName, ts.LastName,ts.Online from 
+                        Chat as ch join StudentSetup as ts on 
                         cast(ts.AcademyId as varchar)= ch.User1ID
                       WHERE User1ID = '${req.params.userId}' OR User2ID = '${req.params.userId}'`
                 );
@@ -31,7 +35,8 @@ const fetch_chats = async (req, res) => {
                     avatarSrc: record.Photo,
                     unread: record.UnRead,
                     online: record.Online,
-                    AcademyId: record.AcademyId
+                    AcademyId: record.AcademyId,
+                    screenName: record.screenName
                 }))
 
                 res.status(200).send(formatedResult);
@@ -55,12 +60,12 @@ const fetch_chat_messages = async (req, res) => {
                     `
                     SELECT * FROM Message AS ms JOIN (
                       SELECT CAST(AcademyId AS VARCHAR(MAX)) AS AcademyId, CAST(Photo AS VARCHAR(MAX))
-                    AS Photo, CAST(FirstName AS VARCHAR(MAX)) AS FirstName, 
-                    CAST(LastName AS VARCHAR(MAX)) AS LastName FROM StudentSetup
+                    AS Photo, CAST(ScreenName AS VARCHAR(MAX)) AS screenName
+                    FROM StudentSetup
                     UNION
                         SELECT CAST(AcademyId AS VARCHAR(MAX)) AS AcademyId, CAST(Photo AS VARCHAR(MAX))
-                        AS Photo, CAST(FirstName AS VARCHAR(MAX)) AS FirstName,
-                        CAST(LastName AS VARCHAR(MAX)) AS LastName FROM TutorSetup
+                        AS Photo, CAST(TutorScreenname AS VARCHAR(MAX)) AS screenName
+                        FROM TutorSetup
                         ) AS combinedSetup ON ms.Sender = combinedSetup.AcademyId
                      WHERE ms.ChatID = ${req.params.chatId}
                      ORDER BY Date DESC
@@ -73,7 +78,7 @@ const fetch_chat_messages = async (req, res) => {
                     date: record.Date,
                     senderId: record.Sender,
                     photo: record.Photo,
-                    name: `${capitalizeFirstLetter(record.FirstName)} ${capitalizeFirstLetter(record.LastName)}`
+                    screenName: record.screenName
                 }))
                 formatedResult.sort((a, b) => new Date(a.date) - new Date(b.date));
 

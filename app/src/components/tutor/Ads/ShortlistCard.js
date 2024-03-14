@@ -25,7 +25,7 @@ const ShortlistCard = ({ photo, name, adText, id, setAdDeleted, studentId, subje
             <div className='d-flex border p-2 align-items-center rounded-4  flex-column position-relative m-1 text-light' style={{ background: "gray" }}>
 
                 <div className='position-absolute top-0 start-0 p-1 cursor-pointer' onClick={handleDeleteAd}>
-                    <MdCancel size={28} color='limegreen' />
+                    <MdCancel size={40} color='limegreen' />
                 </div>
                 <Avatar avatarSrc={photo} size='100px' showOnlineStatus={false} />
                 <div className='d-flex top-0 start-0 p-1 ' style={{ gap: "5px" }}>

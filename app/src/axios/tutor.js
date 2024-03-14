@@ -384,7 +384,17 @@ export let get_user_data = (user_id) => {
     })
 }
 
-
+export const student_public_profile = async (studentId, tutorId = null) => {
+    try {
+        const { data } = await apiClient.get(`/tutor/${tutorId}/profile/${studentId}`);
+        return data;
+    }
+    catch (e) {
+        console.log(e.message)
+        showErrorToast(e)
+        return e
+    }
+}
 
 export let upload_tutor_rates = async (rate, grades, id, faculty, subject) => {
     try {

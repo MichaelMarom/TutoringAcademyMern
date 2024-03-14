@@ -2,14 +2,14 @@ import React from 'react';
 import Avatar from '../common/Avatar';
 import Loading from '../common/Loading';
 
-function DiscussionItem({ fetchingMessages, online, setSelectedChat, selectedChat, name, datetime, message, avatarSrc, unread, groupAmount, id }) {
+function DiscussionItem({ fetchingMessages, screenName, online, setSelectedChat, selectedChat, datetime, message, avatarSrc, unread, groupAmount, id }) {
     return (
         <li className={`ks-item w-100 ${unread ? 'ks-unread' : ''}`}
             style={{
                 borderLeft: id === selectedChat.id ? '5px solid lightGreen' : "none",
 
             }}
-            onClick={() => !fetchingMessages && setSelectedChat({ id, name, datetime, message, avatarSrc, unread, groupAmount })}
+            onClick={() => !fetchingMessages && setSelectedChat({ id, screenName, datetime, message, avatarSrc, unread, groupAmount })}
         >
             <div className="ks-body w-100 ">
                 <div className="ks-name d-flex justify-content-start align-items-center"
@@ -17,7 +17,7 @@ function DiscussionItem({ fetchingMessages, online, setSelectedChat, selectedCha
                     <Avatar avatarSrc={avatarSrc}
                         online={online}
                     />
-                    <h6 className='text-start'>  {name}</h6>
+                    <h6 className='text-start'>  {screenName}</h6>
                     <span className="ks-datetime">{datetime}</span>
                 </div>
             </div>
@@ -37,7 +37,6 @@ function DiscussionList({ selectedChat, fetchingMessages, discussions, setSelect
                                 fetchingMessages={fetchingMessages}
                                 setSelectedChat={setSelectedChat}
                                 key={index}
-                                name={discussion.name}
                                 datetime={discussion.datetime}
                                 message={discussion.message}
                                 avatarSrc={discussion.avatarSrc}
@@ -45,6 +44,7 @@ function DiscussionList({ selectedChat, fetchingMessages, discussions, setSelect
                                 groupAmount={discussion.groupAmount}
                                 online={discussion.online}
                                 id={discussion.id}
+                                screenName={discussion.screenName}
                                 selectedChat={selectedChat}
                             />
                         ))}

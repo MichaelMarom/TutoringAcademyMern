@@ -31,6 +31,7 @@ import { get_user_detail } from "./axios/auth";
 import { redirect_to_login } from "./helperFunctions/auth";
 import { setStudentSessions } from "./redux/student_store/studentSessions";
 import { setTutorSessions } from "./redux/tutor_store/tutorSessions";
+import TutorClass from "./pages/tutor/TutorClass";
 
 const App = () => {
   let location = useLocation();
@@ -190,6 +191,7 @@ const App = () => {
   }, [])
   return (
     <Routes>
+      <Route path="/collab/:id" element={<TutorClass />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       {activeRoutes.map((route) => (

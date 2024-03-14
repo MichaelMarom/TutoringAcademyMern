@@ -1878,6 +1878,32 @@ const get_shortlist_ads = async (req, res) => {
         }
     })
 }
+
+const get_student_public_profile_data = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const { studentId, tutorId } = req.params;
+            console.log(req.params)
+            const poolConnection = await sql.connect(config)
+            const { recordset } = await poolConnection.request().query(
+                `SELECT SS.*, ch.ChatID From 
+                StudentSetup as SS 
+                left join Chat as ch on
+                ch.User1ID = cast(SS.AcademyId as varchar)
+                where cast(SS.AcademyId as varchar) = '${studentId}' and ch.User2ID = '${tutorId}'`
+            )
+
+            res.status(200).send(recordset[0])
+        }
+        catch (err) {
+            res.status(400).send({
+                message: "Error Completing the Request",
+                reason: err.message
+            })
+        }
+    })
+}
+
 module.exports = {
     get_tutor_profile_data,
     get_tutor_against_code,
@@ -1900,6 +1926,7 @@ module.exports = {
     ad_to_shortlist,
     subjects,
     get_tutor_market_data,
+    get_student_public_profile_data,
     get_tutor_students,
     post_tutor_setup,
     faculties,

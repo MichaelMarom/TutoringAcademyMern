@@ -2,8 +2,6 @@ import TutorCollabBoard from "../../components/tutor/Collab/TutorCollabBoard";
 import TutorCollabFooter from "../../components/tutor/Collab/TutorCollabFooter";
 import TutorCollabHeader from "../../components/tutor/Collab/TutorCollabHeader";
 import TutorLayout from "../../layouts/TutorLayout";
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
-
 
 import {
   Excalidraw,
@@ -11,6 +9,7 @@ import {
 import '../../styles/tutor.css'
 
 const TutorClass = () => {
+  
   return (
     <div>
       <h4 className="text-center text-success blinking-button m-0">Lesson will start in 3 minutes</h4>
@@ -24,7 +23,7 @@ const TutorClass = () => {
           <TutorCollabBoard />
         </div >
       </div >
-    </div >
+    </div>
   );
 };
 // <TutorCollabFooter />

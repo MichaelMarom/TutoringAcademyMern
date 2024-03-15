@@ -211,7 +211,7 @@ const TutorAside = () => {
                     size={90}
                     isSmoothColorTransition={false}
                     strokeWidth={13}
-                    colors={['#FFFF00', '#32CD32', '#ff0000', '#ff0000']}
+                    colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
                     colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
                 >
                     {children}

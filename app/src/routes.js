@@ -9,6 +9,7 @@ import "./styles/Tab_Styles/LargeScreen.css";
 import "./styles/student.css";
 import "./styles/admin.css";
 import "./styles/collab.css";
+import './styles/tutor.css'
 import "./styles/Collaboration_Styles/LargeScreen.css";
 import { setUser } from "./redux/auth_state/auth";
 import Login from "./pages/Login";
@@ -32,6 +33,7 @@ import { redirect_to_login } from "./helperFunctions/auth";
 import { setStudentSessions } from "./redux/student_store/studentSessions";
 import { setTutorSessions } from "./redux/tutor_store/tutorSessions";
 import TutorClass from "./pages/tutor/TutorClass";
+import { CallWithChatExperience } from "./pages/tutor/Test1";
 
 const App = () => {
   let location = useLocation();
@@ -194,6 +196,7 @@ const App = () => {
       <Route path="/collab/:id" element={<TutorClass />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
+      <Route path="/chat-call" element={<CallWithChatExperience />} />
       {activeRoutes.map((route) => (
         <Route key={route.path} path={route.path} element={<SignedIn>{route.element}</SignedIn>} />
       ))}

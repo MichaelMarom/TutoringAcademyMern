@@ -20,18 +20,18 @@ const Header = () => {
     let location = useLocation()
     const { student } = useSelector(state => state.student)
     const tabs = [
-        { name: 'Introduction', url: 'intro' },
-        { name: 'Student Setup', url: 'setup' },
-        { name: 'Faculties', url: 'faculties' },
-        { name: 'Short List', url: 'short-list' },
-        { name: 'Accounting', url: 'accounting' },
-        { name: "Feedback", url: 'feedback' },
-        { name: 'Calender', url: 'calender' },
-        { name: 'Terms Of Use', url: 'term-of-use' },
-        { name: 'Message Board', url: 'chat' },
-        { name: 'Market place', url: 'market-place' },
-        { name: 'Collaboration', url: 'collaboration' },
-        { name: 'Profile', url: 'profile' },
+        { name: 'Introduction', url: '/student/intro' },
+        { name: 'Student Setup', url: '/student/setup' },
+        { name: 'Faculties', url: '/student/faculties' },
+        { name: 'Short List', url: '/student/short-list' },
+        { name: 'Accounting', url: '/student/accounting' },
+        { name: "Feedback", url: '/student/feedback' },
+        { name: 'Calender', url: '/student/calender' },
+        { name: 'Terms Of Use', url: '/student/term-of-use' },
+        { name: 'Message Board', url: '/student/chat' },
+        { name: 'Market place', url: '/student/market-place' },
+        { name: 'Collaboration', url: '/collab/123321' },
+        { name: 'Profile', url: '/student/profile' },
     ];
 
     useEffect(() => {
@@ -100,7 +100,7 @@ const Header = () => {
 
 
     let handleTabClick = e => {
-        nav(`/student/${e.currentTarget.dataset.url}`)
+        nav(`${e.currentTarget.dataset.url}`)
     }
 
     return (

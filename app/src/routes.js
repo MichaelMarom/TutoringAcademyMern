@@ -33,7 +33,7 @@ import { redirect_to_login } from "./helperFunctions/auth";
 import { setStudentSessions } from "./redux/student_store/studentSessions";
 import { setTutorSessions } from "./redux/tutor_store/tutorSessions";
 import TutorClass from "./pages/tutor/TutorClass";
-import { CallWithChatExperience } from "./pages/tutor/Test1";
+import CallWithChatExperience from "./pages/tutor/Test1";
 
 const App = () => {
   let location = useLocation();

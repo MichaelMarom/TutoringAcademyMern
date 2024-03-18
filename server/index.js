@@ -7,9 +7,12 @@ const AUTH_ROUTERS = require('./routes/auth');
 const COMMON_ROUTERS = require('./routes/common')
 const HOLIDAY_ROUTES = require('./routes/holiday')
 const FILE_ROUTER = require('./routes/file')
+const { MEETING_ROUTES } = require('./routes/meeting');
 const CHAT_ROUTES = require('./routes/chat')
 
-const { verifyToken } = require('./controllers/auth');
+var { PeerServer } = require("peer");
+var myPeerServer = PeerServer({ port: 8080 });
+
 
 const app = express();
 app.use(cors({ origin: '*' }))
@@ -27,6 +30,7 @@ app.use(AUTH_ROUTERS)
 app.use(HOLIDAY_ROUTES)
 app.use(FILE_ROUTER)
 app.use(CHAT_ROUTES)
+app.use('/api/', MEETING_ROUTES);
 app.use(COMMON_ROUTERS)
 
 
@@ -333,10 +337,6 @@ io.on('connection', socket => {
     })
 
 });
-
-
-var { PeerServer } = require("peer");
-var myPeerServer = PeerServer({ port: 8080 });
 
 myPeerServer.on("connection", function ({ id }) {
     console.log(id + " has connected to the PeerServer");

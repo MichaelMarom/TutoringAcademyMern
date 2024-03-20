@@ -100,7 +100,7 @@ export const SingleTutorFeedbacks = () => {
 
     const localizer = momentLocalizer(moment);
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
             <div style={{
                 width: clickedSlot.id ? "75%" : "100%",
                 float: clickedSlot.id ? "right" : "left"

@@ -58,7 +58,7 @@ const TutorLecturePanel = () => {
   });
 
   return (
-    <TutorLayout showLegacyFooter={false}>
+    <TutorLayout  >
       <div className="student-lec-pane-head shadow-sm"></div>
 
       <div className="student-lec-pane-body">

@@ -4,10 +4,14 @@ import Header from '../layouts/student/Header'
 import SmallSideBar from '../components/common/SmallSideBar'
 import { generateUpcomingSessionMessage } from '../helperFunctions/generalHelperFunctions'
 import { useSelector } from 'react-redux'
+import AdminLayout from './AdminLayout'
 
 
-const CommonLayout = ({ role, children, showLegacyFooter = true }) => {
+const CommonLayout = ({ role, children }) => {
     const { upcomingSessionFromNow, upcomingSession, inMins } = useSelector(state => state.studentSessions)
+    const { upcomingSessionFromNow: tutorUpcomingFromNow,
+        upcomingSession: tutorUpcoming,
+        inMins: isTutorUpcomgLessonInMins } = useSelector(state => state.tutorSessions)
 
     if (role === 'student')
         return (
@@ -22,7 +26,19 @@ const CommonLayout = ({ role, children, showLegacyFooter = true }) => {
         return (
             <div>
                 <TutorHeader />
-                <SmallSideBar inMins={inMins} message={generateUpcomingSessionMessage(upcomingSession, upcomingSessionFromNow)} />
+                <SmallSideBar
+                    inMins={isTutorUpcomgLessonInMins}
+                    message={generateUpcomingSessionMessage(tutorUpcoming, tutorUpcomingFromNow)} />
+                {children}
+            </div>
+        )
+    else if (role === 'admin')
+        return (
+            <div>
+                <AdminLayout />
+                {/* <SmallSideBar
+                    inMins={isTutorUpcomgLessonInMins}
+                    message={generateUpcomingSessionMessage(tutorUpcoming, tutorUpcomingFromNow)} /> */}
                 {children}
             </div>
         )

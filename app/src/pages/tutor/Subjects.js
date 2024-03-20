@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const Subjects = () => {
   return (
-    <TutorLayout showLegacyFooter={false}>
+    <TutorLayout  >
       <SubjectsComp />
     </TutorLayout>
   );

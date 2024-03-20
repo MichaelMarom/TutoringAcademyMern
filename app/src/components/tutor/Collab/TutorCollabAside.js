@@ -14,9 +14,15 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 
 const TutorAside = () => {
     const navigate = useNavigate();
+    const { upcomingSessionFromNow: tutorUpcomingFromNow,
+        upcomingSession: tutorUpcoming,
+        inMins: isTutorUpcomgLessonInMins, currentSession: tutorCurrentSession } = useSelector(state => state.tutorSessions)
+    const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.studentSessions)
+
     const [messages, setMessages] = useState([])
     const [arrivalMsg, setArrivalMsg] = useState(null);
     const { student } = useSelector(state => state.student)
+    const [timeRemaining, setTimeRemaining] = useState(new Date())
 
     let [mssg, setMssg] = useState('');
     const params = useParams();
@@ -29,15 +35,24 @@ const TutorAside = () => {
     let [visuals, setVisuals] = useState(true)
     const { tutor } = useSelector(state => state.tutor);
 
-    console.log(messages)
     useEffect(() => {
         if (socket) {
             socket.on("session-msg-recieve", (msgObj) => {
-                console.log('recived, hehehh', msgObj)
                 setArrivalMsg(msgObj);
             });
         }
     }, [])
+
+    // Calculate time remaining
+    useEffect(() => {
+        if (currentSession.end) {
+            const currentTime = new Date();
+            const remainingTime = Math.max(0, Math.floor((new Date(currentSession.end).getTime() - currentTime) / 1000));
+            setTimeRemaining(remainingTime);
+        }
+    }, [currentSession.end]);
+
+
     useEffect(() => {
         arrivalMsg && arrivalMsg.sessionId === params.id && setMessages((prev) => [...prev, { ...arrivalMsg }]);
     }, [arrivalMsg, params]);
@@ -48,6 +63,7 @@ const TutorAside = () => {
         // }
 
     }, [tutor, params]);
+
     const sendMessage = async () => {
         let text = mssg
         setMssg('')
@@ -196,7 +212,8 @@ const TutorAside = () => {
                 {minutes <= 49 && <p className='m-0' style={{ fontSize: "12px" }}>Lesson</p>}
                 {minutes}:{seconds}
                 {(minutes <= 49 && minutes > 3) && <p className='m-0' style={{ fontSize: "12px" }}>Started</p>}
-                {minutes <= 3 && <p className='m-0 blinking-button text-danger' style={{ fontSize: "12px" }}>Ending</p>}
+                {(minutes <= 3 && minutes !== 0) && <p className='m-0 blinking-button text-danger' style={{ fontSize: "12px" }}>Ending</p>}
+                {minutes === 0 && <p className='m-0 text-danger' style={{ fontSize: "12px" }}>Ended</p>}
             </div>
         )
     }
@@ -204,19 +221,20 @@ const TutorAside = () => {
     return (
         <div className="TutorAside shadow-sm" style={{ top: "37%", width: "16rem" }}>
 
-            <div className='text-center countdown'>
-                <CountdownCircleTimer
-                    isPlaying
-                    duration={53 * 60}
-                    size={90}
-                    isSmoothColorTransition={false}
-                    strokeWidth={13}
-                    colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
-                    colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
-                >
-                    {children}
-                </CountdownCircleTimer>
-                {/* <FlipCountdown
+            {currentSession.subject ?
+                <div className='text-center countdown'>
+                    <CountdownCircleTimer
+                        isPlaying
+                        duration={timeRemaining}
+                        size={90}
+                        isSmoothColorTransition={false}
+                        strokeWidth={13}
+                        colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
+                        colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
+                    >
+                        {children}
+                    </CountdownCircleTimer>
+                    {/* <FlipCountdown
                     size={'small'}
                     hideDay
                     hideHour
@@ -227,7 +245,21 @@ const TutorAside = () => {
                     endAtZero
                     onTimeUp={handleTimeUp}
                     endAt={moment().add('minutes', 53).toDate()} /> */}
-            </div>
+                </div> :
+                <div className='text-center countdown'>
+                    <CountdownCircleTimer
+                        isPlaying
+                        duration={0}
+                        size={90}
+                        isSmoothColorTransition={false}
+                        strokeWidth={13}
+                        colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
+                        colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
+                    >
+                        {children}
+                    </CountdownCircleTimer>
+                </div>
+            }
 
             <div className="TutorAsideVideoCnt">
                 <video className='tutor-video-tab'>

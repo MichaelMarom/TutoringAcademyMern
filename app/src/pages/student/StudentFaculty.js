@@ -4,7 +4,7 @@ import StudentLayout from "../../layouts/StudentLayout";
 
 const StudentFaculty = () => {
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
             <StudentFaculties />
         </StudentLayout>
     );

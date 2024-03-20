@@ -90,7 +90,7 @@ export const Schedules = () => {
     if(loading)
     return <Loading />
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
             <div>
                 <h4 className='text-center m-3'>Your Schedule</h4>
                 <div className='m-3' style={{ height: "65vh" }}>

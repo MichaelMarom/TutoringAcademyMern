@@ -97,7 +97,7 @@ const StudentIntro = () => {
     if (fetching)
         return <Loading />
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
 
             <form onSubmit={user.role === 'admin' ? handleSave : handleSaveAgreement}>
                 <div className='px-4 mt-4 student-terms'>

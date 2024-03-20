@@ -4,7 +4,7 @@ import Actions from '../../components/common/Actions';
 
 const StudentProfile = () => {
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
             <StudentProfileCnt />
             <Actions saveDisabled />
         </StudentLayout>

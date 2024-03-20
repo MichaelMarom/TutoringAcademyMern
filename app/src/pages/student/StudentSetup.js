@@ -8,7 +8,7 @@ import { generateUpcomingSessionMessage } from "../../helperFunctions/generalHel
 const StudentSetup = () => {
 
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
             <StudentSetupComp />
         </StudentLayout>
     );

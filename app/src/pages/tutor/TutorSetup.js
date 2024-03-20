@@ -5,7 +5,7 @@ import VIDEO from '../../images/videos/setup.mp4'
 
 const TutorSetup = () => {
     return (
-        <TutorLayout showLegacyFooter={false}>
+        <TutorLayout  >
             <TabInfoVideoToast video={VIDEO} />
             <Setup />
         </TutorLayout>

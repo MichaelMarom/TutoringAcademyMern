@@ -5,7 +5,7 @@ import VIDEO from '../../images/videos/motivation.mp4'
 
 const Rates = () => {
     return (
-        <TutorLayout showLegacyFooter={false}>
+        <TutorLayout  >
             <TabInfoVideoToast video={VIDEO} />
             <RatesComp />
         </TutorLayout>

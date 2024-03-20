@@ -5,7 +5,7 @@ import '../../styles/common.css'
 
 const StudentScheduling = () => {
   return (
-    <StudentLayout showLegacyFooter={false} >
+    <StudentLayout   >
       <StudentCalenderScheduling />
     </StudentLayout>
   )

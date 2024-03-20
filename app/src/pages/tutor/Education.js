@@ -5,7 +5,7 @@ import VIDEO from '../../images/videos/education.mp4'
 
 const Education = () => {
   return (
-    <TutorLayout showLegacyFooter={false} >
+    <TutorLayout   >
       <TabInfoVideoToast video={VIDEO} />
       <EducationComp />
     </TutorLayout>

@@ -60,7 +60,7 @@ const StudentIntro = () => {
   if (fetching)
     return <Loading />
   return (
-    <StudentLayout showLegacyFooter={false}>
+    <StudentLayout  >
       <form onSubmit={handleSave}>
         <div className='px-4 mt-4 student-intro'>
           <RichTextEditor

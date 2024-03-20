@@ -3,7 +3,7 @@ import StudentLayout from "../../layouts/StudentLayout";
 
 const StudentAccountings = () => {
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
             <StudentAccounting />
         </StudentLayout>
     );

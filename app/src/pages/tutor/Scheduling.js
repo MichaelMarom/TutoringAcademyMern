@@ -6,7 +6,7 @@ import VIDEO from '../../images/videos/calender.mp4'
 
 const Scheduling = () => {
   return (
-    <TutorLayout showLegacyFooter={false}>
+    <TutorLayout  >
       <TabInfoVideoToast video={VIDEO} />
       <SchedulingComp />
       <Actions saveDisabled={true}

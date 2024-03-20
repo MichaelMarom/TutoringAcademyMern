@@ -1,6 +1,5 @@
 // slice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { formatted_student_sessions } from "../../axios/student";
 import { formatted_tutor_sessions } from "../../axios/tutor";
 
 // Create a slice with your event-related reducers
@@ -10,6 +9,7 @@ const slice = createSlice({
         sessions: [],
         upcomingSession: {},
         upcomingSessionFromNow: '',
+        currentSession: {},
         inMins: false
     },
     reducers: {
@@ -20,6 +20,7 @@ const slice = createSlice({
             state.isLoading = false;
             state.sessions = action.payload.sessions;
             state.upcomingSession = action.payload.upcomingSession;
+            state.currentSession = action.payload.currentSession;
             state.inMins = action.payload.inMins;
 
             state.upcomingSessionFromNow = action.payload.upcomingSessionFromNow;

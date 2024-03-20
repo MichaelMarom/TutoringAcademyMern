@@ -138,8 +138,7 @@ function Chat() {
     if (isLoading)
         return <Loading height='100vh' />
     return (
-        <CommonLayout role={loggedInRole}
-            showLegacyFooter={false}>
+        <CommonLayout role={loggedInRole} >
             <div className="container" style={{ height: "65vh" }}>
                 <div className="h-100 m-4">
                     <div className="ks-page-content-body h-100">
@@ -162,7 +161,6 @@ function Chat() {
 
                                     </>
                                 }
-
                             </div>
                             {(params.id && loggedInRole === 'student') &&
                                 <Recomendation AcademyId={selectedChat.AcademyId} />

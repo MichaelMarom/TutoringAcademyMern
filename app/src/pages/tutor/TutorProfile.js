@@ -6,7 +6,7 @@ const TutorProfile = () => {
   const location = useLocation();
   const role = location.pathname.split('/')[1]
   return (
-    <CommonLayout showLegacyFooter={false} role={role}>
+    <CommonLayout   role={role}>
       <TutorProfileComp />
     </CommonLayout>
   );

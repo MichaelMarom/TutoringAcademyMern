@@ -9,6 +9,7 @@ const slice = createSlice({
         sessions: [],
         upcomingSession: {},
         upcomingSessionFromNow: '',
+        currentSession: {},
         inMins: false
     },
     reducers: {
@@ -19,6 +20,7 @@ const slice = createSlice({
             state.isLoading = false;
             state.sessions = action.payload.sessions;
             state.upcomingSession = action.payload.upcomingSession;
+            state.currentSession = action.payload.currentSession;
             state.inMins = action.payload.inMins;
 
             state.upcomingSessionFromNow = action.payload.upcomingSessionFromNow;
@@ -34,7 +36,6 @@ export const setStudentSessions = (student) => {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading())
         const result = await formatted_student_sessions(student.AcademyId)
-        console.log(result)
         dispatch(slice.actions.setStudentSession(result));
         return result;
     };

@@ -6,7 +6,7 @@ import TabInfoVideoToast from '../../components/common/TabInfoVideoToast'
 
 const TutorIntro = () => {
     return (
-        <TutorLayout showLegacyFooter={false}>
+        <TutorLayout  >
             <TabInfoVideoToast video={VIDEO} />
             <Intro />
         </TutorLayout>

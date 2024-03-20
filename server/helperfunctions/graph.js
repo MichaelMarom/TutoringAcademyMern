@@ -33,6 +33,7 @@ async function createNewMeetingAsync(userId) {
     ensureGraphForAppOnlyAuth();
     let startTime = await startDateTimeAsync();
     let endTime = await endDateTimeAsync();
+    userId = `8:acs:77bac1c4-cf55-4b91-b60c-5a396df98b1c_0000001e-f63c-164b-9f3b-8e3a0d00568e`
     const newMeeting = `/users/${userId}/calendar/events`;
 
     const event = {
@@ -45,7 +46,8 @@ async function createNewMeetingAsync(userId) {
             dateTime: endTime,
             timeZone: 'UTC'
         },
-        isOnlineMeeting: true
+        isOnlineMeeting: true,
+        // isOrganizer: true
     };
 
     try {

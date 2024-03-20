@@ -1347,8 +1347,7 @@ const get_all_tutor_sessions_formatted = async (req, res) => {
                     from StudentBookings as sb
                     join TutorSetup as TS on
                     cast(TS.AcademyId as varchar) = sb.tutorId
-                    where sb.tutorId = '${req.params.tutorId}'
-                    `
+                    where sb.tutorId = '${req.params.tutorId}'`
                 )
 
                 if (recordset[0]) {
@@ -1370,6 +1369,13 @@ const get_all_tutor_sessions_formatted = async (req, res) => {
                     const currentTime = moment().tz(timeZone)
                     const sortedEvents = allSessions.sort((a, b) => moment(a.start).diff(moment(b.start)));
                     const upcomingSession = sortedEvents.find(event => moment(event.start).isAfter(currentTime)) || {};
+
+                    const currentSession = allSessions.find(session => {
+                        const startTime = moment(session.start);
+                        const endTime = moment(session.end);
+                        return currentTime.isBetween(startTime, endTime);
+                    }) || {};
+
                     const timeUntilStart = upcomingSession.id ?
                         moment(upcomingSession.start).tz(timeZone).to(currentTime, true) : '';
                     let inMins = false
@@ -1377,10 +1383,10 @@ const get_all_tutor_sessions_formatted = async (req, res) => {
                         inMins = true
                     }
 
-                    res.status(200).send({ sessions: allSessions, upcomingSession, inMins, upcomingSessionFromNow: timeUntilStart })
+                    res.status(200).send({ sessions: allSessions, currentSession, upcomingSession, inMins, upcomingSessionFromNow: timeUntilStart })
                 }
                 else {
-                    res.status(200).send({ sessions: [], upcomingSession: {}, inMins: false, upcomingSessionFromNow: '' })
+                    res.status(200).send({ sessions: [], currentSession: {}, upcomingSession: {}, inMins: false, upcomingSessionFromNow: '' })
                 }
             }
         }

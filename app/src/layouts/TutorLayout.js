@@ -5,11 +5,10 @@ import Steps from '../components/tutor/Steps'
 import SmallSideBar from '../components/common/SmallSideBar'
 import { generateUpcomingSessionMessage } from '../helperFunctions/generalHelperFunctions'
 
-const TutorLayout = ({ children, showLegacyFooter = true }) => {
+const TutorLayout = ({ children}) => {
     const { tutor } = useSelector(state => state.tutor);
     const { user } = useSelector(state => state.user)
     const { upcomingSessionFromNow, upcomingSession, inMins } = useSelector(state => state.tutorSessions)
-    console.log(upcomingSessionFromNow, upcomingSession, inMins)
     const [currentStep, setCurrentStep] = useState(3);
     ///show profile button when currentStep>1
     const steps = [

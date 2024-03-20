@@ -6,7 +6,7 @@ import SmallSideBar from "../../components/common/SmallSideBar";
 
 const StudentShortLists = () => {
     return (
-        <StudentLayout showLegacyFooter={false}>
+        <StudentLayout  >
             <StudentShortList />
         </StudentLayout>
     );

@@ -33,7 +33,7 @@ const Layout = ({ children }) => {
     ];
 
     return (
-        <TutorLayout showLegacyFooter={false}>
+        <TutorLayout  >
             <Tabs links={tabs} setActiveTab={setActiveTab}
                 setActiveTabIndex={setActiveTabIndex}
                 activeTab={activeTab}

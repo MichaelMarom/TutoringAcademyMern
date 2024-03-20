@@ -3,7 +3,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 
 const Accounting = () => {
   return (
-    <TutorLayout showLegacyFooter={false}>
+    <TutorLayout  >
       <AccountingComp />
     </TutorLayout>
   );

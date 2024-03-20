@@ -111,12 +111,18 @@ const App = () => {
     }
   }, [tutor, student, userId, isSignedIn])
 
-
-  //sessons
+  //sessions :nextsession, :allsessions, :time remaing for next lesson
   useEffect(() => {
-    student.AcademyId && dispatch(setStudentSessions(student))
-    tutor.AcademyId && dispatch(setTutorSessions(tutor))
-  }, [student, tutor])
+    student.AcademyId && dispatch(setStudentSessions(student));
+    tutor.AcademyId && dispatch(setTutorSessions(tutor));
+    
+    const intervalId = setInterval(() => {
+      student.AcademyId && dispatch(setStudentSessions(student));
+      tutor.AcademyId && dispatch(setTutorSessions(tutor));
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, [student, tutor, dispatch]);
 
   const getStudentDetails = async () => {
     if (nullValues.includes(studentUserId)) {
@@ -191,6 +197,7 @@ const App = () => {
     }
     else { navigate('/login') }
   }, [])
+
   return (
     <Routes>
       <Route path="/collab/:id" element={<TutorClass />} />

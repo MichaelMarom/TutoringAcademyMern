@@ -12,9 +12,9 @@ import rectImage from '../../images/rectangle-svgrepo-com.svg'
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { socket } from '../../config/socket';
-import { setToolTo } from '../../redux/student_store/Tool';
-import { setEraserWidthTo } from '../../redux/student_store/Eraser';
+import { socket } from '../../../config/socket';
+import { setToolTo } from '../../../redux/student_store/Tool';
+import { setEraserWidthTo } from '../../../redux/student_store/Eraser';
 
 
 const StudentCollabTools = () => {

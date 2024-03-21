@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate, useRoutes } from "react-router-dom";
 import { isExpired, decodeToken } from 'react-jwt'
-
 import React from "react";
 
 import "./styles/Tab_Styles/LargeScreen.css";

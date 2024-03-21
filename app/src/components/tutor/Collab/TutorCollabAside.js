@@ -102,7 +102,7 @@ const TutorAside = () => {
 
     let handleVidActions = e => {
         visuals.getVideoTracks()[0].enabled =
-            !(visuals.getVideoTracks()[0].enabled);
+        !(visuals.getVideoTracks()[0].enabled);
         if (e.target.hasAttribute('id')) {
             e.target?.removeAttribute('id')
         } else {
@@ -122,13 +122,13 @@ const TutorAside = () => {
     }
 
     useEffect(() => {
+
         let myVideo = document.querySelector('.tutor-video-tab');
         let room_id = '1234567890asdfghjkl';
-
         let peer = new Peer(undefined, {});
+
         peer.on('open', id => {
-            socket.emit('join-room', room_id, id)
-            console.log(id);
+            socket.emit('join-room', room_id, id);
         })
 
         const peers = {}
@@ -137,66 +137,72 @@ const TutorAside = () => {
             video: true,
             audio: true
         })
-            .then(stream => {
-                setVisuals(stream)
-                addVideoStream(myVideo, stream);
+        .then(stream => {
+            setVisuals(stream)
+
+            addVideoStream(myVideo, stream);
+            peer.on('call', call => {
+                let file = visuals ? stream : '';
+                setVideoLoader('Connecting...')
+                call.answer(file)
+                call.on('stream', userVideoStream => {
+                    setVideoLoader('')
+                    addVideoStream(myVideo, userVideoStream)
+                })
+            })
+
+            socket.on('user-connected', user_id => {
+                connectToNewUser(user_id, stream)
                 peer.on('call', call => {
+                    let file = visuals ? stream : '';
                     setVideoLoader('Connecting...')
-                    call.answer(stream);
+                    call.answer(file)
                     call.on('stream', userVideoStream => {
-                        setVideoLoader('')
                         addVideoStream(myVideo, userVideoStream)
                     })
                 })
-
-                socket.on('user-connected', user_id => {
-                    connectToNewUser(user_id, stream)
-                    peer.on('call', call => {
-
-                        setVideoLoader('Connecting...')
-                        call.answer(stream)
-                        call.on('stream', userVideoStream => {
-                            addVideoStream(myVideo, userVideoStream)
-                        })
-                    })
-                })
             })
-            .catch(e => console.log(e));
+        })
+        .catch(e => console.log(e));
 
         socket.on('user-disconnected', user_id => {
             if (peers[user_id]) peers[user_id].close()
         })
-
+          
         peer.on('open', id => {
             socket.emit('join-room', room_id, id)
         })
 
         function connectToNewUser(userId, stream) {
+            
             const call = peer.call(userId, stream);
             setVideoLoader('Connecting...')
             call.on('stream', userVideoStream => {
+                // playSound();
                 addVideoStream(myVideo, userVideoStream)
             })
 
             call.on('close', () => {
                 myVideo.src = ''
             })
-
+          
             peers[userId] = call
         }
-
+          
         function addVideoStream(video, stream) {
             console.log(stream)
+
             video.srcObject = stream
             setVideoLoader('Connecting...')
             video.addEventListener('loadedmetadata', () => {
+                // playSound();
                 video.play()
                 setVideoLoader('')
             })
         }
 
-
-    }, [location, peerId])
+        
+    }, [location])
 
     // const handleTimeUp = () => {
     //     toast.warning('Session Time is ended!');

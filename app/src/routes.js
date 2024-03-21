@@ -115,7 +115,7 @@ const App = () => {
   useEffect(() => {
     student.AcademyId && dispatch(setStudentSessions(student));
     tutor.AcademyId && dispatch(setTutorSessions(tutor));
-    
+
     const intervalId = setInterval(() => {
       student.AcademyId && dispatch(setStudentSessions(student));
       tutor.AcademyId && dispatch(setTutorSessions(tutor));
@@ -200,7 +200,7 @@ const App = () => {
 
   return (
     <Routes>
-      <Route path="/collab/:id" element={<TutorClass />} />
+      <Route path="/collab/:sessionId" element={<TutorClass />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/chat-call" element={<CallWithChatExperience />} />

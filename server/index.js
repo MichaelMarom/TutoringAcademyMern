@@ -111,7 +111,7 @@ io.on('connection', socket => {
             const { sessionId = '', elements = [], appState = {} } = data;
             console.log(excalidraw_collaborators, 112)
             sessionId.length && socket.to(sessionId).emit("canvas-change-recieve",
-                { elements, appState, collaborators: excalidraw_collaborators });
+                { elements, appState, collaborators: JSON.stringify([...excalidraw_collaborators]) });
         }
     });
 

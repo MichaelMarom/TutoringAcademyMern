@@ -22,6 +22,8 @@ const TutorClass = () => {
   const [zenModeEnabled, setZenModeEnabled] = useState(false);
   const [gridModeEnabled, setGridModeEnabled] = useState(false);
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
+  const { student } = useSelector(state => state.student)
+  const { tutor } = useSelector(state => state.tutor)
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
 
@@ -36,13 +38,36 @@ const TutorClass = () => {
     if (socket && excalidrawAPI) {
       params.sessionId && socket.emit('join-session', params.sessionId);
       socket.on('canvas-change-recieve', (change) => {
+        console.log(change)
+        const collaborators = new Map();
+        collaborators.set("id1", {
+          username: "Asiya",
+          avatarUrl: tutor.Photo,
+        });
+        collaborators.set("id3", {
+          username: "Michael",
+          avatarUrl: student.Photo,
+        });
+        collaborators.set("id4", {
+          username: "Michael",
+          avatarUrl: student.Photo,
+        });
+        collaborators.set("id5", {
+          username: "Michael",
+          avatarUrl: tutor.Photo,
+        });
+        collaborators.set("id6", {
+          username: "Michael",
+          isCurrentUser: true,
+          isSpeaking: true,
+          socketId: "123",
+          avatarUrl: student.Photo,
+        });
         console.log(change.collaborators)
-        delete change.appState.collaborators
-        excalidrawAPI.updateScene({ elements: change.elements });
+        excalidrawAPI.updateScene({ elements: change.elements, collaborators: collaborators });
       });
     }
   }, [params.sessionId, excalidrawAPI]);
-
 
   const { upcomingSessionFromNow: tutorUpcomingFromNow,
     upcomingSession: tutorUpcoming,
@@ -82,7 +107,6 @@ const TutorClass = () => {
             isCollaborating={true}
             onPointerDown={handlePointerDown}
             onPointerUpdate={handlePointerUpEvent}
-            // Assuming you want to enable collaboration
             // viewModeEnabled={true}   // Assuming you want to enable view mode
             // zenModeEnabled={true}    // Assuming you want to enable Zen mode
             onChange={handleExcalidrawChange}

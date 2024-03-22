@@ -107,30 +107,34 @@ const TutorSetup = () => {
 
   useEffect(() => {
     setIsRecording(!isRecording)
-    let cnt = document.querySelector('.recordVideoCnt');
-    
-    if(isRecording){
+    let cnt = document.querySelector('#recordVideoCnt');
+
+    if (isRecording) {
       navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true
       })
-      .then(stream => {
-          console.log(stream)
-
-        addVideoStream(cnt, stream)
-        function addVideoStream(video, stream) {
+        .then(stream => {
           // console.log(stream)
 
-          video.srcObject = stream
-          video.addEventListener('loadedmetadata', () => {
-              alert('loadedmeta')
-
-              video.play()
+          cnt.addEventListener('loadedmetadata', () => {
+            alert('meta loaded')
+            cnt.srcObject = stream;
+            cnt.play()
           })
-        }
 
-      })
-      .catch(e => console.log(e));
+          // function addVideoStream(video, stream) {
+          //   // console.log(stream)
+
+          //   video.srcObject = stream
+          //   // video.addEventListener('loadedmetadata', () => {
+
+          //   //     video.play()
+          //   // })
+          // }
+
+        })
+        .catch(e => console.log(e));
     }
   }, [isRecording])
 
@@ -176,7 +180,7 @@ const TutorSetup = () => {
   const handleOptionClick = (option) => {
     setUploadVideoClicked(true);
     setSelectedVideoOption(option);
-    
+
   }
 
   async function handleVideoRecord(params) {
@@ -1058,11 +1062,11 @@ const TutorSetup = () => {
             </div>
             {selectedVideoOption === "record" ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >
-                <video id="recordVideoCnt"  className="w-100 h-100 m-0 p-0" controls autoplay></video>
+                <video id="recordVideoCnt" className="w-100 h-100 m-0 p-0" controls autoplay></video>
               </div>
             ) : selectedVideoOption === "upload" && video?.length ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >
-                <video src={video} className="w-100 h-100 m-0 p-0"
+                <video src={video} className="w-100 h-100 m-0 p-0 videoLive"
                   controls autoplay
                 />
               </div>

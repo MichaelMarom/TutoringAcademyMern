@@ -11,6 +11,9 @@ import { moment } from '../../../config/moment'
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { FaCamera, FaMicrophone } from 'react-icons/fa';
+import { RiCameraOffFill } from "react-icons/ri";
+import { PiMicrophoneSlashFill } from "react-icons/pi";
 
 const TutorAside = () => {
     const navigate = useNavigate();
@@ -33,6 +36,8 @@ const TutorAside = () => {
     let [screenType, setScreenType] = useState(screenLarge);
 
     let [visuals, setVisuals] = useState(true)
+    const [audioEnabled, setAudioEnabled] = useState(true)
+    const [videoEnabled, setVideoEnabled] = useState(true)
     const { tutor } = useSelector(state => state.tutor);
 
     useEffect(() => {
@@ -101,24 +106,21 @@ const TutorAside = () => {
     }
 
     let handleVidActions = e => {
-        visuals.getVideoTracks()[0].enabled =
-        !(visuals.getVideoTracks()[0].enabled);
-        if (e.target.hasAttribute('id')) {
-            e.target?.removeAttribute('id')
-        } else {
-            e.target?.setAttribute('id', 'collab-action')
+        if (typeof visuals.getVideoTracks === 'function') {
+            visuals.getVideoTracks()[0].enabled = !(visuals.getVideoTracks()[0].enabled);
+            setVideoEnabled(!videoEnabled)
         }
+        else toast.info('Please Enable Camera from Browser Settings!')
     }
 
     let handleAudioActions = e => {
-        visuals.getAudioTracks()[0].enabled =
-            !(visuals.getAudioTracks()[0].enabled);
+        if (typeof visuals.getAudioTracks === 'function') {
+            visuals.getAudioTracks()[0].enabled =
+                !(visuals.getAudioTracks()[0].enabled);
 
-        if (e.target.hasAttribute('id')) {
-            e.target?.removeAttribute('id')
-        } else {
-            e.target?.setAttribute('id', 'collab-action')
+            setAudioEnabled(!audioEnabled)
         }
+        else toast.info('Please Enable MicroPhone from Browser Settings!')
     }
 
     useEffect(() => {
@@ -132,49 +134,50 @@ const TutorAside = () => {
         })
 
         const peers = {}
-
+        console.log('above nav', navigator.mediaDevices)
         navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true
         })
-        .then(stream => {
-            setVisuals(stream)
-
-            addVideoStream(myVideo, stream);
-            peer.on('call', call => {
-                let file = visuals ? stream : '';
-                setVideoLoader('Connecting...')
-                call.answer(file)
-                call.on('stream', userVideoStream => {
-                    setVideoLoader('')
-                    addVideoStream(myVideo, userVideoStream)
-                })
-            })
-
-            socket.on('user-connected', user_id => {
-                connectToNewUser(user_id, stream)
+            .then(stream => {
+                setVisuals(stream)
+                addVideoStream(myVideo, stream);
                 peer.on('call', call => {
                     let file = visuals ? stream : '';
                     setVideoLoader('Connecting...')
                     call.answer(file)
                     call.on('stream', userVideoStream => {
+                        setVideoLoader('')
                         addVideoStream(myVideo, userVideoStream)
                     })
                 })
+
+                socket.on('user-connected', user_id => {
+                    connectToNewUser(user_id, stream)
+                    peer.on('call', call => {
+                        let file = visuals ? stream : '';
+                        setVideoLoader('Connecting...')
+                        call.answer(file)
+                        call.on('stream', userVideoStream => {
+                            addVideoStream(myVideo, userVideoStream)
+                        })
+                    })
+                })
             })
-        })
-        .catch(e => console.log(e));
+            .catch(e => {
+                console.log(e)
+                toast.info(e)
+            });
 
         socket.on('user-disconnected', user_id => {
             if (peers[user_id]) peers[user_id].close()
         })
-          
+
         peer.on('open', id => {
             socket.emit('join-room', room_id, id)
         })
 
         function connectToNewUser(userId, stream) {
-            
             const call = peer.call(userId, stream);
             setVideoLoader('Connecting...')
             call.on('stream', userVideoStream => {
@@ -185,13 +188,11 @@ const TutorAside = () => {
             call.on('close', () => {
                 myVideo.src = ''
             })
-          
+
             peers[userId] = call
         }
-          
-        function addVideoStream(video, stream) {
-            console.log(stream)
 
+        function addVideoStream(video, stream) {
             video.srcObject = stream
             setVideoLoader('Connecting...')
             video.addEventListener('loadedmetadata', () => {
@@ -201,13 +202,7 @@ const TutorAside = () => {
             })
         }
 
-        
     }, [location])
-
-    // const handleTimeUp = () => {
-    //     toast.warning('Session Time is ended!');
-    //     navigate(`/tutor/setup`)
-    // }
 
     const children = ({ remainingTime }) => {
         const minutes = Math.floor(remainingTime / 60)
@@ -268,22 +263,22 @@ const TutorAside = () => {
             }
 
             <div className="TutorAsideVideoCnt">
+                {videoLoader}
                 <video className='tutor-video-tab'>
                 </video>
                 <ul>
                     <li className="video-size"
-                        style={{ background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px' }} onClick={handleVideoResize}>
+                        style={{ background: '#efefef', opacity: '.4', padding: '5px', borderRadius: '8px' }}
+                        onClick={handleVideoResize}>
                         <img src={screenType}
                             style={{ height: '20px', width: '20px' }} alt="..." />
                     </li>
-                    <li className="disable-visuals" onClick={e => handleVidActions(e)}>
-                        <img src={DiableVideoImage} style={{ height: '25px', width: '25px' }} alt="..." />
-
+                    <li onClick={e => handleVidActions(e)} style={{ borderRadius: "50%", backgroundColor: "white", opacity: "0.7" }} >
+                        {videoEnabled ? <FaCamera color="black" /> : <RiCameraOffFill />}
                     </li>
 
-                    <li className="disable-visuals" onClick={e => handleAudioActions(e)}>
-                        <img src={muteSvg} style={{ height: '25px', width: '25px' }} alt="..." />
-
+                    <li onClick={e => handleAudioActions(e)} style={{ borderRadius: "50%", backgroundColor: "white", opacity: "0.7" }} >
+                        {audioEnabled ? <FaMicrophone color="black" /> : <PiMicrophoneSlashFill />}
                     </li>
                 </ul>
             </div>
@@ -319,7 +314,7 @@ const TutorAside = () => {
                 </div>
             </div>
 
-        </div>
+        </div >
     );
 }
 

@@ -166,7 +166,7 @@ const TutorAside = () => {
             })
             .catch(e => {
                 console.log(e)
-                toast.info(e)
+                toast.warning(e.message)
             });
 
         socket.on('user-disconnected', user_id => {

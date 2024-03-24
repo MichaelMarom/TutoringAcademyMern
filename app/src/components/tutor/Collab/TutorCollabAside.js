@@ -101,7 +101,6 @@ const TutorAside = () => {
         } else {
             element?.setAttribute('id', 'TutorAsideVideoCnt')
             setScreenType(screenNormal)
-
         }
     }
 
@@ -166,7 +165,7 @@ const TutorAside = () => {
             })
             .catch(e => {
                 console.log(e)
-                toast.warning(e.message)
+                // toast.warning(e.message)
             });
 
         socket.on('user-disconnected', user_id => {

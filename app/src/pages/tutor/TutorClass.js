@@ -24,6 +24,9 @@ const TutorClass = () => {
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
   const { student } = useSelector(state => state.student)
   const { tutor } = useSelector(state => state.tutor)
+  const [elements, setElements] = useState([]);
+  const [collaborators, setCollaborators] = useState([]);
+
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
 
@@ -35,49 +38,54 @@ const TutorClass = () => {
   }, [excalidrawAPI]);
 
   useEffect(() => {
-    if (socket && excalidrawAPI) {
+    if (socket) {
       params.sessionId && socket.emit('join-session', params.sessionId);
       socket.on('canvas-change-recieve', (change) => {
         console.log(change)
-        const collaborators = new Map();
-        collaborators.set("id1", {
-          username: "Asiya",
-          avatarUrl: tutor.Photo,
-        });
-        collaborators.set("id3", {
-          username: "Michael",
-          avatarUrl: student.Photo,
-        });
-        collaborators.set("id4", {
-          username: "Michael",
-          avatarUrl: student.Photo,
-        });
-        collaborators.set("id5", {
-          username: "Michael",
-          avatarUrl: tutor.Photo,
-        });
-        collaborators.set("id6", {
-          username: "Michael",
-          isCurrentUser: true,
-          isSpeaking: true,
-          socketId: "123",
-          avatarUrl: student.Photo,
-        });
-        console.log(change.collaborators)
-        excalidrawAPI.updateScene({ elements: change.elements, collaborators: collaborators });
+        // const collaborators = new Map();
+        // collaborators.set("id6", {
+        //   username: "Michael",
+        //   isCurrentUser: true,
+        //   isSpeaking: true,
+        //   socketId: "123",
+        //   avatarUrl: student.Photo,
+        // });
+        setElements([...elements, ...change.elements])
+        // setCollaborators([...collaborators, new Map(JSON.parse(change.collaborators))])
+        // excalidrawAPI.updateScene({ elements: change.elements, collaborators: new Map(JSON.parse(change.collaborators)) });
       });
     }
-  }, [params.sessionId, excalidrawAPI]);
+  }, [params.sessionId]);
+
+  useEffect(() => {
+    if (socket && excalidrawAPI) {
+      console.log(elements, collaborators, excalidrawAPI)
+      excalidrawAPI.updateScene({ elements })
+    }
+  }, [elements, collaborators, excalidrawAPI])
 
   const { upcomingSessionFromNow: tutorUpcomingFromNow,
     upcomingSession: tutorUpcoming,
     inMins: isTutorUpcomgLessonInMins, currentSession: tutorCurrentSession } = useSelector(state => state.tutorSessions)
   const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.studentSessions)
 
-  const handleExcalidrawChange = (elements, appState, files) => {
+  const handleExcalidrawChange = (newElements, appState, files) => {
     // console.log('ent', elements, appState, files)
-    params.sessionId && elements.length && user.role === 'tutor' &&
-      socket.emit('canvas-change', ({ elements, sessionId: params.sessionId, appState }));
+    // console.log('ent', params, elements.length, user.role)
+    // setElements([...elements, ...newElements])
+    params.sessionId && newElements.length && user.role === 'tutor' &&
+      socket.emit('canvas-change', ({
+        newElements,
+        sessionId: params.sessionId,
+        // collaborator: { userName: tutor.TutorScreenname, avatarUrl: tutor.Photo }
+      }));
+
+    // params.sessionId && newElements.length && user.role === 'student' &&
+    //   socket.emit('canvas-change', ({
+    //     sessionId: params.sessionId,
+    //     // newElements,
+    //     // collaborator: { userName: student.ScreenName, avatarUrl: student.Photo }
+    //   }));
   };
 
   const handlePointerDown = (activeTool,

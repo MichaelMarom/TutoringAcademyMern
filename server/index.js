@@ -102,13 +102,14 @@ io.on('connection', socket => {
     socket.on('join-session', (sessionId) => {
         socket.join(sessionId);
         console.log('User', socket.id, ' joined session ', sessionId, excalidraw_collaborators)
-        excalidraw_collaborators.set(socket.id, { sessionId });
+        // excalidraw_collaborators.set(socket.id, { sessionId });
     })
 
     // Handle changes from one user
     socket.on('canvas-change', (data) => {
         if (data) {
-            const { sessionId = '', elements = [], appState = {} } = data;
+            const { sessionId = '', elements = [], appState = {}, collaborator = {} } = data;
+            excalidraw_collaborators.set(socket.id, collaborator);
             console.log(excalidraw_collaborators, 112)
             sessionId.length && socket.to(sessionId).emit("canvas-change-recieve",
                 { elements, appState, collaborators: JSON.stringify([...excalidraw_collaborators]) });

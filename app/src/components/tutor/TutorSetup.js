@@ -103,6 +103,40 @@ const TutorSetup = () => {
   const { tutor, isLoading: tutorDataLoading } = useSelector(state => state.tutor)
   const { isLoading } = useSelector(state => state.video)
   const [nameFieldsDisabled, setNameFieldsDisabled] = useState(false);
+  let [isRecording, setIsRecording] = useState(false);
+
+  useEffect(() => {
+    setIsRecording(!isRecording)
+    let cnt = document.querySelector('#recordVideoCnt');
+
+    if (isRecording) {
+      navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      })
+        .then(stream => {
+          // console.log(stream)
+
+          cnt.addEventListener('loadedmetadata', () => {
+            alert('meta loaded')
+            cnt.srcObject = stream;
+            cnt.play()
+          })
+
+          // function addVideoStream(video, stream) {
+          //   // console.log(stream)
+
+          //   video.srcObject = stream
+          //   // video.addEventListener('loadedmetadata', () => {
+
+          //   //     video.play()
+          //   // })
+          // }
+
+        })
+        .catch(e => console.log(e));
+    }
+  }, [isRecording])
 
   useEffect(() => {
     if (convertToDate(tutor.EndVacation).getTime() < new Date().getTime() && tutor.VacationMode) {
@@ -146,6 +180,44 @@ const TutorSetup = () => {
   const handleOptionClick = (option) => {
     setUploadVideoClicked(true);
     setSelectedVideoOption(option);
+
+  }
+
+  async function handleVideoRecord(params) {
+    // const buttonStart = document.querySelector('#buttonStart')
+    // const buttonStop = document.querySelector('#buttonStop')
+    // const videoLive = document.querySelector('#videoLive')
+    const videoRecorderElem = document.querySelector('.setup-video-recorder')
+
+    const stream = await navigator.mediaDevices.getUserMedia({ // <1>
+      video: true,
+      audio: true,
+    })
+
+    videoRecorderElem.srcObject = stream
+
+    if (!MediaRecorder.isTypeSupported('video/webm')) { // <2>
+      console.warn('video/webm is not supported')
+    }
+
+    const mediaRecorder = new MediaRecorder(stream, { // <3>
+      mimeType: 'video/webm',
+    })
+
+    mediaRecorder.start() // <4>
+    // buttonStart.setAttribute('disabled', '')
+    // buttonStop.removeAttribute('disabled')
+
+    // buttonStop.addEventListener('click', () => {
+    //   mediaRecorder.stop() // <5>
+    //   buttonStart.removeAttribute('disabled')
+    //   buttonStop.setAttribute('disabled', '')
+    // })
+
+    mediaRecorder.addEventListener('dataavailable', event => {
+      videoRecorderElem.src = URL.createObjectURL(event.data) // <6>
+    })
+
   }
 
   let handleTutorGrade = (grade) => {
@@ -989,12 +1061,12 @@ const TutorSetup = () => {
               {isLoading && <Loading height="10px" iconSize="20px" loadingText="uploading video ..." />}
             </div>
             {selectedVideoOption === "record" ? (
-              <div className="w-100">
-                {/* <ProfileVideoRecord handleVideoBlob={handleVideoBlob} /> */}
+              <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >
+                <video id="recordVideoCnt" className="w-100 h-100 m-0 p-0" controls autoplay></video>
               </div>
             ) : selectedVideoOption === "upload" && video?.length ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >
-                <video src={video} className="w-100 h-100 m-0 p-0"
+                <video src={video} className="w-100 h-100 m-0 p-0 videoLive"
                   controls autoplay
                 />
               </div>
@@ -1043,6 +1115,7 @@ const TutorSetup = () => {
                       onClick={() => {
                         set_video("");
                         handleOptionClick("record");
+                        setIsRecording(!isRecording)
                       }}
                     >
                       <div className="button__content">

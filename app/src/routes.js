@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Route, Routes, useLocation, useNavigate, useRoutes } from "react-router-dom";
 import { isExpired, decodeToken } from 'react-jwt'
-
 import React from "react";
 
 import "./styles/Tab_Styles/LargeScreen.css";
@@ -197,10 +196,10 @@ const App = () => {
     }
     else { navigate('/login') }
   }, [])
-
+  
   return (
     <Routes>
-      <Route path="/collab/:sessionId" element={<TutorClass />} />
+      <Route path={`/collab/:sessinId`} element={<TutorClass />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/chat-call" element={<CallWithChatExperience />} />

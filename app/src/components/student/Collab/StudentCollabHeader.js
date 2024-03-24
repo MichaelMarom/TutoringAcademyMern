@@ -4,7 +4,7 @@ import del from '../../images/delete-svgrepo-com.svg';
 import { useLocation, useNavigate } from "react-router-dom";
 import StudentCollabTools from "./StudentCollabTools";
 import { useSelector } from "react-redux";
-import { getBookedSlot } from "../../axios/student";
+import { getBookedSlot } from "../../../axios/student";
 const StudentCollabHeader = () => {
 
     let location = useLocation();

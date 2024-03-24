@@ -7,7 +7,6 @@ const TutorCollabBoard = () => {
     return (
         <div className="TutorCollabBoard">
             <TutorAside />
-          
         </div>
     );
 }

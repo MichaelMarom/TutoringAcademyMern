@@ -108,11 +108,19 @@ io.on('connection', socket => {
     // Handle changes from one user
     socket.on('canvas-change', (data) => {
         if (data) {
-            const { sessionId = '', elements = [], appState = {}, collaborator = {} } = data;
-            excalidraw_collaborators.set(socket.id, collaborator);
+            const { sessionId = '', elements = [], appState = {}, collaborator = {}, files } = data;
+            excalidraw_collaborators.set(collaborator.AcademyId, collaborator);
             console.log(excalidraw_collaborators, 112)
             sessionId.length && socket.to(sessionId).emit("canvas-change-recieve",
-                { elements, appState, collaborators: JSON.stringify([...excalidraw_collaborators]) });
+                { elements, appState, collaborators: JSON.stringify([...excalidraw_collaborators]), files });
+        }
+    });
+    socket.on('activeTool', (data) => {
+        if (data) {
+            const { activeTool, sessionId } = data;
+            console.log(activeTool,121)
+            sessionId.length && socket.to(sessionId).emit("active-tool-change",
+                { activeTool });
         }
     });
 
@@ -146,9 +154,6 @@ io.on('connection', socket => {
     socket.on('offline', (id) => {
         io.emit("offline", id);
     })
-
-
-
 
     socket.on('canvas-start', (pX, pY, color, thickness, fill) => {
         socket.broadcast.emit('canvas-start', pX, pY, color, thickness, fill)

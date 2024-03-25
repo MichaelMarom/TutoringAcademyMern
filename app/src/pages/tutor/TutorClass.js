@@ -25,23 +25,27 @@ const TutorClass = () => {
   const { student } = useSelector(state => state.student)
   const { tutor } = useSelector(state => state.tutor)
   const [elements, setElements] = useState([]);
-  const [collaborators, setCollaborators] = useState([]);
+  const [collaborators, setCollaborators] = useState(new Map());
+  const [files, setFiles] = useState([])
 
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
+  
+  const { upcomingSessionFromNow: tutorUpcomingFromNow,
+    upcomingSession: tutorUpcoming,
+    inMins: isTutorUpcomgLessonInMins, currentSession: tutorCurrentSession } = useSelector(state => state.tutorSessions)
+  const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.studentSessions)
+
+  // useEffect(() => {
+  //   if (!excalidrawAPI) {
+  //     return;
+  //   }
+  // }, [excalidrawAPI]);
 
   useEffect(() => {
-    if (!excalidrawAPI) {
-      return;
-    }
-    // Fetch image and add it to Excalidraw
-  }, [excalidrawAPI]);
-
-  useEffect(() => {
-    if (socket) {
+    if (socket && excalidrawAPI) {
       params.sessionId && socket.emit('join-session', params.sessionId);
       socket.on('canvas-change-recieve', (change) => {
-        console.log(change)
         // const collaborators = new Map();
         // collaborators.set("id6", {
         //   username: "Michael",
@@ -51,33 +55,36 @@ const TutorClass = () => {
         //   avatarUrl: student.Photo,
         // });
         setElements([...elements, ...change.elements])
-        // setCollaborators([...collaborators, new Map(JSON.parse(change.collaborators))])
-        // excalidrawAPI.updateScene({ elements: change.elements, collaborators: new Map(JSON.parse(change.collaborators)) });
+        setCollaborators(new Map([...collaborators, ...JSON.parse(change.collaborators)]))
+        const allDetails = Object.values(change.files).map(entry => entry);
+
+        setFiles(allDetails)
       });
+      socket.on('active-tool-change', (change) => {
+        console.log(change)
+      })
     }
-  }, [params.sessionId]);
+  }, [params.sessionId, excalidrawAPI]);
 
   useEffect(() => {
-    if (socket && excalidrawAPI) {
-      console.log(elements, collaborators, excalidrawAPI)
-      excalidrawAPI.updateScene({ elements })
+    if (excalidrawAPI) {
+      excalidrawAPI.updateScene({ elements, collaborators })
     }
   }, [elements, collaborators, excalidrawAPI])
 
-  const { upcomingSessionFromNow: tutorUpcomingFromNow,
-    upcomingSession: tutorUpcoming,
-    inMins: isTutorUpcomgLessonInMins, currentSession: tutorCurrentSession } = useSelector(state => state.tutorSessions)
-  const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.studentSessions)
+  useEffect(() => {
+    excalidrawAPI && excalidrawAPI.addFiles(files)
+  }, [files])
 
   const handleExcalidrawChange = (newElements, appState, files) => {
-    // console.log('ent', elements, appState, files)
     // console.log('ent', params, elements.length, user.role)
     // setElements([...elements, ...newElements])
     params.sessionId && newElements.length && user.role === 'tutor' &&
       socket.emit('canvas-change', ({
-        newElements,
+        elements: newElements,
         sessionId: params.sessionId,
-        // collaborator: { userName: tutor.TutorScreenname, avatarUrl: tutor.Photo }
+        collaborator: { username: tutor.TutorScreenname, AcademyId: tutor.AcademyId },
+        files
       }));
 
     // params.sessionId && newElements.length && user.role === 'student' &&
@@ -97,7 +104,11 @@ const TutorClass = () => {
   const handlePointerUpEvent = (activeTool,
     pointerDownState,
     event) => {
-    // console.log(activeTool, pointerDownState, event)
+
+    socket.emit('activeTool', ({
+      sessionId: params.sessionId,
+      activeTool
+    }))
   }
 
   return (
@@ -112,11 +123,10 @@ const TutorClass = () => {
         <div style={{ position: 'fixed', inset: 0, top: 0, marginTop: "100px", width: "80%" }}>
           <Excalidraw
             excalidrawAPI={(api) => setExcalidrawAPI(api)}
-            isCollaborating={true}
+            isCollaborating={user.role === 'tutor'}
             onPointerDown={handlePointerDown}
             onPointerUpdate={handlePointerUpEvent}
-            // viewModeEnabled={true}   // Assuming you want to enable view mode
-            // zenModeEnabled={true}    // Assuming you want to enable Zen mode
+            viewModeEnabled={user.role !== 'tutor'}
             onChange={handleExcalidrawChange}
             name={currentSession.subject || 'testing'}
           />

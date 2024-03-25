@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import screenLarge from '../../../images/screen-full-svgrepo-com.svg';
 import screenNormal from '../../../images/screen-normal-svgrepo-com.svg'
 import muteSvg from '../../../images/mute-svgrepo-com.svg'
@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { FaCamera, FaMicrophone } from 'react-icons/fa';
-import { RiCameraOffFill } from "react-icons/ri";
+import { RiCameraOffFill, RiContactsBookLine } from "react-icons/ri";
 import { PiMicrophoneSlashFill } from "react-icons/pi";
 
 const TutorAside = () => {
@@ -34,11 +34,22 @@ const TutorAside = () => {
     let [peerId, setPeerId] = useState('')
     let [videoLoader, setVideoLoader] = useState('');
     let [screenType, setScreenType] = useState(screenLarge);
-
+    const chatContainer = useRef(null);
     let [visuals, setVisuals] = useState(true)
     const [audioEnabled, setAudioEnabled] = useState(true)
     const [videoEnabled, setVideoEnabled] = useState(true)
     const { tutor } = useSelector(state => state.tutor);
+    const { user } = useSelector(state => state.user)
+
+    const scrollToBottom = () => {
+        if (chatContainer.current) {
+            chatContainer.current.scrollTop = chatContainer.current.scrollHeight;
+        }
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     useEffect(() => {
         if (socket) {
@@ -59,12 +70,12 @@ const TutorAside = () => {
 
 
     useEffect(() => {
-        arrivalMsg && arrivalMsg.sessionId === params.id && setMessages((prev) => [...prev, { ...arrivalMsg }]);
+        arrivalMsg && arrivalMsg.sessionId === params.sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
     }, [arrivalMsg, params]);
 
     useEffect(() => {
         // if (loggedInUserDetail.AcademyId && selectedChat.id) {
-        params.id && tutor.AcademyId && socket.emit("session-add-user", params.id);
+        params.sessionId && tutor.AcademyId && socket.emit("session-add-user", params.sessionId);
         // }
 
     }, [tutor, params]);
@@ -74,10 +85,12 @@ const TutorAside = () => {
         setMssg('')
         if (text.trim() !== '') {
             const newMessage = {
-                sessionId: params.id,
+                sessionId: params.sessionId,
                 userId: tutor.AcademyId || student.AcademyId,
                 date: new Date(),
                 text,
+                name: tutor.TutorScreenname || student.ScreenName,
+                isStudent: user.role === 'student'
             }
             setMessages([...messages, newMessage]);
             // const body = {
@@ -92,7 +105,7 @@ const TutorAside = () => {
             socket.emit("session-send-msg", newMessage);
         }
     }
-
+    console.log(messages)
     let handleVideoResize = e => {
         let element = document.querySelector('.TutorAsideVideoCnt');
         if (element.hasAttribute('id')) {
@@ -283,11 +296,36 @@ const TutorAside = () => {
             </div>
 
             <div className="TutorAsideChatCnt" style={{ background: 'rgb(225 238 242)', height: "100%" }}>
-                <div className="TutorAsideChatBox" style={{ background: 'rgb(225 238 242)' }}>
-
-                    {messages.map(msg => <div className="TutorMessageCnt">
-                        <div className='TutorMessageCntContent' style={{ padding: "4px" }}>
-                            {msg.text}
+                <div className="TutorAsideChatBox" ref={chatContainer} style={{ background: 'rgb(225 238 242)' }}>
+                    {messages.map(msg => <div className="" style={{
+                        width: "100%",
+                        height: "fit-content",
+                        display: "flex",
+                        justifyContent: "right",
+                        position: "relative",
+                        margin: "0 0 8px 0",
+                    }}>
+                        <div className='d-flex flex-column' style={{
+                            maxWidth: "80%",
+                            textAlign: "left",
+                            padding: "10px 15px",
+                            float: "right",
+                            position: "relative",
+                            borderTopLeftRadius: "15px",
+                            borderTopRightRadius: "15px",
+                            borderBottomRightRadius: "1.15px",
+                            borderBottomLeftRadius: "15px",
+                            backgroundColor: msg.isStudent ? "green" : "#0062ff",
+                            color: "#fff",
+                            padding: "4px",
+                            // height: "200px"
+                        }}>
+                            <div style={{ fontSize: "13px", color: "lightgray" }}>
+                                {/* {msg.name} */}
+                            </div>
+                            <div>
+                                {msg.text}
+                            </div>
                         </div>
                     </div>)
                     }

@@ -30,7 +30,7 @@ const Header = () => {
         { name: 'Terms Of Use', url: '/student/term-of-use' },
         { name: 'Message Board', url: '/student/chat' },
         { name: 'Market place', url: '/student/market-place' },
-        { name: 'Collaboration', url: '/collab/student' },
+        { name: 'Collaboration', url: '/collab/123321' },
         { name: 'Profile', url: '/student/profile' },
     ];
 

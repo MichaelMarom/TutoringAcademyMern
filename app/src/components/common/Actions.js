@@ -36,55 +36,54 @@ const Actions = ({
     const isStudentSide = currentUser === 'student'
 
     const tutorTabsNavigationInfo = [
-        { next: "setup", current: "intro", back: null },
-        { next: "education", current: "setup", back: "intro" },
-        { next: "rates", current: "education", back: "setup" },
-        { next: "accounting", current: "rates", back: "education" },
-        { next: "subjects", current: "accounting", back: "rates" },
-        
-        { next: "scheduling", current: "subjects", back: "accounting" },
-        { next: "feedback", current: "scheduling", back: "subjects" },
-        { next: "my-students", current: "feedback", back: "scheduling" },
-        { next: "term-of-use", current: "my-students", back: "feedback" },
-        { next: "chat", current: "term-of-use", back: "my-students" },
-        { next: "market-place", current: "chat", back: "term-of-use" },
-        { next: "collaboration", current: "market-place", back: "chat" },
-        { next: `tutor-profile/${tutor.AcademyId}`, current: "collaboration", back: "market-place" },
-        { next: null, current: `tutor-profile`, back: "collaboration" },
+        { next: "setup", current: "intro", back: null, withRole: true },
+        { next: "education", current: "setup", back: "intro", withRole: true },
+        { next: "rates", current: "education", back: "setup", withRole: true },
+        { next: "accounting", current: "rates", back: "education", withRole: true },
+        { next: "subjects", current: "accounting", back: "rates", withRole: true },
+
+        { next: "scheduling", current: "subjects", back: "accounting", withRole: true },
+        { next: "feedback", current: "scheduling", back: "subjects", withRole: true },
+        { next: "my-students", current: "feedback", back: "scheduling", withRole: true },
+        { next: "term-of-use", current: "my-students", back: "feedback", withRole: true },
+        { next: "chat", current: "term-of-use", back: "my-students", withRole: true },
+        { next: "market-place", current: "chat", back: "term-of-use", withRole: true },
+        { next: "/collab/123321", current: "market-place", back: "chat", withRole: false },
+        { next: `tutor-profile/${tutor.AcademyId}`, current: "/collab/123321", back: "market-place", withRole: true },
+        { next: null, current: `tutor-profile`, back: "/collab/123321", withRole: true },
     ]
 
     const studentTabsNavigationInfo = [
-        { next: "setup", current: "intro", back: null },
-        { next: "faculties", current: "setup", back: "intro" },
-        { next: "short-list", current: "faculties", back: "setup" },
-        { next: "accounting", current: "short-list", back: "faculties" },
-        { next: "feedback", current: "accounting", back: "short-list" },
-        { next: "calender", current: "feedback", back: "accounting" },
-        { next: "term-of-use", current: "calender", back: "feedback" },
-        { next: "chat", current: "term-of-use", back: "calender" },
-        { next: "market-place", current: "chat", back: "term-of-use" },
-        { next: "collaboration", current: "market-place", back: "chat" },
-        { next: `profile`, current: "collaboration", back: "market-place" },
-        { next: null, current: "profile", back: "collaboration" },
-        { next: null, current: `tutor-profile`, back: null },
+        { next: "setup", current: "intro", back: null, withRole: true },
+        { next: "faculties", current: "setup", back: "intro", withRole: true },
+        { next: "short-list", current: "faculties", back: "setup", withRole: true },
+        { next: "accounting", current: "short-list", back: "faculties", withRole: true },
+        { next: "feedback", current: "accounting", back: "short-list", withRole: true },
+        { next: "calender", current: "feedback", back: "accounting", withRole: true },
+        { next: "term-of-use", current: "calender", back: "feedback", withRole: true },
+        { next: "chat", current: "term-of-use", back: "calender", withRole: true },
+        { next: "market-place", current: "chat", back: "term-of-use", withRole: true },
+        { next: "/collab/123321", current: "market-place", back: "chat", withRole: true },
+        { next: `profile`, current: "/collab/123321", back: "market-place", withRole: false },
+        { next: null, current: "profile", back: "/collab/123321", withRole: true },
+        { next: null, current: `tutor-profile`, back: null, withRole: true },
     ]
 
-    const currentTabInfo = (isStudentSide ? studentTabsNavigationInfo : tutorTabsNavigationInfo).find(tab => tab.current === currentTab)
+    const currentTabInfo = (isStudentSide ? studentTabsNavigationInfo : tutorTabsNavigationInfo).
+        find(tab => tab.current === currentTab)
 
     const isNextTabExist = currentTabInfo.next;
     const isBackTabExist = currentTabInfo.back;
 
     const onNext = () => {
-        navigate(`/${currentUser}/${currentTabInfo.next}`)
+        currentTabInfo.withRole ? navigate(`/${currentUser}/${currentTabInfo.next}`) :
+            navigate(`${currentTabInfo.next}`)
     }
 
     const onBack = () => {
-        navigate(`/${currentUser}/${currentTabInfo.back}`)
+        currentTabInfo.withRole ? navigate(`/${currentUser}/${currentTabInfo.back}`) :
+            navigate(`${currentTabInfo.back}`)
     }
-
-    console.log((!saveDisabled, (unSavedChanges, loading))
-        , !isNextTabExist, nextDisabled,
-        currentTab === STEPS[tutor.Step], !isStudentSide)
 
     return (
         <div style={actionsStyle}>

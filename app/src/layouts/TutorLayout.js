@@ -18,8 +18,6 @@ const TutorLayout = ({ children}) => {
         { name: 'Subject', url: "/tutor/subject", step: 4 },
     ];
 
-    console.log(upcomingSession)
-
     if(user.role !== 'admin' && (tutor.Status=== 'closed' || tutor.Status ==='disapproved'))
     return <div className='text-danger'>Your Account is Closed or Suspended. Please contact adminitrator.</div>
     if (user.role === 'admin' && !localStorage.getItem('tutor_user_id'))

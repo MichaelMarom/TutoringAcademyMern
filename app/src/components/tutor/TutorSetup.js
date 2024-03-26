@@ -78,7 +78,7 @@ const TutorSetup = () => {
     { grade: "12th grade" },
     { grade: "Academic" },
   ]
-  
+
   let [tutorGrades, setTutorGrades] = useState([]);
   const isValid = isPhoneValid(cell);
   const { user } = useSelector((state) => state.user);
@@ -106,38 +106,36 @@ const TutorSetup = () => {
   const [nameFieldsDisabled, setNameFieldsDisabled] = useState(false);
   let [isRecording, setIsRecording] = useState(false);
 
-  useEffect(() => {
-    setIsRecording(!isRecording)
-    let cnt = document.querySelector('#recordVideoCnt');
+  // useEffect(() => {
+  //   setIsRecording(!isRecording)
+  //   let cnt = document.querySelector('#recordVideoCnt');
 
-    if (isRecording) {
-      navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      })
-        .then(stream => {
-          // console.log(stream)
+  //   if (isRecording) {
+  //     navigator.mediaDevices.getUserMedia({
+  //       video: true,
+  //       audio: true
+  //     })
+  //       .then(stream => {
+  //         cnt.addEventListener('loadedmetadata', () => {
+  //           alert('meta loaded')
+  //           cnt.srcObject = stream;
+  //           cnt.play()
+  //         })
 
-          cnt.addEventListener('loadedmetadata', () => {
-            alert('meta loaded')
-            cnt.srcObject = stream;
-            cnt.play()
-          })
+  //         // function addVideoStream(video, stream) {
+  //         //   // console.log(stream)
 
-          // function addVideoStream(video, stream) {
-          //   // console.log(stream)
+  //         //   video.srcObject = stream
+  //         //   // video.addEventListener('loadedmetadata', () => {
 
-          //   video.srcObject = stream
-          //   // video.addEventListener('loadedmetadata', () => {
+  //         //   //     video.play()
+  //         //   // })
+  //         // }
 
-          //   //     video.play()
-          //   // })
-          // }
-
-        })
-        .catch(e => console.log(e));
-    }
-  }, [isRecording])
+  //       })
+  //       .catch(e => console.log(e));
+  //   }
+  // }, [isRecording])
 
   useEffect(() => {
     if (convertToDate(tutor.EndVacation).getTime() < new Date().getTime() && tutor.VacationMode) {
@@ -291,7 +289,6 @@ const TutorSetup = () => {
         set_video(data.Video);
         setRecordedVideo(data.VideoRecorded)
         setSelectedVideoOption("upload");
-        console.log(data.VacationMode)
         set_vacation_mode(data.VacationMode)
         setStart(data.StartVacation)
         setEnd(data.EndVacation)
@@ -304,7 +301,6 @@ const TutorSetup = () => {
   // comparing db and local
   useEffect(() => {
     let newTutor;
-    console.log(tutorGrades)
     if (!tutor.AcademyId) {
       newTutor = {
         FirstName: '',
@@ -594,35 +590,6 @@ const TutorSetup = () => {
       reader.readAsArrayBuffer(blobObj);
     }
   };
-
-  useEffect(() => {
-    console.log(recordedVideo, "record Video");
-  }, [recordedVideo]);
-
-
-  const formatUTC = (dateInt, addOffset = false, startDate = false) => {
-    let date = (!dateInt || dateInt.length < 1) ? new Date : new Date(dateInt);
-    const currentDate = new Date();
-    if (date < currentDate) {
-      return null; // You can also throw an error here if you prefer
-    }
-    if (typeof dateInt === "string") {
-      return date;
-    } else {
-      if (startDate) {
-        date.setHours(0)
-        date.setMinutes(0)
-      }
-      else {
-        date.setHours(23)
-        date.setMinutes(59)
-      }
-      console.log(date, moment(date).tz(), date.getHours(), date.getDate(), date.getFullYear(), date.getMonth() + 1)
-      console.log(date.getHours())
-      return date;
-    }
-  }
-  console.log(start, end)
 
   useEffect(() => {
     if (vacation_mode) {
@@ -1063,12 +1030,12 @@ const TutorSetup = () => {
             </div>
             {selectedVideoOption === "record" ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >
-                <video id="recordVideoCnt" className="w-100 h-100 m-0 p-0" controls autoplay></video>
+                <video id="recordVideoCnt" className="w-100 h-100 m-0 p-0" controls autoPlay={false}></video>
               </div>
             ) : selectedVideoOption === "upload" && video?.length ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >
                 <video src={video} className="w-100 h-100 m-0 p-0 videoLive"
-                  controls autoplay
+                  controls autoPlay={false}
                 />
               </div>
             ) :
@@ -1254,7 +1221,7 @@ const TutorSetup = () => {
                         const originalMoment = moment.tz(date, tutor.timeZone).startOf('day');
                         const utcMomentStartDate = originalMoment.clone();
                         // utcMomentStartDate.utc()
-                        console.log(originalMoment.get('hour'), utcMomentStartDate.get('hour'), originalMoment.get('date'), date.getDate(), date.getHours())
+                        // console.log(originalMoment.get('hour'), utcMomentStartDate.get('hour'), originalMoment.get('date'), date.getDate(), date.getHours())
                         setStart(utcMomentStartDate)
                       }}
                       minDate={new Date()}

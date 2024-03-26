@@ -77,7 +77,6 @@ const rolePermissions = {
 
   ],
   student: [
-    { path: "/student/collaboration", component: <StudentClass /> },
     { path: "/student/", component: <StudentSetup /> },
     { path: "/student/intro", component: <StudentIntro /> },
     { path: "/student/setup", component: <StudentSetup /> },

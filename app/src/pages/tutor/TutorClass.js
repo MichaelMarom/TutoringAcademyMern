@@ -1,4 +1,3 @@
-import TutorCollabBoard from "../../components/tutor/Collab/TutorCollabBoard";
 import TutorCollabFooter from "../../components/tutor/Collab/TutorCollabFooter";
 import TutorCollabHeader from "../../components/tutor/Collab/TutorCollabHeader";
 import TutorLayout from "../../layouts/TutorLayout";
@@ -16,6 +15,12 @@ import { useEffect, useRef, useState } from "react";
 import { constants } from "buffer";
 import { useParams } from "react-router-dom";
 import { RiContactsBookLine } from "react-icons/ri";
+import TutorAside from "../../components/tutor/Collab/TutorCollabAside";
+import { BiChat } from "react-icons/bi";
+import Switch from '../../components/common/Switch'
+import { MdCancel } from "react-icons/md";
+import Tooltip from "../../components/common/ToolTip";
+import _ from "lodash";
 
 const TutorClass = () => {
   const { user } = useSelector(state => state.user)
@@ -27,10 +32,14 @@ const TutorClass = () => {
   const [elements, setElements] = useState([]);
   const [collaborators, setCollaborators] = useState(new Map());
   const [files, setFiles] = useState([])
+  const [isChatOpen, setIsChatOpen] = useState(false)
+
 
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
-  
+  const [isChecked, setIsChecked] = useState(false);
+
+
   const { upcomingSessionFromNow: tutorUpcomingFromNow,
     upcomingSession: tutorUpcoming,
     inMins: isTutorUpcomgLessonInMins, currentSession: tutorCurrentSession } = useSelector(state => state.tutorSessions)
@@ -54,14 +63,16 @@ const TutorClass = () => {
         //   socketId: "123",
         //   avatarUrl: student.Photo,
         // });
-        setElements([...elements, ...change.elements])
+        const mergedArray = _.uniqBy(excalidrawAPI.getSceneElements().concat(change.elements), 'id');
+        console.log(mergedArray)
+        setElements(mergedArray)
         setCollaborators(new Map([...collaborators, ...JSON.parse(change.collaborators)]))
         const allDetails = Object.values(change.files).map(entry => entry);
 
         setFiles(allDetails)
       });
       socket.on('active-tool-change', (change) => {
-        console.log(change)
+        // console.log(change)
       })
     }
   }, [params.sessionId, excalidrawAPI]);
@@ -79,20 +90,21 @@ const TutorClass = () => {
   const handleExcalidrawChange = (newElements, appState, files) => {
     // console.log('ent', params, elements.length, user.role)
     // setElements([...elements, ...newElements])
-    params.sessionId && newElements.length && user.role === 'tutor' &&
-      socket.emit('canvas-change', ({
-        elements: newElements,
-        sessionId: params.sessionId,
-        collaborator: { username: tutor.TutorScreenname, AcademyId: tutor.AcademyId },
-        files
-      }));
+    // params.sessionId && newElements.length && user.role === 'tutor' &&
+    socket.emit('canvas-change', ({
+      elements: _.uniqBy(excalidrawAPI.getSceneElements().concat(newElements), 'id'),
+      sessionId: params.sessionId,
+      // collaborator: { username: tutor.TutorScreenname, AcademyId: tutor.AcademyId },
+      files
+    }));
 
     // params.sessionId && newElements.length && user.role === 'student' &&
-    //   socket.emit('canvas-change', ({
-    //     sessionId: params.sessionId,
-    //     // newElements,
-    //     // collaborator: { userName: student.ScreenName, avatarUrl: student.Photo }
-    //   }));
+    // socket.emit('canvas-change', ({
+    //   sessionId: params.sessionId,
+    //   elements: _.uniqBy(excalidrawAPI.getSceneElements().concat(newElements), 'id'),
+    //   // collaborator: { username: student.ScreenName, AcademyId: student.AcademyId },
+    //   files
+    // }));
   };
 
   const handlePointerDown = (activeTool,
@@ -119,6 +131,7 @@ const TutorClass = () => {
       </div> :
         <h4 className="text-center text-success m-0"> No Current Session!</h4>
       }
+
       <div className="d-flex" style={{ gap: "2%" }}>
         <div style={{ position: 'fixed', inset: 0, top: 0, marginTop: "100px", width: "80%" }}>
           <Excalidraw
@@ -126,16 +139,27 @@ const TutorClass = () => {
             isCollaborating={user.role === 'tutor'}
             onPointerDown={handlePointerDown}
             onPointerUpdate={handlePointerUpEvent}
-            viewModeEnabled={user.role !== 'tutor'}
+            // viewModeEnabled={user.role !== 'tutor'}
             onChange={handleExcalidrawChange}
             name={currentSession.subject || 'testing'}
           />
         </div>
 
-        <div className="bg-light rounded" style={{ width: "28%" }}>
-          <TutorCollabBoard />
-        </div>
-      </div >
+        {<div className="bg-light rounded shadow-lg"
+          style={{ width: "20%", position: "fixed", right: 0 }}>
+          {/* <div onClick={() => setIsChatOpen(false)} className="cursor-pointer"> <MdCancel size={24} /> </div> */}
+          <TutorAside />
+          <div className="d-flex align-items-center justify-content-center" >
+            <Tooltip text={"swicth text goes here"} iconSize="25" />
+            <Switch isChecked={isChecked} setIsChecked={setIsChecked} authorized={user.role === 'tutor'} />
+          </div>
+        </div>}
+        {/* <div style={{ position: "fixed", bottom: "10%", right: "3%" }}>
+          <div onClick={() => setIsChatOpen(!isChatOpen)}>
+            <BiChat size={32} />
+          </div>
+        </div> */}
+      </div>
     </CommonLayout>
   );
 };

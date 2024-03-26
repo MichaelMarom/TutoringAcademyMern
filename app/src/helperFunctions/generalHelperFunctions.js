@@ -41,7 +41,6 @@ export const convertTutorIdToName = (academyId) => {
 
 function isArrayStringEqual(array, strArray) {
   try {
-    console.log(array, strArray)
     const parsedArray = JSON.parse(strArray);
 
     return JSON.stringify(array.sort()) === JSON.stringify(parsedArray.sort());
@@ -94,7 +93,7 @@ export function getFileExtension(filename) {
  * @returns Boolean - if dbValues = localValues
  */
 export const compareStates = (dbState, currentState) => {
-  console.log(dbState, currentState)
+  // console.log(dbState, currentState)
   if (!(Object.keys(dbState).length)) return false;
 
   for (const key in currentState) {

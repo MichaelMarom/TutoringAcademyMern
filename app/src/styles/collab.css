@@ -544,7 +544,6 @@
         width: 100%;
         background-color: #000;
         position: relative;
-
     }
 
     .TutorAsideVideoCnt video {
@@ -576,7 +575,6 @@
     }
 
     .TutorAsideChatCnt {
-        height: 70%;
         position: relative;
         width: 100%;
     }

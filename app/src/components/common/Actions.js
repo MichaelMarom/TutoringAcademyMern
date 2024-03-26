@@ -48,8 +48,8 @@ const Actions = ({
         { next: "term-of-use", current: "my-students", back: "feedback", withRole: true },
         { next: "chat", current: "term-of-use", back: "my-students", withRole: true },
         { next: "market-place", current: "chat", back: "term-of-use", withRole: true },
-        { next: "/collab/123321", current: "market-place", back: "chat", withRole: false },
-        { next: `tutor-profile/${tutor.AcademyId}`, current: "/collab/123321", back: "market-place", withRole: true },
+        { next: "/collab/123321", current: "market-place", back: "chat", withRole: true },
+        { next: `tutor-profile/${tutor.AcademyId}`, current: "/collab/123321", back: "market-place", withRole: false },
         { next: null, current: `tutor-profile`, back: "/collab/123321", withRole: true },
     ]
 
@@ -71,17 +71,24 @@ const Actions = ({
 
     const currentTabInfo = (isStudentSide ? studentTabsNavigationInfo : tutorTabsNavigationInfo).
         find(tab => tab.current === currentTab)
+    const nextTabInfo = (isStudentSide ? studentTabsNavigationInfo : tutorTabsNavigationInfo).
+        find(tab => {
+            return tab.back === currentTab
+        })
+    const backTabInfo = (isStudentSide ? studentTabsNavigationInfo : tutorTabsNavigationInfo).
+        find(tab => tab.next === currentTab)
 
     const isNextTabExist = currentTabInfo.next;
     const isBackTabExist = currentTabInfo.back;
 
     const onNext = () => {
-        currentTabInfo.withRole ? navigate(`/${currentUser}/${currentTabInfo.next}`) :
+        console.log(currentTabInfo, currentTab, currentUser, nextTabInfo, backTabInfo, `/${currentUser}/${currentTabInfo.next}`)
+        nextTabInfo.withRole ? navigate(`/${currentUser}/${currentTabInfo.next}`) :
             navigate(`${currentTabInfo.next}`)
     }
 
     const onBack = () => {
-        currentTabInfo.withRole ? navigate(`/${currentUser}/${currentTabInfo.back}`) :
+        backTabInfo.withRole ? navigate(`/${currentUser}/${currentTabInfo.back}`) :
             navigate(`${currentTabInfo.back}`)
     }
 

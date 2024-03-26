@@ -110,7 +110,7 @@ io.on('connection', socket => {
         if (data) {
             const { sessionId = '', elements = [], appState = {}, collaborator = {}, files } = data;
             excalidraw_collaborators.set(collaborator.AcademyId, collaborator);
-            console.log(excalidraw_collaborators, 112)
+            console.log(elements.map(elem => elem.id), 112)
             sessionId.length && socket.to(sessionId).emit("canvas-change-recieve",
                 { elements, appState, collaborators: JSON.stringify([...excalidraw_collaborators]), files });
         }
@@ -118,7 +118,6 @@ io.on('connection', socket => {
     socket.on('activeTool', (data) => {
         if (data) {
             const { activeTool, sessionId } = data;
-            console.log(activeTool,121)
             sessionId.length && socket.to(sessionId).emit("active-tool-change",
                 { activeTool });
         }

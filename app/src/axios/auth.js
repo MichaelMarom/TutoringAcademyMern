@@ -28,7 +28,6 @@ export const login = async (data) => {
 
 export const get_user_detail = async (userId, token) => {
     try {
-        console.log(token, userId)
         const { data } = await apiClient.get(`/user/${userId}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('access_token')}`

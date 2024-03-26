@@ -36,7 +36,7 @@ const SmallSideBar = ({ message = '', inMins }) => {
                     }}
                 >
                     <div style={{ display: 'flex', marginTop: '20px' }}>
-                        <div className=' border p-2 rounded bg-dark m-1'
+                        <div className=' border p-2 rounded bg-dark m-0 cursor-pointer'
                             style={{ width: '50px', height: "50px" }}
                             onClick={toggleSidebar}
                         >

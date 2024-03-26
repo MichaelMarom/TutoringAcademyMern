@@ -14,6 +14,7 @@ import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { FaCamera, FaMicrophone } from 'react-icons/fa';
 import { RiCameraOffFill, RiContactsBookLine } from "react-icons/ri";
 import { PiMicrophoneSlashFill } from "react-icons/pi";
+import { BiChat } from 'react-icons/bi';
 
 const TutorAside = () => {
     const navigate = useNavigate();
@@ -68,7 +69,6 @@ const TutorAside = () => {
         }
     }, [currentSession.end]);
 
-
     useEffect(() => {
         arrivalMsg && arrivalMsg.sessionId === params.sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
     }, [arrivalMsg, params]);
@@ -105,7 +105,7 @@ const TutorAside = () => {
             socket.emit("session-send-msg", newMessage);
         }
     }
-    console.log(messages)
+
     let handleVideoResize = e => {
         let element = document.querySelector('.TutorAsideVideoCnt');
         if (element.hasAttribute('id')) {
@@ -232,8 +232,7 @@ const TutorAside = () => {
     }
 
     return (
-        <div className="TutorAside shadow-sm" style={{ top: "37%", width: "16rem" }}>
-
+        <div className="shadow-sm" style={{ width: "100%", height: "78vh" }}>
             {currentSession.subject ?
                 <div className='text-center countdown'>
                     <CountdownCircleTimer
@@ -274,6 +273,7 @@ const TutorAside = () => {
                 </div>
             }
 
+
             <div className="TutorAsideVideoCnt">
                 {videoLoader}
                 <video className='tutor-video-tab'>
@@ -295,7 +295,7 @@ const TutorAside = () => {
                 </ul>
             </div>
 
-            <div className="TutorAsideChatCnt" style={{ background: 'rgb(225 238 242)', height: "100%" }}>
+            <div className="TutorAsideChatCnt" style={{ background: 'rgb(225 238 242)', height: "53%" }}>
                 <div className="TutorAsideChatBox" ref={chatContainer} style={{ background: 'rgb(225 238 242)' }}>
                     {messages.map(msg => <div className="" style={{
                         width: "100%",
@@ -327,9 +327,7 @@ const TutorAside = () => {
                                 {msg.text}
                             </div>
                         </div>
-                    </div>)
-                    }
-
+                    </div>)}
                 </div>
                 <div className="TutorAsideChatControl" style={{ background: 'rgb(225 238 242)' }}>
                     <span style={{ width: '80%', height: '80%', float: 'left', background: '#fff' }}>
@@ -339,8 +337,14 @@ const TutorAside = () => {
                                 width: '100%', borderRadius: '5px', border: 'none', display: 'flex',
                                 alignItems: 'center', background: '#f9f9f9', height: '40px', padding: '10px 5px 5px 5px', fontFamily: 'serif', fontSize: 'medium', outline: 'none', resize: 'none'
                             }} onInput={e => setMssg(e.target.value)} value={mssg}
-                            placeholder='Type Your Message Here'></textarea>
+                            placeholder='Type Your Message Here'
 
+                            onKeyDown={e => {
+                                if (e.key === 'Enter' && !e.shiftKey) { // Check if Enter key was pressed without Shift
+                                    e.preventDefault(); // Prevent default behavior (new line)
+                                    sendMessage(); // Call sendMessage function
+                                }
+                            }}></textarea>
                     </span>
                     <span style={{ width: '20%', height: '70%', float: 'right', background: '#fff' }}>
                         <button className="btn btn-success p-0 m-0"
@@ -350,7 +354,6 @@ const TutorAside = () => {
                     </span>
                 </div>
             </div>
-
         </div >
     );
 }

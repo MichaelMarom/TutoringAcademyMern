@@ -993,7 +993,6 @@ export const CAN_STATES = [
   "MAN",
   "NB",
   "NFD",
-  "NFD",
   "NS",
   "NU",
   "NWT",
@@ -1002,7 +1001,6 @@ export const CAN_STATES = [
   "QUE",
   "SAS",
   "YT",
-
 ]
 
 export const COMMISSION_DATA = [

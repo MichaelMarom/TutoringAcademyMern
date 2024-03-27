@@ -21,6 +21,7 @@ import Switch from '../../components/common/Switch'
 import { MdCancel } from "react-icons/md";
 import Tooltip from "../../components/common/ToolTip";
 import _ from "lodash";
+import { toast } from "react-toastify";
 
 const TutorClass = () => {
   const { user } = useSelector(state => state.user)
@@ -38,7 +39,9 @@ const TutorClass = () => {
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
   const [isChecked, setIsChecked] = useState(false);
+  const [hasAuth, setAuth] = useState(false)
 
+  useEffect(() => { setAuth(user.role === 'tutor') }, [user])
 
   const { upcomingSessionFromNow: tutorUpcomingFromNow,
     upcomingSession: tutorUpcoming,
@@ -50,6 +53,12 @@ const TutorClass = () => {
   //     return;
   //   }
   // }, [excalidrawAPI]);
+
+  function getUniqueIdsWithHigherVersion(arr) {
+    const groupedById = _.groupBy(arr, 'id');
+    const uniqueIdsWithHigherVersion = _.map(groupedById, group => _.maxBy(group, 'version'));
+    return uniqueIdsWithHigherVersion;
+  }
 
   useEffect(() => {
     if (socket && excalidrawAPI) {
@@ -63,8 +72,8 @@ const TutorClass = () => {
         //   socketId: "123",
         //   avatarUrl: student.Photo,
         // });
-        const mergedArray = _.uniqBy(excalidrawAPI.getSceneElements().concat(change.elements), 'id');
-        console.log(mergedArray)
+        const mergedArray = getUniqueIdsWithHigherVersion(excalidrawAPI.getSceneElements().concat(change.elements), 'id');
+        // console.log(mergedArray)
         setElements(mergedArray)
         setCollaborators(new Map([...collaborators, ...JSON.parse(change.collaborators)]))
         const allDetails = Object.values(change.files).map(entry => entry);
@@ -74,29 +83,38 @@ const TutorClass = () => {
       socket.on('active-tool-change', (change) => {
         // console.log(change)
       })
+      socket.on('recieve-authorization', (data) => {
+        if (user.role !== 'tutor') {
+          (data.hasAuthorization) ?
+          toast.success('Tutor has given you access to access the canvas tools.') :
+          toast.warning('Tutor has removed your access to the canvas tools!');
+
+          setAuth(data.hasAuthorization)
+        }
+      })
     }
   }, [params.sessionId, excalidrawAPI]);
 
   useEffect(() => {
     if (excalidrawAPI) {
-      excalidrawAPI.updateScene({ elements, collaborators })
+      excalidrawAPI.updateScene({ elements })
     }
   }, [elements, collaborators, excalidrawAPI])
 
   useEffect(() => {
-    excalidrawAPI && excalidrawAPI.addFiles(files)
+    // excalidrawAPI && excalidrawAPI.addFiles(files)
   }, [files])
 
   const handleExcalidrawChange = (newElements, appState, files) => {
     // console.log('ent', params, elements.length, user.role)
     // setElements([...elements, ...newElements])
-    // params.sessionId && newElements.length && user.role === 'tutor' &&
-    socket.emit('canvas-change', ({
-      elements: _.uniqBy(excalidrawAPI.getSceneElements().concat(newElements), 'id'),
-      sessionId: params.sessionId,
-      // collaborator: { username: tutor.TutorScreenname, AcademyId: tutor.AcademyId },
-      files
-    }));
+    params.sessionId && newElements.length &&
+      socket.emit('canvas-change', ({
+        elements: getUniqueIdsWithHigherVersion(excalidrawAPI.getSceneElements().concat(newElements), 'id'),
+        sessionId: params.sessionId,
+        // collaborator: { username: tutor.TutorScreenname, AcademyId: tutor.AcademyId },
+        files
+      }));
 
     // params.sessionId && newElements.length && user.role === 'student' &&
     // socket.emit('canvas-change', ({
@@ -123,6 +141,16 @@ const TutorClass = () => {
     }))
   }
 
+  useEffect(() => {
+    if (socket && params.sessionId) {
+      socket.emit('authorize-student', ({
+        userId: student?.AcademyId,
+        sessionId: params.sessionId,
+        hasAuthorization: isChecked
+      }))
+    }
+  }, [isChecked, params])
+
   return (
     <CommonLayout role={user.role}>
       {currentSession.subject ? <div style={{ width: "70%" }} className={`d-flex ${currentSession.subject ? "justify-content-between" : "justify-content-center"}`} >
@@ -139,7 +167,7 @@ const TutorClass = () => {
             isCollaborating={user.role === 'tutor'}
             onPointerDown={handlePointerDown}
             onPointerUpdate={handlePointerUpEvent}
-            // viewModeEnabled={user.role !== 'tutor'}
+            viewModeEnabled={!hasAuth}
             onChange={handleExcalidrawChange}
             name={currentSession.subject || 'testing'}
           />

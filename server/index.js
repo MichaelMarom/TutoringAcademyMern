@@ -13,7 +13,6 @@ const CHAT_ROUTES = require('./routes/chat')
 var { PeerServer } = require("peer");
 var myPeerServer = PeerServer({ port: 8080 });
 
-
 const app = express();
 app.use(cors({ origin: '*' }))
 app.use(morgan('tiny'));
@@ -32,7 +31,6 @@ app.use(FILE_ROUTER)
 app.use(CHAT_ROUTES)
 app.use('/api/', MEETING_ROUTES);
 app.use(COMMON_ROUTERS)
-
 
 var server = app.listen(process.env.PORT, () =>
     console.log('app is live @', process.env.PORT));
@@ -103,6 +101,12 @@ io.on('connection', socket => {
         socket.join(sessionId);
         console.log('User', socket.id, ' joined session ', sessionId, excalidraw_collaborators)
         // excalidraw_collaborators.set(socket.id, { sessionId });
+    })
+
+    socket.on('authorize-student', ( data ) => {
+        const { sessionId } = data;
+        console.log(data)
+        socket.to(sessionId).emit("recieve-authorization", data);
     })
 
     // Handle changes from one user
@@ -369,7 +373,7 @@ myPeerServer.on("disconnect", function ({ id }) {
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.log('Unhandled Rejection at:', reason.stack || reason)
+    console.log('Unhandled Rejection at:123', reason.stack || reason)
     // Recommended: send the information to sentry.io
     // or whatever crash reporting service you use
 })

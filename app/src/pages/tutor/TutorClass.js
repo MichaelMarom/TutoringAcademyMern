@@ -86,8 +86,8 @@ const TutorClass = () => {
       socket.on('recieve-authorization', (data) => {
         if (user.role !== 'tutor') {
           (data.hasAuthorization) ?
-          toast.success('Tutor has given you access to access the canvas tools.') :
-          toast.warning('Tutor has removed your access to the canvas tools!');
+            toast.success('Tutor has given you access to access the canvas tools.') :
+            toast.warning('Tutor has removed your access to the canvas tools!');
 
           setAuth(data.hasAuthorization)
         }
@@ -161,7 +161,9 @@ const TutorClass = () => {
       }
 
       <div className="d-flex" style={{ gap: "2%" }}>
-        <div style={{ position: 'fixed', inset: 0, top: 0, marginTop: "100px", width: "80%" }}>
+        <div style={{ position: 'fixed', inset: 0, top: 0, marginTop: "80px", width: "80%", border: "2px solid lightgray" }}
+          className="rounded"
+        >
           <Excalidraw
             excalidrawAPI={(api) => setExcalidrawAPI(api)}
             isCollaborating={user.role === 'tutor'}

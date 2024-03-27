@@ -24,11 +24,11 @@ const ToggleSwitch = ({ isChecked, setIsChecked, authorized = true }) => {
 
             <label
                 htmlFor="switch"
-                className={isChecked ? "toggle-collab checked" : "toggle-collab"}
+                className={isChecked ? "toggle-collab checked" : "toggle-collab "}
             >
                 <div className={`p-1 w-100 h-100 d-flex ${isChecked ? 'justify-content-start' : 'justify-content-end'} align-items-center`}>
-                    {isChecked ? <p className='m-0 text-light'>Tutor</p>
-                        : <p className="m-0 ">Student</p>}
+                    {isChecked ? <p className='m-0 '>Student</p>
+                        : <p className="m-0 text-light">Student</p>}
                 </div>
             </label>
         </div>

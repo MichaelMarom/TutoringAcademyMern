@@ -234,7 +234,7 @@ const TutorAside = () => {
     return (
         <div className="shadow-sm" style={{ width: "100%", height: "78vh" }}>
             {currentSession.subject ?
-                <div className='text-center countdown'>
+                <div className='text-center countdown p-1 m-0'>
                     <CountdownCircleTimer
                         isPlaying
                         duration={timeRemaining}
@@ -258,7 +258,7 @@ const TutorAside = () => {
                     onTimeUp={handleTimeUp}
                     endAt={moment().add('minutes', 53).toDate()} /> */}
                 </div> :
-                <div className='text-center countdown'>
+                <div className='text-center countdown p-1 m-0'>
                     <CountdownCircleTimer
                         isPlaying
                         duration={0}

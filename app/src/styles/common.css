@@ -481,9 +481,9 @@
   display: inline-block;
   width: 100px;
   height: 30px;
-  background-color: rgb(63, 231, 21);
+  background-color: rgb(229, 68, 46);
   border-radius: 30px;
-  border: 2px solid rgb(72, 71, 71);
+  border: 2px solid rgb(173, 173, 173);
 }
 
 .toggle-collab.checked::after {
@@ -496,7 +496,9 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background-color: rgb(72, 71, 71);
+  background-color: rgb(173, 173, 173);
+  border: 2px solid white;
+
   top: 1px;
   left: 1px;
   transition: all 0.5s;
@@ -507,7 +509,7 @@
 }
 
 .toggle-collab.checked {
-  background-color: rgb(231, 70, 21);
+  background-color: rgb(63, 231, 21);
 }
 
 .toggle-collab p {

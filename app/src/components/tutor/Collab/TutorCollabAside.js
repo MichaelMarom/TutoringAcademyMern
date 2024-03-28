@@ -3,7 +3,7 @@ import screenLarge from '../../../images/screen-full-svgrepo-com.svg';
 import screenNormal from '../../../images/screen-normal-svgrepo-com.svg'
 import muteSvg from '../../../images/mute-svgrepo-com.svg'
 import DiableVideoImage from '../../../images/video-recorder-off-svgrepo-com.svg';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { socket } from '../../../config/socket';
 import { Peer } from 'peerjs';
 import FlipCountdown from '@rumess/react-flip-countdown';
@@ -41,6 +41,19 @@ const TutorAside = () => {
     const [videoEnabled, setVideoEnabled] = useState(true)
     const { tutor } = useSelector(state => state.tutor);
     const { user } = useSelector(state => state.user)
+    const queryParams = new URLSearchParams(location.search);
+    const sessionId = queryParams.get('sessionId')
+    console.log(sessionId);
+
+    /**
+     * validate id
+     * get session
+     * check its date and see its time in future/past/current
+     * show message accordingly
+     * if current session, then show collabs, 
+     * if user visit /collab with no sessionId, then we show live session link, he can click and collab
+     * 
+     */
 
     const scrollToBottom = () => {
         if (chatContainer.current) {
@@ -74,10 +87,7 @@ const TutorAside = () => {
     }, [arrivalMsg, params]);
 
     useEffect(() => {
-        // if (loggedInUserDetail.AcademyId && selectedChat.id) {
         params.sessionId && tutor.AcademyId && socket.emit("session-add-user", params.sessionId);
-        // }
-
     }, [tutor, params]);
 
     const sendMessage = async () => {
@@ -216,6 +226,8 @@ const TutorAside = () => {
 
     }, [location])
 
+
+
     const children = ({ remainingTime }) => {
         const minutes = Math.floor(remainingTime / 60)
         const seconds = remainingTime % 60
@@ -272,7 +284,6 @@ const TutorAside = () => {
                     </CountdownCircleTimer>
                 </div>
             }
-
 
             <div className="TutorAsideVideoCnt">
                 {videoLoader}

@@ -75,9 +75,6 @@ io.on('connection', socket => {
                             result.rowsAffected[0] ?
                                 console.log('deleted data successfully') :
                                 console.log('No data found to be deleted')
-
-                            //res.status(200).send()
-                            //SELECT * From Education  WHERE CONVERT(VARCHAR, AcademyId) =  '${subject}'  
                         })
                         .catch(err => console.log(err))
                 )
@@ -97,28 +94,26 @@ io.on('connection', socket => {
 
     });
 
+    //excalidraw/canvas/session
     socket.on('join-session', (sessionId) => {
         socket.join(sessionId);
-        console.log('User', socket.id, ' joined session ', sessionId, excalidraw_collaborators)
-        // excalidraw_collaborators.set(socket.id, { sessionId });
+        console.log('User', socket.id, ' joined session ', sessionId)
     })
 
-    socket.on('authorize-student', ( data ) => {
+    socket.on('authorize-student', (data) => {
         const { sessionId } = data;
-        console.log(data)
         socket.to(sessionId).emit("recieve-authorization", data);
     })
 
-    // Handle changes from one user
     socket.on('canvas-change', (data) => {
         if (data) {
             const { sessionId = '', elements = [], appState = {}, collaborator = {}, files } = data;
             excalidraw_collaborators.set(collaborator.AcademyId, collaborator);
-            console.log(elements.map(elem => elem.id), 112)
             sessionId.length && socket.to(sessionId).emit("canvas-change-recieve",
                 { elements, appState, collaborators: JSON.stringify([...excalidraw_collaborators]), files });
         }
     });
+
     socket.on('activeTool', (data) => {
         if (data) {
             const { activeTool, sessionId } = data;
@@ -127,14 +122,20 @@ io.on('connection', socket => {
         }
     });
 
-    socket.on("add-user", (roomId) => {
-        socket.join(roomId)
-        console.log('User', socket.id, ' joined room ', roomId)
-    });
-
+    //add in session/canvas chat
     socket.on("session-add-user", (sessionId) => {
         socket.join(sessionId)
         console.log('User', socket.id, ' joined room ', sessionId)
+    });
+    socket.on("session-send-msg", (data) => {
+        const { text, sessionId } = data;
+        console.log(`From session Message:${text}, sent from ${sessionId}`);
+        socket.to(sessionId).emit("session-msg-recieve", data);
+    });
+
+    socket.on("add-user", (roomId) => {
+        socket.join(roomId)
+        console.log('User', socket.id, ' joined room ', roomId)
     });
 
     socket.on("send-msg", (data) => {
@@ -143,11 +144,7 @@ io.on('connection', socket => {
         socket.to(room).emit("msg-recieve", data);
     });
 
-    socket.on("session-send-msg", (data) => {
-        const { text, sessionId } = data;
-        console.log(`From session Message:${text}, sent from ${sessionId}`);
-        socket.to(sessionId).emit("session-msg-recieve", data);
-    });
+
 
     socket.on('online', (id, role) => {
         socketToUserMap[socket.id] = { userId: id, role };

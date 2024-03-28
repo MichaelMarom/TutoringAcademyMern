@@ -90,6 +90,7 @@ const TutorClass = () => {
             toast.warning('Tutor has removed your access to the canvas tools!');
 
           setAuth(data.hasAuthorization)
+          setIsChecked(data.hasAuthorization)
         }
       })
     }
@@ -102,8 +103,8 @@ const TutorClass = () => {
   }, [elements, collaborators, excalidrawAPI])
 
   useEffect(() => {
-    // excalidrawAPI && excalidrawAPI.addFiles(files)
-  }, [files])
+    (excalidrawAPI && !_.isEqual(_.sortBy(files.map(file => file.id)), _.sortBy(Object.keys(excalidrawAPI.getFiles())))) && excalidrawAPI.addFiles(files)
+  }, [files, excalidrawAPI])
 
   const handleExcalidrawChange = (newElements, appState, files) => {
     // console.log('ent', params, elements.length, user.role)
@@ -150,6 +151,21 @@ const TutorClass = () => {
       }))
     }
   }, [isChecked, params])
+
+  useEffect(() => {
+    excalidrawAPI &&
+      params.sessionId &&
+      elements.length &&
+      localStorage.setItem(params.sessionId, JSON.stringify(elements))
+  }, [elements, params.sessionId, excalidrawAPI])
+
+  useEffect(() => {
+    if (excalidrawAPI && params.sessionId) {
+      const elements = localStorage.getItem(params.sessionId)
+      const parsedElems = JSON.parse(elements)
+      excalidrawAPI.updateScene({ elements: parsedElems })
+    }
+  }, [excalidrawAPI, params])
 
   return (
     <CommonLayout role={user.role}>

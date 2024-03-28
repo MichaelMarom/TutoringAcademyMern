@@ -1,5 +1,7 @@
 const { verify } = require('jsonwebtoken');
 const { verifyToken } = require('../controllers/auth');
+const multer = require('multer');
+const upload = multer({dest: 'interviews/'})
 const { subjects,
     post_form_one,
     get_countries,
@@ -51,14 +53,14 @@ const { subjects,
     ad_to_shortlist,
     get_shortlist_ads,
     delete_ad_from_shortlist,
-    get_student_public_profile_data } = require('../controllers/tutor');
+    get_student_public_profile_data, recordVideoController} = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
-
 
 const TUTOR_ROUTES = express.Router();
 
 // TUTOR_ROUTES.use(verifyToken);
+
 
 TUTOR_ROUTES.get('/tutor/tutor-status', verifyToken, get_tutor_status)
 TUTOR_ROUTES.get('/tutor/subjects', verifyToken, subjects)
@@ -100,6 +102,7 @@ TUTOR_ROUTES.post("/api/store-event", parser, verifyToken, storeEvents);
 TUTOR_ROUTES.get("/api/bookings/:tutorId", verifyToken, fetchStudentsBookings)
 TUTOR_ROUTES.put("/tutor/update/:id", parser, verifyToken, storeCalenderTutorRecord);
 TUTOR_ROUTES.post('/tutor/setup', parser, verifyToken, post_tutor_setup)
+TUTOR_ROUTES.post('/tutor/setup/record', upload.single('file') ,verifyToken, recordVideoController)
 TUTOR_ROUTES.put('/tutor/agreement-updated', parser, verifyToken, set_agreements_date_null_for_all)
 TUTOR_ROUTES.get('/tutor/market-data', verifyToken, get_tutor_market_data)
 
@@ -119,6 +122,7 @@ TUTOR_ROUTES.get('/tutor/market-place/shortlist/:tutorId/list', parser, verifyTo
 TUTOR_ROUTES.delete('/tutor/:tutorId/market-place/shortlist/:Id', verifyToken, delete_ad_from_shortlist)
 TUTOR_ROUTES.get('/tutor/rate/:code', verifyToken, get_tutor_against_code)
 TUTOR_ROUTES.get('/tutor/:tutorId/profile/:studentId', verifyToken, get_student_public_profile_data)
+
 
 module.exports = {
     TUTOR_ROUTES

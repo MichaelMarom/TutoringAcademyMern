@@ -5,6 +5,7 @@ const moment = require('moment-timezone');
 const { insert, updateById, getAll, find, findByAnyIdColumn, update, parameteriedUpdateQuery, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
 
 const multer = require('multer');
+const { exec } = require('child_process');
 const path = require('path');
 const sql = require('mssql');
 const COMMISSION_DATA = require('../constants/tutor');
@@ -1910,7 +1911,44 @@ const get_student_public_profile_data = async (req, res) => {
     })
 }
 
+const recordVideoController = async (req,res) => {
+    const { user_id } = req.body
+
+    if (!req.file || !req.file.mimetype.startsWith('video/')) {
+      return res.status(400).send({ message: 'Please upload a video file' })
+    }
+  
+    if (!user_id) {
+      return res.status(400).send({ message: 'Please provide a user id' })
+    }
+  
+    // Mirror the video horizontally using ffmpeg
+    const outputFileName = `interviews/${user_id}.mp4`
+    const command = `ffmpeg -y -i ${req.file.path} -vf "hflip" ${outputFileName}`
+  
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(error)
+        return res.status(500).send({ message: 'Failed to flip video' })
+      }
+  
+      //delete the non-flipped video
+      // TODO: del for windows (this is only for test) typical prod servers won't run on windows but linux
+      //   const del_command = `rm ${req.file.path}`
+      const del_command = `del ${req.file.path}`
+      exec(del_command, (error, stdout, stderr) => {
+        if (error) {
+          console.error(error)
+          return res.status(500).send({ message: 'Failed to delete video' })
+        }
+  
+        res.send({ message: 'Video flipped successfully' })
+      })
+    })
+} 
+
 module.exports = {
+    recordVideoController,
     get_tutor_profile_data,
     get_tutor_against_code,
     delete_ad,

@@ -18,6 +18,8 @@ app.use(cors({ origin: '*' }))
 app.use(morgan('tiny'));
 
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+app.use('/interviews', express.static(path.join(__dirname, '/interviews')));
+
 
 require('dotenv').config();
 

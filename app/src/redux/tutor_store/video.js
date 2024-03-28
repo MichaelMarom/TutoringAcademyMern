@@ -28,4 +28,3 @@ export function uploadVideo(data) {
         return res;
     };
 }
-

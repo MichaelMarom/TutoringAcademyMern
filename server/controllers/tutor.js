@@ -13,8 +13,12 @@ const educationSchema = require('../schema/tutor/education');
 
 const { DefaultAzureCredential } = require("@azure/identity");
 const { QueueServiceClient } = require("@azure/storage-queue");
-const account = "rsfunctionapp9740";
+const account = process.env.AZURE_ACCOUNT_NAME;
 const credential = new DefaultAzureCredential();
+const http = require('http');
+const { BlobServiceClient } = require('@azure/storage-blob')
+const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net/?${process.env.AZURE_BLOB_SAS_TOKEN}`)
+const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_BLOB_CONT_NAME)
 
 const queueServiceClient = new QueueServiceClient(
     `https://${account}.queue.core.windows.net`,
@@ -1911,41 +1915,45 @@ const get_student_public_profile_data = async (req, res) => {
     })
 }
 
-const recordVideoController = async (req,res) => {
+const recordVideoController = async (req, res) => {
     const { user_id } = req.body
 
     if (!req.file || !req.file.mimetype.startsWith('video/')) {
-      return res.status(400).send({ message: 'Please upload a video file' })
+        return res.status(400).send({ message: 'Please upload a video file' })
     }
-  
+
     if (!user_id) {
-      return res.status(400).send({ message: 'Please provide a user id' })
+        return res.status(400).send({ message: 'Please provide a user id' })
     }
-  
+
+    console.log(req.file)
+    const blobClient = containerClient.getBlockBlobClient(fileName);
+    blobClient.uploadStream(req.file)
+
     // Mirror the video horizontally using ffmpeg
     const outputFileName = `interviews/${user_id}.mp4`
     const command = `ffmpeg -y -i ${req.file.path} -vf "hflip" ${outputFileName}`
-  
+
     exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(error)
-        return res.status(500).send({ message: 'Failed to flip video' })
-      }
-  
-      //delete the non-flipped video
-      // TODO: del for windows (this is only for test) typical prod servers won't run on windows but linux
-      //   const del_command = `rm ${req.file.path}`
-      const del_command = `del ${req.file.path}`
-      exec(del_command, (error, stdout, stderr) => {
         if (error) {
-          console.error(error)
-          return res.status(500).send({ message: 'Failed to delete video' })
+            console.error(error)
+            return res.status(500).send({ message: 'Failed to flip video' })
         }
-  
-        res.send({ message: 'Video flipped successfully' })
-      })
+
+        //delete the non-flipped video
+        // TODO: del for windows (this is only for test) typical prod servers won't run on windows but linux
+        //   const del_command = `rm ${req.file.path}`
+        const del_command = `del ${req.file.path}`
+        exec(del_command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(error)
+                return res.status(500).send({ message: 'Failed to delete video' })
+            }
+
+            res.send({ message: 'Video flipped successfully' })
+        })
     })
-} 
+}
 
 module.exports = {
     recordVideoController,

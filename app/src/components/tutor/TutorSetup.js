@@ -1029,15 +1029,15 @@ const TutorSetup = () => {
             </div>
             {selectedVideoOption === "record" ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >
-                {/* <WebcamCapture
+                <WebcamCapture
                   user_id={tutor.AcademyId}
                   record_duration={60000}
-                /> */}
-                <video
+                />
+                {/* <video
                   src={`${process.env.REACT_APP_SERVER_URL}/interviews/${tutor.AcademyId.replace(/[.\s]/g, "")}.mp4`}
                   className="w-100 h-100 m-0 p-0 videoLive"
                   controls autoPlay={false}
-                />
+                /> */}
               </div>
             ) : selectedVideoOption === "upload" && video?.length ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >

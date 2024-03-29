@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useState, useCallback, useEffect, useRef } from 'react'
-import Webcam from 'react-webcam'
 import './record.css'
 import { toast } from "react-toastify"
 import { fileUploadClient } from "../../../axios/config"
-
+import Webcam from 'react-webcam'
 
 const WebcamCapture = ({ user_id, record_duration }) => {
   const webcamRef = useRef(null)
@@ -116,7 +115,7 @@ const WebcamCapture = ({ user_id, record_duration }) => {
           previewRef.current.removeEventListener('pause', () => setIsPlayingPreview(false))
           previewRef.current.removeEventListener('play', () => setIsPlayingPreview(true))
         }
-      }else{console.log('empty data...')}
+      } else { console.log('empty data...') }
     } catch (e) {
       logError(e)
     }

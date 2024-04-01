@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 
 const tooltipStyle = {
@@ -11,8 +11,13 @@ const tooltipStyle = {
   overflow: 'hidden',
 };
 
-const Tooltip = ({ text, children, iconSize = 16, direction = "top", width = "100px", color = "rgb(0, 150, 255)" }) => {
+const Tooltip = ({ text, children, iconSize = 16, direction = "top", width = "100px", color = "rgb(0, 150, 255)",
+  style, customStyling = false }) => {
   const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipStyle, setTooltipStye] = useState({
+    width,
+    whiteSpace: "normal",
+  })
 
   const handleMouseEnter = () => {
     setShowTooltip(true);
@@ -21,6 +26,12 @@ const Tooltip = ({ text, children, iconSize = 16, direction = "top", width = "10
   const handleMouseLeave = () => {
     setShowTooltip(false);
   };
+
+  useEffect(() => {
+    if (customStyling) {
+      if (style) setTooltipStye({ ...tooltipStyle, ...style })
+    }
+  }, [customStyling, style])
 
   return (
     <div
@@ -31,10 +42,7 @@ const Tooltip = ({ text, children, iconSize = 16, direction = "top", width = "10
       {children ? children : <FaInfoCircle size={iconSize} color={color} />}
       {showTooltip && (
         <div className={`custom-tooltip ${direction}`}
-          style={{
-            width,
-            whiteSpace: "normal"
-          }}
+          style={tooltipStyle}
         >{text}</div>
       )}
     </div>

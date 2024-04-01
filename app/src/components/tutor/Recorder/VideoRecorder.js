@@ -4,6 +4,11 @@ import './record.css'
 import { toast } from "react-toastify"
 import { fileUploadClient } from "../../../axios/config"
 import Webcam from 'react-webcam'
+import { BsPause, BsPlay, BsTrash, BsUpload } from 'react-icons/bs'
+import { IoTrash } from 'react-icons/io5'
+import Tooltip from '../../common/ToolTip'
+import { FaRegCirclePlay } from 'react-icons/fa6'
+import { FaRegStopCircle } from 'react-icons/fa'
 
 const WebcamCapture = ({ user_id, record_duration }) => {
   const webcamRef = useRef(null)
@@ -18,6 +23,7 @@ const WebcamCapture = ({ user_id, record_duration }) => {
   const [countdown, setCountdown] = useState(0)
   const [recordingSupported, setRecordingSupported] = useState(false)
   const [blob, setBlob] = useState(null)
+  const [videoUploaded, setVideoUploaded] = useState(false)
 
   const chooseVideoDevice = (e) => {
     setLoading(true)
@@ -98,8 +104,9 @@ const WebcamCapture = ({ user_id, record_duration }) => {
         const videoUrl = URL.createObjectURL(processBlob)
 
         previewRef.current.muted = false
-        previewRef.current.loop = true
+        previewRef.current.loop = false
         previewRef.current.src = videoUrl
+        previewRef.current.controls = true
 
         previewRef.current.onloadedmetadata = () => {
           previewRef.current.play()
@@ -184,8 +191,9 @@ const WebcamCapture = ({ user_id, record_duration }) => {
         formData.append('file', video)
         formData.append('user_id', userId)
 
-        const res = await fileUploadClient.post('/tutor/setup/record', formData)
-        console.log(res)
+        await fileUploadClient.post('/tutor/setup/record', formData)
+        setVideoUploaded(true)
+        toast.success('Video Succesfully Uploaded!')
 
         handleCleanup()
       } else {
@@ -199,14 +207,16 @@ const WebcamCapture = ({ user_id, record_duration }) => {
   }
 
   const handleCleanup = () => {
-    setBlob(null)
+
+    // setBlob(null)
+
     setCapturing(false)
     setCountdown(0)
 
-    if (previewRef.current) {
-      previewRef.current.pause()
-      previewRef.current.src = ''
-    }
+    // if (previewRef.current) {
+    //   previewRef.current.pause()
+    //   previewRef.current.src = ''
+    // }
   }
 
   const Loader = () => (
@@ -248,25 +258,53 @@ const WebcamCapture = ({ user_id, record_duration }) => {
 
       {!loading && recordingSupported && !blob && (
         <div className="buttonWrapper">
-          {!capturing && <button onClick={handleStart}>Start</button>}
-          {capturing && <button onClick={handleStop}>Stop</button>}
+          {!capturing && <button onClick={handleStart} className="btn btn-transparent rounded-circle" style={{
+            height: "50px",
+            width: "50px",
+
+          }}><FaRegCirclePlay size={39} color="#da012d" /></button>}
+          {capturing && <button onClick={handleStop} className="btn btn-transparent rounded-circle"
+            style={{
+              height: "50px",
+              width: "50px",
+
+            }}><FaRegStopCircle size={39} color="#da012d" /></button>}
         </div>
       )}
 
-      {!loading && blob && (
+      {!loading && blob && !videoUploaded && (
         <div className="buttonWrapper">
-          <button onClick={handleCleanup}>Delete</button>
-          {previewRef.current && (
-            <button onClick={handlePreviewPlayPause}>{isPlayingPreview ? 'Pause' : 'Play'}</button>
-          )}
-          <button onClick={handleUpload}>Upload</button>
+          <Tooltip text={"delete"} direction='unknown' style={{ top: "-10px", left: "0" }} customStyling={true}>
+            <button onClick={handleCleanup} className='video-overlay-btn btn btn-danger rounded-circle' style={{
+              height: "50px",
+              width: "50px"
+            }}>
+              <IoTrash size={25} /></button>
+          </Tooltip>
+          {/* {previewRef.current && (
+            <button className='video-overlay-btn btn btn-primary rounded-circle' style={{
+              height: "50px",
+              width: "50px"
+            }} onClick={handlePreviewPlayPause}>
+              {isPlayingPreview ? <BsPause size={25} /> : <BsPlay size={25} />}</button>
+          )} */}
+          <Tooltip text={"upload"} direction={"unknown"} style={{ top: "-10px", left: "0" }}
+            customStyling={true}>
+            <button className='video-overlay-btn btn btn-success rounded-circle' style={{
+              height: "50px",
+              width: "50px"
+            }} onClick={handleUpload}>
+              <BsUpload size={25} />
+            </button>
+          </Tooltip>
         </div>
-      )}
+      )
+      }
 
-      <div className={`preview ${blob ? 'show' : 'hide'}`}>
-        <video ref={previewRef} playsInline onClick={handlePreviewPlayPause} />
+      <div className={`preview h-100 ${blob ? 'show' : 'hide'}`}>
+        <video ref={previewRef} playsInline onClick={handlePreviewPlayPause} controls />
       </div>
-    </div>
+    </div >
   )
 }
 

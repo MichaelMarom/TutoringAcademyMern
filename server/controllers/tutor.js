@@ -1,12 +1,9 @@
-const { resolve } = require('path/posix');
-const { marom_db, knex, connecteToDB } = require('../db');
+const { marom_db } = require('../db');
 const { shortId, fs } = require('../modules');
 const moment = require('moment-timezone');
 const { insert, updateById, getAll, find, findByAnyIdColumn, update, parameteriedUpdateQuery, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
 
-const multer = require('multer');
 const { exec } = require('child_process');
-const path = require('path');
 const sql = require('mssql');
 const COMMISSION_DATA = require('../constants/tutor');
 const educationSchema = require('../schema/tutor/education');
@@ -15,8 +12,8 @@ const { DefaultAzureCredential } = require("@azure/identity");
 const { QueueServiceClient } = require("@azure/storage-queue");
 const account = process.env.AZURE_ACCOUNT_NAME;
 const credential = new DefaultAzureCredential();
-const http = require('http');
-const { BlobServiceClient } = require('@azure/storage-blob')
+const { BlobServiceClient } = require('@azure/storage-blob');
+const sendErrors = require('..');
 const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net/?${process.env.AZURE_BLOB_SAS_TOKEN}`)
 const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_BLOB_CONT_NAME)
 
@@ -1967,18 +1964,17 @@ const recordVideoController = async (req, res) => {
 
 const getVideo = async (req, res) => {
     try {
-        const { user_id } = req.body;
+        const { user_id } = req.query;
         const blobClient = containerClient.getBlockBlobClient(`${user_id}.mp4`);
-        const url = await blobClient.download()
-
+        res.status(200).send(blobClient)
     } catch (err) {
-        console.log(err)
-        res.status(400).send({ message: "Faield", reason: err.message })
+        sendErrors(err, res)
     }
 }
 
 module.exports = {
     recordVideoController,
+    getVideo,
     get_tutor_profile_data,
     get_tutor_against_code,
     delete_ad,

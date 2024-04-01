@@ -48,16 +48,12 @@ code {
   border-top: 0 !important;
 }
 
-.rbc-day-slot.rbc-time-column
-  .rbc-timeslot-group
-  .rbc-time-slot.place-holder-start-slot {
+.rbc-day-slot.rbc-time-column .rbc-timeslot-group .rbc-time-slot.place-holder-start-slot {
   border: 1px solid red !important;
   border-bottom: 0 !important;
 }
 
-.rbc-day-slot.rbc-time-column
-  .rbc-timeslot-group
-  .rbc-time-slot.place-holder-start-slot::after {
+.rbc-day-slot.rbc-time-column .rbc-timeslot-group .rbc-time-slot.place-holder-start-slot::after {
   content: "Place holder";
   display: block;
   color: rgb(249, 5, 5);
@@ -98,11 +94,8 @@ button.Toastify__close-button.Toastify__close-button--light {
   display: inline-block;
 }
 
-.custom-tooltip.top {
+.custom-tooltip {
   position: absolute;
-  bottom: 20px;
-  left: 4rem;
-  transform: translateX(-50%);
   background-color: #333;
   color: #fff;
   padding: 5px;
@@ -110,17 +103,16 @@ button.Toastify__close-button.Toastify__close-button--light {
   font-size: 13px;
   z-index: 999;
 }
-.custom-tooltip.bottomleft{
+
+.custom-tooltip.top {
+  bottom: 20px;
+  left: 4rem;
+}
+
+.custom-tooltip.bottomleft {
   position: absolute;
   top: 20px;
   right: -27px;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: #fff;
-  padding: 5px;
-  border-radius: 4px;
-  font-size: 13px;
-  z-index: 999;
 }
 
 .custom-tooltip.left {
@@ -128,37 +120,25 @@ button.Toastify__close-button.Toastify__close-button--light {
   position: absolute;
   top: -83px;
   left: -3rem;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: #fff;
-  padding: 5px;
-  border-radius: 4px;
-  font-size: 13px;
-  z-index: 999;
 }
 
-.custom-tooltip.bottomright{
+.custom-tooltip.bottomright {
   position: absolute;
   top: 20px;
   left: 50px;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: #fff;
-  padding: 5px;
-  border-radius: 4px;
-  font-size: 13px;
-  z-index: 999;
 }
 
 /* //video recorder */
 .record-button__Button-sc-1n5amwk-0.jbBlLf {
   margin: 0 !important;
 }
+
 /* checkbox */
 
 input[type="checkbox"] {
   accent-color: green
 }
+
 .form-check-input:checked {
   background-color: green;
   border-color: green;

@@ -1,7 +1,7 @@
 const { sendingSMS } = require('../config/sendingMessages');
 const { get_tutor_data, set_tutor_status, get_student_data, set_student_status, get_tutor_new_subject, accept_new_subject, decline_new_subject, get_Constants, postTerms } = require('../controllers/admin');
 const { verifyToken } = require('../controllers/auth');
-const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
+const { express, parser} = require('../modules');
 
 
 const ADMIN_ROUTES = express.Router();

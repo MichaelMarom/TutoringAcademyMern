@@ -376,3 +376,9 @@ process.on('unhandledRejection', (reason, promise) => {
     // Recommended: send the information to sentry.io
     // or whatever crash reporting service you use
 })
+
+const sendErrors = (e, res) => {
+    console.log(err)
+    res.status(400).send({ message: "Failed to Complete the Request!", reason: e.message })
+}
+module.exports = sendErrors

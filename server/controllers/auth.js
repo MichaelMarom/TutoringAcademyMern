@@ -44,7 +44,6 @@ const verifyToken = async (req, res, next) => {
         // const session = await sessions.verifySession(sessionId, token);
         // console.log(session, 'sessuan')
         if (token) {
-            console.log('start verifying token ....')
             jwt.verify(token, publicKey, (err, decoded) => {
                 if (err) {
                     return res.status(401).json({ response: err.message, message: "The security token expired after 20 minutes of ideling, please login again." });

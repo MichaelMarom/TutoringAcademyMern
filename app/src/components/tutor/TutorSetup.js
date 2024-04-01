@@ -30,6 +30,7 @@ import Button from "../common/Button";
 import { RxAvatar } from "react-icons/rx";
 import { IoPersonCircle } from "react-icons/io5";
 import { convertToDate } from "../common/Calendar/Calendar";
+import { apiClient } from "../../axios/config";
 
 
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -62,6 +63,7 @@ const TutorSetup = () => {
   let [photo, set_photo] = useState("");
   const lastNameInputRef = useRef(null);
   let [video, set_video] = useState("");
+  const [newVideo, setNewVideo] = useState(null)
 
   let grades = [
     { grade: "1st grade" },
@@ -106,36 +108,15 @@ const TutorSetup = () => {
   const [nameFieldsDisabled, setNameFieldsDisabled] = useState(false);
   let [isRecording, setIsRecording] = useState(false);
 
-  // useEffect(() => {
-  //   setIsRecording(!isRecording)
-  //   let cnt = document.querySelector('#recordVideoCnt');
-
-  //   if (isRecording) {
-  //     navigator.mediaDevices.getUserMedia({
-  //       video: true,
-  //       audio: true
-  //     })
-  //       .then(stream => {
-  //         cnt.addEventListener('loadedmetadata', () => {
-  //           alert('meta loaded')
-  //           cnt.srcObject = stream;
-  //           cnt.play()
-  //         })
-
-  //         // function addVideoStream(video, stream) {
-  //         //   // console.log(stream)
-
-  //         //   video.srcObject = stream
-  //         //   // video.addEventListener('loadedmetadata', () => {
-
-  //         //   //     video.play()
-  //         //   // })
-  //         // }
-
-  //       })
-  //       .catch(e => console.log(e));
-  //   }
-  // }, [isRecording])
+  useEffect(() => {
+    console.log(tutor)
+    tutor.AcademyId &&
+      apiClient.get('/tutor/setup/intro', { params: { user_id: tutor.AcademyId.replace(/[.\s]/g, '') } })
+        .then(res => {
+          set_video(res.data.url)
+        })
+        .catch(err => console.log(err))
+  }, [tutor])
 
   useEffect(() => {
     if (convertToDate(tutor.EndVacation).getTime() < new Date().getTime() && tutor.VacationMode) {
@@ -1033,11 +1014,12 @@ const TutorSetup = () => {
                   user_id={tutor.AcademyId}
                   record_duration={60000}
                 />
-                {/* <video
-                  src={`${process.env.REACT_APP_SERVER_URL}/interviews/${tutor.AcademyId.replace(/[.\s]/g, "")}.mp4`}
-                  className="w-100 h-100 m-0 p-0 videoLive"
-                  controls autoPlay={false}
-                /> */}
+
+                {/* {newVideo &&
+                  <video width="320" height="240" autoplay controls>
+                    <source id="video_path" src={newVideo} type="video/mp4" />
+                  </video>
+                } */}
               </div>
             ) : selectedVideoOption === "upload" && video?.length ? (
               <div className="d-flex justify-content-center align-item-center w-100 h-100 border shadow" >

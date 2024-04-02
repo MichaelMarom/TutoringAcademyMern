@@ -15,10 +15,10 @@ import { FaLocationDot } from "react-icons/fa6";
 import { IoTime } from "react-icons/io5";
 import GradePills from './GradePills';
 import ToolTip from '../common/ToolTip'
-import { FaFilePdf } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import Actions from '../common/Actions';
 import { monthFormatWithYYYY } from '../../constants/constants';
+import { apiClient } from '../../axios/config';
 
 const TutorProfile = () => {
     const params = useParams();
@@ -85,8 +85,11 @@ const TutorProfile = () => {
 
     useEffect(() => {
         const fetch_profile = async () => {
-            const data = await get_tutor_profile(params.id, studentId);
-            setProfileData(data)
+            const profileInfo = await get_tutor_profile(params.id, studentId);
+            delete profileInfo['Video'];
+            const res = await apiClient.get('/tutor/setup/intro', { params: { user_id: params.id.replace(/[.\s]/g, '') } })
+
+            setProfileData({ ...profileInfo, Video: res.data.url })
             setFetching(false)
         }
 
@@ -95,7 +98,7 @@ const TutorProfile = () => {
 
     if (fetching)
         return <Loading />
-    else if (!Object.keys(data).length)
+    else if (!data.AcademyId)
         return <h5 className='text-danger p-5'>In order to view your profile, Please first must to complete uploading your Photo, Video, Diploma or Certification!</h5>
     return (
         <div style={{ background: "lightGray", height: "83vh", overflowY: "auto" }}>
@@ -240,7 +243,9 @@ const TutorProfile = () => {
 
                         <div className="w-25 h-100">
                             <div className='' style={{ paddingRight: "20px" }}>
-                                <video src={data.Video} className=" rounded w-100 " style={{ height: "220px" }}
+                                <video src={data.Video}
+                                    className=" rounded w-100 "
+                                    style={{ height: "220px" }}
                                     controls autoplay
                                 />
                             </div>

@@ -109,7 +109,6 @@ const TutorSetup = () => {
   let [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
-    console.log(tutor)
     tutor.AcademyId &&
       apiClient.get('/tutor/setup/intro', { params: { user_id: tutor.AcademyId.replace(/[.\s]/g, '') } })
         .then(res => {
@@ -592,14 +591,14 @@ const TutorSetup = () => {
         <div className="d-flex justify-content-between" style={{ gap: "25px", marginLeft: "20px", marginRight: "20px", marginTop: "0" }}>
           <div className="profile-photo-cnt " style={{ width: "15%" }}>
             <h6 className="text-start m-0" style={{ whiteSpace: "nowrap" }}>Profile Photo</h6 >
-            <input
+            {/* <input
               type="file"
               data-type="file"
               name="photo"
               onChange={handleImage}
               style={{ display: "none" }}
               id="photo"
-            />
+            /> */}
             <div className="mb-2 w-100 h-100">
               {picUploading && <Loading height="10px" iconSize="20px" loadingText="uploading picture ..." />}
             </div>
@@ -610,7 +609,21 @@ const TutorSetup = () => {
               }
             </div>
 
-            <label id="btn" style={{ pointerEvents: !editMode ? "none" : "auto", width: "50%" }}
+            <input
+              type="file"
+              data-type="file"
+              name="photo"
+              onChange={handleImage}
+              style={{ display: "none" }}
+              id="photo"
+              disabled={!editMode}
+            />
+            <label id="btn"
+              onClick={() => !editMode && toast.info('Please click the "Edit" button to activate the "Upload" Photo button!')}
+              style={{
+                // pointerEvents: !editMode ? "none" : "auto",
+                width: "50%"
+              }}
               type="label" disabled={!editMode} htmlFor="photo" className="action-btn btn mt-4">
               <div className="button__content">
                 <div className="button__icon">
@@ -1046,17 +1059,20 @@ const TutorSetup = () => {
             }
 
             <div className=" mt-2">
-              <div className="row justify-content-center align-items-center">
+              <div className="row justify-content-center align-items-center" onClick={() => !editMode &&
+                toast.info('Please click the "Edit" button to activate the "Upload", or "Record" video buttons!')
+              }>
                 <div className="col-md-4">
                   <div className="">
 
-                    <Button className="action-btn btn btn-sm " style={{ width: "100%", fontSize: "12px" }} disabled={!editMode}
+                    <Button className="action-btn btn btn-sm "
+                      style={{ width: "100%", fontSize: "12px" }} disabled={!editMode}
                       onClick={() => window.open('https://www.heygen.com')}>
                       <div className="button__content">
                         <div className="button__icon">
                           <RiRobot2Fill size={18} />
                         </div>
-                        <p className="button__text" > Create AI intro</p>
+                        <p className="button__text"> Create AI intro</p>
                       </div>
                     </Button>
                   </div>
@@ -1092,19 +1108,22 @@ const TutorSetup = () => {
                       onChange={handleVideo}
                       type="file"
                       name="video"
+                      disabled={!editMode}
                       style={{ display: "none" }}
                       id="video"
                     />
                     <label
                       id="btn"
+                      onClick={() => handleOptionClick("upload")}
                       type="button"
                       htmlFor="video"
-                      style={{ width: "100%", pointerEvents: !editMode ? "none" : "auto", fontSize: "10px" }}
-                      className={`action-btn btn ${selectedVideoOption === "upload" ? "active" : ""
-                        }`}
-                      onClick={() => handleOptionClick("upload")}
+                      style={{
+                        width: "100%",
+                        // pointerEvents: !editMode ? "none" : "auto",
+                        fontSize: "10px"
+                      }}
+                      className={`action-btn btn ${selectedVideoOption === "upload" ? "active" : ""}`}
                     >
-
                       <div className="button__content">
                         <div className="button__icon">
                           <BsCloudUpload size={15} /> <br />

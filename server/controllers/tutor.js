@@ -1961,7 +1961,6 @@ const recordVideoController = async (req, res) => {
     }
 }
 
-
 const getVideo = async (req, res) => {
     try {
         const { user_id } = req.query;

@@ -199,7 +199,7 @@ const App = () => {
   
   return (
     <Routes>
-      <Route path={`/collab/:sessionId`} element={<TutorClass />} />
+      <Route path={`/collab`} element={<TutorClass />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/chat-call" element={<CallWithChatExperience />} />

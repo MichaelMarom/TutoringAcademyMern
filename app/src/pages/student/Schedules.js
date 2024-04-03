@@ -93,7 +93,7 @@ export const Schedules = () => {
         <StudentLayout  >
             <div>
                 <h4 className='text-center m-3'>Your Schedule</h4>
-                <div className='m-3' style={{ height: "65vh" }}>
+                <div className='m-3 student-calender' style={{ height: "65vh" }}>
                     <Calendar
                         localizer={localizer}
                         events={(reservedSlots.concat(bookedSlots)).map((event) => ({

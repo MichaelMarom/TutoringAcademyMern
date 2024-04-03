@@ -118,8 +118,8 @@ io.on('connection', socket => {
 
     socket.on('activeTool', (data) => {
         if (data) {
-            const { activeTool, sessionId } = data;
-            sessionId.length && socket.to(sessionId).emit("active-tool-change",
+            const { activeTool = {}, sessionId = '' } = data;
+            sessionId?.length && socket.to(sessionId).emit("active-tool-change",
                 { activeTool });
         }
     });

@@ -357,8 +357,8 @@ const ShowCalendar = ({
           (!slot.rating))
     })) {
       return toast.warning(<FeedbackMissing
-        handleButtonClick={() => navigate('/student/feedback')} 
-        subject={selectedTutor.subject} 
+        handleButtonClick={() => navigate('/student/feedback')}
+        subject={selectedTutor.subject}
         buttonText={'Feedback'} />, { autoClose: false, });
     }
     if ((selectedSlots.length && selectedSlots[0].type === 'reserved') && reservedSlots.length > 6) {
@@ -909,7 +909,7 @@ const ShowCalendar = ({
   if (!dataFetched)
     return <Loading height="60vh" />
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%" }} className={`${isStudentLoggedIn ? 'student-calender' : 'tutor-calender'}`}>
       <Calendar
         views={["day", "week", "month"]}
         localizer={localizer}

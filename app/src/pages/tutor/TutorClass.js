@@ -13,7 +13,7 @@ import CommonLayout from "../../layouts/CommonLayout";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { constants } from "buffer";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { RiContactsBookLine } from "react-icons/ri";
 import TutorAside from "../../components/tutor/Collab/TutorCollabAside";
 import { BiChat } from "react-icons/bi";
@@ -22,6 +22,7 @@ import { MdCancel } from "react-icons/md";
 import Tooltip from "../../components/common/ToolTip";
 import _ from "lodash";
 import { toast } from "react-toastify";
+import { getSessionDetail } from "../../axios/tutor";
 
 const TutorClass = () => {
   const { user } = useSelector(state => state.user)
@@ -34,7 +35,19 @@ const TutorClass = () => {
   const [collaborators, setCollaborators] = useState(new Map());
   const [files, setFiles] = useState([])
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search);
+  const sessionId = queryParams.get('sessionId')
+  const [openedSession, setOpenedSession] = useState({})
+  const [sessionTime, setSessionTime] = useState('')
 
+  useEffect(() => {
+    sessionId && getSessionDetail(sessionId)
+      .then(res => {
+        setOpenedSession(res.session)
+        setSessionTime(res.time)
+      })
+  }, [sessionId])
 
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
@@ -61,8 +74,8 @@ const TutorClass = () => {
   }
 
   useEffect(() => {
-    if (socket && excalidrawAPI) {
-      params.sessionId && socket.emit('join-session', params.sessionId);
+    if (socket && excalidrawAPI && sessionTime === 'current') {
+      sessionId && socket.emit('join-session', sessionId);
       socket.on('canvas-change-recieve', (change) => {
         // const collaborators = new Map();
         // collaborators.set("id6", {
@@ -94,7 +107,7 @@ const TutorClass = () => {
         }
       })
     }
-  }, [params.sessionId, excalidrawAPI]);
+  }, [sessionId, excalidrawAPI, sessionTime]);
 
   useEffect(() => {
     if (excalidrawAPI) {
@@ -103,23 +116,24 @@ const TutorClass = () => {
   }, [elements, collaborators, excalidrawAPI])
 
   useEffect(() => {
-    (excalidrawAPI && !_.isEqual(_.sortBy(files.map(file => file.id)), _.sortBy(Object.keys(excalidrawAPI.getFiles())))) && excalidrawAPI.addFiles(files)
+    (excalidrawAPI && !_.isEqual(_.sortBy(files.map(file => file.id)),
+      _.sortBy(Object.keys(excalidrawAPI.getFiles())))) && excalidrawAPI.addFiles(files)
   }, [files, excalidrawAPI])
 
   const handleExcalidrawChange = (newElements, appState, files) => {
     // console.log('ent', params, elements.length, user.role)
     // setElements([...elements, ...newElements])
-    params.sessionId && newElements.length &&
+    sessionId && newElements.length && sessionTime === 'current' &&
       socket.emit('canvas-change', ({
         elements: getUniqueIdsWithHigherVersion(excalidrawAPI.getSceneElements().concat(newElements), 'id'),
-        sessionId: params.sessionId,
+        sessionId: sessionId,
         // collaborator: { username: tutor.TutorScreenname, AcademyId: tutor.AcademyId },
         files
       }));
 
-    // params.sessionId && newElements.length && user.role === 'student' &&
+    // sessionId && newElements.length && user.role === 'student' &&
     // socket.emit('canvas-change', ({
-    //   sessionId: params.sessionId,
+    //   sessionId: sessionId,
     //   elements: _.uniqBy(excalidrawAPI.getSceneElements().concat(newElements), 'id'),
     //   // collaborator: { username: student.ScreenName, AcademyId: student.AcademyId },
     //   files
@@ -135,49 +149,57 @@ const TutorClass = () => {
   const handlePointerUpEvent = (activeTool,
     pointerDownState,
     event) => {
-
-    socket.emit('activeTool', ({
-      sessionId: params.sessionId,
-      activeTool
-    }))
+    sessionTime === 'current' &&
+      socket.emit('activeTool', ({
+        sessionId: sessionId,
+        activeTool
+      }))
   }
 
   useEffect(() => {
-    if (socket && params.sessionId) {
+    if (socket && sessionId && sessionTime === 'current') {
       socket.emit('authorize-student', ({
         userId: student?.AcademyId,
-        sessionId: params.sessionId,
+        sessionId: sessionId,
         hasAuthorization: isChecked
       }))
     }
-  }, [isChecked, params])
+  }, [isChecked, sessionId, sessionTime])
 
   useEffect(() => {
     excalidrawAPI &&
-      params.sessionId &&
+      sessionId &&
       elements.length &&
-      localStorage.setItem(params.sessionId, JSON.stringify(elements))
-  }, [elements, params.sessionId, excalidrawAPI])
+      sessionTime === 'current' &&
+      localStorage.setItem(sessionId, JSON.stringify(elements))
+  }, [elements, sessionId, excalidrawAPI, sessionTime])
 
   useEffect(() => {
-    if (excalidrawAPI && params.sessionId) {
-      const elements = localStorage.getItem(params.sessionId)
+    if (excalidrawAPI && sessionId && sessionTime === 'current') {
+      const elements = localStorage.getItem(sessionId)
       const parsedElems = JSON.parse(elements)
       excalidrawAPI.updateScene({ elements: parsedElems })
     }
-  }, [excalidrawAPI, params])
+  }, [excalidrawAPI, sessionId, sessionTime])
 
   return (
     <CommonLayout role={user.role}>
-      {currentSession.subject ? <div style={{ width: "70%" }} className={`d-flex ${currentSession.subject ? "justify-content-between" : "justify-content-center"}`} >
-        <div >Current Session: {currentSession.subject}</div>
+      {openedSession.subject ? <div style={{ width: "70%" }}
+        className={`d-flex ${openedSession.subject ? "justify-content-between" : "justify-content-center"}`} >
+        <div> Subject: {openedSession.subject}
+          {sessionTime === 'future' && <p className="text-danger">Session is in Future</p>}
+          {sessionTime === 'past' && <p className="text-danger">Session already Pass</p>}
+        </div>
         <h4 className="text-center text-success blinking-button m-0">Lesson will start in 3 minutes</h4>
       </div> :
-        <h4 className="text-center text-success m-0"> No Current Session!</h4>
+        <h4 className="text-center text-success m-0">No Current Session!</h4>
       }
 
       <div className="d-flex" style={{ gap: "2%" }}>
-        <div style={{ position: 'fixed', inset: 0, top: 0, marginTop: "80px", width: "80%", border: "2px solid lightgray" }}
+        <div style={{
+          position: 'fixed', inset: 0, top: 0, marginTop: "100px",
+          width: "80%", border: "2px solid lightgray"
+        }}
           className="rounded"
         >
           <Excalidraw
@@ -187,7 +209,7 @@ const TutorClass = () => {
             onPointerUpdate={handlePointerUpEvent}
             viewModeEnabled={!hasAuth}
             onChange={handleExcalidrawChange}
-            name={currentSession.subject || 'testing'}
+            name={openedSession.subject || 'testing'}
           />
         </div>
 
@@ -196,8 +218,11 @@ const TutorClass = () => {
           {/* <div onClick={() => setIsChatOpen(false)} className="cursor-pointer"> <MdCancel size={24} /> </div> */}
           <TutorAside />
           <div className="d-flex align-items-center justify-content-center" >
-            <Tooltip text={"swicth text goes here"} iconSize="25" />
-            <Switch isChecked={isChecked} setIsChecked={setIsChecked} authorized={user.role === 'tutor'} />
+            <Tooltip text={"switch text goes here"} iconSize="25" />
+            <Switch
+              isChecked={isChecked}
+              setIsChecked={setIsChecked}
+              authorized={user.role === 'tutor' && sessionTime === 'current'} />
           </div>
         </div>}
         {/* <div style={{ position: "fixed", bottom: "10%", right: "3%" }}>

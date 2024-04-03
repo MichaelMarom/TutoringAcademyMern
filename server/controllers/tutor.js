@@ -1992,7 +1992,10 @@ const getSessionDetailById = async (req, res) => {
                 WITH (id nvarchar(255) '$.id') AS json_data
                 WHERE json_data.id = '${sessionId}'; `)
 
-            const session = result.recordset[0]?.sessions?.filter(session => session.id = sessionId)?.[0] || {};
+            const session = result.recordset[0]?.sessions
+                ? JSON.parse(result.recordset[0]?.sessions)?.filter(session => session.id = sessionId)?.[0]
+                : {};
+
             const sessionTime = session.id ? checkSessionStatus(session) : '';
 
             res.status(200).send({ session, time: sessionTime })

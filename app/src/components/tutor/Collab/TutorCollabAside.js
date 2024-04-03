@@ -60,8 +60,8 @@ const TutorAside = () => {
     useEffect(() => {
         sessionId && getSessionDetail(sessionId)
             .then(res => {
-                setOpenedSession(res.data.session)
-                setSessionTime(res.data.time)
+                setOpenedSession(res.session)
+                setSessionTime(res.time)
             })
     }, [sessionId])
 
@@ -85,7 +85,7 @@ const TutorAside = () => {
 
     // Calculate time remaining
     useEffect(() => {
-        if (openedSession.end) {
+        if (openedSession.end && sessionTime === 'current') {
             const currentTime = new Date();
             const remainingTime = Math.max(0, Math.floor((new Date(openedSession.end).getTime() - currentTime) / 1000));
             setTimeRemaining(remainingTime);
@@ -93,14 +93,15 @@ const TutorAside = () => {
     }, [openedSession.end]);
 
     useEffect(() => {
-        arrivalMsg && arrivalMsg.sessionId ===  sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
-    }, [arrivalMsg, sessionId]);
+        sessionTime === 'current' && arrivalMsg && arrivalMsg.sessionId === sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
+    }, [arrivalMsg, sessionId, sessionTime]);
 
     useEffect(() => {
-         sessionId && tutor.AcademyId && socket.emit("session-add-user",  sessionId);
-    }, [tutor, sessionId]);
+        sessionTime === 'current' && sessionId && tutor.AcademyId && socket.emit("session-add-user", sessionId);
+    }, [tutor, sessionId, sessionTime]);
 
     const sendMessage = async () => {
+        if (!sessionId || sessionTime !== 'current') return toast.info('Session need to be live to send messages!')
         let text = mssg
         setMssg('')
         if (text.trim() !== '') {

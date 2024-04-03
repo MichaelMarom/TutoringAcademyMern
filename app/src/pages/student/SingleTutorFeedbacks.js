@@ -106,7 +106,7 @@ export const SingleTutorFeedbacks = () => {
                 float: clickedSlot.id ? "right" : "left"
             }}>
                 <h4 className='text-center m-3'>Tutor "{convertTutorIdToName(params.AcademyId)}" feedback from students</h4>
-                <div className='m-3' style={{ height: "80vh" }}>
+                <div className='m-3 student-calender' style={{ height: "80vh" }}>
                     <Calendar
                         localizer={localizer}
                         events={events.map((event) => ({

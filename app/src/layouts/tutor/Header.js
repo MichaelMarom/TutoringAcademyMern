@@ -52,7 +52,7 @@ const Header = () => {
         { url: '/tutor/term-of-use', name: 'Terms Of Use' },
         { url: '/tutor/chat', name: 'Message Board' },
         { url: '/tutor/market-place', name: 'Market place' },
-        { url: '/collab/123321', name: 'Collaboration' },
+        { url: '/collab', name: 'Collaboration' },
         { url: `/tutor/tutor-profile/${tutor.AcademyId}`, name: 'Profile' },
     ];
 

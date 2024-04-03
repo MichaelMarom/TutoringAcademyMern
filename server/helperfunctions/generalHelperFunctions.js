@@ -1,3 +1,5 @@
+const moment = require('moment-timezone')
+
 function checkSessionStatus(session) {
     const currentTime = moment();
     const sessionStart = moment(session.start);

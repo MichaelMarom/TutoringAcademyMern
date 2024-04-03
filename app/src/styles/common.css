@@ -127,6 +127,10 @@
   position: absolute;
 }
 
+.student-calender .rbc-current-time-indicator:before {
+  content: 'Student UTC Time';
+}
+
 .rbc-current-time-indicator {
   height: 3px !important;
   background-color: rgb(230, 16, 16) !important;

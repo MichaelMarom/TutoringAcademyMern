@@ -15,6 +15,7 @@ import { FaCamera, FaMicrophone } from 'react-icons/fa';
 import { RiCameraOffFill, RiContactsBookLine } from "react-icons/ri";
 import { PiMicrophoneSlashFill } from "react-icons/pi";
 import { BiChat } from 'react-icons/bi';
+import { getSessionDetail } from '../../../axios/tutor';
 
 const TutorAside = () => {
     const navigate = useNavigate();
@@ -43,7 +44,8 @@ const TutorAside = () => {
     const { user } = useSelector(state => state.user)
     const queryParams = new URLSearchParams(location.search);
     const sessionId = queryParams.get('sessionId')
-    console.log(sessionId);
+    const [openedSession, setOpenedSession] = useState({})
+    const [sessionTime, setSessionTime] = useState('')
 
     /**
      * validate id
@@ -54,6 +56,14 @@ const TutorAside = () => {
      * if user visit /collab with no sessionId, then we show live session link, he can click and collab
      * 
      */
+
+    useEffect(() => {
+        sessionId && getSessionDetail(sessionId)
+            .then(res => {
+                setOpenedSession(res.data.session)
+                setSessionTime(res.data.time)
+            })
+    }, [sessionId])
 
     const scrollToBottom = () => {
         if (chatContainer.current) {
@@ -75,27 +85,27 @@ const TutorAside = () => {
 
     // Calculate time remaining
     useEffect(() => {
-        if (currentSession.end) {
+        if (openedSession.end) {
             const currentTime = new Date();
-            const remainingTime = Math.max(0, Math.floor((new Date(currentSession.end).getTime() - currentTime) / 1000));
+            const remainingTime = Math.max(0, Math.floor((new Date(openedSession.end).getTime() - currentTime) / 1000));
             setTimeRemaining(remainingTime);
         }
-    }, [currentSession.end]);
+    }, [openedSession.end]);
 
     useEffect(() => {
-        arrivalMsg && arrivalMsg.sessionId === params.sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
-    }, [arrivalMsg, params]);
+        arrivalMsg && arrivalMsg.sessionId ===  sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
+    }, [arrivalMsg, sessionId]);
 
     useEffect(() => {
-        params.sessionId && tutor.AcademyId && socket.emit("session-add-user", params.sessionId);
-    }, [tutor, params]);
+         sessionId && tutor.AcademyId && socket.emit("session-add-user",  sessionId);
+    }, [tutor, sessionId]);
 
     const sendMessage = async () => {
         let text = mssg
         setMssg('')
         if (text.trim() !== '') {
             const newMessage = {
-                sessionId: params.sessionId,
+                sessionId,
                 userId: tutor.AcademyId || student.AcademyId,
                 date: new Date(),
                 text,
@@ -226,8 +236,6 @@ const TutorAside = () => {
 
     }, [location])
 
-
-
     const children = ({ remainingTime }) => {
         const minutes = Math.floor(remainingTime / 60)
         const seconds = remainingTime % 60
@@ -245,7 +253,7 @@ const TutorAside = () => {
 
     return (
         <div className="shadow-sm" style={{ width: "100%", height: "78vh" }}>
-            {currentSession.subject ?
+            {(openedSession.subject && sessionTime === 'current') ?
                 <div className='text-center countdown p-1 m-0'>
                     <CountdownCircleTimer
                         isPlaying
@@ -254,31 +262,20 @@ const TutorAside = () => {
                         isSmoothColorTransition={false}
                         strokeWidth={13}
                         colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
-                        colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
+                        colorsTime={[53 * 60, 47 * 60, 3 * 60, 0]}
                     >
                         {children}
                     </CountdownCircleTimer>
-                    {/* <FlipCountdown
-                    size={'small'}
-                    hideDay
-                    hideHour
-                    hideMonth
-                    hideYear
-                    minuteTitle='Minutes'
-                    secondTitle='Seconds'
-                    endAtZero
-                    onTimeUp={handleTimeUp}
-                    endAt={moment().add('minutes', 53).toDate()} /> */}
                 </div> :
                 <div className='text-center countdown p-1 m-0'>
                     <CountdownCircleTimer
                         isPlaying
                         duration={0}
+                        colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
+                        colorsTime={[53 * 60, 47 * 60, 3 * 60, 0]}
                         size={90}
                         isSmoothColorTransition={false}
                         strokeWidth={13}
-                        colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
-                        colorsTime={[53 * 60, 50 * 60, 3 * 60, 0]}
                     >
                         {children}
                     </CountdownCircleTimer>

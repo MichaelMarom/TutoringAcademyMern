@@ -37,7 +37,18 @@ export const fileUploadClient = axios.create({
     baseURL: "http://localhost:9876",
     headers: {
         'Content-Type': 'multipart/form-data',
-        "Authorization": `Bearer ${getAccessToken()}`
     },
 })
+
+fileUploadClient.interceptors.request.use(
+    config => {
+        const accessToken = getAccessToken();
+        if (!config.headers['Authorization'])
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 

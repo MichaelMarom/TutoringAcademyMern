@@ -372,13 +372,10 @@ myPeerServer.on("disconnect", function ({ id }) {
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-    console.log('Unhandled Rejection at:123', reason.stack || reason)
+    console.log('Unhandled Rejection at:', reason.stack || reason)
+    // res.status(400).send({ message: "Failed to Complete the Request!", reason: reason })
+
     // Recommended: send the information to sentry.io
     // or whatever crash reporting service you use
 })
 
-const sendErrors = (e, res) => {
-    console.log(err)
-    res.status(400).send({ message: "Failed to Complete the Request!", reason: e.message })
-}
-module.exports = sendErrors

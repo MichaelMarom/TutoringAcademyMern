@@ -53,7 +53,7 @@ const { subjects,
     ad_to_shortlist,
     get_shortlist_ads,
     delete_ad_from_shortlist,
-    get_student_public_profile_data, recordVideoController, getVideo } = require('../controllers/tutor');
+    get_student_public_profile_data, recordVideoController, getVideo, getSessionDetailById } = require('../controllers/tutor');
 
 const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, jwt } = require('../modules');
 
@@ -124,6 +124,8 @@ TUTOR_ROUTES.get('/tutor/market-place/shortlist/:tutorId/list', parser, verifyTo
 TUTOR_ROUTES.delete('/tutor/:tutorId/market-place/shortlist/:Id', verifyToken, delete_ad_from_shortlist)
 TUTOR_ROUTES.get('/tutor/rate/:code', verifyToken, get_tutor_against_code)
 TUTOR_ROUTES.get('/tutor/:tutorId/profile/:studentId', verifyToken, get_student_public_profile_data)
+
+TUTOR_ROUTES.get('/collab/:sessionId', verifyToken, getSessionDetailById)
 
 
 module.exports = {

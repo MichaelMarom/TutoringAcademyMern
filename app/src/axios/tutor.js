@@ -103,7 +103,6 @@ export let get_faculty = () => {
 }
 
 
-
 export let get_tutor_status = (faculty, subject, reason, AcademyId) => {
 
     return new Promise((resolve, reject) => {
@@ -125,8 +124,6 @@ export let get_tutor_status = (faculty, subject, reason, AcademyId) => {
 
     })
 }
-
-
 
 export let get_countries = () => {
 
@@ -899,5 +896,15 @@ export const delete_ad = async (id) => {
     catch (err) {
         showErrorToast(err)
         return err
+    }
+}
+
+export const getSessionDetail = async (sessionId) => {
+    try {
+        const { data } = await apiClient.get(`/collab/${sessionId}`)
+        return data;
+    }
+    catch (err) {
+        showErrorToast(err)
     }
 }

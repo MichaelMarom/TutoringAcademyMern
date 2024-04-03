@@ -2,7 +2,7 @@ const { marom_db } = require('../db');
 const { shortId, fs } = require('../modules');
 const moment = require('moment-timezone');
 const { insert, updateById, getAll, find, findByAnyIdColumn, update, parameteriedUpdateQuery, parameterizedInsertQuery } = require('../helperfunctions/crud_queries');
-
+const { deleteFolderContents } = require('../constants/helperfunctions')
 const { exec } = require('child_process');
 const sql = require('mssql');
 const COMMISSION_DATA = require('../constants/tutor');
@@ -13,7 +13,8 @@ const { QueueServiceClient } = require("@azure/storage-queue");
 const account = process.env.AZURE_ACCOUNT_NAME;
 const credential = new DefaultAzureCredential();
 const { BlobServiceClient } = require('@azure/storage-blob');
-const sendErrors = require('..');
+const { sendErrors } = require('../helperfunctions/handleReqErrors');
+const { checkSessionStatus } = require('../helperfunctions/generalHelperFunctions');
 const blobServiceClient = new BlobServiceClient(`https://${account}.blob.core.windows.net/?${process.env.AZURE_BLOB_SAS_TOKEN}`)
 const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_BLOB_CONT_NAME)
 
@@ -1951,6 +1952,7 @@ const recordVideoController = async (req, res) => {
                 // const readAbleStream = fs.createReadStream()
                 const blobClient = containerClient.getBlockBlobClient(`${user_id}.mp4`);
                 const url = await blobClient.uploadFile(outputFileName)
+                deleteFolderContents('interviews/')
                 res.send({ message: 'Video flipped successfully', url })
             })
         })
@@ -1971,9 +1973,39 @@ const getVideo = async (req, res) => {
     }
 }
 
+
+const getSessionDetailById = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            const { sessionId } = req.params;
+            const poolConnection = await sql.connect(config);
+            const result = await poolConnection.request().query(`
+                SELECT sessions
+                FROM (
+                    SELECT reservedSlots AS sessions
+                    FROM [dbo].[StudentBookings]
+                    UNION ALL
+                    SELECT bookedSlots AS sessions
+                    FROM [dbo].[StudentBookings]
+                ) combined_sessions
+                CROSS APPLY OPENJSON(combined_sessions.sessions)
+                WITH (id nvarchar(255) '$.id') AS json_data
+                WHERE json_data.id = '${sessionId}'; `)
+
+            const session = result.recordset[0]?.sessions?.filter(session => session.id = sessionId)?.[0] || {};
+            const sessionTime = session.id ? checkSessionStatus(session) : '';
+
+            res.status(200).send({ session, time: sessionTime })
+        } catch (err) {
+            sendErrors(err, res)
+        }
+    })
+}
+
 module.exports = {
     recordVideoController,
     getVideo,
+    getSessionDetailById,
     get_tutor_profile_data,
     get_tutor_against_code,
     delete_ad,

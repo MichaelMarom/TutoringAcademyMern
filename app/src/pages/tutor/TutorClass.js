@@ -5,6 +5,7 @@ import TutorLayout from "../../layouts/TutorLayout";
 import {
   Excalidraw,
   LiveCollaborationTrigger,
+  WelcomeScreen,
   useHandleLibrary
 } from "@excalidraw/excalidraw";
 import { socket } from '../../config/socket'
@@ -214,14 +215,29 @@ const TutorClass = () => {
             viewModeEnabled={!hasAuth}
             onChange={handleExcalidrawChange}
             name={openedSession.subject || 'testing'}
-          />
+          >
+            <WelcomeScreen>
+              <WelcomeScreen.Center>
+                <WelcomeScreen.Center.Logo />
+                <WelcomeScreen.Center.Heading>
+                 Lesson Will start in 3 minutes
+                </WelcomeScreen.Center.Heading>
+                <WelcomeScreen.Center.Menu>
+                  {/* <WelcomeScreen.Center.MenuItemLink href="https://github.com/excalidraw/excalidraw">
+                    Excalidraw GitHub
+                  </WelcomeScreen.Center.MenuItemLink>
+                  <WelcomeScreen.Center.MenuItemHelp /> */}
+                </WelcomeScreen.Center.Menu>
+              </WelcomeScreen.Center>
+            </WelcomeScreen>
+          </Excalidraw>
         </div>
 
         {<div className="bg-light rounded shadow-lg"
           style={{ width: "20%", position: "fixed", right: 0 }}>
           {/* <div onClick={() => setIsChatOpen(false)} className="cursor-pointer">
            <MdCancel size={24} /> </div> */}
-          <TutorAside openedSession={openedSession} sessionTime={{ sessionTime }} />
+          <TutorAside openedSession={openedSession} sessionTime={sessionTime} />
           {sessionTime === 'current' && <div className="d-flex align-items-center justify-content-center" >
             <Tooltip text={"switch text goes here"} iconSize="25" />
             <Switch

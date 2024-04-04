@@ -81,6 +81,7 @@ const TutorAside = ({ openedSession, sessionTime }) => {
             setTimeRemaining(remainingTime);
         }
     }, [openedSession.end]);
+    console.log(timeRemaining, openedSession.end, sessionTime)
 
     useEffect(() => {
         sessionTime === 'current' && arrivalMsg && arrivalMsg.sessionId === sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
@@ -192,7 +193,7 @@ const TutorAside = ({ openedSession, sessionTime }) => {
                 // toast.warning(e.message)
             });
 
-        socket.on('user-disconnected', user_id => {
+      socket&&  socket.on('user-disconnected', user_id => {
             if (peers[user_id]) peers[user_id].close()
         })
 
@@ -228,6 +229,7 @@ const TutorAside = ({ openedSession, sessionTime }) => {
     }, [location])
 
     const children = ({ remainingTime }) => {
+
         const minutes = Math.floor(remainingTime / 60)
         const seconds = remainingTime % 60
 
@@ -248,7 +250,8 @@ const TutorAside = ({ openedSession, sessionTime }) => {
                 <div className='text-center countdown p-1 m-0'>
                     <CountdownCircleTimer
                         isPlaying
-                        duration={timeRemaining}
+                        initialRemainingTime={timeRemaining}
+                        duration={53*60}
                         size={90}
                         isSmoothColorTransition={false}
                         strokeWidth={13}

@@ -1995,7 +1995,7 @@ const getSessionDetailById = async (req, res) => {
                 WHERE json_data.id = '${sessionId}'; `)
 
             const session = result.recordset[0]?.sessions
-                ? JSON.parse(result.recordset[0]?.sessions)?.filter(session => session.id = sessionId)?.[0]
+                ? JSON.parse(result.recordset[0]?.sessions)?.filter(session => session.id === sessionId)?.[0]
                 : {};
 
             const sessionTime = session.id ? checkSessionStatus(session, timezone) : '';

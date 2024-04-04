@@ -1,9 +1,10 @@
 const moment = require('moment-timezone')
 
-function checkSessionStatus(session) {
-    const currentTime = moment();
-    const sessionStart = moment(session.start);
-    const sessionEnd = moment(session.end);
+function checkSessionStatus(session, timezone) {
+    console.log(timezone)
+    const currentTime = moment().tz(timezone);
+    const sessionStart = moment(session.start).tz(timezone);
+    const sessionEnd = moment(session.end).tz(timezone);
 
     if (currentTime.isBefore(sessionStart)) {
         return "future";

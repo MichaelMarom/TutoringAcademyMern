@@ -1978,6 +1978,8 @@ const getSessionDetailById = async (req, res) => {
     marom_db(async (config) => {
         try {
             const { sessionId } = req.params;
+            const { timezone } = req.query;
+            console.log(req.query, req.params)
             const poolConnection = await sql.connect(config);
             const result = await poolConnection.request().query(`
                 SELECT sessions
@@ -1996,7 +1998,7 @@ const getSessionDetailById = async (req, res) => {
                 ? JSON.parse(result.recordset[0]?.sessions)?.filter(session => session.id = sessionId)?.[0]
                 : {};
 
-            const sessionTime = session.id ? checkSessionStatus(session) : '';
+            const sessionTime = session.id ? checkSessionStatus(session, timezone) : '';
 
             res.status(200).send({ session, time: sessionTime })
         } catch (err) {

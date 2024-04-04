@@ -17,7 +17,7 @@ import { PiMicrophoneSlashFill } from "react-icons/pi";
 import { BiChat } from 'react-icons/bi';
 import { getSessionDetail } from '../../../axios/tutor';
 
-const TutorAside = () => {
+const TutorAside = ({ openedSession, sessionTime }) => {
     const navigate = useNavigate();
     const { upcomingSessionFromNow: tutorUpcomingFromNow,
         upcomingSession: tutorUpcoming,
@@ -44,8 +44,6 @@ const TutorAside = () => {
     const { user } = useSelector(state => state.user)
     const queryParams = new URLSearchParams(location.search);
     const sessionId = queryParams.get('sessionId')
-    const [openedSession, setOpenedSession] = useState({})
-    const [sessionTime, setSessionTime] = useState('')
 
     /**
      * validate id
@@ -56,14 +54,6 @@ const TutorAside = () => {
      * if user visit /collab with no sessionId, then we show live session link, he can click and collab
      * 
      */
-
-    useEffect(() => {
-        sessionId && getSessionDetail(sessionId)
-            .then(res => {
-                setOpenedSession(res.session)
-                setSessionTime(res.time)
-            })
-    }, [sessionId])
 
     const scrollToBottom = () => {
         if (chatContainer.current) {
@@ -304,7 +294,8 @@ const TutorAside = () => {
                 </ul>
             </div>
 
-            <div className="TutorAsideChatCnt" style={{ background: 'rgb(225 238 242)', height: "53%" }}>
+            <div className="TutorAsideChatCnt"
+                style={{ background: 'rgb(225 238 242)', height: "53%" }}>
                 <div className="TutorAsideChatBox" ref={chatContainer} style={{ background: 'rgb(225 238 242)' }}>
                     {messages.map(msg => <div className="" style={{
                         width: "100%",
@@ -363,7 +354,7 @@ const TutorAside = () => {
                     </span>
                 </div>
             </div>
-        </div >
+        </div>
     );
 }
 

@@ -899,9 +899,9 @@ export const delete_ad = async (id) => {
     }
 }
 
-export const getSessionDetail = async (sessionId) => {
+export const getSessionDetail = async (sessionId, timezone) => {
     try {
-        const { data } = await apiClient.get(`/collab/${sessionId}`)
+        const { data } = await apiClient.get(`/collab/${sessionId}`, { params: { timezone } })
         return data;
     }
     catch (err) {

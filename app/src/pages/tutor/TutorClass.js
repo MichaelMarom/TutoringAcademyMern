@@ -26,15 +26,18 @@ import { getSessionDetail } from "../../axios/tutor";
 
 const TutorClass = () => {
   const { user } = useSelector(state => state.user)
+  const { student } = useSelector(state => state.student)
+  const { tutor } = useSelector(state => state.tutor)
+
   const [zenModeEnabled, setZenModeEnabled] = useState(false);
   const [gridModeEnabled, setGridModeEnabled] = useState(false);
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
-  const { student } = useSelector(state => state.student)
-  const { tutor } = useSelector(state => state.tutor)
   const [elements, setElements] = useState([]);
   const [collaborators, setCollaborators] = useState(new Map());
   const [files, setFiles] = useState([])
+
   const [isChatOpen, setIsChatOpen] = useState(false)
+
   const location = useLocation()
   const queryParams = new URLSearchParams(location.search);
   const sessionId = queryParams.get('sessionId')
@@ -42,12 +45,13 @@ const TutorClass = () => {
   const [sessionTime, setSessionTime] = useState('')
 
   useEffect(() => {
-    sessionId && getSessionDetail(sessionId)
-      .then(res => {
-        setOpenedSession(res.session)
-        setSessionTime(res.time)
-      })
-  }, [sessionId])
+    sessionId && (student.timeZone || tutor.timeZone) &&
+      getSessionDetail(sessionId, user.role === 'student' ? student.timeZone : tutor.timeZone)
+        .then(res => {
+          setOpenedSession(res.session)
+          setSessionTime(res.time)
+        })
+  }, [sessionId, student, tutor, user])
 
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
@@ -215,15 +219,16 @@ const TutorClass = () => {
 
         {<div className="bg-light rounded shadow-lg"
           style={{ width: "20%", position: "fixed", right: 0 }}>
-          {/* <div onClick={() => setIsChatOpen(false)} className="cursor-pointer"> <MdCancel size={24} /> </div> */}
-          <TutorAside />
-          <div className="d-flex align-items-center justify-content-center" >
+          {/* <div onClick={() => setIsChatOpen(false)} className="cursor-pointer">
+           <MdCancel size={24} /> </div> */}
+          <TutorAside openedSession={openedSession} sessionTime={{ sessionTime }} />
+          {sessionTime === 'current' && <div className="d-flex align-items-center justify-content-center" >
             <Tooltip text={"switch text goes here"} iconSize="25" />
             <Switch
               isChecked={isChecked}
               setIsChecked={setIsChecked}
               authorized={user.role === 'tutor' && sessionTime === 'current'} />
-          </div>
+          </div>}
         </div>}
         {/* <div style={{ position: "fixed", bottom: "10%", right: "3%" }}>
           <div onClick={() => setIsChatOpen(!isChatOpen)}>

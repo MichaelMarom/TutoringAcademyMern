@@ -6,8 +6,6 @@ import { HiPrinter } from "react-icons/hi2";
 import { MdDownloadForOffline } from "react-icons/md";
 import Tooltip from '../common/ToolTip';
 
-
-
 const SlotsInvoice = ({
   selectedType,
   studentName,

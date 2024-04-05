@@ -14,7 +14,7 @@ import CommonLayout from "../../layouts/CommonLayout";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { constants } from "buffer";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { RiContactsBookLine } from "react-icons/ri";
 import TutorAside from "../../components/tutor/Collab/TutorCollabAside";
 import { BiChat } from "react-icons/bi";
@@ -24,6 +24,8 @@ import Tooltip from "../../components/common/ToolTip";
 import _ from "lodash";
 import { toast } from "react-toastify";
 import { getSessionDetail } from "../../axios/tutor";
+import logo from '../../images/tutoring Logo.png'
+
 
 const TutorClass = () => {
   const { user } = useSelector(state => state.user)
@@ -59,6 +61,8 @@ const TutorClass = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [hasAuth, setAuth] = useState(false)
 
+  const navigate = useNavigate()
+
   useEffect(() => { setAuth(user.role === 'tutor') }, [user])
 
   const { upcomingSessionFromNow: tutorUpcomingFromNow,
@@ -77,6 +81,12 @@ const TutorClass = () => {
     const uniqueIdsWithHigherVersion = _.map(groupedById, group => _.maxBy(group, 'version'));
     return uniqueIdsWithHigherVersion;
   }
+
+  useEffect(() => {
+    if (currentSession?.id) {
+      navigate(`${process.env.REACT_APP_BASE_URL}/collab?sessionId=${currentSession.id}`)
+    }
+  }, [currentSession])
 
   useEffect(() => {
     if (socket && excalidrawAPI && sessionTime === 'current') {
@@ -187,6 +197,8 @@ const TutorClass = () => {
     }
   }, [excalidrawAPI, sessionId, sessionTime])
 
+  console.log(sessionTime)
+
   return (
     <CommonLayout role={user.role}>
       {openedSession.subject ? <div style={{ width: "70%" }}
@@ -218,15 +230,20 @@ const TutorClass = () => {
           >
             <WelcomeScreen>
               <WelcomeScreen.Center>
-                <WelcomeScreen.Center.Logo />
+                {/* <WelcomeScreen.Center.Logo /> */}
+                <img src={logo} at="logo" width={400} height={130} />
+
                 <WelcomeScreen.Center.Heading>
-                 Lesson Will start in 3 minutes
+                  {sessionTime === 'current' ? `${openedSession.subject} Lesson Will start in 3 minutes,
+                  but you can start using the canvas tools`:
+                    `Please select the session Id to join current session`
+                  }
                 </WelcomeScreen.Center.Heading>
                 <WelcomeScreen.Center.Menu>
-                  {/* <WelcomeScreen.Center.MenuItemLink href="https://github.com/excalidraw/excalidraw">
+                  {/* <WelcomeScreen.Center.MenuItemLink href={``}>
                     Excalidraw GitHub
-                  </WelcomeScreen.Center.MenuItemLink>
-                  <WelcomeScreen.Center.MenuItemHelp /> */}
+                  </WelcomeScreen.Center.MenuItemLink> */}
+                  {/* <WelcomeScreen.Center.MenuItemHelp /> */}
                 </WelcomeScreen.Center.Menu>
               </WelcomeScreen.Center>
             </WelcomeScreen>

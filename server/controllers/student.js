@@ -4,7 +4,7 @@ const { express, path, fs, parser, cookieParser, mocha, morgan, cors, shortId, j
 require('dotenv').config();
 const moment = require('moment-timezone');
 const sql = require('mssql');
-const capitalizeFirstLetter = require('../constants/helperfunctions.js')
+const { capitalizeFirstLetter } = require('../constants/helperfunctions.js')
 const studentAd = require('../schema/student/studentAd.js')
 
 const executeQuery = async (query, res) => {

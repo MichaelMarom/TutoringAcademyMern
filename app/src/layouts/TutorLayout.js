@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Header from '../layouts/tutor/Header'
 import { useSelector } from 'react-redux'
-import Steps from '../components/tutor/Steps'
 import SmallSideBar from '../components/common/SmallSideBar'
 import { generateUpcomingSessionMessage } from '../helperFunctions/generalHelperFunctions'
 import { useNavigate } from 'react-router-dom'
@@ -10,21 +9,19 @@ const TutorLayout = ({ children }) => {
     const { tutor } = useSelector(state => state.tutor);
     const { user } = useSelector(state => state.user)
     const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.tutorSessions)
-    const [currentStep, setCurrentStep] = useState(3);
     const navigate = useNavigate()
-    ///show profile button when currentStep>1
-    const steps = [
-        { name: 'Profile Setup', url: "/tutor/setup", step: 1 },
-        { name: 'Education', url: "/tutor/edu", step: 2 },
-        { name: 'Bank', url: "/tutor/accounting", step: 3 },
-        { name: 'Subject', url: "/tutor/subject", step: 4 },
-    ];
+
+    const extractRemainingtimeInInteger = parseInt(upcomingSessionFromNow.split(' ')[0]);
+    console.log(extractRemainingtimeInInteger)
 
     useEffect(() => {
-        if (currentSession?.id) {
-            navigate(`${process.env.REACT_APP_BASE_URL}/collab?sessionId=${currentSession.id}`)
-        }
-    }, [currentSession])
+        // if (inMins && upcomingSession?.id && extractRemainingtimeInInteger < 4) {
+        //     navigate(`/collab?sessionId=${upcomingSession.id}`)
+        // }
+        // else if (currentSession?.id) {
+        //     navigate(`/collab?sessionId=${currentSession.id}`)
+        // }
+    }, [currentSession.id, inMins, upcomingSession])
 
     if (user.role !== 'admin' && (tutor.Status === 'closed' || tutor.Status === 'disapproved'))
         return <div className='text-danger'>Your Account is Closed or Suspended. Please contact adminitrator.</div>

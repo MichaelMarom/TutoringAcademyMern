@@ -5,6 +5,8 @@ import SmallSideBar from '../components/common/SmallSideBar'
 import { generateUpcomingSessionMessage } from '../helperFunctions/generalHelperFunctions'
 import { useSelector } from 'react-redux'
 import AdminLayout from './AdminLayout'
+import TutorLayout from './TutorLayout'
+import StudentLayout from './StudentLayout'
 
 
 const CommonLayout = ({ role, children }) => {
@@ -15,30 +17,16 @@ const CommonLayout = ({ role, children }) => {
 
     if (role === 'student')
         return (
-            <div>
-                <Header />
-                <SmallSideBar inMins={inMins} message={generateUpcomingSessionMessage(upcomingSession, upcomingSessionFromNow)} />
-
-                {children}
-            </div>
+            <StudentLayout>{children}</StudentLayout>
         )
     else if (role === 'tutor')
         return (
-            <div>
-                <TutorHeader />
-                <SmallSideBar
-                    inMins={isTutorUpcomgLessonInMins}
-                    message={generateUpcomingSessionMessage(tutorUpcoming, tutorUpcomingFromNow)} />
-                {children}
-            </div>
+            <TutorLayout>{children}</TutorLayout>
         )
     else if (role === 'admin')
         return (
             <div>
                 <AdminLayout />
-                {/* <SmallSideBar
-                    inMins={isTutorUpcomgLessonInMins}
-                    message={generateUpcomingSessionMessage(tutorUpcoming, tutorUpcomingFromNow)} /> */}
                 {children}
             </div>
         )

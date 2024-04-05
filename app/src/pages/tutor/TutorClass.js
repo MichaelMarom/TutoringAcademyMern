@@ -83,12 +83,6 @@ const TutorClass = () => {
   }
 
   useEffect(() => {
-    if (currentSession?.id) {
-      navigate(`${process.env.REACT_APP_BASE_URL}/collab?sessionId=${currentSession.id}`)
-    }
-  }, [currentSession])
-
-  useEffect(() => {
     if (socket && excalidrawAPI && sessionTime === 'current') {
       sessionId && socket.emit('join-session', sessionId);
       socket.on('canvas-change-recieve', (change) => {
@@ -197,24 +191,20 @@ const TutorClass = () => {
     }
   }, [excalidrawAPI, sessionId, sessionTime])
 
-  console.log(sessionTime)
 
   return (
     <CommonLayout role={user.role}>
-      {openedSession.subject ? <div style={{ width: "70%" }}
+      {openedSession.subject && <div style={{ width: "70%" }}
         className={`d-flex ${openedSession.subject ? "justify-content-between" : "justify-content-center"}`} >
-        <div> Subject: {openedSession.subject}
+        <div>
           {sessionTime === 'future' && <p className="text-danger">Session is in Future</p>}
           {sessionTime === 'past' && <p className="text-danger">Session already Pass</p>}
         </div>
-        <h4 className="text-center text-success blinking-button m-0">Lesson will start in 3 minutes</h4>
-      </div> :
-        <h4 className="text-center text-success m-0">No Current Session!</h4>
-      }
+      </div>}
 
       <div className="d-flex" style={{ gap: "2%" }}>
         <div style={{
-          position: 'fixed', inset: 0, top: 0, marginTop: "100px",
+          position: 'fixed', inset: 0, top: 0, marginTop: "70px",
           width: "80%", border: "2px solid lightgray"
         }}
           className="rounded"

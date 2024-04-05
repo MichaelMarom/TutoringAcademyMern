@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useState, useCallback, useEffect, useRef } from 'react'
 import './record.css'
-import { toast } from "react-toastify"
-import { fileUploadClient } from "../../../axios/config"
+import { toast } from 'react-toastify'
+import { fileUploadClient } from '../../../axios/config'
 import Webcam from 'react-webcam'
 import { BsPause, BsPlay, BsTrash, BsUpload } from 'react-icons/bs'
 import { IoTrash } from 'react-icons/io5'
@@ -32,10 +32,9 @@ const WebcamCapture = ({ user_id, record_duration }) => {
 
   const logError = (e) => {
     setError(e.message)
-    toast.error(e.message)
+    // toast.error(e.message)
     console.log(e)
   }
-
 
   const initRecorder = () => {
     setRecordingSupported(true)
@@ -61,6 +60,8 @@ const WebcamCapture = ({ user_id, record_duration }) => {
 
   useEffect(() => {
     try {
+      let tryAgainTimeout = null
+      setRecordingSupported(false)
       const hasGetUserMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)
       if (!hasGetUserMedia) {
         throw new Error('getUserMedia is not supported in your browser')
@@ -69,6 +70,7 @@ const WebcamCapture = ({ user_id, record_duration }) => {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
         .then((stream) => {
+          console.log('.. got stream')
           //stop the test stream and enable the webcam
           stream.getTracks().forEach((track) => track.stop())
           initRecorder()
@@ -76,12 +78,16 @@ const WebcamCapture = ({ user_id, record_duration }) => {
         .catch((e) => {
           console.error(e)
           setRecordingSupported(false)
-
-          setTimeout(() => {
+          // this is to try the webcam again after some time for slow devices what it does is activate the Webcam component which has it's own getUserMedia call
+          tryAgainTimeout = setTimeout(() => {
             console.log('giving the webcam another try...')
             setRecordingSupported(true)
-          }, 1500) // this is a hack to try the webcam again after some time for slow devices what it does is activate the Webcam component which has it's own getUserMedia call
+          }, 1500)
         })
+
+      return () => {
+        clearTimeout(tryAgainTimeout)
+      }
     } catch (e) {
       logError(e)
     }
@@ -122,7 +128,9 @@ const WebcamCapture = ({ user_id, record_duration }) => {
           previewRef.current.removeEventListener('pause', () => setIsPlayingPreview(false))
           previewRef.current.removeEventListener('play', () => setIsPlayingPreview(true))
         }
-      } else { console.log('empty data...') }
+      } else {
+        console.log('empty data...')
+      }
     } catch (e) {
       logError(e)
     }
@@ -137,25 +145,31 @@ const WebcamCapture = ({ user_id, record_duration }) => {
     }
   }
 
-  const handleStart = useCallback(() => {
-    if (capturing || !deviceId) return
-    setCountdown(record_duration)
-    setCapturing(true)
+  const handleStart = useCallback(
+    async (retry = true) => {
+      if (capturing || !deviceId) return
 
-    // check if navigator.mediaDevices is available
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      throw new Error('Unable to access media devices. Please check your browser settings.')
-    }
+      try {
+        // check if navigator.mediaDevices is available
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('Unable to access media devices. Please check your browser settings.')
+        }
+        const stream = webcamRef.current.stream
+        // const stream = await navigator.mediaDevices.getUserMedia({
+        //   video: { deviceId: deviceId },
+        //   audio: {
+        //     noiseSuppression: { exact: true },
+        //     autoGainControl: { exact: true },
+        //   },
+        // })
 
-    navigator.mediaDevices
-      .getUserMedia({
-        video: { deviceId: deviceId },
-        audio: {
-          noiseSuppression: { exact: true },
-          autoGainControl: { exact: true },
-        },
-      })
-      .then((stream) => {
+        if (!stream) {
+          throw new Error('Failed to start stream...')
+        }
+
+        setCountdown(record_duration)
+        setCapturing(true)
+
         webcamRef.current.srcObject = stream
         mediaRecorderRef.current = new MediaRecorder(stream, {
           mimeType: 'video/webm',
@@ -165,20 +179,29 @@ const WebcamCapture = ({ user_id, record_duration }) => {
           onRecordingDataAvailable(data)
         })
         mediaRecorderRef.current.start()
-      })
-      .catch((e) => {
-        logError(e)
-      })
 
-    return () => {
-      if (mediaRecorderRef.current) {
-        mediaRecorderRef.current.stop()
-        mediaRecorderRef.current = null
+        return () => {
+          if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop()
+            mediaRecorderRef.current = null
+          }
+        }
+      } catch (e) {
+        handleCleanup()
+        console.info('Error from start stream...')
+        logError(e)
+
+        if (retry) {
+          console.info('Retrying start...')
+          setTimeout(() => handleStart(false), 500)
+        }
       }
-    }
-  }, [deviceId, capturing, record_duration, onRecordingDataAvailable])
+    },
+    [deviceId, capturing, record_duration, onRecordingDataAvailable]
+  )
 
   const handleUpload = async () => {
+   // need to install ffmpeg on this computer as well.....
     try {
       setLoading(true)
       if (blob) {
@@ -207,16 +230,15 @@ const WebcamCapture = ({ user_id, record_duration }) => {
   }
 
   const handleCleanup = () => {
-
-    // setBlob(null)
+    setBlob(null)
 
     setCapturing(false)
     setCountdown(0)
 
-    // if (previewRef.current) {
-    //   previewRef.current.pause()
-    //   previewRef.current.src = ''
-    // }
+    if (previewRef.current) {
+      previewRef.current.pause()
+      previewRef.current.src = ''
+    }
   }
 
   const Loader = () => (
@@ -228,12 +250,20 @@ const WebcamCapture = ({ user_id, record_duration }) => {
   return (
     <div className="videoCaptureContainer">
       {loading && !error && <Loader />}
-      {error && <div className="error">{error}</div>}
+      {error && !recordingSupported && <div className="error">{error}</div>}
       {countdown > 0 && <div className="countdown">{countdown / 1000}</div>}
 
       {recordingSupported && !blob && (
         <Webcam
-          audio={false}
+          audio={true}
+          audioConstraints={{
+            noiseSuppression: { exact: true },
+            autoGainControl: { exact: true },
+          }}
+          videoConstraints={{
+            deviceId
+          }}
+          muted
           ref={webcamRef}
           mirrored={true}
           onUserMedia={initRecorder}
@@ -242,7 +272,6 @@ const WebcamCapture = ({ user_id, record_duration }) => {
               new Error('Failed to access a camera, please check your device and browser settings')
             )
           }
-          videoConstraints={{ deviceId: deviceId }}
         />
       )}
 
@@ -258,53 +287,88 @@ const WebcamCapture = ({ user_id, record_duration }) => {
 
       {!loading && recordingSupported && !blob && (
         <div className="buttonWrapper">
-          {!capturing && <button onClick={handleStart} className="btn btn-transparent rounded-circle" style={{
-            height: "50px",
-            width: "50px",
-
-          }}><FaRegCirclePlay size={39} color="#da012d" /></button>}
-          {capturing && <button onClick={handleStop} className="btn btn-transparent rounded-circle"
-            style={{
-              height: "50px",
-              width: "50px",
-
-            }}><FaRegStopCircle size={39} color="#da012d" /></button>}
+          {!capturing && (
+            <button
+              onClick={handleStart}
+              type='button'
+              className="btn btn-transparent rounded-circle"
+              style={{
+                height: '50px',
+                width: '50px',
+              }}
+            >
+              <FaRegCirclePlay size={39} color="#da012d" />
+            </button>
+          )}
+          {capturing && (
+            <button
+              onClick={handleStop}
+              className="btn btn-transparent rounded-circle"
+              type='button'
+              style={{
+                height: '50px',
+                width: '50px',
+              }}
+            >
+              <FaRegStopCircle size={39} color="#da012d" />
+            </button>
+          )}
         </div>
       )}
 
       {!loading && blob && !videoUploaded && (
         <div className="buttonWrapper">
-          <Tooltip text={"delete"} direction='unknown' style={{ top: "-10px", left: "0" }} customStyling={true}>
-            <button onClick={handleCleanup} className='video-overlay-btn btn btn-danger rounded-circle' style={{
-              height: "50px",
-              width: "50px"
-            }}>
-              <IoTrash size={25} /></button>
+          <Tooltip
+            text={'delete'}
+            direction="unknown"
+            style={{ top: '-10px', left: '0' }}
+            customStyling={true}
+          >
+            <button
+              onClick={handleCleanup}
+              type='button'
+              className="video-overlay-btn btn btn-danger rounded-circle"
+              style={{
+                height: '50px',
+                width: '50px',
+              }}
+            >
+              <IoTrash size={25} />
+            </button>
           </Tooltip>
           {/* {previewRef.current && (
             <button className='video-overlay-btn btn btn-primary rounded-circle' style={{
               height: "50px",
+              type='button'
               width: "50px"
             }} onClick={handlePreviewPlayPause}>
               {isPlayingPreview ? <BsPause size={25} /> : <BsPlay size={25} />}</button>
           )} */}
-          <Tooltip text={"upload"} direction={"unknown"} style={{ top: "-10px", left: "0" }}
-            customStyling={true}>
-            <button className='video-overlay-btn btn btn-success rounded-circle' style={{
-              height: "50px",
-              width: "50px"
-            }} onClick={handleUpload}>
+          <Tooltip
+            text={'upload'}
+            direction={'unknown'}
+            style={{ top: '-10px', left: '0' }}
+            customStyling={true}
+          >
+            <button
+              className="video-overlay-btn btn btn-success rounded-circle"
+              type='button'
+              style={{
+                height: '50px',
+                width: '50px',
+              }}
+              onClick={handleUpload}
+            >
               <BsUpload size={25} />
             </button>
           </Tooltip>
         </div>
-      )
-      }
+      )}
 
       <div className={`preview h-100 ${blob ? 'show' : 'hide'}`}>
         <video ref={previewRef} playsInline onClick={handlePreviewPlayPause} controls />
       </div>
-    </div >
+    </div>
   )
 }
 

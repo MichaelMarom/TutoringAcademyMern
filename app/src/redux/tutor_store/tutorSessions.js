@@ -34,10 +34,15 @@ export default slice.reducer;
 
 export const setTutorSessions = (tutor) => {
     return async (dispatch) => {
-        dispatch(slice.actions.isLoading())
-        const result = await formatted_tutor_sessions(tutor.AcademyId)
-        dispatch(slice.actions.setTutorSession(result));
-        return result;
+        try {
+            dispatch(slice.actions.isLoading())
+            const result = await formatted_tutor_sessions(tutor.AcademyId)
+            dispatch(slice.actions.setTutorSession(result));
+            return result;
+        }
+        catch (err) {
+            console.log(err)
+        }
     };
 }
 

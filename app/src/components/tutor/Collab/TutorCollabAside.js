@@ -193,7 +193,7 @@ const TutorAside = ({ openedSession, sessionTime }) => {
                 // toast.warning(e.message)
             });
 
-      socket&&  socket.on('user-disconnected', user_id => {
+        socket && socket.on('user-disconnected', user_id => {
             if (peers[user_id]) peers[user_id].close()
         })
 
@@ -244,29 +244,56 @@ const TutorAside = ({ openedSession, sessionTime }) => {
         )
     }
 
+    const startingClockChildren = ({ remainingTime }) => {
+        const minutes = Math.floor(remainingTime / 60)
+        const seconds = remainingTime % 60
+
+        return (
+            <div>
+                {minutes <= 49 && <p className='m-0' style={{ fontSize: "12px" }}>Lesson</p>}
+                {minutes}:{seconds}
+                <p className='m-0 blinking-button text-danger'
+                    style={{ fontSize: "12px" }}>Starting</p>
+            </div>
+        )
+    }
+
     return (
         <div className="shadow-sm" style={{ width: "100%", height: "78vh" }}>
-            {(openedSession.subject && sessionTime === 'current') ?
-                <div className='text-center countdown p-1 m-0'>
-                    <CountdownCircleTimer
-                        isPlaying
-                        initialRemainingTime={timeRemaining}
-                        duration={53*60}
-                        size={90}
-                        isSmoothColorTransition={false}
-                        strokeWidth={13}
-                        colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
-                        colorsTime={[53 * 60, 47 * 60, 3 * 60, 0]}
-                    >
-                        {children}
-                    </CountdownCircleTimer>
-                </div> :
-                <div className='text-center countdown p-1 m-0'>
+            {(openedSession.subject && !sessionTime === 'current') ?
+                timeRemaining < (57 * 60) ?
+                    <div className='text-center countdown p-1 m-0'>
+                        <CountdownCircleTimer
+                            isPlaying
+                            initialRemainingTime={timeRemaining}
+                            duration={50 * 60}
+                            size={90}
+                            isSmoothColorTransition={false}
+                            strokeWidth={13}
+                            colors={['#32CD32', '#ff0000', '#ff0000']}
+                            colorsTime={[50 * 60, 3 * 60, 0]}
+                        >
+                            {children}
+                        </CountdownCircleTimer>
+
+                    </div>
+                    : <div className='text-center countdown p-1 m-0'>
+                        <CountdownCircleTimer
+                            isPlaying
+                            duration={3 * 60}
+                            colors='#FFA500'
+                            size={90}
+                            isSmoothColorTransition={false}
+                            strokeWidth={13}
+                        >
+                            {startingClockChildren}
+                        </CountdownCircleTimer>
+                    </div>
+                : <div className='text-center countdown p-1 m-0'>
                     <CountdownCircleTimer
                         isPlaying
                         duration={0}
-                        colors={['#FFA500', '#32CD32', '#ff0000', '#ff0000']}
-                        colorsTime={[53 * 60, 47 * 60, 3 * 60, 0]}
+                        colors='#FFA500'
                         size={90}
                         isSmoothColorTransition={false}
                         strokeWidth={13}

@@ -47,6 +47,11 @@ const TutorClass = () => {
   const [openedSession, setOpenedSession] = useState({})
   const [sessionTime, setSessionTime] = useState('')
 
+  const { upcomingSessionFromNow: tutorUpcomingFromNow,
+    upcomingSession: tutorUpcoming,
+    inMins: isTutorUpcomgLessonInMins, currentSession: tutorCurrentSession } = useSelector(state => state.tutorSessions)
+  const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.studentSessions)
+
   useEffect(() => {
     sessionId && (student.timeZone || tutor.timeZone) &&
       getSessionDetail(sessionId, user.role === 'student' ? student.timeZone : tutor.timeZone)
@@ -54,7 +59,7 @@ const TutorClass = () => {
           setOpenedSession(res.session)
           setSessionTime(res.time)
         })
-  }, [sessionId, student, tutor, user])
+  }, [sessionId, student, tutor, user, currentSession.id])
 
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
@@ -65,10 +70,6 @@ const TutorClass = () => {
 
   useEffect(() => { setAuth(user.role === 'tutor') }, [user])
 
-  const { upcomingSessionFromNow: tutorUpcomingFromNow,
-    upcomingSession: tutorUpcoming,
-    inMins: isTutorUpcomgLessonInMins, currentSession: tutorCurrentSession } = useSelector(state => state.tutorSessions)
-  const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.studentSessions)
 
   // useEffect(() => {
   //   if (!excalidrawAPI) {

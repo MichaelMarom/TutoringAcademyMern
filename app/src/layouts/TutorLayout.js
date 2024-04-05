@@ -14,13 +14,14 @@ const TutorLayout = ({ children }) => {
     const extractRemainingtimeInInteger = parseInt(upcomingSessionFromNow.split(' ')[0]);
     console.log(extractRemainingtimeInInteger)
 
+
     useEffect(() => {
-        // if (inMins && upcomingSession?.id && extractRemainingtimeInInteger < 4) {
-        //     navigate(`/collab?sessionId=${upcomingSession.id}`)
-        // }
-        // else if (currentSession?.id) {
-        //     navigate(`/collab?sessionId=${currentSession.id}`)
-        // }
+        if (inMins && upcomingSession?.id && extractRemainingtimeInInteger < 4) {
+            navigate(`/collab?sessionId=${upcomingSession.id}`)
+        }
+        else if (currentSession?.id) {
+            navigate(`/collab?sessionId=${currentSession.id}`)
+        }
     }, [currentSession.id, inMins, upcomingSession])
 
     if (user.role !== 'admin' && (tutor.Status === 'closed' || tutor.Status === 'disapproved'))

@@ -255,7 +255,7 @@ const WebcamCapture = ({ user_id, record_duration }) => {
 
       {recordingSupported && !blob && (
         <Webcam
-          audio={true}
+          audio={true} // so it works with mic turned off only....
           audioConstraints={{
             noiseSuppression: { exact: true },
             autoGainControl: { exact: true },

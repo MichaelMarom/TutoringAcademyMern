@@ -62,6 +62,12 @@ const TutorAside = ({ openedSession, sessionTime }) => {
     };
 
     useEffect(() => {
+        if (timeRemaining < 360) {
+            navigate(`/${user.role}/feedback`)
+        }
+    }, [timeRemaining])
+
+    useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
@@ -81,7 +87,6 @@ const TutorAside = ({ openedSession, sessionTime }) => {
             setTimeRemaining(remainingTime);
         }
     }, [openedSession.end]);
-    console.log(timeRemaining, openedSession.end, sessionTime)
 
     useEffect(() => {
         sessionTime === 'current' && arrivalMsg && arrivalMsg.sessionId === sessionId && setMessages((prev) => [...prev, { ...arrivalMsg }]);
@@ -229,7 +234,6 @@ const TutorAside = ({ openedSession, sessionTime }) => {
     }, [location])
 
     const children = ({ remainingTime }) => {
-
         const minutes = Math.floor(remainingTime / 60)
         const seconds = remainingTime % 60
 
@@ -260,12 +264,12 @@ const TutorAside = ({ openedSession, sessionTime }) => {
 
     return (
         <div className="shadow-sm" style={{ width: "100%", height: "78vh" }}>
-            {(openedSession.subject && !sessionTime === 'current') ?
-                timeRemaining < (57 * 60) ?
+            {(openedSession.subject && sessionTime === 'current') ?
+                timeRemaining < 3420 ?
                     <div className='text-center countdown p-1 m-0'>
                         <CountdownCircleTimer
                             isPlaying
-                            initialRemainingTime={timeRemaining}
+                            // initialRemainingTime={timeRemaining}
                             duration={50 * 60}
                             size={90}
                             isSmoothColorTransition={false}

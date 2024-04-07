@@ -30,7 +30,7 @@ const verifyToken = async (req, res, next) => {
     // }
 
     if (!token || token === 'undefined' || token === 'null')
-        return res.status(401).json({ message: "The security token expired after 20 minutes of ideling, please login again." });
+        return res.status(401).json({ reason: "token not attached!", message: "The security token expired after 20 minutes of ideling, please login again." });
 
     try {
         // const clientToken = cookies.get('__session');
@@ -46,7 +46,7 @@ const verifyToken = async (req, res, next) => {
         if (token) {
             jwt.verify(token, publicKey, (err, decoded) => {
                 if (err) {
-                    return res.status(401).json({ response: err.message, message: "The security token expired after 20 minutes of ideling, please login again." });
+                    return res.status(401).json({ reason: err.message, message: "The security token expired after 20 minutes of ideling, please login again." });
                 }
                 req.user = decoded;
                 next();

@@ -34,12 +34,13 @@ export function setTutor(data) {
         dispatch(slice.actions.isLoading());
         let result;
         const nullValues = ['null', 'undefined']
-        if (nullValues.includes(localStorage.getItem('tutor_user_id'))) {
+        if (nullValues.includes(localStorage.getItem('tutor_user_id')) ||
+            !localStorage.getItem('tutor_user_id')) {
             const user = JSON.parse(localStorage.getItem('user'))
             if (!user?.SID) return {}
             result = await tutorApis.get_tutor_setup({ userId: user?.SID })
         }
-        else if (localStorage.getItem('tutor_user_id')) {
+        else {
             result = await tutorApis.get_tutor_setup({ AcademyId: localStorage.getItem('tutor_user_id') })
         }
 

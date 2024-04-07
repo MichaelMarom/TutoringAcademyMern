@@ -15,7 +15,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
-import { get_tutor_setup_by_userId } from "./axios/tutor";
+import { get_tutor_setup, get_tutor_setup_by_userId } from "./axios/tutor";
 import { setShortlist } from "./redux/student_store/shortlist";
 import { get_my_data, get_student_setup_by_userId } from "./axios/student";
 
@@ -57,8 +57,11 @@ const App = () => {
 
   const screen = location.pathname.split('/')[1]
   const handleExpiredToken = (result) => {
-    if (result?.response?.data?.message?.includes('expired') ||
-      result?.response?.data?.message?.includes('malformed')) {
+    const isExpired = result?.response?.data?.message?.includes('expired');
+    const isMalformed = result?.response?.data?.message?.includes('malformed');
+    const missingToken = result?.response?.data?.reason?.includes('attached');
+
+    if ((isExpired || isMalformed) && !missingToken) {
       return redirect_to_login(navigate, signOut)
     }
   }
@@ -91,16 +94,14 @@ const App = () => {
   }, [userId, token, isSignedIn])
 
   useEffect(() => {
-    if (user && user.role !== 'admin' && user.SID && isSignedIn)
-      get_tutor_setup_by_userId(user.SID).then((result) => {
+    if (user && user.role !== 'admin' && user.SID && isSignedIn && token)
+      get_tutor_setup({ userId: user.SID }).then((result) => {
         handleExpiredToken(result);
-
-        localStorage.setItem("tutor_user_id", result[0]?.AcademyId || null);
+        localStorage.setItem("tutor_user_id", result?.data?.[0]?.AcademyId || null);
       });
-  }, [user, isSignedIn]);
+  }, [user, isSignedIn, token]);
 
   //dispatch
-
   useEffect(() => {
     if (studentLoggedIn && userId && isSignedIn) {
       moment.tz.setDefault(student.timeZone);
@@ -112,16 +113,18 @@ const App = () => {
 
   //sessions :nextsession, :allsessions, :time remaing for next lesson
   useEffect(() => {
-    student.AcademyId && dispatch(setStudentSessions(student));
-    tutor.AcademyId && dispatch(setTutorSessions(tutor));
-
-    const intervalId = setInterval(() => {
+    if (token) {
       student.AcademyId && dispatch(setStudentSessions(student));
       tutor.AcademyId && dispatch(setTutorSessions(tutor));
-    }, 60000);
 
-    return () => clearInterval(intervalId);
-  }, [student, tutor, dispatch]);
+      const intervalId = setInterval(() => {
+        student.AcademyId && dispatch(setStudentSessions(student));
+        tutor.AcademyId && dispatch(setTutorSessions(tutor));
+      }, 60000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [student, tutor, dispatch, token]);
 
   const getStudentDetails = async () => {
     if (nullValues.includes(studentUserId)) {
@@ -137,7 +140,10 @@ const App = () => {
   }, [dispatch, studentUserId, userId, isSignedIn, token])
 
   useEffect(() => {
-    if (userId && token && isSignedIn) dispatch(setTutor())
+    if (userId && token && isSignedIn) {
+      console.log('render', token)
+      dispatch(setTutor())
+    }
   }, [dispatch, tutorUserId, userId, isSignedIn, token])
 
   useEffect(() => {
@@ -196,7 +202,7 @@ const App = () => {
     }
     else { navigate('/login') }
   }, [])
-  
+
   return (
     <Routes>
       <Route path={`/collab`} element={<TutorClass />} />

@@ -548,23 +548,21 @@ export let upload_tutor_bank = (email, acct_name, acct_type, bank_name, acct, ro
             })
             .catch(error => {
                 showErrorToast(error)
-
-                // reject(error)
             })
 
     })
 }
 
 export let get_tutor_setup = async (idObject) => {
-    apiClient.get('/tutor/tutor-setup', {
-        params: idObject
-    })
-        .then((result) => {
-            return result.data
+    try {
+        const {data}= await apiClient.get('/tutor/tutor-setup', {
+            params: idObject
         })
-        .catch(error => {
-            showErrorToast(error)
-        })
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
+    }
 }
 
 export let get_tutor_setup_by_userId = async (id) => {

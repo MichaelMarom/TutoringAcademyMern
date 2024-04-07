@@ -27,7 +27,7 @@ const TutorAside = ({ openedSession, sessionTime }) => {
     const [messages, setMessages] = useState([])
     const [arrivalMsg, setArrivalMsg] = useState(null);
     const { student } = useSelector(state => state.student)
-    const [timeRemaining, setTimeRemaining] = useState(new Date())
+    const [timeRemaining, setTimeRemaining] = useState(0)
 
     let [mssg, setMssg] = useState('');
     const params = useParams();
@@ -62,10 +62,12 @@ const TutorAside = ({ openedSession, sessionTime }) => {
     };
 
     useEffect(() => {
-        if (timeRemaining < 360) {
+        if (timeRemaining < 360 && currentSession?.id) {
             navigate(`/${user.role}/feedback`)
         }
-    }, [timeRemaining])
+    }, [timeRemaining, currentSession])
+
+    console.log(timeRemaining, currentSession)
 
     useEffect(() => {
         scrollToBottom();
@@ -82,9 +84,13 @@ const TutorAside = ({ openedSession, sessionTime }) => {
     // Calculate time remaining
     useEffect(() => {
         if (openedSession.end && sessionTime === 'current') {
-            const currentTime = new Date();
-            const remainingTime = Math.max(0, Math.floor((new Date(openedSession.end).getTime() - currentTime) / 1000));
-            setTimeRemaining(remainingTime);
+            const intervalId = setInterval(() => {
+                const currentTime = new Date();
+                const remainingTime = Math.max(0, Math.floor((new Date(openedSession.end).getTime() - currentTime) / 1000));
+                setTimeRemaining(remainingTime);
+            }, 1000)
+
+            return () => clearInterval(intervalId);
         }
     }, [openedSession.end]);
 
@@ -264,47 +270,47 @@ const TutorAside = ({ openedSession, sessionTime }) => {
 
     return (
         <div className="shadow-sm" style={{ width: "100%", height: "78vh" }}>
-            {(openedSession.subject && sessionTime === 'current') ?
+            {(openedSession.subject && sessionTime === 'current') &&
                 timeRemaining < 3420 ?
-                    <div className='text-center countdown p-1 m-0'>
-                        <CountdownCircleTimer
-                            isPlaying
-                            // initialRemainingTime={timeRemaining}
-                            duration={50 * 60}
-                            size={90}
-                            isSmoothColorTransition={false}
-                            strokeWidth={13}
-                            colors={['#32CD32', '#ff0000', '#ff0000']}
-                            colorsTime={[50 * 60, 3 * 60, 0]}
-                        >
-                            {children}
-                        </CountdownCircleTimer>
+                <div className='text-center countdown p-1 m-0'>
+                    <CountdownCircleTimer
+                        isPlaying
+                        // initialRemainingTime={timeRemaining}
+                        duration={50 * 60}
+                        size={90}
+                        isSmoothColorTransition={false}
+                        strokeWidth={13}
+                        colors={['#32CD32', '#ff0000', '#ff0000']}
+                        colorsTime={[50 * 60, 3 * 60, 0]}
+                    >
+                        {children}
+                    </CountdownCircleTimer>
 
-                    </div>
-                    : <div className='text-center countdown p-1 m-0'>
-                        <CountdownCircleTimer
-                            isPlaying
-                            duration={3 * 60}
-                            colors='#FFA500'
-                            size={90}
-                            isSmoothColorTransition={false}
-                            strokeWidth={13}
-                        >
-                            {startingClockChildren}
-                        </CountdownCircleTimer>
-                    </div>
+                </div>
                 : <div className='text-center countdown p-1 m-0'>
                     <CountdownCircleTimer
                         isPlaying
-                        duration={0}
+                        duration={3 * 60}
                         colors='#FFA500'
                         size={90}
                         isSmoothColorTransition={false}
                         strokeWidth={13}
                     >
-                        {children}
+                        {startingClockChildren}
                     </CountdownCircleTimer>
                 </div>
+                // : <div className='text-center countdown p-1 m-0'>
+                //     <CountdownCircleTimer
+                //         isPlaying
+                //         duration={0}
+                //         colors='#FFA500'
+                //         size={90}
+                //         isSmoothColorTransition={false}
+                //         strokeWidth={13}
+                //     >
+                //         {children}
+                //     </CountdownCircleTimer>
+                // </div>
             }
 
             <div className="TutorAsideVideoCnt">
@@ -388,7 +394,7 @@ const TutorAside = ({ openedSession, sessionTime }) => {
                     </span>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

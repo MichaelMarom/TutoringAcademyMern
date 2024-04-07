@@ -10,19 +10,32 @@ const TutorLayout = ({ children }) => {
     const { user } = useSelector(state => state.user)
     const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.tutorSessions)
     const navigate = useNavigate()
+    const [remainingTime, setTimeRemaining] = useState(0)
 
     const extractRemainingtimeInInteger = parseInt(upcomingSessionFromNow.split(' ')[0]);
-    console.log(extractRemainingtimeInInteger)
 
-
+    //todo
+    //when currentsession timeRemaing is 7 minutes then move to feedback
     useEffect(() => {
         if (inMins && upcomingSession?.id && extractRemainingtimeInInteger < 4) {
             navigate(`/collab?sessionId=${upcomingSession.id}`)
         }
-        else if (currentSession?.id) {
+        else if (currentSession?.id && remainingTime < 7 * 60) {
             navigate(`/collab?sessionId=${currentSession.id}`)
         }
     }, [currentSession.id, inMins, upcomingSession])
+
+    useEffect(() => {
+        if (currentSession.end) {
+            const intervalId = setInterval(() => {
+                const currentTime = new Date();
+                const remainingTime = Math.max(0, Math.floor((new Date(currentSession.end).getTime() - currentTime) / 1000));
+                setTimeRemaining(remainingTime);
+            }, 1000)
+
+            return () => clearInterval(intervalId);
+        }
+    }, [currentSession.end]);
 
     if (user.role !== 'admin' && (tutor.Status === 'closed' || tutor.Status === 'disapproved'))
         return <div className='text-danger'>Your Account is Closed or Suspended. Please contact adminitrator.</div>

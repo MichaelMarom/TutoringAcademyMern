@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../layouts/student/Header'
 import { useSelector } from 'react-redux'
 import SmallSideBar from '../components/common/SmallSideBar'
@@ -13,14 +13,31 @@ const StudentLayout = ({ children }) => {
     const extractRemainingtimeInInteger = parseInt(upcomingSessionFromNow.split(' ')[0]);
     console.log(extractRemainingtimeInInteger)
 
+    const [remainingTime, setTimeRemaining] = useState(0)
+
+    //todo
+    //when currentsession timeRemaing is 7 minutes then move to feedback
     useEffect(() => {
         if (inMins && upcomingSession?.id && extractRemainingtimeInInteger < 4) {
             navigate(`/collab?sessionId=${upcomingSession.id}`)
         }
-        else if (currentSession?.id) {
+        else if (currentSession?.id && remainingTime < 7 * 60) {
             navigate(`/collab?sessionId=${currentSession.id}`)
         }
-    }, [currentSession.id, inMins, upcomingSession])
+    }, [currentSession.id, inMins, upcomingSession, remainingTime])
+
+    useEffect(() => {
+        if (currentSession.end) {
+            const intervalId = setInterval(() => {
+                const currentTime = new Date();
+                const remainingTime = Math.max(0, Math.floor((new Date(currentSession.end).getTime() - currentTime) / 1000));
+                setTimeRemaining(remainingTime);
+            }, 1000)
+
+            return () => clearInterval(intervalId);
+        }
+    }, [currentSession.end]);
+
 
     if (user.role === 'admin' && !student?.AcademyId)
         return <div className='text-danger'>Please Select Student from Student-Table to view tutor records</div>

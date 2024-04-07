@@ -225,10 +225,9 @@ const TutorClass = () => {
                 <img src={logo} at="logo" width={400} height={130} />
 
                 <WelcomeScreen.Center.Heading>
-                  {sessionTime === 'current' ? `${openedSession.subject} Lesson Will start in 3 minutes,
-                  but you can start using the canvas tools`:
-                    `Please select the session Id to join current session`
-                  }
+                  {/* {sessionTime === 'current' ? */}
+                  <div className="fs-1 text-dark">You can start using the canvas tools now </div>
+                  {/* } */}
                 </WelcomeScreen.Center.Heading>
                 <WelcomeScreen.Center.Menu>
                   {/* <WelcomeScreen.Center.MenuItemLink href={``}>

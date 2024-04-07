@@ -555,30 +555,23 @@ export let upload_tutor_bank = (email, acct_name, acct_type, bank_name, acct, ro
     })
 }
 
-export let get_tutor_setup = (AcademyId) => {
-    return new Promise((resolve, reject) => {
-
-        apiClient.get('/tutor/tutor-setup', {
-            params: {
-                AcademyId
-            }
-        })
-            .then((result) => {
-                resolve(result.data)
-            })
-            .catch(error => {
-                showErrorToast(error)
-                // // reject(error)
-            })
-
+export let get_tutor_setup = async (idObject) => {
+    apiClient.get('/tutor/tutor-setup', {
+        params: idObject
     })
+        .then((result) => {
+            return result.data
+        })
+        .catch(error => {
+            showErrorToast(error)
+        })
 }
 
-export let get_tutor_setup_by_userId = async (userId) => {
+export let get_tutor_setup_by_userId = async (id) => {
     try {
         const { data } = await apiClient.get('/tutor/tutor-setup', {
             params: {
-                userId
+                userId: id
             }
         })
         return data
@@ -590,11 +583,11 @@ export let get_tutor_setup_by_userId = async (userId) => {
 
 }
 
-export let get_tutor_setup_by_acaId = async (AcademyId) => {
+export let get_tutor_setup_by_acaId = async (id) => {
     try {
         const { data } = await apiClient.get('/tutor/tutor-setup', {
             params: {
-                AcademyId
+                AcademyId: id
             }
         })
         return data

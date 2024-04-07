@@ -913,7 +913,7 @@ let get_bank_details = (req, res) => {
 let get_tutor_setup = (req, res) => {
     marom_db(async (config) => {
         try {
-            const sql = require('mssql');
+            // const sql = require('mssql');
 
             var poolConnection = await sql.connect(config);
             if (poolConnection) {

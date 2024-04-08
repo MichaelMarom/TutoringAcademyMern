@@ -10,21 +10,22 @@ const StudentLayout = ({ children }) => {
     const { user } = useSelector(state => state.user)
     const { student } = useSelector(state => state.student)
     const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } = useSelector(state => state.studentSessions)
-    const extractRemainingtimeInInteger = parseInt(upcomingSessionFromNow.split(' ')[0]);
-    console.log(extractRemainingtimeInInteger)
 
     const [remainingTime, setTimeRemaining] = useState(0)
 
     //todo
     //when currentsession timeRemaing is 7 minutes then move to feedback
+    //have to remove inMins, because, it will effect when time is in seconds
     useEffect(() => {
+        const extractRemainingtimeInInteger = parseInt(upcomingSessionFromNow.split(' ')[0]);
+        console.log(extractRemainingtimeInInteger, 'next lesson time')
         if (inMins && upcomingSession?.id && extractRemainingtimeInInteger < 4) {
             navigate(`/collab?sessionId=${upcomingSession.id}`)
         }
-        else if (currentSession?.id && remainingTime < 7 * 60) {
+        else if (currentSession?.id && remainingTime > 10 * 60) {
             navigate(`/collab?sessionId=${currentSession.id}`)
         }
-    }, [currentSession.id, inMins, upcomingSession, remainingTime])
+    }, [currentSession.id, inMins, upcomingSession.id, remainingTime, upcomingSessionFromNow])
 
     useEffect(() => {
         if (currentSession.end) {
@@ -44,7 +45,8 @@ const StudentLayout = ({ children }) => {
     return (
         <div>
             <Header />
-            <SmallSideBar inMins={inMins} message={generateUpcomingSessionMessage(upcomingSession, upcomingSessionFromNow)} />
+            <SmallSideBar inMins={inMins}
+                message={generateUpcomingSessionMessage(upcomingSession, upcomingSessionFromNow)} />
             {children}
         </div>
     )

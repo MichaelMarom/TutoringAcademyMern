@@ -1381,7 +1381,8 @@ const get_all_tutor_sessions_formatted = async (req, res) => {
                     const timeUntilStart = upcomingSession.id ?
                         moment(upcomingSession.start).tz(timeZone).to(currentTime, true) : '';
                     let inMins = false
-                    if (timeUntilStart.includes('minutes') || timeUntilStart.includes('minute')) {
+                    if (timeUntilStart.includes('minutes') || timeUntilStart.includes('minute')
+                        || timeUntilStart.includes('seconds')) {
                         inMins = true
                     }
 

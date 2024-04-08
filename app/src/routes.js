@@ -114,15 +114,22 @@ const App = () => {
   //sessions :nextsession, :allsessions, :time remaing for next lesson
   useEffect(() => {
     if (token) {
-      student.AcademyId && dispatch(setStudentSessions(student));
-      tutor.AcademyId && dispatch(setTutorSessions(tutor));
+      const dispatchUserSessions = async () => {
+        const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
+        const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
+        handleExpiredToken(studentSessions)
+        handleExpiredToken(tutorSessions)
 
-      const intervalId = setInterval(() => {
-        student.AcademyId && dispatch(setStudentSessions(student));
-        tutor.AcademyId && dispatch(setTutorSessions(tutor));
-      }, 60000);
+        const intervalId = setInterval(async () => {
+          const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
+          const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
+          handleExpiredToken(studentSessions)
+          handleExpiredToken(tutorSessions)
+        }, 60000);
 
-      return () => clearInterval(intervalId);
+        return () => clearInterval(intervalId);
+      }
+      dispatchUserSessions()
     }
   }, [student, tutor, dispatch, token]);
 

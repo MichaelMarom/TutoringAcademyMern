@@ -18,12 +18,11 @@ const slice = createSlice({
         },
         setStudentSession: (state, action) => {
             state.isLoading = false;
-            state.sessions = action.payload.sessions;
-            state.upcomingSession = action.payload.upcomingSession;
-            state.currentSession = action.payload.currentSession;
+            state.sessions = action.payload.sessions || [];
+            state.upcomingSession = action.payload.upcomingSession || {};
+            state.currentSession = action.payload.currentSession || {};
             state.inMins = action.payload.inMins;
-
-            state.upcomingSessionFromNow = action.payload.upcomingSessionFromNow;
+            state.upcomingSessionFromNow = action.payload.upcomingSessionFromNow || '';
         },
     },
 });
@@ -32,7 +31,7 @@ export default slice.reducer;
 
 // ACTIONS
 
-export const setStudentSessions = (student) => {
+export const setStudentSessions = async (student) => {
     return async (dispatch) => {
         try {
             dispatch(slice.actions.isLoading())
@@ -42,6 +41,7 @@ export const setStudentSessions = (student) => {
         }
         catch (err) {
             console.log(err)
+            return err
         }
     };
 }

@@ -46,6 +46,9 @@ const TutorClass = () => {
   const sessionId = queryParams.get('sessionId')
   const [openedSession, setOpenedSession] = useState({})
   const [sessionTime, setSessionTime] = useState('')
+  const [openedSessionTimeRemainingToStart, setOpenedSessionTimeRemainingToStart] = useState(null)
+  const [timeRemainingToEndCurrentSession, setTimeRemainingToEndCurrentSession] = useState(null)
+
 
   const { upcomingSessionFromNow: tutorUpcomingFromNow,
     upcomingSession: tutorUpcoming,
@@ -59,7 +62,33 @@ const TutorClass = () => {
           setOpenedSession(res.session)
           setSessionTime(res.time)
         })
-  }, [sessionId, student, tutor, user, currentSession.id])
+  }, [sessionId, student, tutor, user, currentSession.id, tutorCurrentSession])
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const currentTime = new Date();
+      const sessionStartTime = new Date(openedSession.start);
+      const timeDiff = sessionStartTime.getTime() - currentTime.getTime();
+      setOpenedSessionTimeRemainingToStart(Math.max(0, Math.floor(timeDiff / (1000))));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [openedSession.start])
+
+  // Calculate time remaining
+  useEffect(() => {
+    if (openedSession.end && sessionTime === 'current') {
+      const intervalId = setInterval(() => {
+        const currentTime = new Date();
+        const remainingTime = Math.max(0, Math.floor((new Date(openedSession.end).getTime() - currentTime) / 1000));
+        setTimeRemainingToEndCurrentSession(remainingTime);
+      }, 1000)
+
+      return () => clearInterval(intervalId);
+    }
+  }, [openedSession.end, sessionTime]);
+
+ 
 
   useHandleLibrary({ excalidrawAPI });
   const params = useParams();
@@ -223,12 +252,12 @@ const TutorClass = () => {
               <WelcomeScreen.Center>
                 {/* <WelcomeScreen.Center.Logo /> */}
                 <img src={logo} at="logo" width={400} height={130} />
-
-                <WelcomeScreen.Center.Heading>
-                  {/* {sessionTime === 'current' ? */}
-                  <div className="fs-1 text-dark">You can start using the canvas tools now </div>
-                  {/* } */}
-                </WelcomeScreen.Center.Heading>
+                {user.role === 'tutor' &&
+                  <WelcomeScreen.Center.Heading>
+                    {/* {sessionTime === 'current' ? */}
+                    <div className="fs-1 text-dark">You can start using the canvas tools now </div>
+                    {/* } */}
+                  </WelcomeScreen.Center.Heading>}
                 <WelcomeScreen.Center.Menu>
                   {/* <WelcomeScreen.Center.MenuItemLink href={``}>
                     Excalidraw GitHub
@@ -244,7 +273,10 @@ const TutorClass = () => {
           style={{ width: "20%", position: "fixed", right: 0 }}>
           {/* <div onClick={() => setIsChatOpen(false)} className="cursor-pointer">
            <MdCancel size={24} /> </div> */}
-          <TutorAside openedSession={openedSession} sessionTime={sessionTime} />
+          <TutorAside openedSession={openedSession} sessionTime={sessionTime}
+            timeRemainingToEndCurrentSession={timeRemainingToEndCurrentSession}
+            openedSessionTimeRemainingToStart={openedSessionTimeRemainingToStart}
+          />
           {sessionTime === 'current' && <div className="d-flex align-items-center justify-content-center" >
             <Tooltip text={"switch text goes here"} iconSize="25" />
             <Switch

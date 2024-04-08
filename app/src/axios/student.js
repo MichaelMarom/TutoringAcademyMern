@@ -289,8 +289,6 @@ export const formatted_student_sessions = async (studentId) => {
     }
     catch (err) {
         showErrorToast(err)
-        console.log(err)
-        return err
     }
 }
 

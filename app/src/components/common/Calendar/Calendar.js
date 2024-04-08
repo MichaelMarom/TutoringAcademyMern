@@ -121,7 +121,8 @@ const ShowCalendar = ({
   }
 
   const getTutorSetup = async () => {
-    const [result] = await get_tutor_setup(isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId);
+    const [result] = await get_tutor_setup({ AcademyId: isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId });
+    console.log(result)
     if (Object.keys(result ? result : {}).length) {
       console.log(result)
       const updatedEnableHours = getTimeZonedEnableHours(JSON.parse(result.enableHourSlots === 'undefined' ? '[]' : result.enableHourSlots), timeZone)
@@ -332,7 +333,7 @@ const ShowCalendar = ({
     return { reservedSlots: updatedReservedSlots, bookedSlots: updatedBookedSlots };
   }
 
-  const handleBulkEventCreate = (type, invoiceNum) => {
+  const handleBulkEventCreate = async (type, invoiceNum) => {
     if (reservedSlots?.some(slot => isEqualTwoObjectsRoot(slot, clickedSlot))) {
       let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId, tutorId, subjectName, bookedSlots: [...bookedSlots, { ...clickedSlot, title: "Booked", type: 'booked' }], reservedSlots: reservedSlots.filter(slot => slot.id !== clickedSlot.id) }));
@@ -361,10 +362,13 @@ const ShowCalendar = ({
         subject={selectedTutor.subject}
         buttonText={'Feedback'} />, { autoClose: false, });
     }
+
+    //limit of max 6 lslot reservation at /bookingone time
     if ((selectedSlots.length && selectedSlots[0].type === 'reserved') && reservedSlots.length > 6) {
       toast.warning("You Can Reserve no more than 6 slots")
       return;
     }
+
     const updatedSelectedSlots = selectedSlots?.map((slot) => {
       return {
         ...slot,
@@ -394,7 +398,7 @@ const ShowCalendar = ({
       let { reservedSlots, bookedSlots } = filterOtherStudentAndTutorSession()
       dispatch(postStudentBookings({ studentId: student.AcademyId, tutorId: selectedTutor.academyId, reservedSlots, bookedSlots: bookedSlots.concat(updatedSelectedSlots), subjectName: selectedTutor.subject }));
     }
-    student.AcademyId && dispatch(setStudentSessions(student))
+    student.AcademyId && dispatch(await setStudentSessions(student))
   }
 
   const handleRemoveReservedSlot = (reservedSlots) => {

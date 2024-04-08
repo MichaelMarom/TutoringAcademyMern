@@ -8,9 +8,7 @@ import { wholeDateFormat } from '../../constants/constants';
 import Avatar from '../common/Avatar';
 import Tooltip from '../common/ToolTip';
 import Actions from '../common/Actions';
-import tutorData from '../../redux/tutor_store/tutorData';
-import { moment } from '../../config/moment'
-import BTN_ICON from '../../images/button__icon.png'
+import BTN_ICON from '../../assets/images/button__icon.png'
 
 import Pill from '../common/Pill'
 import { useEffect, useState } from 'react';

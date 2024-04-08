@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from './Button';
-import BTN_ICON from '../../images/button__icon.png'
+import BTN_ICON from '../../assets/images/button__icon.png'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useSelector } from 'react-redux';

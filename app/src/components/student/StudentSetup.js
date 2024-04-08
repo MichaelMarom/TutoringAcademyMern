@@ -11,7 +11,7 @@ import { PhoneInput } from 'react-international-phone';
 import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
 import Button from '../common/Button';
-import BTN_ICON from '../../images/button__icon.png';
+import BTN_ICON from '../../assets/images/button__icon.png';
 import { get_tutor_against_code } from '../../axios/tutor';
 import { useNavigate } from 'react-router-dom';
 import { setShortlist } from '../../redux/student_store/shortlist';

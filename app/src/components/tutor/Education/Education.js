@@ -5,7 +5,7 @@ import {
     get_certificates, get_degree, get_experience, get_level,
     get_my_edu, get_state, post_edu, post_tutor_setup, upload_edu_form, upload_form_two
 } from '../../../axios/tutor';
-import career from '../../../images/Experience-photo50.jpg';
+import career from '../../../assets/images/Experience-photo50.jpg';
 
 import { moment } from '../../../config/moment'
 

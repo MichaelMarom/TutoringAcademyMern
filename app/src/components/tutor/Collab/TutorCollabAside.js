@@ -376,6 +376,25 @@ const TutorAside = ({
           </div>
         )}
 
+      {!sessionId ||
+        (openedSessionTimeRemainingToStart > 180 &&
+          !_.isNaN(openedSessionTimeRemainingToStart) && (
+            <div className="text-center countdown p-1 m-0">
+              <CountdownCircleTimer
+                isPlaying
+                initialRemainingTime={openedSessionTimeRemainingToStart}
+                duration={0}
+                colors="#FFA500"
+                size={90}
+                isSmoothColorTransition={false}
+                strokeWidth={13}
+              >
+                {/* {startingClockChildren} */}
+                00:00
+              </CountdownCircleTimer>
+            </div>
+          ))}
+
       <div className="TutorAsideVideoCnt">
         {videoLoader}
 

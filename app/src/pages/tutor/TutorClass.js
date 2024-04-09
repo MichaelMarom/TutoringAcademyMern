@@ -172,7 +172,7 @@ const TutorClass = () => {
 
   useEffect(() => {
     if (
-      timeRemainingToEndCurrentSession <= 610 &&
+      timeRemainingToEndCurrentSession <= 620 &&
       timeRemainingToEndCurrentSession
     )
       excalidrawAPI && excalidrawAPI.resetScene();
@@ -191,7 +191,7 @@ const TutorClass = () => {
       socket &&
       excalidrawAPI &&
       sessionTime === "current" &&
-      timeRemainingToEndCurrentSession > 610
+      timeRemainingToEndCurrentSession > 620
     ) {
       sessionId && socket.emit("join-session", sessionId);
       socket.on("canvas-change-recieve", (change) => {
@@ -266,7 +266,7 @@ const TutorClass = () => {
     sessionId &&
       newElements.length &&
       sessionTime === "current" &&
-      timeRemainingToEndCurrentSession > 610 &&
+      timeRemainingToEndCurrentSession > 620 &&
       timeRemainingToEndCurrentSession &&
       socket.emit("canvas-change", {
         elements: getUniqueIdsWithHigherVersion(
@@ -296,7 +296,7 @@ const TutorClass = () => {
       socket &&
       sessionId &&
       sessionTime === "current" &&
-      timeRemainingToEndCurrentSession > 610
+      timeRemainingToEndCurrentSession > 620
     ) {
       socket.emit("authorize-student", {
         userId: student?.AcademyId,
@@ -371,7 +371,7 @@ const TutorClass = () => {
               <WelcomeScreen.Center>
                 {
                   <WelcomeScreen.Center.Heading>
-                    {timeRemainingToEndCurrentSession <= 610 &&
+                    {timeRemainingToEndCurrentSession <= 620 &&
                       !!timeRemainingToEndCurrentSession && (
                         <div className="fs-2 text-dark">
                           Session is going to end in 10 seconds, Redirecting you
@@ -391,8 +391,10 @@ const TutorClass = () => {
 
                 <WelcomeScreen.Center.Heading>
                   {user.role === "tutor" &&
-                    timeRemainingToEndCurrentSession > 610 &&
-                    !!timeRemainingToEndCurrentSession && (
+                    ((timeRemainingToEndCurrentSession > 620 &&
+                      !!timeRemainingToEndCurrentSession) ||
+                      (!!openedSessionTimeRemainingToStart &&
+                        openedSessionTimeRemainingToStart < 180)) && (
                       <div className="fs-3 text-dark">
                         You can start using the canvas tools now.
                       </div>
@@ -427,7 +429,7 @@ const TutorClass = () => {
               }
             />
             {sessionTime === "current" &&
-              timeRemainingToEndCurrentSession > 610 && (
+              timeRemainingToEndCurrentSession > 620 && (
                 <div className="d-flex align-items-center justify-content-center">
                   <Tooltip text={"switch text goes here"} iconSize="25" />
                   <Switch

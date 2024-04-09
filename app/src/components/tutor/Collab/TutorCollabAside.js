@@ -339,7 +339,7 @@ const TutorAside = ({
     <div className="shadow-sm" style={{ width: "100%", height: "78vh" }}>
       {openedSession.subject &&
         sessionTime === "current" &&
-        timeRemainingToEndCurrentSession < 3420 &&
+        // timeRemainingToEndCurrentSession < 3420 &&
         timeRemainingToEndCurrentSession > 0 &&
         !_.isNaN(timeRemainingToEndCurrentSession) && (
           <div className="text-center countdown p-1 m-0">

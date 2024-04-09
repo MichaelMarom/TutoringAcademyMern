@@ -118,7 +118,8 @@ function BookedLessons({
                 <td style={{ width: Header[0].width }}>
                   <TAButton className={``} buttonText={'Select'}
                     style={{ animation: (event.feedbackEligible && !event.rating) ? 'blinking 1s infinite' : 'none' }}
-                    onClick={() => handleRowSelect(event)} disabled={!event.feedbackEligible || selectedEvent.id === event.id}
+                    onClick={() => handleRowSelect(event)}
+                    disabled={!event.feedbackEligible || selectedEvent.id === event.id}
                   />
                   {/* <button className={`btn ${selectedEvent.id === event.id ? 'btn-success' : 'btn-primary'} `}
                 style={{ animation: (event.feedbackEligible && !event.rating) ? 'blinking 1s infinite' : 'none' }}

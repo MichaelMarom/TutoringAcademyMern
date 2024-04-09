@@ -1737,11 +1737,11 @@ const get_feedback_data = async (req, res) => {
             const allSessions = sessions.flat();
             const sessionsWithPhotos = allSessions.map(session => {
                 const studentFound = result.recordset.find(record => record.studentId === session.studentId)
-                if (moment(session.end).isBefore(moment())) {
+                if (moment(session.end).isBefore(moment().subtract(11, 'minutes'))) {
                     session = {
                         ...session,
                         tutorFeedbackEligible: true
-                    }
+                    };
                 }
                 if (studentFound) {
                     return { ...session, photo: studentFound.Photo }

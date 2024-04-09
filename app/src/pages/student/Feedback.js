@@ -11,6 +11,7 @@ import Actions from '../../components/common/Actions';
 import { toast } from 'react-toastify';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
 import Loading from '../../components/common/Loading';
+import { moment } from '../../config/moment'
 
 export const Feedback = () => {
     const { student } = useSelector(state => state.student)
@@ -24,7 +25,7 @@ export const Feedback = () => {
     const [feedbackData, setFeedbackData] = useState([])
     const studentId = localStorage.getItem('student_user_id');
     const [pendingChange, setPendingChange] = useState(null);
-    const [loading, setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -170,20 +171,20 @@ export const Feedback = () => {
         let reservedSlots = JSON.parse(item.reservedSlots);
         console.log(bookedSlots, reservedSlots)
         bookedSlots = bookedSlots.map(slot => {
-            if (convertToDate(slot.end).getTime() < (new Date()).getTime()) {
+            if (moment(convertToDate(slot.end)).isBefore(moment().subtract(11, 'minutes'))) {
                 return {
                     ...slot,
                     feedbackEligible: true
-                }
+                };
             }
             return slot
         })
         reservedSlots = reservedSlots.map(slot => {
-            if (convertToDate(slot.end).getTime() < (new Date()).getTime()) {
+            if (moment(convertToDate(slot.end)).isBefore(moment().subtract(11, 'minutes'))) {
                 return {
                     ...slot,
                     feedbackEligible: true
-                }
+                };
             }
             return slot
         })
@@ -198,7 +199,7 @@ export const Feedback = () => {
             setLoading(true)
             const data = await get_payment_report(studentId);
             setLoading(false)
-          
+
             const uniqueData = data.reduce((unique, item) => {
                 if (unique?.some(detail => detail.tutorId === item.tutorId)) {
                     return unique
@@ -274,10 +275,10 @@ export const Feedback = () => {
     //     }
     // }, [student, upcomingEvent]);
 
-    if(loading)
+    if (loading)
         return <Loading />
     return (
-        <StudentLayout  >
+        <StudentLayout>
             <div className="container mt-1">
                 <div className="py-2 row" >
                     <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>

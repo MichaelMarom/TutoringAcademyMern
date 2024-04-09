@@ -79,7 +79,7 @@ const TutorClass = () => {
       // todo: get student photo and name from api
       const studentPicture = student.Photo;
       collaborators.set(studentId, {
-        username: "dummy",
+        username: studentId,
         isCurrentUser: true,
         isSpeaking: true,
         avatarUrl: studentPicture,
@@ -172,6 +172,12 @@ const TutorClass = () => {
     setAuth(user.role === "tutor");
   }, [user]);
 
+
+  useEffect(() => {
+    if (timeRemainingToEndCurrentSession <= 100)
+      excalidrawAPI && excalidrawAPI.resetScene()
+  }, [timeRemainingToEndCurrentSession, excalidrawAPI])
+
   function getUniqueIdsWithHigherVersion(arr) {
     const groupedById = _.groupBy(arr, "id");
     const uniqueIdsWithHigherVersion = _.map(groupedById, (group) =>
@@ -219,11 +225,11 @@ const TutorClass = () => {
         if (user.role !== "tutor") {
           data.hasAuthorization
             ? toast.success(
-                "Tutor has given you access to access the canvas tools."
-              )
+              "Tutor has given you access to access the canvas tools."
+            )
             : toast.warning(
-                "Tutor has removed your access to the canvas tools!"
-              );
+              "Tutor has removed your access to the canvas tools!"
+            );
 
           setAuth(data.hasAuthorization);
           setIsChecked(data.hasAuthorization);
@@ -251,6 +257,7 @@ const TutorClass = () => {
     sessionId &&
       newElements.length &&
       sessionTime === "current" &&
+      timeRemainingToEndCurrentSession <= 100 &&
       socket.emit("canvas-change", {
         elements: getUniqueIdsWithHigherVersion(
           excalidrawAPI.getSceneElements().concat(newElements),
@@ -307,11 +314,10 @@ const TutorClass = () => {
       {openedSession.subject && (
         <div
           style={{ width: "70%" }}
-          className={`d-flex ${
-            openedSession.subject
-              ? "justify-content-between"
-              : "justify-content-center"
-          }`}
+          className={`d-flex ${openedSession.subject
+            ? "justify-content-between"
+            : "justify-content-center"
+            }`}
         >
           <div>
             {sessionTime === "future" && (
@@ -347,17 +353,27 @@ const TutorClass = () => {
           >
             <WelcomeScreen>
               <WelcomeScreen.Center>
-                {/* <WelcomeScreen.Center.Logo /> */}
-                <img src={logo} at="logo" width={400} height={130} />
-                {user.role === "tutor" && (
+                {(
                   <WelcomeScreen.Center.Heading>
-                    {/* {sessionTime === 'current' ? */}
-                    <div className="fs-1 text-dark">
-                      You can start using the canvas tools now{" "}
-                    </div>
-                    {/* } */}
+                    {(sessionTime === 'current') ?
+                      <>
+                        {user.role === "tutor" && <div className="fs-1 text-dark">
+                          You can start using the canvas tools now{" "}
+                        </div>}
+                        {
+                          timeRemainingToEndCurrentSession <= 100 &&
+                          <div className="fs-1 text-dark">
+                            Session is going to end in 10 seconds, Redirecting you to Feedback Screen
+                          </div>
+                        }
+                      </>
+                      : (openedSessionTimeRemainingToStart > 0 &&
+                        openedSessionTimeRemainingToStart < 180)
+                      && <div>{openedSession.subject} will start in 3 minutes</div>
+                    }
                   </WelcomeScreen.Center.Heading>
                 )}
+                <img src={logo} at="logo" width={400} height={130} />
                 <WelcomeScreen.Center.Menu>
                   {/* <WelcomeScreen.Center.MenuItemLink href={``}>
                     Excalidraw GitHub
@@ -368,7 +384,6 @@ const TutorClass = () => {
             </WelcomeScreen>
           </Excalidraw>
         </div>
-
         {
           <div
             className="bg-light rounded shadow-lg"

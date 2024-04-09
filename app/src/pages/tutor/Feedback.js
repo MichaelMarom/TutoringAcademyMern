@@ -26,12 +26,11 @@ const Feedback = () => {
     const [fetchingSessions, setFetchingFeedbackSessions] = useState(false)
 
     useEffect(() => {
-        const getALlFeedbackQuestion = async () => {
+        const getAllFeedbackQuestion = async () => {
             const data = await get_tutor_feedback_questions();
             setQuestions(data)
         }
-        getALlFeedbackQuestion();
-
+        getAllFeedbackQuestion();
     }, [])
 
     useEffect(() => {

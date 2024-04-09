@@ -35,13 +35,13 @@ const TutorAside = ({
     useSelector((state) => state.studentSessions);
   console.log(
     openedSessionTimeRemainingToStart,
-    openedSessionTimeRemainingToStart / 60,
-    "openedSession time remaining"
+    parseInt(openedSessionTimeRemainingToStart / 60),
+    "time to start!"
   );
   console.log(
     timeRemainingToEndCurrentSession,
-    timeRemainingToEndCurrentSession / 60,
-    "timeRemaining to endכ"
+    parseInt(timeRemainingToEndCurrentSession / 60),
+    "time to end!"
   );
 
   const [messages, setMessages] = useState([]);
@@ -340,7 +340,7 @@ const TutorAside = ({
       {openedSession.subject &&
         sessionTime === "current" &&
         // timeRemainingToEndCurrentSession < 3420 &&
-        timeRemainingToEndCurrentSession > 0 &&
+        !!timeRemainingToEndCurrentSession &&
         !_.isNaN(timeRemainingToEndCurrentSession) && (
           <div className="text-center countdown p-1 m-0">
             <CountdownCircleTimer
@@ -359,7 +359,7 @@ const TutorAside = ({
         )}
 
       {openedSessionTimeRemainingToStart < 180 &&
-        openedSessionTimeRemainingToStart > 0 &&
+        !!openedSessionTimeRemainingToStart &&
         !_.isNaN(openedSessionTimeRemainingToStart) && (
           <div className="text-center countdown p-1 m-0">
             <CountdownCircleTimer

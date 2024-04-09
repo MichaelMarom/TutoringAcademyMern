@@ -52,8 +52,6 @@ const TutorClass = () => {
     setTimeRemainingToEndCurrentSession,
   ] = useState(null);
 
-
-
   const setCollboratorsInState = (tutorId, studentId) => {
     const collaborators = new Map();
 
@@ -172,11 +170,13 @@ const TutorClass = () => {
     setAuth(user.role === "tutor");
   }, [user]);
 
-
   useEffect(() => {
-    if (timeRemainingToEndCurrentSession <= 10 && timeRemainingToEndCurrentSession)
-      excalidrawAPI && excalidrawAPI.resetScene()
-  }, [timeRemainingToEndCurrentSession, excalidrawAPI])
+    if (
+      timeRemainingToEndCurrentSession <= 610 &&
+      timeRemainingToEndCurrentSession
+    )
+      excalidrawAPI && excalidrawAPI.resetScene();
+  }, [timeRemainingToEndCurrentSession, excalidrawAPI]);
 
   function getUniqueIdsWithHigherVersion(arr) {
     const groupedById = _.groupBy(arr, "id");
@@ -225,11 +225,11 @@ const TutorClass = () => {
         if (user.role !== "tutor") {
           data.hasAuthorization
             ? toast.success(
-              "Tutor has given you access to access the canvas tools."
-            )
+                "Tutor has given you access to access the canvas tools."
+              )
             : toast.warning(
-              "Tutor has removed your access to the canvas tools!"
-            );
+                "Tutor has removed your access to the canvas tools!"
+              );
 
           setAuth(data.hasAuthorization);
           setIsChecked(data.hasAuthorization);
@@ -257,7 +257,7 @@ const TutorClass = () => {
     sessionId &&
       newElements.length &&
       sessionTime === "current" &&
-      timeRemainingToEndCurrentSession <= 10 &&
+      timeRemainingToEndCurrentSession > 590 &&
       timeRemainingToEndCurrentSession &&
       socket.emit("canvas-change", {
         elements: getUniqueIdsWithHigherVersion(
@@ -315,10 +315,11 @@ const TutorClass = () => {
       {openedSession.subject && (
         <div
           style={{ width: "70%" }}
-          className={`d-flex ${openedSession.subject
-            ? "justify-content-between"
-            : "justify-content-center"
-            }`}
+          className={`d-flex ${
+            openedSession.subject
+              ? "justify-content-between"
+              : "justify-content-center"
+          }`}
         >
           <div>
             {sessionTime === "future" && (
@@ -354,28 +355,34 @@ const TutorClass = () => {
           >
             <WelcomeScreen>
               <WelcomeScreen.Center>
-                {(
+                {
                   <WelcomeScreen.Center.Heading>
-                    {(sessionTime === 'current') ?
-                      <>
-                        {user.role === "tutor" && <div className="fs-1 text-dark">
-                          You can start using the canvas tools now{" "}
-                        </div>}
-                        {
-                          timeRemainingToEndCurrentSession <= 10 &&
-                          timeRemainingToEndCurrentSession > 0 &&
-                          <div className="fs-1 text-dark">
-                            Session is going to end in 10 seconds, Redirecting you to Feedback Screen
-                          </div>
-                        }
-                      </>
-                      : (openedSessionTimeRemainingToStart > 0 &&
-                        openedSessionTimeRemainingToStart < 180)
-                      && <div>{openedSession.subject} will start in 3 minutes</div>
-                    }
+                    {timeRemainingToEndCurrentSession <= 610 &&
+                      !!timeRemainingToEndCurrentSession && (
+                        <div className="fs-2 text-dark">
+                          Session is going to end in 10 seconds, Redirecting you
+                          to Feedback Screen.
+                        </div>
+                      )}
+
+                    {!!openedSessionTimeRemainingToStart &&
+                      openedSessionTimeRemainingToStart < 180 && (
+                        <div className="fs-1 text-dark">
+                          {openedSession.subject} will start in 3 minutes
+                        </div>
+                      )}
                   </WelcomeScreen.Center.Heading>
-                )}
+                }
                 <img src={logo} at="logo" width={400} height={130} />
+
+                <WelcomeScreen.Center.Heading>
+                  {user.role === "tutor" && (
+                    <div className="fs-3 text-dark">
+                      You can start using the canvas tools now.
+                    </div>
+                  )}
+                </WelcomeScreen.Center.Heading>
+
                 <WelcomeScreen.Center.Menu>
                   {/* <WelcomeScreen.Center.MenuItemLink href={``}>
                     Excalidraw GitHub

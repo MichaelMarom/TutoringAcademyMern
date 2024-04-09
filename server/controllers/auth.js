@@ -10,7 +10,7 @@ function generateToken(user) {
         email: user.email,
     };
     const options = {
-        expiresIn: '3h'
+        expiresIn: '8h'
     };
     const secretKey = process.env.SECRET_KEY
     return jwt.sign(payload, secretKey, options);
@@ -206,8 +206,6 @@ const token_auth = (token) => {
     const data = jwt.verify(token, process.env.JWT_SECRET)
     console.log(data)
 }
-
-
 
 module.exports = {
     login,

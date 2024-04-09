@@ -23,6 +23,10 @@ const TutorClass = () => {
   const { student } = useSelector((state) => state.student);
   const { tutor } = useSelector((state) => state.tutor);
   const { shortlist } = useSelector((state) => state.shortlist);
+  const { currentSession } = useSelector((state) => state.studentSessions);
+  const { currentSession: tutorCurrentSession } = useSelector(
+    (state) => state.tutorSessions
+  );
 
   const [zenModeEnabled, setZenModeEnabled] = useState(false);
   const [gridModeEnabled, setGridModeEnabled] = useState(false);
@@ -48,11 +52,7 @@ const TutorClass = () => {
     setTimeRemainingToEndCurrentSession,
   ] = useState(null);
 
-  const { currentSession: tutorCurrentSession } = useSelector(
-    (state) => state.tutorSessions
-  );
 
-  const { currentSession } = useSelector((state) => state.studentSessions);
 
   const setCollboratorsInState = (tutorId, studentId) => {
     const collaborators = new Map();
@@ -174,7 +174,7 @@ const TutorClass = () => {
 
 
   useEffect(() => {
-    if (timeRemainingToEndCurrentSession <= 100)
+    if (timeRemainingToEndCurrentSession <= 10 && timeRemainingToEndCurrentSession)
       excalidrawAPI && excalidrawAPI.resetScene()
   }, [timeRemainingToEndCurrentSession, excalidrawAPI])
 
@@ -257,7 +257,8 @@ const TutorClass = () => {
     sessionId &&
       newElements.length &&
       sessionTime === "current" &&
-      timeRemainingToEndCurrentSession <= 100 &&
+      timeRemainingToEndCurrentSession <= 10 &&
+      timeRemainingToEndCurrentSession &&
       socket.emit("canvas-change", {
         elements: getUniqueIdsWithHigherVersion(
           excalidrawAPI.getSceneElements().concat(newElements),
@@ -361,7 +362,8 @@ const TutorClass = () => {
                           You can start using the canvas tools now{" "}
                         </div>}
                         {
-                          timeRemainingToEndCurrentSession <= 100 &&
+                          timeRemainingToEndCurrentSession <= 10 &&
+                          timeRemainingToEndCurrentSession > 0 &&
                           <div className="fs-1 text-dark">
                             Session is going to end in 10 seconds, Redirecting you to Feedback Screen
                           </div>

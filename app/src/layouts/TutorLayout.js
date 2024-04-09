@@ -21,10 +21,10 @@ const TutorLayout = ({ children }) => {
         if (inMins && upcomingSession?.id && extractRemainingtimeInInteger < 4) {
             navigate(`/collab?sessionId=${upcomingSession.id}`)
         }
-        else if (currentSession?.id && remainingTime < 7 * 60) {
+        else if (currentSession?.id && remainingTime > 10 * 60) {
             navigate(`/collab?sessionId=${currentSession.id}`)
         }
-    }, [currentSession.id, inMins, upcomingSession, upcomingSessionFromNow])
+    }, [currentSession.id, inMins, upcomingSession, upcomingSessionFromNow,remainingTime])
 
     useEffect(() => {
         if (currentSession.end) {

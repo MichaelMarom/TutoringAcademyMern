@@ -1,7 +1,5 @@
-
 import {
   Excalidraw,
-  LiveCollaborationTrigger,
   WelcomeScreen,
   useHandleLibrary,
 } from "@excalidraw/excalidraw";
@@ -9,14 +7,10 @@ import { socket } from "../../config/socket";
 import "../../styles/tutor.css";
 import CommonLayout from "../../layouts/CommonLayout";
 import { useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
-import { constants } from "buffer";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { RiContactsBookLine } from "react-icons/ri";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import TutorAside from "../../components/tutor/Collab/TutorCollabAside";
-import { BiChat } from "react-icons/bi";
 import Switch from "../../components/common/Switch";
-import { MdCancel } from "react-icons/md";
 import Tooltip from "../../components/common/ToolTip";
 import _ from "lodash";
 import { toast } from "react-toastify";
@@ -28,6 +22,7 @@ const TutorClass = () => {
   const { user } = useSelector((state) => state.user);
   const { student } = useSelector((state) => state.student);
   const { tutor } = useSelector((state) => state.tutor);
+  const { shortlist } = useSelector((state) => state.shortlist);
 
   const [zenModeEnabled, setZenModeEnabled] = useState(false);
   const [gridModeEnabled, setGridModeEnabled] = useState(false);
@@ -35,8 +30,7 @@ const TutorClass = () => {
   const [elements, setElements] = useState([]);
   const [collaborators, setCollaborators] = useState(new Map());
   const [files, setFiles] = useState([]);
-
-  const [isChatOpen, setIsChatOpen] = useState(false);
+  const navigate = useNavigate();
 
   const location = useLocation();
   const [openedSessionFetching, setOpenedSessionFetching] = useState(false);
@@ -54,15 +48,54 @@ const TutorClass = () => {
     setTimeRemainingToEndCurrentSession,
   ] = useState(null);
 
-  const {
-    upcomingSessionFromNow: tutorUpcomingFromNow,
-    upcomingSession: tutorUpcoming,
-    inMins: isTutorUpcomgLessonInMins,
-    currentSession: tutorCurrentSession,
-  } = useSelector((state) => state.tutorSessions);
+  const { currentSession: tutorCurrentSession } = useSelector(
+    (state) => state.tutorSessions
+  );
 
-  const { upcomingSessionFromNow, upcomingSession, inMins, currentSession } =
-    useSelector((state) => state.studentSessions);
+  const { currentSession } = useSelector((state) => state.studentSessions);
+
+  const setCollboratorsInState = (tutorId, studentId) => {
+    const collaborators = new Map();
+
+    if (user.role === "student") {
+      const tutorPicture = shortlist.find(
+        (list) => list.AcademyId[0] === tutorId
+      )?.Photo;
+
+      collaborators.set(studentId, {
+        username: student.ScreenName,
+        isCurrentUser: true,
+        isSpeaking: true,
+        avatarUrl: student.Photo,
+      });
+      collaborators.set(tutorId, {
+        username: tutor.AcademyId,
+        isCurrentUser: true,
+        isSpeaking: true,
+        avatarUrl: tutorPicture,
+      });
+    } else if (user.role === "tutor") {
+      const tutorPicture = tutor.Photo;
+      // todo: get student photo and name from api
+      const studentPicture = student.Photo;
+      collaborators.set(studentId, {
+        username: "dummy",
+        isCurrentUser: true,
+        isSpeaking: true,
+        avatarUrl: studentPicture,
+      });
+      collaborators.set(tutorId, {
+        username: tutor.AcademyId,
+        isCurrentUser: true,
+        isSpeaking: true,
+        avatarUrl: tutorPicture,
+      });
+    }
+    excalidrawAPI &&
+      excalidrawAPI.updateScene({
+        collaborators: collaborators,
+      });
+  };
 
   //added currentSession.id, SO that it calls when sesion is live
   useEffect(() => {
@@ -73,11 +106,30 @@ const TutorClass = () => {
         user.role === "student" ? student.timeZone : tutor.timeZone
       ).then((res) => {
         setOpenedSessionFetching(false);
+
+        setCollboratorsInState(res.session.tutorId, res.session.studentId);
         setOpenedSession(res.session);
         setSessionTime(res.time);
       });
     }
-  }, [sessionId, student, tutor, user, currentSession.id, tutorCurrentSession]);
+  }, [
+    sessionId,
+    student,
+    tutor,
+    user,
+    currentSession.id,
+    tutorCurrentSession.id,
+  ]);
+
+  useEffect(() => {
+    if (
+      timeRemainingToEndCurrentSession &&
+      timeRemainingToEndCurrentSession < 600 &&
+      (currentSession?.id || tutorCurrentSession?.id)
+    ) {
+      navigate(`/${user.role}/feedback`);
+    }
+  }, [timeRemainingToEndCurrentSession, currentSession, tutorCurrentSession]);
 
   useEffect(() => {
     if (openedSession.start) {
@@ -132,22 +184,30 @@ const TutorClass = () => {
     if (socket && excalidrawAPI && sessionTime === "current") {
       sessionId && socket.emit("join-session", sessionId);
       socket.on("canvas-change-recieve", (change) => {
+        setCollboratorsInState(openedSession.tutorId, openedSession.studentId);
         // const collaborators = new Map();
-        // collaborators.set("id6", {
-        //   username: "Michael",
+        // collaborators.set("231", {
+        //   username: "dummy",
         //   isCurrentUser: true,
         //   isSpeaking: true,
-        //   socketId: "123",
-        //   avatarUrl: student.Photo,
+        //   avatarUrl: "dede",
         // });
+        // collaborators.set("23", {
+        //   username: "dede",
+        //   isCurrentUser: true,
+        //   isSpeaking: true,
+        //   avatarUrl: "zF",
+        // });
+
         const mergedArray = getUniqueIdsWithHigherVersion(
           excalidrawAPI.getSceneElements().concat(change.elements),
           "id"
         );
         setElements(mergedArray);
-        setCollaborators(
-          new Map([...collaborators, ...JSON.parse(change.collaborators)])
-        );
+        // excalidrawAPI.updateScene({collaborators: collaborators})
+        // setCollaborators(
+        //   new Map([...collaborators, ...JSON.parse(change.collaborators)])
+        // );
         const allDetails = Object.values(change.files).map((entry) => entry);
 
         setFiles(allDetails);
@@ -188,8 +248,6 @@ const TutorClass = () => {
   }, [files, excalidrawAPI]);
 
   const handleExcalidrawChange = (newElements, appState, files) => {
-    // console.log('ent', params, elements.length, user.role)
-    // setElements([...elements, ...newElements])
     sessionId &&
       newElements.length &&
       sessionTime === "current" &&
@@ -202,14 +260,6 @@ const TutorClass = () => {
         // collaborator: { username: tutor.TutorScreenname, AcademyId: tutor.AcademyId },
         files,
       });
-
-    // sessionId && newElements.length && user.role === 'student' &&
-    // socket.emit('canvas-change', ({
-    //   sessionId: sessionId,
-    //   elements: _.uniqBy(excalidrawAPI.getSceneElements().concat(newElements), 'id'),
-    //   // collaborator: { username: student.ScreenName, AcademyId: student.AcademyId },
-    //   files
-    // }));
   };
 
   const handlePointerDown = (activeTool, pointerDownState, event) => {

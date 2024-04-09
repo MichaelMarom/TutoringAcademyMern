@@ -88,16 +88,6 @@ const TutorAside = ({
   };
 
   useEffect(() => {
-    if (
-      timeRemainingToEndCurrentSession &&
-      timeRemainingToEndCurrentSession < 600 &&
-      currentSession?.id
-    ) {
-      navigate(`/${user.role}/feedback`);
-    }
-  }, [timeRemainingToEndCurrentSession, currentSession]);
-
-  useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
@@ -306,7 +296,7 @@ const TutorAside = ({
             Started
           </p>
         )}
-        {minutes <= 2 && minutes !== 0 && (
+        {minutes <= 2 && seconds !== 0 && (
           <p
             className="m-0 blinking-button text-danger"
             style={{ fontSize: "12px" }}

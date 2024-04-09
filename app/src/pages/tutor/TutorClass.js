@@ -187,7 +187,12 @@ const TutorClass = () => {
   }
 
   useEffect(() => {
-    if (socket && excalidrawAPI && sessionTime === "current") {
+    if (
+      socket &&
+      excalidrawAPI &&
+      sessionTime === "current" &&
+      timeRemainingToEndCurrentSession > 610
+    ) {
       sessionId && socket.emit("join-session", sessionId);
       socket.on("canvas-change-recieve", (change) => {
         setCollboratorsInState(openedSession.tutorId, openedSession.studentId);
@@ -223,20 +228,24 @@ const TutorClass = () => {
       });
       socket.on("recieve-authorization", (data) => {
         if (user.role !== "tutor") {
-          data.hasAuthorization
-            ? toast.success(
-                "Tutor has given you access to access the canvas tools."
-              )
-            : toast.warning(
-                "Tutor has removed your access to the canvas tools!"
-              );
+          hasAuth !== data.hasAuthorization && setAuth(data.hasAuthorization);
 
-          setAuth(data.hasAuthorization);
-          setIsChecked(data.hasAuthorization);
+          hasAuth !== data.hasAuthorization &&
+            setIsChecked(data.hasAuthorization);
         }
       });
     }
-  }, [sessionId, excalidrawAPI, sessionTime]);
+  }, [sessionId, excalidrawAPI, sessionTime, timeRemainingToEndCurrentSession]);
+
+  useEffect(() => {
+    if (user.role === "student") {
+      hasAuth &&
+        toast.success("Tutor has given you access to access the canvas tools.");
+
+      !hasAuth &&
+        toast.warning("Tutor has removed your access to the canvas tools!");
+    }
+  }, [hasAuth, user]);
 
   useEffect(() => {
     if (excalidrawAPI) {
@@ -257,7 +266,7 @@ const TutorClass = () => {
     sessionId &&
       newElements.length &&
       sessionTime === "current" &&
-      timeRemainingToEndCurrentSession > 590 &&
+      timeRemainingToEndCurrentSession > 610 &&
       timeRemainingToEndCurrentSession &&
       socket.emit("canvas-change", {
         elements: getUniqueIdsWithHigherVersion(
@@ -283,14 +292,19 @@ const TutorClass = () => {
   };
 
   useEffect(() => {
-    if (socket && sessionId && sessionTime === "current") {
+    if (
+      socket &&
+      sessionId &&
+      sessionTime === "current" &&
+      timeRemainingToEndCurrentSession > 610
+    ) {
       socket.emit("authorize-student", {
         userId: student?.AcademyId,
         sessionId: sessionId,
         hasAuthorization: isChecked,
       });
     }
-  }, [isChecked, sessionId, sessionTime]);
+  }, [isChecked, sessionId, sessionTime, timeRemainingToEndCurrentSession]);
 
   useEffect(() => {
     excalidrawAPI &&
@@ -376,11 +390,13 @@ const TutorClass = () => {
                 <img src={logo} at="logo" width={400} height={130} />
 
                 <WelcomeScreen.Center.Heading>
-                  {user.role === "tutor" && (
-                    <div className="fs-3 text-dark">
-                      You can start using the canvas tools now.
-                    </div>
-                  )}
+                  {user.role === "tutor" &&
+                    timeRemainingToEndCurrentSession > 610 &&
+                    !!timeRemainingToEndCurrentSession && (
+                      <div className="fs-3 text-dark">
+                        You can start using the canvas tools now.
+                      </div>
+                    )}
                 </WelcomeScreen.Center.Heading>
 
                 <WelcomeScreen.Center.Menu>
@@ -410,18 +426,19 @@ const TutorClass = () => {
                 openedSessionTimeRemainingToStart
               }
             />
-            {sessionTime === "current" && (
-              <div className="d-flex align-items-center justify-content-center">
-                <Tooltip text={"switch text goes here"} iconSize="25" />
-                <Switch
-                  isChecked={isChecked}
-                  setIsChecked={setIsChecked}
-                  authorized={
-                    user.role === "tutor" && sessionTime === "current"
-                  }
-                />
-              </div>
-            )}
+            {sessionTime === "current" &&
+              timeRemainingToEndCurrentSession > 610 && (
+                <div className="d-flex align-items-center justify-content-center">
+                  <Tooltip text={"switch text goes here"} iconSize="25" />
+                  <Switch
+                    isChecked={isChecked}
+                    setIsChecked={setIsChecked}
+                    authorized={
+                      user.role === "tutor" && sessionTime === "current"
+                    }
+                  />
+                </div>
+              )}
           </div>
         }
         {/* <div style={{ position: "fixed", bottom: "10%", right: "3%" }}>

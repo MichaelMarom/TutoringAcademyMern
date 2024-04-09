@@ -219,7 +219,7 @@ const TutorAside = ({
             console.log("Retrying...");
             setTimeout(() => initStreamAndSocket(false), 500);
           } else {
-            toast.warning(e.message);
+            // toast.warning(e.message);
           }
         });
 

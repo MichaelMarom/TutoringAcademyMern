@@ -30,7 +30,7 @@ const verifyToken = async (req, res, next) => {
     // }
 
     if (!token || token === 'undefined' || token === 'null')
-        return res.status(401).json({ reason: "token not attached!", message: "The security token expired after 20 minutes of ideling, please login again." });
+        return res.status(401).json({ reason: "token not attached!", message: "The security token has expired , please login again to continue protecting your account." });
 
     try {
         // const clientToken = cookies.get('__session');

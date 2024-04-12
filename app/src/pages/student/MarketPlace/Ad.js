@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { get_student_market_data, post_student_ad } from "../../../axios/student";
+import { get_faculty_subject } from "../../../axios/tutor";
+
 import Layout from "./Layout";
 import { useSelector } from "react-redux";
 import UserRichTextEditor from "../../../components/common/RichTextEditor/UserRichTextEditor";
 import { CERTIFICATES, EXPERIENCE, GMT, LEVEL, languages } from "../../../constants/constants";
 import ReactSelect from "react-select";
 import { toast } from "react-toastify";
-import { get_faculty_subject } from "../../../axios/tutor";
 import Actions from "../../../components/common/Actions";
 import { useNavigate } from "react-router-dom";
 import { compareStates } from "../../../helperFunctions/generalHelperFunctions";
@@ -79,7 +80,7 @@ const Ads = () => {
         setSubject('')
         if (activeFaculty.length) {
             get_faculty_subject(activeFaculty)
-                .then(result => setSubjects(result))
+                .then(result => !result?.response?.data && setSubjects(result))
                 .catch(err => toast.error(err.message))
         }
     }, [activeFaculty])
@@ -88,7 +89,7 @@ const Ads = () => {
         if (student.AcademyId) {
             get_student_market_data(student.AcademyId)
                 .then(faculties => {
-                    setFaculties(faculties)
+                    !faculties?.response?.data && setFaculties(faculties)
                 })
                 .catch(err => toast.error(err.message))
         }
@@ -291,7 +292,7 @@ const Ads = () => {
                                         value={timeZone}>
                                         <option value={''} disabled>Select</option>
 
-                                        {["+/- 0","+/- 1", "+/- 2", "+/- 3", "+/- 4", "+/- 5"].map((item, index) =>
+                                        {["+/- 0", "+/- 1", "+/- 2", "+/- 3", "+/- 4", "+/- 5"].map((item, index) =>
                                             <option key={index} value={item}>{item}</option>
                                         )}
                                         <option value={'any'} >Any</option>

@@ -15,7 +15,7 @@ const ListComponent = ({ setActiveTab, setActiveTabIndex }) => {
         if (tutor.AcademyId) {
             const fetch = async () => {
                 const data = await fetch_tutor_ads(tutor.AcademyId)
-                setAds(data)
+                data?.length && setAds(data)
             }
             fetch()
         }

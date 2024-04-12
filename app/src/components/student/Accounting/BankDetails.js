@@ -36,7 +36,7 @@ function BankDetails({ }) {
 
     const fetchBankDetails = async () => {
         const data = await get_bank_details(AcademyId)
-        if (data.length) {
+        if (data?.length) {
             const result = data[0];
             setDbState(result)
             set_acct_name(result.AccountName);
@@ -115,7 +115,7 @@ function BankDetails({ }) {
                 AcademyId,
             })
             if (data?.response?.status === 400)
-                toast.error('Error Saving eeh data')
+                toast.error('Error Saving the data')
             else {
                 fetchBankDetails();
                 setEditMode(false)

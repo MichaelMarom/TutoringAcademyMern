@@ -50,8 +50,7 @@ const StudentCalenderScheduling = () => {
     const update = async () => {
       console.log(student.AcademyId)
       if (subscriptionHours && student.AcademyId?.length) {
-        const res = await update_student_shortlist(selectedTutor.academyId, student.AcademyId, selectedTutor.subject, { DiscountHours: subscriptionHours });
-        console.log(res)
+        await update_student_shortlist(selectedTutor.academyId, student.AcademyId, selectedTutor.subject, { DiscountHours: subscriptionHours });
       }
     }
     update()
@@ -60,7 +59,7 @@ const StudentCalenderScheduling = () => {
   useEffect(() => {
     const getStudentDetails = async () => {
       const res = await get_my_data(localStorage.getItem('student_user_id'))
-      dispatch(setStudent(res[1][0][0]))
+      !res?.response?.data?.message && dispatch(setStudent(res[1][0][0]))
     }
     getStudentDetails()
   }, [dispatch])

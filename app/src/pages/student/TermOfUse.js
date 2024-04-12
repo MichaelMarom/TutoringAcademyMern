@@ -8,10 +8,8 @@ import Loading from '../../components/common/Loading'
 import { toast } from 'react-toastify'
 import { showDate } from '../../helperFunctions/timeHelperFunctions'
 import { convertToDate } from '../../components/common/Calendar/Calendar'
-import { post_student_agreement, upload_setup_form } from '../../axios/student'
+import { post_student_agreement } from '../../axios/student'
 import { setStudent } from '../../redux/student_store/studentData'
-import SmallSideBar from '../../components/common/SmallSideBar'
-import { generateUpcomingSessionMessage } from '../../helperFunctions/generalHelperFunctions'
 
 const StudentIntro = () => {
     const { user } = useSelector(state => state.user)
@@ -37,8 +35,10 @@ const StudentIntro = () => {
         const fetchData = async () => {
             try {
                 const result = await get_adminConstants(2);
-                setTerms(result.data[0].TermContent);
-                set_db_terms(result.data[0].TermContent);
+                if (!result?.response?.data) {
+                    setTerms(result.data[0].TermContent);
+                    set_db_terms(result.data[0].TermContent);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -84,8 +84,7 @@ const StudentIntro = () => {
             student.GMT, student.Photo, student.AcademyId, student.userId
         )
         const data = await post_student_agreement(user.SID, { AgreementDate: new Date() })
-        if (data[0]) {
-            console.log('enter')
+        if (data?.[0]) {
             dispatch(setStudent(data[0]))
         }
         setEditMode(false)

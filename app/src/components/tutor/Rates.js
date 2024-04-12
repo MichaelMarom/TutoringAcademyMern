@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { get_tutor_rates, get_tutor_subjects, post_tutor_setup, upload_tutor_rates_form } from "../../axios/tutor";
+import {
+  get_tutor_rates,
+  get_tutor_subjects,
+  post_tutor_setup,
+  upload_tutor_rates_form
+} from "../../axios/tutor";
 import { IoMdCopy, IoMdRefresh } from "react-icons/io";
 import { FaInfoCircle } from "react-icons/fa";
 import Tooltip from "../common/ToolTip";
@@ -52,7 +57,7 @@ const Rates = () => {
   const fetchTutorRateRecord = () => {
     get_tutor_rates(window.localStorage.getItem("tutor_user_id"))
       .then((result) => {
-        if (result.length) {
+        if (result?.length) {
           setDbState(result[0]);
           setMultiStudentHourlyRate(result[0].MutiStudentHourlyRate);
           setSelectedCancPolicy(result[0].CancellationPolicy);
@@ -103,7 +108,6 @@ const Rates = () => {
             document.querySelector("#freeDemoNo").checked = true;
           }
 
-        } else {
         }
       })
       .catch((err) => {
@@ -125,7 +129,7 @@ const Rates = () => {
       setSubject('')
       setCodeUsed('new')
       get_tutor_subjects(tutor.AcademyId).then(result => {
-        setSubjects(result)
+        result?.length && setSubjects(result)
       }).catch(err => toast.error(err.message))
     }
   }, [discountEnabled])
@@ -169,7 +173,6 @@ const Rates = () => {
       IntroSessionDiscount,
       codeUsed
     );
-
     return response;
   };
 
@@ -263,7 +266,7 @@ const Rates = () => {
                   {selectedCancellationPolicy.length ? `${selectedCancellationPolicy}hr   ` : " Select"}
                 </button>
                 {isOpen && (
-                  <div className="dropdown-menu show" style={{ left: "90px", top:"43px" }}>
+                  <div className="dropdown-menu show" style={{ left: "90px", top: "43px" }}>
                     <div className="dropdown-item" onClick={() => {
                       setSelectedCancPolicy('4')
                       setIsOpen(false)

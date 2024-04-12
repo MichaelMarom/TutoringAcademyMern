@@ -12,7 +12,7 @@ const ShortlistCard = ({ photo, name, adText, id, setAdDeleted, studentId, subje
 
     const handleDeleteAd = async () => {
         const data = await deleteAdFromShortlist(id, tutor.AcademyId);
-        setAdDeleted(data)
+        !data?.response?.data && setAdDeleted(data)
     }
 
     useEffect(() => {

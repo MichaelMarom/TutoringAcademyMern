@@ -105,9 +105,11 @@ const TutorClass = () => {
       ).then((res) => {
         setOpenedSessionFetching(false);
 
-        setCollboratorsInState(res.session.tutorId, res.session.studentId);
-        setOpenedSession(res.session);
-        setSessionTime(res.time);
+        if (!res?.response?.data) {
+          setCollboratorsInState(res.session.tutorId, res.session.studentId);
+          setOpenedSession(res.session);
+          setSessionTime(res.time);
+        }
       });
     }
   }, [
@@ -329,11 +331,10 @@ const TutorClass = () => {
       {openedSession.subject && (
         <div
           style={{ width: "70%" }}
-          className={`d-flex ${
-            openedSession.subject
+          className={`d-flex ${openedSession.subject
               ? "justify-content-between"
               : "justify-content-center"
-          }`}
+            }`}
         >
           <div>
             {sessionTime === "future" && (

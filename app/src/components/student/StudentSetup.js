@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { code_applied, get_my_data, upload_setup_form } from '../../axios/student';
+import { get_tutor_against_code } from '../../axios/tutor';
 import { convertGMTOffsetToLocalString } from '../../helperFunctions/timeHelperFunctions';
 import { useDispatch } from 'react-redux';
 import { setStudent } from '../../redux/student_store/studentData';
@@ -12,7 +13,6 @@ import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
 import Button from '../common/Button';
 import BTN_ICON from '../../assets/images/button__icon.png';
-import { get_tutor_against_code } from '../../axios/tutor';
 import { useNavigate } from 'react-router-dom';
 import { setShortlist } from '../../redux/student_store/shortlist';
 import { compareStates } from '../../helperFunctions/generalHelperFunctions';
@@ -89,7 +89,7 @@ const StudentSetup = () => {
         if (response.bool) {
             toast.success('success')
             const res = await get_my_data(localStorage.getItem('student_user_id'));
-            dispatch(setStudent(res[1][0][0]))
+            !(res?.response?.status === 400) && dispatch(setStudent(res[1][0][0]))
         }
         else {
             toast.error('failed')
@@ -188,22 +188,28 @@ const StudentSetup = () => {
     }, [])
 
     useEffect(() => {
-        let list = Countries.map((item) =>
-            <option key={item.Country} className={item.Country} selected={item.Country === country ? 'selected' : ''}
-                style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Country}>{item.Country}</option>
+        let list = Countries.map((item, index) =>
+            <option key={index} className={item.Country}
+                style={{
+                    height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                    borderRadius: '0'
+                }} value={item.Country}>{item.Country}</option>
         );
-        let head = <option key='null'
-            style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Country</option>
+        let head = <option
+            style={{
+                height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                borderRadius: '0'
+            }} value=''>Country</option>
 
         list.unshift(head);
         setCountryList(list)
 
 
-        let gmt_list = GMT.map((item) =>
-            <option key={item.GMT} className={item.GMT} selected={item.GMT === timeZone ? 'selected' : ''}
+        let gmt_list = GMT.map((item, index) =>
+            <option key={index} className={item.GMT}
                 style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.GMT}>{item.GMT}</option>
         );
-        let gmt_head = <option key='null'
+        let gmt_head = <option
             style={{
                 height: '50px', width: '100%',
                 outline: 'none', padding: '0 10px 0 10px', borderRadius: '0'
@@ -213,11 +219,12 @@ const StudentSetup = () => {
         setGMTList(gmt_list)
 
 
-
-
-        let grades_list = GRADES.map((item) =>
-            <option key={item.id} className={item.Grade} selected={item.Grade === grade ? 'selected' : ''}
-                style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.Grade}>{item.Grade}</option>
+        let grades_list = GRADES.map((item, index) =>
+            <option key={index} className={item.Grade}
+                style={{
+                    height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                    borderRadius: '0'
+                }} value={item.Grade}>{item.Grade}</option>
         );
         let grades_head = <option key='null'
             style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>Grade</option>
@@ -226,11 +233,11 @@ const StudentSetup = () => {
         setGradeList(grades_list)
 
 
-        let states_list = STATES.map((item) =>
-            <option key={item.State} className={item.State} selected={item.State === state ? 'selected' : ''}
+        let states_list = STATES.map((item, index) =>
+            <option key={index} className={item.State}
                 style={{ height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value={item.State}>{item.State}</option>
         );
-        let state_head = <option key='null'
+        let state_head = <option
             style={{ height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px', borderRadius: '0' }} value=''>State</option>
 
         states_list.unshift(state_head);
@@ -327,42 +334,35 @@ const StudentSetup = () => {
                             style={{ width: "48%" }}>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">
                                     First Name</label>
                                 <input required disabled={nameFieldsDisabled} className="form-control"
-                                    onInput={e => set_fname(e.target.value)} placeholder='First Name'
+                                    onChange={e => set_fname(e.target.value)} placeholder='First Name'
                                     value={fname} type="text" id="fname"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Middle Name</label>
-                                <input required disabled={nameFieldsDisabled} className="form-control" onInput={e => set_mname(e.target.value)} placeholder='Middle Name' value={mname} type="text" id="mname"
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Middle Name</label>
+                                <input required disabled={nameFieldsDisabled} className="form-control" onChange={e => set_mname(e.target.value)}
+                                    placeholder='Middle Name' value={mname} type="text" id="mname"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Last Name</label>
-                                <input required disabled={nameFieldsDisabled} className="form-control" onInput={e => set_sname(e.target.value)} placeholder='Last Name' value={sname} type="text" id="sname"
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Last Name</label>
+                                <input required disabled={nameFieldsDisabled} className="form-control" onChange={e => set_sname(e.target.value)}
+                                    placeholder='Last Name' value={sname} type="text" id="sname"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Email</label>
-                                <input required disabled className="form-control"
-                                    placeholder='Email'
-                                    value={user.role === 'student' ? user.email : email}
-                                    type="text" id="email"
-                                    readonly />
-
-                                <div className='err-mssg' >
-                                    Email already exist, Please try something else...
-                                </div>
-
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Email</label>
+                                <div className="form-control"  >{user.role === 'student' ? user.email : email}</div>
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">CellPhone</label>
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">CellPhone</label>
                                 <PhoneInput
                                     disabled={!editMode}
                                     defaultCountry="us"
@@ -373,30 +373,41 @@ const StudentSetup = () => {
                                 />
                             </div>
 
-
-
-
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Are you over 18?</label>
-                                <select required disabled={!editMode} className="form-select " dname="" id="" onInput={e => set_is_18(e.target.value)}>
-                                    <option value="null">Are You Over 18 ?</option>
-                                    <option selected={is_18 === 'yes' ? 'selected' : ''} value="yes">Yes</option>
-                                    <option selected={is_18 === 'no' ? 'selected' : ''} value="no">No</option>
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Are you over 18?</label>
+                                <select required disabled={!editMode}
+                                    className="form-select" dname="" id=""
+                                    onChange={e => set_is_18(e.target.value)} value={is_18}>
+                                    <option value="">Are You Over 18 ?</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
                                 </select>
                             </div>
 
                             <div className='input-group mb-2' >
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">GMT</label>
+                                <label className="input-group-text" style={{ width: "35%" }}
+                                    htmlFor="inputGroupSelect01">GMT</label>
 
-                                <select required disabled={!editMode} className="form-select " onInput={e => set_timeZone(e.target.value)} id="timeZone" value={timeZone}>
-                                    {GMTList}
+                                <select required disabled={!editMode} className="form-select "
+                                    onChange={e => set_timeZone(e.target.value)} id="timeZone" value={timeZone}>
+                                    <option
+                                        style={{
+                                            height: '50px', width: '100%',
+                                            outline: 'none', padding: '0 10px 0 10px', borderRadius: '0'
+                                        }} value=''>GMT</option>
+                                    {GMT.map((item, index) => <option key={index} className={item.GMT}
+                                        style={{
+                                            height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                                            borderRadius: '0'
+                                        }} value={item.GMT}>{item.GMT}</option>
+                                    )}
 
                                 </select>
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Grade</label>
-                                <select disabled={!editMode} required className="form-select " onInput={e => set_grade(e.target.value)} id="state" value={grade}
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Grade</label>
+                                <select disabled={!editMode} required className="form-select " onChange={e => set_grade(e.target.value)} id="state" value={grade}
                                 >
                                     {
                                         GradeList
@@ -407,15 +418,14 @@ const StudentSetup = () => {
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Native Language</label>
-                                <select disabled={!editMode} required className="form-select " onInput={e => set_lang(e.target.value)} id="state" value={lang}
-
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Native Language</label>
+                                <select disabled={!editMode} required className="form-select "
+                                    onChange={e => set_lang(e.target.value)} id="state" value={lang}
                                 >
-                                    <option value="null">Select Language</option>
+                                    <option value="">Select Language</option>
                                     {
-                                        lang_list.map(item =>
-
-                                            <option selected={item === lang ? 'selected' : ''} value={item}>{item}</option>
+                                        lang_list.map((item, index) =>
+                                            <option value={item} key={index}>{item}</option>
                                         )
                                     }
 
@@ -427,32 +437,43 @@ const StudentSetup = () => {
                         <div className="profile-details-cnt" style={{ width: "48%" }}>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Address1</label>
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Address1</label>
 
                                 <input required disabled={!editMode} className="form-control "
-                                    onInput={e => set_add1(e.target.value)} placeholder='Address 1' value={add1}
+                                    onChange={e => set_add1(e.target.value)} placeholder='Address 1' value={add1}
                                     type="text" id="add1"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Address2</label>
-                                <input disabled={!editMode} className="form-control" onInput={e => set_add2(e.target.value)} placeholder='Optional' value={add2} type="text" id="add2"
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Address2</label>
+                                <input disabled={!editMode} className="form-control" onChange={e => set_add2(e.target.value)} placeholder='Optional' value={add2} type="text" id="add2"
                                 />
                             </div>
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">City</label>
-                                <input required disabled={!editMode} className="form-control" onInput={e => set_city(e.target.value)} placeholder='City/Town' type="text" value={city} id="city"
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">City</label>
+                                <input required disabled={!editMode} className="form-control" onChange={e => set_city(e.target.value)} placeholder='City/Town'
+                                    type="text" value={city} id="city"
                                 />
                             </div>
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Country</label>
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Country</label>
 
-                                <select required className="form-select " disabled={!editMode} onInput={e => set_country(e.target.value)}
+                                <select required className="form-select " disabled={!editMode} onChange={e => set_country(e.target.value)}
                                     id="country" value={country}
-                                >
-                                    {countryList}
+                                > <option
+                                    style={{
+                                        height: '50px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                                        borderRadius: '0'
+                                    }} value=''>Country</option>
+                                    {Countries.map((item, index) =>
+                                        <option key={index} className={item.Country}
+                                            style={{
+                                                height: '80px', width: '100%', outline: 'none', padding: '0 10px 0 10px',
+                                                borderRadius: '0'
+                                            }} value={item.Country}>{item.Country}</option>
+                                    )}
 
                                 </select>
 
@@ -460,15 +481,15 @@ const StudentSetup = () => {
 
                             {options[country] &&
                                 <div className='input-group mb-2 '>
-                                    <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">State</label>
+                                    <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">State</label>
                                     <select required className="form-select "
-                                        disabled={!editMode} onInput={e => set_state(e.target.value)} id="state"
+                                        disabled={!editMode} onChange={e => set_state(e.target.value)} id="state"
                                         value={state}
                                     >
                                         <option value="">Select State</option>
 
-                                        {options[country].map((item) => (
-                                            <option key={item} value={item}>
+                                        {options[country].map((item, index) => (
+                                            <option key={index} value={item}>
                                                 {item}
                                             </option>
                                         ))}
@@ -477,27 +498,26 @@ const StudentSetup = () => {
                                 </div>}
 
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Zip</label>
-                                <input required className="form-control" disabled={!editMode} onInput={e => set_zipCode(e.target.value)} value={zipCode} placeholder='Zip-Code' type="text" id="zip"
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Zip</label>
+                                <input required className="form-control" disabled={!editMode} onChange={e => set_zipCode(e.target.value)} value={zipCode}
+                                    placeholder='Zip-Code' type="text" id="zip"
                                 />
                             </div>
                             <div className='input-group mb-2' >
 
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">UTC</label>
+                                <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">UTC</label>
 
-                                <input className='form-control' disabled={!editMode} value={dateTime} />
+                                <div className='form-control' disabled={!editMode} style={{ backgroundColor: "#e9ecef" }} >{dateTime}</div>
                             </div>
                             <div className='input-group mb-2 '>
-                                <label class="input-group-text small" style={{ width: "35%" }} for="inputGroupSelect01">Other Language(s)</label>
+                                <label className="input-group-text small" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Other Language(s)</label>
                                 <select className="form-select " disabled={!editMode} placeholder='Optional'
                                     onChange={e => setSecLang(e.target.value)} id="state" value={secLan}
                                 >
                                     <option value="null">Select Language</option>
                                     {
-                                        lang_list.map(item =>
-
-                                            <option selected={item === lang ? 'selected' : ''}
-                                                value={item}>{item}</option>
+                                        lang_list.map((item, index) =>
+                                            <option value={item} key={index}>{item}</option>
                                         )
                                     }
 
@@ -506,43 +526,47 @@ const StudentSetup = () => {
 
                         </div>
                     </div>
-                    <div className='d-flex flex-column border rounded shadow p-2 m-2'
+                    {<div className='d-flex flex-column border rounded shadow p-2 m-2'
                         style={{ gap: "2%" }}>
-                        <h6 className='mb-3'>Parent Info</h6>
-                        <div className='d-flex' style={{ gap: "2%" }}>
-                            <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Email</label>
-                                <input disabled={!editMode} required={is_18 === 'no'} className="form-control"
-                                    onChange={e => setParentAEmail(e.target.value)}
-                                    placeholder='Parent A Email'
-                                    type="email" value={parentAEmail} />
-                            </div>
+                        {!['Freshman', 'Junior', 'Senior', 'Sophmore'].includes(grade) &&
+                            <>
+                                <h6 className='mb-3'>Parent Info</h6>
+                                <div className='d-flex' style={{ gap: "2%" }}>
+                                    <div className='input-group mb-2 '>
+                                        <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Parent A Email</label>
+                                        <input disabled={!editMode} required={is_18 === 'no'} className="form-control"
+                                            onChange={e => setParentAEmail(e.target.value)}
+                                            placeholder='Parent A Email'
+                                            type="email" value={parentAEmail} />
+                                    </div>
 
-                            <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent A Name</label>
-                                <input disabled={!editMode} required={is_18 === 'no'} className="form-control"
-                                    onChange={e => setParentAName(e.target.value)} placeholder='Parent A Name'
-                                    type="text" value={parentAName} />
-                            </div>
-                        </div>
-                        <div className='d-flex' style={{ gap: "2%" }}>
-                            <div className='input-group mb-2'>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Email</label>
-                                <input disabled={!editMode} className="form-control"
-                                    onChange={e => setParentBEmail(e.target.value)}
-                                    placeholder='Parent B Email' type="email" value={parentBEmail} required={is_18 === 'no'} />
-                            </div>
+                                    <div className='input-group mb-2 '>
+                                        <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Parent A Name</label>
+                                        <input disabled={!editMode} required={is_18 === 'no'} className="form-control"
+                                            onChange={e => setParentAName(e.target.value)} placeholder='Parent A Name'
+                                            type="text" value={parentAName} />
+                                    </div>
 
-                            <div className='input-group mb-2 '>
-                                <label class="input-group-text" style={{ width: "35%" }} for="inputGroupSelect01">Parent B Name</label>
-                                <input disabled={!editMode} className="form-control"
-                                    onChange={e => setParentBName(e.target.value)}
-                                    placeholder='Parent B Name' type="text" value={parentBName}
-                                    required={is_18 === 'no'}
-                                />
-                            </div>
-                        </div>
-                        <div
+                                </div>
+                                <div className='d-flex' style={{ gap: "2%" }}>
+                                    <div className='input-group mb-2'>
+                                        <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Parent B Email</label>
+                                        <input disabled={!editMode} className="form-control"
+                                            onChange={e => setParentBEmail(e.target.value)}
+                                            placeholder='Parent B Email' type="email" value={parentBEmail} required={is_18 === 'no'} />
+                                    </div>
+
+                                    <div className='input-group mb-2 '>
+                                        <label className="input-group-text" style={{ width: "35%" }} htmlFor="inputGroupSelect01">Parent B Name</label>
+                                        <input disabled={!editMode} className="form-control"
+                                            onChange={e => setParentBName(e.target.value)}
+                                            placeholder='Parent B Name' type="text" value={parentBName}
+                                            required={is_18 === 'no'}
+                                        />
+                                    </div>
+                                </div>
+                            </>}
+                        {is_18 === 'no' && <div
                             style={{
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'
@@ -570,8 +594,37 @@ const StudentSetup = () => {
                                     <FaInfoCircle size={18} color="#0096ff" />
                                 </Tooltip>
                             </div>
-                        </div>
-                    </div>
+                        </div>}
+                        {is_18 === 'yes' && <div
+                            style={{
+                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                                width: '100%', display: 'flex', justifyContent: 'center', whiteSpace: 'nowrap'
+                            }}>
+
+                            <h5>Video recording consent</h5>
+                            <div className="form-check form-switch d-flex gap-3"
+
+                                style={{ fontSize: "16px " }}>
+                                <input className="form-check-input m-1"
+                                    disabled={!editMode}
+                                    type="checkbox"
+                                    role="switch"
+                                    style={{
+                                        width: "30px",
+                                        height: "15px"
+                                    }}
+                                    onChange={() => { set_parentConsent(!parentConsent) }}
+                                    checked={parentConsent === "true" || parentConsent === true}
+                                />
+                                <label className="form-check-label mr-3" htmlFor="flexSwitchCheckChecked" >
+                                    video recording consent
+                                </label>
+                                <Tooltip text="Enable this switch to consent video recording for ensuring quality of service. The video clip stored for 30 days, then be deleted from The academy servers." width="200px">
+                                    <FaInfoCircle size={18} color="#0096ff" />
+                                </Tooltip>
+                            </div>
+                        </div>}
+                    </div>}
                 </div>
             </div>
             <Actions

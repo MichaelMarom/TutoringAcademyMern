@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { fetch_tutor_ads, get_tutor_market_data, post_tutor_ad } from "../../../axios/tutor";
 import { useSelector } from "react-redux";
 import { capitalizeFirstLetter, compareStates } from "../../../helperFunctions/generalHelperFunctions";
@@ -37,10 +38,12 @@ const CreateComponent = ({ setActiveTab }) => {
         if (AcademyId !== null) {
             get_tutor_market_data(AcademyId)
                 .then((result) => {
-                    let { Subjects, Education } = result
-                    set_subjects(Subjects)
-                    set_education(Education[0])
-                    setFetching(false)
+                    if (!result?.repsonse?.data) {
+                        let { Subjects, Education } = result
+                        set_subjects(Subjects)
+                        set_education(Education[0])
+                        setFetching(false)
+                    }
                 })
                 .catch(err => console.log(err))
         }
@@ -70,7 +73,10 @@ const CreateComponent = ({ setActiveTab }) => {
         setLoading(true)
         const ads = await fetch_tutor_ads(AcademyId)
         setLoading(false)
-        if (ads.find(ad => ad.Subject === subject)) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published in the last 7 days!')
+        if (ads?.length) {
+            const adExist = ads.find(ad => ad.Subject === subject)
+            if (adExist) return toast.warning('You can  Publish 1 Ad per Subject every 7 days. this subject is already published in the last 7 days!')
+        }
         const data = await post_tutor_ad({
             AcademyId,
             AdText: addText,

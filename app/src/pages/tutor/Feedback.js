@@ -5,8 +5,9 @@ import QuestionFeedback from '../../components/tutor/Feedback/QuestionFeedback';
 import SessionsTable from '../../components/tutor/Feedback/SessionsTable';
 import { wholeDateFormat } from '../../constants/constants';
 import { feedback_records, get_tutor_feedback_questions } from '../../axios/tutor';
-import { useDispatch, useSelector } from 'react-redux';
 import { get_feedback_to_question, post_feedback_to_question } from '../../axios/student';
+
+import { useDispatch, useSelector } from 'react-redux';
 import { postStudentBookings } from '../../redux/student_store/studentBookings';
 import { toast } from 'react-toastify';
 import Actions from '../../components/common/Actions';
@@ -28,7 +29,7 @@ const Feedback = () => {
     useEffect(() => {
         const getAllFeedbackQuestion = async () => {
             const data = await get_tutor_feedback_questions();
-            setQuestions(data)
+            !!data?.length && setQuestions(data)
         }
         getAllFeedbackQuestion();
     }, [])
@@ -39,7 +40,7 @@ const Feedback = () => {
             const records = tutor.AcademyId ? await feedback_records(tutor.AcademyId) : []
             setFetchingFeedbackSessions(false)
 
-            setFeedbackData(records)
+            !!records?.length && setFeedbackData(records)
         }
         getFeedback()
     }, [tutor])
@@ -157,7 +158,7 @@ const Feedback = () => {
             const fetchFeedbackToQuestion = async () => {
                 const data = await get_feedback_to_question(selectedEvent.id, tutor.AcademyId, selectedEvent.studentId, 0)
                 console.log(data)
-                if (data.length)
+                if (!!data?.length)
                     setQuestions(data)
                 setQuestionLoading(false)
             }

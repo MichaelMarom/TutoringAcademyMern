@@ -31,7 +31,7 @@ export const Feedback = () => {
     useEffect(() => {
         const getAllFeedbackQuestion = async () => {
             const data = await get_all_feedback_questions();
-            setQuestions(data)
+            !!data.length && setQuestions(data)
         }
         getAllFeedbackQuestion();
 
@@ -200,16 +200,19 @@ export const Feedback = () => {
             const data = await get_payment_report(studentId);
             setLoading(false)
 
-            const uniqueData = data.reduce((unique, item) => {
-                if (unique?.some(detail => detail.tutorId === item.tutorId)) {
-                    return unique
-                }
-                else {
-                    return [...unique, item]
-                }
-            }, [])
-            const transformedData = uniqueData.map(item => transformFeedbackData(item)).flat().filter(slot => slot.studentId === studentId);
-            setFeedbackData(transformedData);
+            if (!data?.response?.data) {
+                const uniqueData = data.reduce((unique, item) => {
+                    if (unique?.some(detail => detail.tutorId === item.tutorId)) {
+                        return unique
+                    }
+                    else {
+                        return [...unique, item]
+                    }
+                }, [])
+                const transformedData = uniqueData.map(item => transformFeedbackData(item))
+                    .flat().filter(slot => slot.studentId === studentId);
+                setFeedbackData(transformedData);
+            }
         };
 
         fetchPaymentReport();
@@ -220,8 +223,7 @@ export const Feedback = () => {
             setQuestionLoading(true)
             const fetchFeedbackToQuestion = async () => {
                 const data = await get_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId)
-                console.log(data)
-                if (data.length)
+                if (!!data.length)
                     setQuestions(data)
                 setQuestionLoading(false)
             }

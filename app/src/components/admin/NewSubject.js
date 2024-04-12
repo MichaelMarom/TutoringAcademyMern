@@ -42,9 +42,10 @@ const TutorTable = () => {
         setIsLoading(true)
         get_tutor_new_subject()
             .then((result) => {
-                setData(result)
-                setIsLoading(false)
-
+                if (!result?.response?.data) {
+                    setData(result)
+                    setIsLoading(false)
+                }
             })
             .catch((err) => console.log(err))
     }, [actionTaken])
@@ -64,15 +65,13 @@ const TutorTable = () => {
 
         if (response.bool) {
             setActionTaken(!actionTaken)
-
             toast.success("Record Updated Successfully!")
-
         } else {
             toast.error("Failed to Update the Record")
         }
     }
     if (loading)
-        return <Loading  />
+        return <Loading />
     return (
 
         <div className="tables" style={{ height: '100%', width: '100%', overflow: 'auto', padding: '5px' }}>
@@ -107,7 +106,7 @@ const TutorTable = () => {
                                                         onClick={() => acceptNewSubject(item.facultyId, item.subject, item.AcademyId[0])}
                                                         className='action-btn btn btn-sm'>
                                                         <div className="button__content">
-                                                           
+
                                                             <p className="button__text">Accept   </p>
                                                         </div>
                                                     </button>

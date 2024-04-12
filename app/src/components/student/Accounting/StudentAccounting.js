@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import AmountCalc from './AmountCalc';
 import AccountingTable from './AccountingTable';
 import BankDetails from './BankDetails';
-import { get_bank_details, get_payment_report, post_bank_details } from '../../../axios/student';
-import Actions from '../../common/Actions';
-import { toast } from 'react-toastify';
-import Loading from '../../common/Loading';
-import { convertToDate } from '../../common/Calendar/Calendar';
+import { get_payment_report } from '../../../axios/student';
 import Tabs from '../../common/Tabs';
 import Lessons from './Lessons';
 
 const StudentAccounting = () => {
     const AcademyId = localStorage.getItem('student_user_id')
 
-   
-   
+
+
 
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -48,18 +43,19 @@ const StudentAccounting = () => {
         const fetchPaymentReport = async () => {
             const studentId = localStorage.getItem('student_user_id')
             const data = await get_payment_report(studentId);
-            const uniqueData = data.reduce((unique, item) => {
-                if (unique?.some(detail => detail.tutorId === item.tutorId)) {
-                    return unique
-                }
-                else {
-                    return [...unique, item]
-                }
-            }, [])
-            console.log(uniqueData, 'des')
+            if (!data?.response?.data) {
+                const uniqueData = data.reduce((unique, item) => {
+                    if (unique?.some(detail => detail.tutorId === item.tutorId)) {
+                        return unique
+                    }
+                    else {
+                        return [...unique, item]
+                    }
+                }, [])
 
-            const transformedData = uniqueData.map(item => transformIntoPaymentReport(item)).flat().filter(slot => slot.studentId === studentId);
-            setPaymentReportData([...paymentReportData, ...transformedData]);
+                const transformedData = uniqueData.map(item => transformIntoPaymentReport(item)).flat().filter(slot => slot.studentId === studentId);
+                setPaymentReportData([...paymentReportData, ...transformedData]);
+            }
         };
 
         fetchPaymentReport();

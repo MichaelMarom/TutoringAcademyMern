@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   get_user_detail,
-  get_user_setup_detail,
   getToken as tokenApi,
-  login,
 } from "../axios/auth";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -109,15 +107,15 @@ const LoginPage = () => {
   let fetchUser = async (userId) => {
     if (isLoaded) {
       const user = await get_user_detail(userId);
-
-      dispatch(setUser(user));
-      localStorage.setItem("user", JSON.stringify(user));
-
-      const token = await tokenApi(user);
-
-      localStorage.setItem("access_token", token);
       if (user?.role) {
-        navigate(DEFAULT_URL_AFTER_LOGIN[user.role]);
+        dispatch(setUser(user));
+        localStorage.setItem("user", JSON.stringify(user));
+
+        const token = await tokenApi(user);
+        if (token) {
+          localStorage.setItem("access_token", token);
+          navigate(DEFAULT_URL_AFTER_LOGIN[user.role]);
+        }
       }
     }
   };

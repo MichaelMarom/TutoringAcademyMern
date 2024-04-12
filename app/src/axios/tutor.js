@@ -21,29 +21,24 @@ export let upload_new_subject = (faculty, subject, reason, AcademyId, facultyId)
     })
 }
 export const uploadFile = (file) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const formData = new FormData();
-            formData.append('file', file);
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
 
-            apiClient.post('/tutor/upload-resume', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+        apiClient.post('/tutor/upload-resume', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then((result) => {
+                return result.data;
             })
-                .then((result) => {
-                    resolve(result.data);
-                })
-                .catch(error => {
-                    showErrorToast(error)
-
-                    // reject(error);
-                });
-        } catch (error) {
-            showErrorToast(error)
-            // reject(error);
-        }
-    });
+            .catch(error => {
+                showErrorToast(error)
+            });
+    } catch (error) {
+        showErrorToast(error)
+    }
 };
 
 export let get_subject = (id) => {
@@ -387,9 +382,7 @@ export const student_public_profile = async (studentId, tutorId = null) => {
         return data;
     }
     catch (e) {
-        console.log(e.message)
         showErrorToast(e)
-        return e
     }
 }
 
@@ -462,7 +455,6 @@ export const get_tutor_subjects = async (id) => {
     }
     catch (err) {
         showErrorToast(err)
-        return err
     }
 }
 export const get_faculty_subject = async (id) => {
@@ -472,7 +464,6 @@ export const get_faculty_subject = async (id) => {
     }
     catch (err) {
         showErrorToast(err)
-        return err
     }
 }
 
@@ -555,7 +546,7 @@ export let upload_tutor_bank = (email, acct_name, acct_type, bank_name, acct, ro
 
 export let get_tutor_setup = async (idObject) => {
     try {
-        const {data}= await apiClient.get('/tutor/tutor-setup', {
+        const { data } = await apiClient.get('/tutor/tutor-setup', {
             params: idObject
         })
         return data
@@ -662,8 +653,7 @@ export const updateTutorDisableslots = async (tutorAcademyId, body) => {
         return data
     }
     catch (error) {
-        console.log(error)
-        return error
+        showErrorToast(error)
     }
 }
 export const addDisabledDates = async (date) => {
@@ -853,7 +843,7 @@ export const fetch_ad = async (id) => {
         return data
     }
     catch (error) {
-        return error
+        showErrorToast(error)
     }
 }
 

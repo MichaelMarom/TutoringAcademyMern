@@ -16,7 +16,7 @@ export const TutorFeedbackModal = ({ isOpen, onClose, clickedSlot, handlePostpon
             setQuestionLoading(true)
             const fetchFeedbackToQuestion = async () => {
                 const data = await get_feedback_to_question(clickedSlot.id, clickedSlot.tutorId, clickedSlot.studentId, 0)
-                if (data.length)
+                if (data?.length)
                     setQuestions(data)
                 setQuestionLoading(false)
             }

@@ -105,7 +105,6 @@ const rolePermissions = {
     { path: "/admin/marketing", component: <Marketing /> },
     { path: "/admin/chat", component: <AdminChat /> },
     { path: "/admin/accounting", component: null },
-
   ],
   common: [
     { path: "/login", component: <Login /> },

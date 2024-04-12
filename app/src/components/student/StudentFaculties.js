@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react';
+import {
+    get_student_short_list,
+    get_student_short_list_data,
+    get_tutor_subject,
+    upload_student_short_list
+} from '../../axios/student';
+import { create_chat } from '../../axios/chat';
+import { get_faculty } from '../../axios/tutor';
 
-import { COLUMNS } from '../../Tables/Faculty/columns';
-import { useMemo } from 'react';
-import { get_student_short_list, get_student_short_list_data, get_tutor_subject, upload_student_short_list } from '../../axios/student';
 import { socket } from '../../config/socket';
 import Actions from '../common/Actions';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShortlist } from '../../redux/student_store/shortlist';
-import { create_chat } from '../../axios/chat';
 import Tooltip from '../common/ToolTip';
 import { convertToDate } from '../common/Calendar/Calendar';
-import { FaSearch } from 'react-icons/fa';
-import tutorData from '../../redux/tutor_store/tutorData';
 import Pill from '../common/Pill';
 import { statesColours } from '../../constants/constants';
-import { get_faculty } from '../../axios/tutor';
 import SubMenu from '../common/SubMenu';
 import Loading from '../common/Loading';
-import { BiInfoCircle } from 'react-icons/bi';
 
 const StudentFaculties = () => {
     const dispatch = useDispatch()
@@ -34,6 +34,27 @@ const StudentFaculties = () => {
     useEffect(() => {
         const fetchTutorSubject = async () => {
             const result = await get_tutor_subject('1');
+            if (!result?.response?.data) {
+                result.sort(function (a, b) {
+                    if (a.subject < b.subject) {
+                        return -1;
+                    }
+                    if (a.subject > b.subject) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                setResponse(result)
+            }
+        }
+        fetchTutorSubject()
+
+    }, [])
+
+    let getTutorSubject = async () => {
+        const result = await get_tutor_subject(selectedFaculty)
+        setFetchedTutorSubjectRecord(true)
+        if (!result?.repsonse?.data) {
             result.sort(function (a, b) {
                 if (a.subject < b.subject) {
                     return -1;
@@ -43,25 +64,8 @@ const StudentFaculties = () => {
                 }
                 return 0;
             });
-            setResponse(result)
+            setResponse(result);
         }
-        fetchTutorSubject()
-
-    }, [])
-
-    let getTutorSubject = async () => {
-        const result = await get_tutor_subject(selectedFaculty)
-        setFetchedTutorSubjectRecord(true)
-        result.sort(function (a, b) {
-            if (a.subject < b.subject) {
-                return -1;
-            }
-            if (a.subject > b.subject) {
-                return 1;
-            }
-            return 0;
-        });
-        setResponse(result);
     }
 
     useEffect(() => {
@@ -70,25 +74,26 @@ const StudentFaculties = () => {
 
     const getShortlist = async () => {
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
-        result.sort(function (a, b) {
-            if (a.Subject < b.Subject) {
-                return -1;
-            }
-            if (a.Subject > b.Subject) {
-                return 1;
-            }
-            return 0;
-        });
-        dispatch(setShortlist(result))
+        if (!result?.response.data) {
+            result.sort(function (a, b) {
+                if (a.Subject < b.Subject) {
+                    return -1;
+                }
+                if (a.Subject > b.Subject) {
+                    return 1;
+                }
+                return 0;
+            });
+            dispatch(setShortlist(result))
+        }
     }
+
     useEffect(() => {
-        console.log('triggered')
         get_student_short_list_data(student.AcademyId)
             .then((result) => {
                 let list = [...document.querySelectorAll('#student-tutor')];
-                console.log(list, result)
-                setSelectedTutors(result)
-                if (result.length) {
+                if (result?.length) {
+                    setSelectedTutors(result)
                     result.map(item => {
                         let elem = list.filter(res => res.dataset.id.split('-')[0] === item.AcademyId && res.dataset.id.split('-')[1] === item.Subject)
                         if (elem.length > 0) {
@@ -168,7 +173,7 @@ const StudentFaculties = () => {
 
     const getFacultiesOption = async () => {
         let list = await get_faculty()
-        set_faculties(list)
+        list?.length && set_faculties(list)
     }
     useEffect(() => { getFacultiesOption() }, [])
 

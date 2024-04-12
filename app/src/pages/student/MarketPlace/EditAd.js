@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
 import { useNavigate, useParams } from 'react-router-dom'
+import { get_faculty_subject } from '../../../axios/tutor';
 import { get_ad, get_student_market_data, put_ad } from '../../../axios/student';
+
 import { useSelector } from 'react-redux';
 import { CERTIFICATES, EXPERIENCE, GMT, LEVEL, languages } from '../../../constants/constants';
-import { get_faculty_subject } from '../../../axios/tutor';
 import { toast } from 'react-toastify';
 import Actions from '../../../components/common/Actions';
 import UserRichTextEditor from '../../../components/common/RichTextEditor/UserRichTextEditor';
@@ -71,17 +72,13 @@ const EditAd = () => {
     }, [student, subject, language, experience, timeZone])
 
     useEffect(() => {
-        console.log(subject, activeFaculty, subjects)
-    }, [subject, activeFaculty, subjects])
-
-    useEffect(() => {
         if (dbValues.FacultyId !== parseInt(activeFaculty) && dataFetched) {
             console.log(dbValues.FacultyId, activeFaculty)
             setSubject('')
         }
         if (activeFaculty.length) {
             get_faculty_subject(activeFaculty)
-                .then(result => setSubjects(result))
+                .then(result => !!result?.length && setSubjects(result))
                 .catch(err => toast.error(err.message))
         }
 
@@ -91,7 +88,7 @@ const EditAd = () => {
         if (student.AcademyId) {
             get_student_market_data(student.AcademyId)
                 .then(faculties => {
-                    setFaculties(faculties)
+                    !!faculties?.length && setFaculties(faculties)
                 })
                 .catch(err => toast.error(err.message))
         }
@@ -99,19 +96,21 @@ const EditAd = () => {
 
     useEffect(() => {
         get_ad(params.id).then(data => {
-            setDbValues(data)
-            setHeader(data.AdHeader)
-            setAdText(data.AdText)
-            setTimezone(data.TutorGMT)
-            setExperience(data.TutorExperience)
-            setLevel(data.TutorEduLevel)
-            setLanguage(JSON.parse(data.TutorLanguages))
-            setCertificate(data.TutorCertificate)
-            setActiveFaculty(`${data.FacultyId}`)
-            setSubject(data.Subject)
-            setStatus(data.Status)
-            setPublishDate(data.Published_At)
-            setDataFetched(true)
+            if (!data?.response?.data) {
+                setDbValues(data)
+                setHeader(data.AdHeader)
+                setAdText(data.AdText)
+                setTimezone(data.TutorGMT)
+                setExperience(data.TutorExperience)
+                setLevel(data.TutorEduLevel)
+                setLanguage(JSON.parse(data.TutorLanguages))
+                setCertificate(data.TutorCertificate)
+                setActiveFaculty(`${data.FacultyId}`)
+                setSubject(data.Subject)
+                setStatus(data.Status)
+                setPublishDate(data.Published_At)
+                setDataFetched(true)
+            }
         })
     }, [params.id])
 

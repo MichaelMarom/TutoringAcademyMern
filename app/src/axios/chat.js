@@ -64,8 +64,6 @@ export const set_online_status = async (isOnline, id, role) => {
     }
     catch (err) {
         showErrorToast(err)
-        console.log(err)
-        return err
     }
 }
 

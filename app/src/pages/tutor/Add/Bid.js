@@ -14,7 +14,7 @@ const Bid = () => {
     useEffect(() => {
         const fetchAds = async () => {
             const data = await get_shortlist_ads(tutor.AcademyId)
-            setAds(data)
+            !!data?.length && setAds(data)
         }
         tutor.AcademyId && fetchAds()
     }, [tutor, adDeleted])

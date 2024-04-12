@@ -57,20 +57,22 @@ const Edit = () => {
         if (params.id) {
             fetch_ad(params.id)
                 .then((result) => {
-                    setGrades(JSON.parse(result.Grades))
-                    setSubject(result.Subject)
-                    setHeader(result.AdHeader)
-                    setAddText(result.AdText)
-                    setStatus(result.Status)
-                    setNotEditableAfterPublish(result.Status === 'published')
-                    setDBValues({
-                        Grades: JSON.parse(result.Grades),
-                        Subject: result.Subject,
-                        AdHeader: result.AdHeader,
-                        AdText: result.AdText,
-                        Status: result.Status,
-                        Published_At: result.Published_At
-                    })
+                    if (!result?.response?.data) {
+                        setGrades(JSON.parse(result.Grades))
+                        setSubject(result.Subject)
+                        setHeader(result.AdHeader)
+                        setAddText(result.AdText)
+                        setStatus(result.Status)
+                        setNotEditableAfterPublish(result.Status === 'published')
+                        setDBValues({
+                            Grades: JSON.parse(result.Grades),
+                            Subject: result.Subject,
+                            AdHeader: result.AdHeader,
+                            AdText: result.AdText,
+                            Status: result.Status,
+                            Published_At: result.Published_At
+                        })
+                    }
                 })
                 .catch(err => console.log(err))
 
@@ -98,7 +100,10 @@ const Edit = () => {
         e.preventDefault();
         if (!grades.length) return toast.warning('Please select at least one school grade!')
         const ads = await fetch_tutor_ads(AcademyId)
-        if (ads.filter(ad => ad.Subject === subject).length >= 2) return toast.warning('You can Publish 1 Ad per Subject every 7 days. this subjectwas already published in the past 7 days!')
+        if (!ads?.length) {
+            const adWithSameSubjExist = ads.filter(ad => ad.Subject === subject).length >= 2
+            if (adWithSameSubjExist) return toast.warning('You can Publish 1 Ad per Subject every 7 days. this subjectwas already published in the past 7 days!')
+        }
 
         const data = params.id && await put_ad(params.id, {
             AcademyId,
@@ -125,7 +130,7 @@ const Edit = () => {
 
     const handleDeleteAd = async () => {
         try {
-            const data = await delete_ad(params.id)
+            await delete_ad(params.id)
             navigate('/tutor/market-place/list')
             toast.success('Ad Successfully deleted.')
         }

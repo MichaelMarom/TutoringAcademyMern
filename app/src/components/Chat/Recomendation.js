@@ -10,7 +10,7 @@ const Recomendation = ({ AcademyId }) => {
         const fetch = async () => {
             if (AcademyId) {
                 const data = await recomendation(AcademyId)
-                setRecom(data.recomendation)
+                !data?.response?.data && setRecom(data.recomendation)
             }
         }
         fetch()

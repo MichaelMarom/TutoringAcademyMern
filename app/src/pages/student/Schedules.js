@@ -10,7 +10,6 @@ import Actions from '../../components/common/Actions';
 import { TutorFeedbackModal } from '../../components/student/CalenderTab/TutorFeedbackModal';
 import Loading from '../../components/common/Loading';
 
-
 export const Schedules = () => {
     const studentId = localStorage.getItem("student_user_id");
     const [reservedSlots, setReservedSlots] = useState([]);
@@ -19,7 +18,7 @@ export const Schedules = () => {
     const { student } = useSelector(state => state.student)
     const [clickedSlot, setClickedSlot] = useState({})
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [loading, setLoading]=useState(false);
+    const [loading, setLoading] = useState(false);
     const isStudentLoggedIn = student.AcademyId
 
     useEffect(() => {
@@ -40,10 +39,12 @@ export const Schedules = () => {
             const data = await get_student_events(studentId);
             setLoading(false)
 
-            const reservedSlotsArray = data.map(item => JSON.parse(item.reservedSlots)).flat();
-            const bookedSlotsArray = data.map(item => JSON.parse(item.bookedSlots)).flat();
-            setReservedSlots(reservedSlotsArray);
-            setBookedSlots(bookedSlotsArray);
+            if (!data?.response?.data) {
+                const reservedSlotsArray = data.map(item => JSON.parse(item.reservedSlots)).flat();
+                const bookedSlotsArray = data.map(item => JSON.parse(item.bookedSlots)).flat();
+                setReservedSlots(reservedSlotsArray);
+                setBookedSlots(bookedSlotsArray);
+            }
         }
         fetchEvents();
     }, [studentId])
@@ -87,8 +88,8 @@ export const Schedules = () => {
     };
 
     const localizer = momentLocalizer(moment);
-    if(loading)
-    return <Loading />
+    if (loading)
+        return <Loading />
     return (
         <StudentLayout  >
             <div>
@@ -122,7 +123,7 @@ export const Schedules = () => {
             <TutorFeedbackModal
                 isOpen={isModalOpen}
                 clickedSlot={clickedSlot}
-                onClose={()=>setIsModalOpen(false)}
+                onClose={() => setIsModalOpen(false)}
             />
             <Actions saveDisabled />
         </StudentLayout >

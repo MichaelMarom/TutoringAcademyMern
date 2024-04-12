@@ -23,7 +23,7 @@ const StudentAdList = () => {
                 const data = await fetch_student_ads(student.AcademyId)
                 setLoading(false)
 
-                setAds(data)
+                !!data?.length && setAds(data)
             }
             fetch()
         }

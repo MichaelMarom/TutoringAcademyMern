@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Layout from './Layout';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetch_tutor_ads } from '../../../axios/tutor';
 import { add_to_shortlist, fetch_published_ads } from '../../../axios/student';
 import TAButton from '../../../components/common/TAButton'
 import { moment } from '../../../config/moment'
@@ -10,7 +9,6 @@ import { showDate } from '../../../helperFunctions/timeHelperFunctions';
 import { BiChevronDown } from 'react-icons/bi';
 import Avatar from '../../../components/common/Avatar';
 import Pill from '../../../components/common/Pill';
-import GradePills from '../../../components/tutor/GradePills';
 import { convertTutorIdToName } from '../../../helperFunctions/generalHelperFunctions';
 import Actions from '../../../components/common/Actions';
 
@@ -23,13 +21,13 @@ const Marketplace = () => {
     useEffect(() => {
         const fetch = async () => {
             const data = await fetch_published_ads()
-            setAds(data)
+            !!data?.length && setAds(data)
         }
         fetch()
     }, [])
 
     const handleClick = async (item) => {
-        const data = await add_to_shortlist(item.Id, student.AcademyId)
+        await add_to_shortlist(item.Id, student.AcademyId)
         navigate('/student/market-place/bid')
     }
 

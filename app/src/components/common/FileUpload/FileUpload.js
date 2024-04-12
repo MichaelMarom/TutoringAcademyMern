@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { uploadFile } from '../../../axios/tutor';
 
 const FileUpload = () => {
@@ -17,27 +16,27 @@ const FileUpload = () => {
         console.error('File upload failed:', error);
       });
   };
-//   const handleUpload = async () => {
-//     try {
-//       const formData = new FormData();
-//       formData.append('resume', file);
+  //   const handleUpload = async () => {
+  //     try {
+  //       const formData = new FormData();
+  //       formData.append('resume', file);
 
-//       // Use Axios for the file upload
-//       const response = await axios.post('http://localhost:3001/upload', formData, {
-//         headers: {
-//           'Content-Type': 'multipart/form-data',
-//         },
-//       });
+  //       // Use Axios for the file upload
+  //       const response = await axios.post('http://localhost:3001/upload', formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
 
-//       if (response.data.success) {
-//         console.log('File uploaded successfully');
-//       } else {
-//         console.error('File upload failed');
-//       }
-//     } catch (error) {
-//       console.error('Error uploading file:', error.message);
-//     }
-//   };
+  //       if (response.data.success) {
+  //         console.log('File uploaded successfully');
+  //       } else {
+  //         console.error('File upload failed');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error uploading file:', error.message);
+  //     }
+  //   };
 
   return (
     <div>

@@ -23,7 +23,7 @@ function TutorCalenderSidebar({
         }
     }, [activeTab]);
 
-    useEffect(() => { fetch_holidays('PK', 2023, 12) }, [])
+    // useEffect(() => { fetch_holidays('PK', 2023, 12) }, [])
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);

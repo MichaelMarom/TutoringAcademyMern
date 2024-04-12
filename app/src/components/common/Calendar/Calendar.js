@@ -4,6 +4,7 @@ import moment from "moment-timezone";
 import EventModal from "../EventModal/EventModal";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchStudentsBookings, get_tutor_setup, updateTutorDisableslots } from "../../../axios/tutor";
+import { get_student_tutor_events } from "../../../axios/student";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -16,7 +17,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import '../../../styles/common.css';
 import useDebouncedEffect from "../../../hooks/DebouceWithDeps";
 import { TutorEventModal } from "../EventModal/TutorEventModal/TutorEventModal";
-import { get_student_tutor_events } from "../../../axios/student";
 import { setStudentSessions } from "../../../redux/student_store/studentSessions";
 import { FeedbackMissing } from "./ToastMessages";
 
@@ -88,7 +88,6 @@ const ShowCalendar = ({
       disableHoursRange: disabledHours,
       disableColor: disableColor || null
     })
-
   }
 
   const getTimeZonedDisableHoursRange = (initialArray) => {
@@ -121,8 +120,7 @@ const ShowCalendar = ({
   }
 
   const getTutorSetup = async () => {
-    const [result] = await get_tutor_setup({ AcademyId: isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId });
-    console.log(result)
+    const [result = []] = await get_tutor_setup({ AcademyId: isStudentLoggedIn ? selectedTutor.academyId : tutorAcademyId });
     if (Object.keys(result ? result : {}).length) {
       console.log(result)
       const updatedEnableHours = getTimeZonedEnableHours(JSON.parse(result.enableHourSlots === 'undefined' ? '[]' : result.enableHourSlots), timeZone)
@@ -160,7 +158,7 @@ const ShowCalendar = ({
     }
     else {
       const response = await fetchStudentsBookings(tutorAcademyId);
-      if (response.length) {
+      if (!!response.length) {
         const reservedSlots = response?.map(data => JSON.parse(data.reservedSlots)).flat()
         const bookedSlots = response?.map(data => JSON.parse(data.bookedSlots)).flat()
 

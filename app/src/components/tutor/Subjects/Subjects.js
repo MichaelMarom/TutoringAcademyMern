@@ -48,8 +48,8 @@ const Subjects = () => {
         else {
             setNewSubjReqChecking(true)
             const result = await new_subj_request_exist(newSubjectData);
-            if (result.data) setSubjectInFaculties(result.data.faculties);
-            if (!result.data.faculties.length) setPhase('add')
+            if (result?.data) setSubjectInFaculties(result.data.faculties);
+            if (!result?.data?.faculties?.length) setPhase('add')
             setNewSubjReqChecking(false)
         }
     }
@@ -59,7 +59,7 @@ const Subjects = () => {
         setLoadingSubs(true)
         get_rates(user_id, selectedFaculty)
             .then((result) => {
-                setSubjectsWithRates(result)
+                if (!result?.response?.data) { setSubjectsWithRates(result) }
                 setLoadingSubs(false)
             })
             .catch((err) => console.log(err))
@@ -67,14 +67,16 @@ const Subjects = () => {
 
     const getFacultiesOption = async () => {
         let list = await get_faculty()
-        const selectOptions = list.map((item) => {
-            return (
-                <option data-id={item.Id} value={`${item.Faculty}-${item.Id}`}
-                    selected={newSubjectFacultyData === `${item.Faculty}-${item.Id}`} >{item.Faculty}</option>
-            )
-        })
-        set_faculty(list)
-        setNewSubjectFaculty(selectOptions)
+        if (list?.length) {
+            const selectOptions = list.map((item) => {
+                return (
+                    <option data-id={item.Id} value={`${item.Faculty}-${item.Id}`}
+                        selected={newSubjectFacultyData === `${item.Faculty}-${item.Id}`} >{item.Faculty}</option>
+                )
+            })
+            set_faculty(list)
+            setNewSubjectFaculty(selectOptions)
+        }
     }
     useEffect(() => { getFacultiesOption() }, [newSubjectFacultyData])
 
@@ -98,7 +100,8 @@ const Subjects = () => {
 
     let uploadNewSubject = () => {
         let user_id = window.localStorage.getItem('tutor_user_id');
-        upload_new_subject(newSubjectFacultyData.split('-')[0], newSubjectData, newSubjectReasonData, user_id, newSubjectFacultyData.split('-')[1])
+        upload_new_subject(newSubjectFacultyData.split('-')[0], newSubjectData, newSubjectReasonData,
+            user_id, newSubjectFacultyData.split('-')[1])
             .then((result) => {
                 if (result) {
                     setNewSubjectData('')
@@ -180,8 +183,8 @@ const Subjects = () => {
                 show={showAddNewSubjModal}
                 handleClose={handleModalClose}
                 title={!subjectExistInFaculties.length && phase !== 'search' && !!newSubjectData.length ?
-            'Add New Suggested Subject':
-            'To Search If your subject exist , please type it in below field'}
+                    'Add New Suggested Subject' :
+                    'To Search If your subject exist , please type it in below field'}
             >
                 <form onSubmit={checkRequestExist}>
 
@@ -203,11 +206,11 @@ const Subjects = () => {
                                 <p>This Subject does not exist.
                                     To add the subject, select also the fauclty to be considered.
                                 </p>
-                            <select className='form-select mb-1'
-                                required onChange={e => setNewSubjectFacultyData(e.target.value)} type='text' >
-                                <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
-                                {newSubjectFaculty}
-                            </select>
+                                <select className='form-select mb-1'
+                                    required onChange={e => setNewSubjectFacultyData(e.target.value)} type='text' >
+                                    <option value='' selected={!newSubjectFacultyData.length} disabled>Select Faculty</option>
+                                    {newSubjectFaculty}
+                                </select>
                             </div>
                         }
                         {/* {!subjectExistInFaculties.length && !!newSubjectData.length &&

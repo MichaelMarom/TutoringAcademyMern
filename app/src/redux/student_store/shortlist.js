@@ -40,6 +40,7 @@ export function setShortlist() {
             return dispatch(slice.actions.setShortlist([]));
         }
         const result = await get_student_short_list(window.localStorage.getItem('student_user_id'))
+        if (result?.response?.data) return [];
         result.sort(function (a, b) {
             if (a.Subject < b.Subject) {
                 return -1;

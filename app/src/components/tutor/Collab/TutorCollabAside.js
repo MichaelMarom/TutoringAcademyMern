@@ -65,6 +65,7 @@ const TutorAside = ({
   const sessionId = queryParams.get("sessionId");
   const [volume, setVolume] = useState(50);
 
+  console.log(sessionId)
   const handleVolumeChange = (event) => {
     if (!event) return;
     const { value } = event.target;
@@ -175,7 +176,7 @@ const TutorAside = ({
       let room_id = "1234567890asdfghjkl";
       let peer = new Peer(undefined, {});
 
-      peer.on("open", (id) => {
+      peer && peer.on("open", (id) => {
         socket.emit("join-room", room_id, id);
       });
 
@@ -191,23 +192,23 @@ const TutorAside = ({
         .then((stream) => {
           setVisuals(stream);
           addVideoStream(myVideo, stream);
-          peer.on("call", (call) => {
+          peer && peer.on("call", (call) => {
             let file = visuals ? stream : "";
             setVideoLoader("Connecting...");
             call.answer(file);
-            call.on("stream", (userVideoStream) => {
+            call && call.on("stream", (userVideoStream) => {
               setVideoLoader("");
               addVideoStream(myVideo, userVideoStream);
             });
           });
 
-          socket.on("user-connected", (user_id) => {
+          socket && socket.on("user-connected", (user_id) => {
             connectToNewUser(user_id, stream);
-            peer.on("call", (call) => {
+            peer && peer.on("call", (call) => {
               let file = visuals ? stream : "";
               setVideoLoader("Connecting...");
               call.answer(file);
-              call.on("stream", (userVideoStream) => {
+              call && call.on("stream", (userVideoStream) => {
                 addVideoStream(myVideo, userVideoStream);
               });
             });
@@ -228,18 +229,18 @@ const TutorAside = ({
           if (peers[user_id]) peers[user_id].close();
         });
 
-      peer.on("open", (id) => {
+      peer && peer.on("open", (id) => {
         socket.emit("join-room", room_id, id);
       });
       function connectToNewUser(userId, stream) {
         const call = peer.call(userId, stream);
         setVideoLoader("Connecting...");
-        call.on("stream", (userVideoStream) => {
+        call && call.on("stream", (userVideoStream) => {
           // playSound();
           addVideoStream(myVideo, userVideoStream);
         });
 
-        call.on("close", () => {
+        call && call.on("close", () => {
           myVideo.src = "";
         });
 
@@ -375,25 +376,39 @@ const TutorAside = ({
             </CountdownCircleTimer>
           </div>
         )}
+      {!sessionId &&
+        <div className="text-center countdown p-1 m-0">
+          <CountdownCircleTimer
+            isPlaying
+            initialRemainingTime={openedSessionTimeRemainingToStart}
+            duration={0}
+            colors="#ddd"
+            size={90}
+            isSmoothColorTransition={false}
+            strokeWidth={13}
+          >
+            {({ }) => '00:00'}
+          </CountdownCircleTimer>
+        </div>
+      }
 
-      {!sessionId ||
+      {/* {!sessionId ||
         (openedSessionTimeRemainingToStart > 180 &&
-          !_.isNaN(openedSessionTimeRemainingToStart) && (
-            <div className="text-center countdown p-1 m-0">
-              <CountdownCircleTimer
-                isPlaying
-                initialRemainingTime={openedSessionTimeRemainingToStart}
-                duration={0}
-                colors="#FFA500"
-                size={90}
-                isSmoothColorTransition={false}
-                strokeWidth={13}
-              >
-                {/* {startingClockChildren} */}
-                00:00
-              </CountdownCircleTimer>
-            </div>
-          ))}
+          !_.isNaN(openedSessionTimeRemainingToStart)) && (
+          <div className="text-center countdown p-1 m-0">
+            <CountdownCircleTimer
+              isPlaying
+              initialRemainingTime={openedSessionTimeRemainingToStart}
+              duration={0}
+              colors="#FFA500"
+              size={90}
+              isSmoothColorTransition={false}
+              strokeWidth={13}
+            >
+              00:00
+            </CountdownCircleTimer>
+          </div>
+        )} */}
 
       <div className="TutorAsideVideoCnt">
         {videoLoader}

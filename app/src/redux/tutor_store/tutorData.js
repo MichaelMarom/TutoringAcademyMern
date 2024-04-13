@@ -46,7 +46,7 @@ export function setTutor(data) {
 
         if (result?.[0]?.userId) {
             const selectedUserId = await get_user_detail(result[0]?.userId);
-            dispatch(slice.actions.setTutor({ ...result[0], email: selectedUserId.email }));
+            !selectedUserId?.response?.data && dispatch(slice.actions.setTutor({ ...result[0], email: selectedUserId.email }));
             localStorage.setItem('tutor_screen_name', result[0].TutorScreenname)
             localStorage.setItem('tutor_user_id', result[0].AcademyId)
 

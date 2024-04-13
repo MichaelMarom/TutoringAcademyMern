@@ -125,6 +125,11 @@
   font-size: 12px;
   bottom: 3px;
   position: absolute;
+  font-weight: bold;
+  color: black;
+  width: 100%;
+  margin-left: auto;
+  text-align: center;
 }
 
 .student-calender .rbc-current-time-indicator:before {

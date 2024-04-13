@@ -282,8 +282,6 @@ export const formatted_tutor_sessions = async (tutorId) => {
     }
     catch (err) {
         showErrorToast(err)
-        console.log(err)
-        return err
     }
 }
 

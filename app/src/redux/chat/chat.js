@@ -31,6 +31,8 @@ export function setChats(userId, role) {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading())
         const result = await get_chats(userId, role)
+        if(result?.response?.data) return []
+
         dispatch(slice.actions.setChats(result));
         return result;
     };

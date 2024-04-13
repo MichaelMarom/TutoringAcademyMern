@@ -241,13 +241,13 @@ const TutorClass = () => {
 
   useEffect(() => {
     if (user.role === "student") {
-      hasAuth &&
+      hasAuth && sessionId &&
         toast.success("Tutor has given you access to access the canvas tools.");
 
-      !hasAuth &&
+      !hasAuth && sessionId &&
         toast.warning("Tutor has removed your access to the canvas tools!");
     }
-  }, [hasAuth, user]);
+  }, [hasAuth, user, sessionId]);
 
   useEffect(() => {
     if (excalidrawAPI) {
@@ -332,8 +332,8 @@ const TutorClass = () => {
         <div
           style={{ width: "70%" }}
           className={`d-flex ${openedSession.subject
-              ? "justify-content-between"
-              : "justify-content-center"
+            ? "justify-content-between"
+            : "justify-content-center"
             }`}
         >
           <div>

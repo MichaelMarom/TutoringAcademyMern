@@ -207,7 +207,10 @@ let get_tutor_subject = async (req, res) => {
                     cast(SubjectRates.AcademyId as varchar(max))
                     JOIN Education as edu ON
                     cast(TutorSetup.AcademyId as varchar(max)) =  cast(edu.AcademyId as varchar(max))
-                    WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}';`)
+                    WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}' and
+                    TutorSetup.Status = 'active'
+                    `
+                    )
 
                     res.status(200).send(subjects.recordset)
                 }
@@ -221,6 +224,52 @@ let get_tutor_subject = async (req, res) => {
         console.log(err)
         res.status(500).send({ message: err.message })
     }
+}
+
+const get_tutor_by_subject_faculty = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            let { subjectName, facultyId } = req.params;
+
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const subjects = await poolConnection.request().query(`SELECT 
+                    SubjectRates.rate,
+                    edu.EducationalLevelExperience,
+                    edu.EducationalLevel,
+                    edu.Certificate,
+                    edu.CertificateExpiration,
+                    edu.CertificateState,
+                    edu.CertCountry,
+
+
+                    TutorSetup.ResponseHrs as responseTime, 
+                    TutorSetup.Status as status,
+                    TutorSetup.AcademyId,
+                    
+                    TutorRates.CancellationPolicy as cancPolicy
+
+                    FROM SubjectRates
+                    JOIN TutorSetup ON cast(TutorSetup.AcademyId as varchar(max)) = 
+                    cast(SubjectRates.AcademyId as varchar(max))
+                    JOIN TutorRates ON cast(TutorRates.AcademyId as varchar(max)) = 
+                    cast(SubjectRates.AcademyId as varchar(max))
+                    JOIN Education as edu ON
+                    cast(TutorSetup.AcademyId as varchar(max)) =  cast(edu.AcademyId as varchar(max))
+                    WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${facultyId}' and
+                    TutorSetup.Status = 'active' and 
+                    CONVERT(VARCHAR, SubjectRates.subject) = '${subjectName}'
+                    ` )
+
+                res.status(200).send(subjects.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+
 }
 
 let upload_student_short_list = async (req, res) => {
@@ -1084,6 +1133,7 @@ module.exports = {
     upload_student_short_list,
     get_student_short_list_data,
     get_student_market_data,
+    get_tutor_by_subject_faculty,
     get_my_data,
     get_student_bookings,
     post_student_bookings,

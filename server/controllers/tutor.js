@@ -63,9 +63,9 @@ let post_new_subject = (req, res) => {
           result.rowsAffected[0] === 1
             ? res.send({ bool: true, mssg: "Data Was Successfully Saved" })
             : res.send({
-                bool: false,
-                mssg: "Data Was Not Successfully Saved",
-              });
+              bool: false,
+              mssg: "Data Was Not Successfully Saved",
+            });
         })
         .catch((err) => {
           console.log(err);
@@ -396,11 +396,9 @@ let post_tutor_rates_form = (req, res) => {
                             VALUES ( '${MutiStudentHourlyRate}', 
                             '${CancellationPolicy}','${FreeDemoLesson}',
                             '${ConsentRecordingLesson}','${ActivateSubscriptionOption}',
-                            '${SubscriptionPlan}','${AcademyId}','${DiscountCode}', '${CodeSubject}',${
-              MultiStudent ? 1 : 0
+                            '${SubscriptionPlan}','${AcademyId}','${DiscountCode}', '${CodeSubject}',${MultiStudent ? 1 : 0
             },
-                            ${CodeShareable ? 1 : 0},${
-              IntroSessionDiscount ? 1 : 0
+                            ${CodeShareable ? 1 : 0},${IntroSessionDiscount ? 1 : 0
             },
                             '${CodeStatus}')  `
           );
@@ -697,10 +695,10 @@ let upload_tutor_bank = (req, res) => {
       var poolConnection = await sql.connect(config);
       let response = poolConnection
         ? await poolConnection
-            .request()
-            .query(
-              `SELECT * FROM "TutorBank" WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}'`
-            )
+          .request()
+          .query(
+            `SELECT * FROM "TutorBank" WHERE CONVERT(VARCHAR, AcademyId) = '${AcademyId}'`
+          )
         : "err conneecting to db";
 
       cb(response.rowsAffected[0]);
@@ -854,16 +852,11 @@ const get_faculty_subjects = async (req, res) => {
     try {
       const poolConnection = await sql.connect(config);
       const { recordset } = await poolConnection.request().query(`
-                SELECT SubjectName from Subjects where FacultyId = '${facultyId}' 
+                SELECT * from Subjects where FacultyId = '${facultyId}' 
             `);
       res.status(200).send(recordset);
     } catch (err) {
-      res
-        .status(400)
-        .send({
-          message: "Error completing the response",
-          reason: err.message,
-        });
+      sendErrors(err)
     }
   });
 };
@@ -955,14 +948,12 @@ let faculties = (req, res) => {
       poolConnection
         .request()
         .query(
-          `
-                    SELECT * From Faculty  
-                `
+          `SELECT * From Faculty `
         )
         .then((result) => {
           res.status(200).send(result.recordset);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => sendErrors(err));
     }
   });
 };
@@ -1195,18 +1186,18 @@ const post_tutor_setup = (req, res) => {
           req.body.AcademyId =
             req.body.MiddleName.length > 0
               ? req.body.FirstName +
-                "." +
-                " " +
-                req.body.MiddleName[0] +
-                "." +
-                " " +
-                req.body.LastName[0] +
-                shortId.generate()
+              "." +
+              " " +
+              req.body.MiddleName[0] +
+              "." +
+              " " +
+              req.body.LastName[0] +
+              shortId.generate()
               : req.body.FirstName +
-                "." +
-                " " +
-                req.body.LastName[0] +
-                shortId.generate();
+              "." +
+              " " +
+              req.body.LastName[0] +
+              shortId.generate();
 
           const request = poolConnection.request();
           Object.keys(req.body).map((key) => {
@@ -2162,8 +2153,8 @@ const getSessionDetailById = async (req, res) => {
 
       const session = result.recordset[0]?.sessions
         ? JSON.parse(result.recordset[0]?.sessions)?.filter(
-            (session) => session.id === sessionId
-          )?.[0]
+          (session) => session.id === sessionId
+        )?.[0]
         : {};
 
       const sessionTime = session.id

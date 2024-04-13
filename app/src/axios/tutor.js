@@ -80,8 +80,6 @@ export const get_tutor_feedback_questions = async () => {
 export let get_faculty = () => {
 
     return new Promise((resolve, reject) => {
-
-
         apiClient.get('/tutor/faculties', {
             params: {
 
@@ -93,7 +91,6 @@ export let get_faculty = () => {
             .catch(error => {
                 showErrorToast(error)
             })
-
     })
 }
 

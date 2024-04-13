@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import {
+    getTutorsAccordingToSubjectandFaculty,
     get_student_short_list,
     get_student_short_list_data,
     get_tutor_subject,
     upload_student_short_list
 } from '../../axios/student';
 import { create_chat } from '../../axios/chat';
-import { get_faculty } from '../../axios/tutor';
+import { get_faculty, get_faculty_subject } from '../../axios/tutor';
 
 import { socket } from '../../config/socket';
 import Actions from '../common/Actions';
@@ -19,37 +20,61 @@ import Pill from '../common/Pill';
 import { statesColours } from '../../constants/constants';
 import SubMenu from '../common/SubMenu';
 import Loading from '../common/Loading';
+import { BiChevronDown } from 'react-icons/bi';
+import { convertTutorIdToName } from '../../helperFunctions/generalHelperFunctions';
 
 const StudentFaculties = () => {
     const dispatch = useDispatch()
+    const [subjects, setSubjects] = useState([]);
     const [response, setResponse] = useState([]);
+
     const [checkBoxClicked, setCheckBoxClicked] = useState("")
     const { student } = useSelector(state => state.student)
     const [faculties, set_faculties] = useState([]);
     const [selectedFaculty, setSelectedFaculty] = useState(1);
-    const [fetchedTutorSubjectRecord, setFetchedTutorSubjectRecord] = useState(false)
+    const [fetchedTutorSubjectRecord, setFetchedTutorSubjectRecord] = useState(true)
     const [loading, setLoading] = useState(false)
     const [selectedTutors, setSelectedTutors] = useState([])
+    const [selectedSubject, setSelectedSubject] = useState({})
+    const [tutorsWithRates, setTutorWithRates] = useState([])
+
 
     useEffect(() => {
-        const fetchTutorSubject = async () => {
-            const result = await get_tutor_subject('1');
-            if (!result?.response?.data) {
-                result.sort(function (a, b) {
-                    if (a.subject < b.subject) {
-                        return -1;
-                    }
-                    if (a.subject > b.subject) {
-                        return 1;
-                    }
-                    return 0;
-                });
-                setResponse(result)
-            }
+        if (selectedFaculty) {
+            get_faculty_subject(selectedFaculty).then((result) => {
+                if (!result?.response?.data) setSubjects(result)
+            })
         }
-        fetchTutorSubject()
+    }, [selectedFaculty])
 
-    }, [])
+    useEffect(() => {
+        if (selectedSubject.Id && selectedFaculty) {
+            getTutorsAccordingToSubjectandFaculty(selectedSubject.SubjectName, selectedFaculty).then((result) => {
+                !result?.response?.data && setTutorWithRates(result)
+            })
+        }
+    }, [selectedSubject, selectedFaculty])
+
+    console.log(subjects, selectedFaculty, tutorsWithRates)
+    // useEffect(() => {
+    //     const fetchTutorSubject = async () => {
+    //         const result = await get_tutor_subject('1');
+    //         if (!result?.response?.data) {
+    //             result.sort(function (a, b) {
+    //                 if (a.subject < b.subject) {
+    //                     return -1;
+    //                 }
+    //                 if (a.subject > b.subject) {
+    //                     return 1;
+    //                 }
+    //                 return 0;
+    //             });
+    //             setResponse(result)
+    //         }
+    //     }
+    //     fetchTutorSubject()
+
+    // }, [])
 
     let getTutorSubject = async () => {
         const result = await get_tutor_subject(selectedFaculty)
@@ -88,22 +113,22 @@ const StudentFaculties = () => {
         }
     }
 
-    useEffect(() => {
-        get_student_short_list_data(student.AcademyId)
-            .then((result) => {
-                let list = [...document.querySelectorAll('#student-tutor')];
-                if (result?.length) {
-                    setSelectedTutors(result)
-                    result.map(item => {
-                        let elem = list.filter(res => res.dataset.id.split('-')[0] === item.AcademyId && res.dataset.id.split('-')[1] === item.Subject)
-                        if (elem.length > 0) {
-                            elem[0].children[0].checked = true;
-                        }
-                    })
-                }
-            })
-            .catch((err) => console.log(err))
-    }, [response, checkBoxClicked, student])
+    // useEffect(() => {
+    //     get_student_short_list_data(student.AcademyId)
+    //         .then((result) => {
+    //             let list = [...document.querySelectorAll('#student-tutor')];
+    //             if (result?.length) {
+    //                 setSelectedTutors(result)
+    //                 result.map(item => {
+    //                     let elem = list.filter(res => res.dataset.id.split('-')[0] === item.AcademyId && res.dataset.id.split('-')[1] === item.Subject)
+    //                     if (elem.length > 0) {
+    //                         elem[0].children[0].checked = true;
+    //                     }
+    //                 })
+    //             }
+    //         })
+    //         .catch((err) => console.log(err))
+    // }, [response, checkBoxClicked, student])
 
     let multi_student_cols = [
         {
@@ -195,89 +220,70 @@ const StudentFaculties = () => {
                     </div>
 
                     {(fetchedTutorSubjectRecord && !loading) ?
-                        response?.length ?
+                        subjects?.length ?
                             <>
-                                <div className='d-flex rounded justify-content-between
-                         align-items-center
-                         p-2' style={{ color: "white", background: "#2471A3" }}>
-                                    {multi_student_cols.map(item =>
+                                <div className='' style={{ height: "72vh", overflowY: "auto" }}>
+                                    <div className='container'>
+                                        {subjects.map(item =>
+                                            <div className=' rounded m-1 border' style={{ background: "lightgray" }}>
+                                                <div onClick={() => selectedSubject.Id == item.Id ?
+                                                    setSelectedSubject({}) : setSelectedSubject(item)}
+                                                    className='ad  click-effect-elem  shadow-sm p-2  
+                                                    d-flex justify-content-between align-items-center'
+                                                    style={{ gap: "20px" }} >
+                                                    <div>
+                                                        {item.SubjectName}
+                                                    </div>
+                                                    <div>
+                                                        <BiChevronDown />
+                                                    </div>
+                                                </div>
+                                                <div className={`w-100 ${selectedSubject.Id === item.Id ? '' : 'opacity-0'} `}
+                                                    style={{
+                                                        background: 'white',
+                                                        maxHeight: selectedSubject.Id === item.Id ? '250px' : '0',
+                                                        overflow: 'hidden',
+                                                        transition: 'max-height ease-in-out 0.5s, opacity 0.5s, visibility 0.5s',
+                                                    }}>
+                                                    <div className='d-flex pb-3' style={{ gap: "50px" }}>
+                                                        <div>
+                                                            <div className='d-flex'>
+                                                                {tutorsWithRates.map(tutor => <div className='w-25 p-2 border rounded shadow m-2'>
+                                                                    <h5 > {convertTutorIdToName(tutor.AcademyId)} </h5>
+                                                                    <h6 className='text-start'>Rate: {tutor.rate}</h6>
+                                                                    <p className='m-0 ' style={{ fontSize: " 12px " }}>HighestEducation: {tutor.EducationalLevelExperience}</p>
+                                                                    <p className='m-0 ' style={{ fontSize: " 12px " }}>Experience:  {tutor.EducationalLevel}</p>
+                                                                    <div>-</div>
+                                                                    <div>
+                                                                        CertificateExpiration: {item.CertificateExpiration?.length ?
+                                                                            <div
+                                                                                className={convertToDate(item.CertificateExpiration).getTime() < (new Date).getTime() ?
+                                                                                    `text-danger blinking-button` : ''}>
+                                                                                {new Date(item.CertificateExpiration).toLocaleDateString()}
+                                                                            </div> : "-"
+                                                                        }</div>
+                                                                    <p className='m-0 ' style={{ fontSize: " 12px " }}>Certificate:  {tutor.Certificate}</p>
+                                                                    <p className='m-0 ' style={{ fontSize: " 12px " }}>Certificate State: {tutor.CertificateState}</p>
+                                                                    <p className='m-0 ' style={{ fontSize: " 12px " }}>Certificate COuntry{tutor.CertCountry}</p>
 
-                                        <div className='text-center d-flex flex-column'
-                                            style={{ width: item.width }}>
-                                            <p className='m-0' key={item.Header} > {item.Header}</p>
-                                            <div style={{ float: "right" }}>
-                                                {item.tooltip}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="tables" style={{ height: '40vh', width: '100%', overflow: 'auto', padding: '5px' }}>
-                                    <table>
-                                        <thead className='d-none'>
-                                            <tr>
-                                                {multi_student_cols.map(item => <th key={item.Header}>{item.Header}{item.tooltip}</th>)}
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            {
-                                                response.map((item) => {
-                                                    return <tr>
-                                                        <td style={{ width: multi_student_cols[0].width }} id={`student-tutor`}
-                                                            data-id={`${item.AcademyId[0]}-${item.subject}-${item.rate}-${item?.AcademyId}-${student.AcademyId}-${item.status}`}
-                                                        >
-
-                                                            <input disabled={item.status !== 'active' || loading} onChange={(e) =>
-                                                                handleSavedDeleteData(e, item.status, {
-                                                                    Student: student.AcademyId, Rate: item.rate, date: new Date(),
-                                                                    AcademyId: item.AcademyId[0], Subject: item.subject
-                                                                })} type='checkbox' checked={
-                                                                    !!selectedTutors.find(tutor =>
-                                                                        tutor.Subject === item.subject && tutor.AcademyId == item.AcademyId[0] &&
-                                                                        tutor.Student === student.AcademyId)?.AcademyId}
-                                                                style={{ height: '20px', width: '20px' }} />
-                                                        </td>
-
-                                                        <td style={{ width: multi_student_cols[1].width }}>{item.subject}</td>
-                                                        <td style={{ width: multi_student_cols[2].width }}>
-                                                            <div>
-                                                                {(item.AcademyId[0]).split(".").slice(0, 2).join(".")}
-                                                                <Pill label={item.status} customColor={true} color={statesColours[item.status].bg}
-                                                                    fontColor={statesColours[item.status].color}
-                                                                    width='auto'
-                                                                />
+                                                                </div>)}
                                                             </div>
-                                                        </td>
-                                                        <td style={{ width: multi_student_cols[3].width }}>
-                                                            {item.EducationalLevelExperience}
-                                                        </td>
-                                                        <td style={{ width: multi_student_cols[4].width }}>
-                                                            {item.Certificate}
-                                                        </td>
-                                                        <td style={{ width: multi_student_cols[5].width }}>
-                                                            {item.CertCountry}
-                                                        </td>
-                                                        <td style={{ width: multi_student_cols[6].width }}>
-                                                            {item.CertificateExpiration?.length ?
-                                                                <div className={convertToDate(item.CertificateExpiration).getTime() <
-                                                                    (new Date).getTime() ? `text-danger blinking-button` : ''}>
-                                                                    {new Date(item.CertificateExpiration).toLocaleDateString()}
-                                                                </div> : "-"
-                                                            }
-                                                        </td>
-                                                        <td style={{ width: multi_student_cols[7].width }}>{item.rate}</td>
-                                                        <td style={{ width: multi_student_cols[8].width }}>{item.cancPolicy} Hrs </td>
-                                                        <td style={{ width: multi_student_cols[9].width }}>{item.responseTime.replace("Hours", 'Hrs')} </td>
 
-                                                    </tr>
-                                                })
-                                            }
-                                        </tbody>
-                                    </table>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
+
                             </>
-                            : <div style={{ position: 'absolute', width: '100%', textAlign: 'center', fontSize: 'large', paddingTop: '20px', fontWeight: 'bold' }}>We Are Sorry, There Are No Tutor(s) Available For This Faculty. Please check later. New tutors register every day.</div>
+                            : <div style={{
+                                position: 'absolute', width: '100%',
+                                textAlign: 'center', fontSize: 'large', paddingTop: '20px',
+                                fontWeight: 'bold'
+                            }}>We Are Sorry, There Are No Tutor(s) Available For This Faculty. Please check later. New tutors register every day.</div>
                         : <Loading height='50vh' />
                     }
 

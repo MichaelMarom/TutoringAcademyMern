@@ -13,7 +13,7 @@ import {
   post_tutor_setup,
 } from "../../axios/tutor";
 import { useDispatch } from "react-redux";
-import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
+// import { setscreenNameTo } from "../../redux/tutor_store/ScreenName";
 import { convertGMTOffsetToLocalString, showDate } from "../../helperFunctions/timeHelperFunctions";
 import WebcamCapture from "./Recorder/VideoRecorder"
 import Loading from "../common/Loading";
@@ -345,7 +345,7 @@ const TutorSetup = () => {
         response.data?.[0]?.TutorScreenname
       );
       localStorage.setItem('tutor_user_id', response.data?.[0]?.AcademyId)
-      dispatch(setscreenNameTo(response.data?.[0]?.TutorScreenname));
+      // dispatch(setscreenNameTo(response.data?.[0]?.TutorScreenname));
       setEditMode(false);
       toast.success("Data saved successfully");
     }

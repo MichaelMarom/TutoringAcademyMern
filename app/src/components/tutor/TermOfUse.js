@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import RichTextEditor from "../common/RichTextEditor/RichTextEditor";
 import Actions from "../common/Actions";
 import { get_adminConstants, post_termsOfUse } from "../../axios/admin";
+import { post_tutor_setup, setAgreementDateToNullForAll } from "../../axios/tutor";
 import Loading from "../common/Loading";
 import { setTutor } from "../../redux/tutor_store/tutorData";
-import { post_tutor_setup, setAgreementDateToNullForAll } from "../../axios/tutor";
 import { useDispatch, useSelector } from "react-redux";
 import { showDate } from "../../helperFunctions/timeHelperFunctions";
 import { convertToDate } from "../common/Calendar/Calendar";
@@ -29,14 +29,15 @@ const TermOfUse = () => {
             try {
                 const storedUserRole = user.role;
                 const result = await get_adminConstants();
-                set_terms(result.data[0].TermContent);
-                set_db_terms(result.data[0].TermContent);
+                if (result?.data?.[0]?.TermContent) {
+                    set_terms(result.data[0].TermContent);
+                    set_db_terms(result.data[0].TermContent);
+                }
                 setUserRole(storedUserRole);
             } catch (error) {
                 toast.error(error.message);
             }
             setFetching(false)
-
         }
         fetchData();
     }, []);
@@ -64,7 +65,7 @@ const TermOfUse = () => {
         setLoading(true)
         const response = await post_termsOfUse({ TermContent: terms });
         await setAgreementDateToNullForAll()
-        set_db_terms(response.data.TermContent);
+        response?.data?.TermContent && set_db_terms(response.data.TermContent);
         setEditMode(false);
         setLoading(false)
     };

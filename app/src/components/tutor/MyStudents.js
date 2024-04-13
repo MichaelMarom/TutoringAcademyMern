@@ -16,7 +16,7 @@ const MyStudents = () => {
       setLoading(true)
       const AcademyId = localStorage.getItem('tutor_user_id');
       const response = await get_tutor_students(AcademyId);
-      setStudents(response);
+      response?.length && setStudents(response);
       setFetching(false)
       setLoading(false)
     };

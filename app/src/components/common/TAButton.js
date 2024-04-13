@@ -1,5 +1,5 @@
 import React from 'react';
-import BTN_ICON from '../../images/button__icon.png'
+import BTN_ICON from '../../assets/images/button__icon.png'
 
 function Button({ loading = false, type = "button", handleClick = () => { },
     buttonText, className = '', ...otherProps }) {

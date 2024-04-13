@@ -14,7 +14,7 @@ const Bids = () => {
   useEffect(() => {
     const fetchAds = async () => {
       const data = await get_shortlist_ads(student.AcademyId)
-      setAds(data)
+      !data?.length && setAds(data)
     }
     student.AcademyId && fetchAds()
   }, [student, adDeleted])
@@ -24,7 +24,7 @@ const Bids = () => {
       <div className='d-flex m-1 flex-wrap' style={{ height: "74vh", overflowY: "auto" }}>
         {ads.map(ad =>
           <ShortlistAdCard
-           photo={ad.Photo} adText={ad.AdText}
+            photo={ad.Photo} adText={ad.AdText}
             name={convertTutorIdToName(ad.AcademyId)} id={ad.Id} setAdDeleted={setAdDeleted} subject={ad.Subject}
             country={ad.Country}
             tutorId={ad.AcademyId}

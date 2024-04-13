@@ -3,16 +3,15 @@ import TutorLayout from '../../layouts/TutorLayout'
 import StudentProfileCnt from '../../components/student/StudentProfile'
 import Avatar from '../../components/common/Avatar'
 import { useNavigate, useParams } from 'react-router-dom'
-import { get_my_data } from '../../axios/student'
 import { moment } from '../../config/moment'
 import { capitalizeFirstLetter } from '../../helperFunctions/generalHelperFunctions'
 import { FaCheckCircle } from 'react-icons/fa'
 import { IoWarning } from 'react-icons/io5'
 import TAButton from '../../components/common/TAButton'
 import { create_chat } from '../../axios/chat'
+import { student_public_profile } from '../../axios/tutor'
 import { useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import { student_public_profile } from '../../axios/tutor'
 
 function calcTime() {
     let utcDateTime = moment().utc()
@@ -27,9 +26,10 @@ const StudentProfile = () => {
     const { tutor } = useSelector(state => state.tutor)
 
     useEffect(() => {
-        params.AcademyId && tutor.AcademyId && student_public_profile(params.AcademyId, tutor.AcademyId).then(result => {
-            setStudent(result)
-        })
+        params.AcademyId && tutor.AcademyId &&
+            student_public_profile(params.AcademyId, tutor.AcademyId).then(result => {
+                !result.response?.data && setStudent(result)
+            })
 
     }, [params.AcademyId, tutor])
 
@@ -40,7 +40,7 @@ const StudentProfile = () => {
         else if (!tutor.AcademyId) return toast.error("Please login as tutor to see student public profile")
         else {
             const result = await create_chat({ User1ID: params.AcademyId, User2ID: tutor.AcademyId });
-            navigate(`/tutor/chat/${result[0]?.ChatID}`)
+            result[0]?.ChatID && navigate(`/tutor/chat/${result[0]?.ChatID}`)
         }
     }
     if (!tutor.AcademyId)

@@ -1,5 +1,5 @@
 import React from 'react';
-import generalAvatar from '../../images/avatar.png'
+import generalAvatar from '../../assets/images/avatar.png'
 
 const Avatar = ({ avatarSrc, online, size = "50", indicSize = "12px", positionInPixle = 0, showOnlineStatus = 1 }) => {
     const containerStyle = {

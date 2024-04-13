@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'
 import { get_tutor_profile } from '../../axios/tutor';
 import { create_chat } from '../../axios/chat'
+import { apiClient } from '../../axios/config';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { FaCalendar, FaComment, FaRegTimesCircle } from 'react-icons/fa';
 
@@ -18,7 +19,6 @@ import ToolTip from '../common/ToolTip'
 import { toast } from 'react-toastify';
 import Actions from '../common/Actions';
 import { monthFormatWithYYYY } from '../../constants/constants';
-import { apiClient } from '../../axios/config';
 
 const TutorProfile = () => {
     const params = useParams();
@@ -72,7 +72,7 @@ const TutorProfile = () => {
         if (!studentId) return toast.error("You need  to select 1 student from student list!")
         else {
             const result = await create_chat({ User1ID: studentId, User2ID: data.AcademyId });
-            navigate(`/student/chat/${result[0]?.ChatID}`)
+            result?.[0]?.ChatID && navigate(`/student/chat/${result?.[0]?.ChatID}`)
         }
     }
 
@@ -84,16 +84,21 @@ const TutorProfile = () => {
     }, [data])
 
     useEffect(() => {
-        const fetch_profile = async () => {
-            const profileInfo = await get_tutor_profile(params.id, studentId);
-            delete profileInfo['Video'];
-            const res = await apiClient.get('/tutor/setup/intro', { params: { user_id: params.id.replace(/[.\s]/g, '') } })
+        if (params.id) {
+            const fetch_profile = async () => {
+                const profileInfo = await get_tutor_profile(params.id, studentId);
+                if (profileInfo?.AcademyId) {
+                    delete profileInfo['Video'];
+                    const res = await apiClient.get('/tutor/setup/intro',
+                        { params: { user_id: params.id.replace(/[.\s]/g, '') } })
 
-            setProfileData({ ...profileInfo, Video: res.data.url })
-            setFetching(false)
+                    setProfileData({ ...profileInfo, Video: res?.data?.url })
+                    setFetching(false)
+                }
+            }
+
+            fetch_profile();
         }
-
-        fetch_profile();
     }, [params.id, studentId])
 
     if (fetching)
@@ -246,7 +251,7 @@ const TutorProfile = () => {
                                 <video src={data.Video}
                                     className=" rounded w-100 "
                                     style={{ height: "220px" }}
-                                    controls autoplay
+                                    controls autoPlay
                                 />
                             </div>
                         </div>
@@ -264,7 +269,7 @@ const TutorProfile = () => {
                                             - Native
                                         </div>
                                         {data.OtherLang.map(lang =>
-                                            <div className='d-flex align-items-center'>
+                                            <div className='d-flex align-items-center' key={lang}>
                                                 <GradePills grades={[]} grade={lang.value} editable={false} hasIcon={false} />
                                             </div>
                                         )
@@ -275,12 +280,13 @@ const TutorProfile = () => {
                                     <h5 className=''>
                                         Grades I Teach
                                     </h5>
-                                    <p className='border p-2'>
+                                    <div className='border p-2'>
                                         <div className='d-flex align-items-center  flex-wrap'
                                             style={{ gap: "5px" }}>
-                                            {sortedGrades.map(grade =>
+                                            {sortedGrades.map((grade, index) =>
                                                 <div style={{ width: "30%" }}>
                                                     <GradePills
+                                                        key={index}
                                                         grade={grade}
                                                         editable={false}
                                                         grades={[]}
@@ -288,7 +294,7 @@ const TutorProfile = () => {
                                                 </div>
                                             )}
                                         </div>
-                                    </p>
+                                    </div>
                                 </div>
                                 <div>
 
@@ -330,31 +336,31 @@ const TutorProfile = () => {
                                         <ul className="vertical-tabs flex-column p-0 align-items-start"
                                             style={{ width: "20%", borderRight: "1px solid lightblue" }}>
                                             <li className="nav-item w-100 p-0">
-                                                <p class={`nav-link m-0 ${activeTab === 'bach' ? "text-bg-primary" : ""} w-100`}
+                                                <p className={`nav-link m-0 ${activeTab === 'bach' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('bach')}
                                                 >Bachelor</p>
                                             </li>
                                             <li className="nav-item w-100 p-0">
-                                                <p class={`nav-link m-0 ${activeTab === 'mast' ? "text-bg-primary" : ""} w-100`}
+                                                <p className={`nav-link m-0 ${activeTab === 'mast' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('mast')}
                                                 >Master</p>
                                             </li>
                                             <li className="nav-item w-100 p-0">
-                                                <p class={`nav-link m-0 ${activeTab === 'doc' ? "text-bg-primary" : ""} w-100`}
+                                                <p className={`nav-link m-0 ${activeTab === 'doc' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('doc')}
                                                 >Doctorate</p>
                                             </li>
                                             <li className="nav-item w-100 p-0">
-                                                <p class={`nav-link m-0 ${activeTab === 'cert' ? "text-bg-primary" : ""} w-100`}
+                                                <p className={`nav-link m-0 ${activeTab === 'cert' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('cert')}
                                                 >Certificate</p>
                                             </li>
                                             <li className="nav-item w-100 p-0">
-                                                <p class={`nav-link m-0 m-0 ${activeTab === 'deg' ? "text-bg-primary" : ""} w-100`}
+                                                <p className={`nav-link m-0 m-0 ${activeTab === 'deg' ? "text-bg-primary" : ""} w-100`}
                                                     aria-current="page"
                                                     onClick={() => setActiveTab('deg')}
                                                 >Degree</p>
@@ -581,14 +587,16 @@ const TutorProfile = () => {
                                         Subjects I Teach
                                     </h5>
                                     <div className=''>
-                                        {data.Subjects.map(item => {
+                                        {data.Subjects.map((item, index) => {
                                             const subjectGrades = JSON.parse(!item.SubjectGrades ?
                                                 '[]' : item.SubjectGrades).sort(customSortForSubjectsGrades);
-                                            return <div className={`border p-2 rounded d-flex justify-content-between align-items-center `} style={{ background: '#d8d8d8' }}>
-                                                <p className='m-0 text-start col-2' style={{ fontSize: "14px" }}>{item.Subject}</p>
+                                            return <div
+                                                className={`border p-2 rounded d-flex justify-content-between align-items-center `} key={index} style={{ background: '#d8d8d8' }}>
+                                                <p className='m-0 text-start col-2'
+                                                    style={{ fontSize: "14px" }}>{item.Subject}</p>
                                                 <div className='d-flex col-9'>
                                                     {subjectGrades.map(option =>
-                                                        <GradePills editable={false} grade={option} grades={[]} />)
+                                                        <GradePills key={option} o editable={false} grade={option} grades={[]} />)
                                                     }
                                                 </div>
                                                 <h6 className='m-0 text-start col-1'>{item.Rate}</h6>

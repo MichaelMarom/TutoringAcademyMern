@@ -11,6 +11,7 @@ import Actions from '../../components/common/Actions';
 import { toast } from 'react-toastify';
 import { convertToDate } from '../../components/common/Calendar/Calendar';
 import Loading from '../../components/common/Loading';
+import { moment } from '../../config/moment'
 
 export const Feedback = () => {
     const { student } = useSelector(state => state.student)
@@ -24,13 +25,13 @@ export const Feedback = () => {
     const [feedbackData, setFeedbackData] = useState([])
     const studentId = localStorage.getItem('student_user_id');
     const [pendingChange, setPendingChange] = useState(null);
-    const [loading, setLoading]=useState(false)
+    const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
 
     useEffect(() => {
         const getAllFeedbackQuestion = async () => {
             const data = await get_all_feedback_questions();
-            setQuestions(data)
+            !!data.length && setQuestions(data)
         }
         getAllFeedbackQuestion();
 
@@ -170,20 +171,20 @@ export const Feedback = () => {
         let reservedSlots = JSON.parse(item.reservedSlots);
         console.log(bookedSlots, reservedSlots)
         bookedSlots = bookedSlots.map(slot => {
-            if (convertToDate(slot.end).getTime() < (new Date()).getTime()) {
+            if (moment(convertToDate(slot.end)).isBefore(moment().subtract(11, 'minutes'))) {
                 return {
                     ...slot,
                     feedbackEligible: true
-                }
+                };
             }
             return slot
         })
         reservedSlots = reservedSlots.map(slot => {
-            if (convertToDate(slot.end).getTime() < (new Date()).getTime()) {
+            if (moment(convertToDate(slot.end)).isBefore(moment().subtract(11, 'minutes'))) {
                 return {
                     ...slot,
                     feedbackEligible: true
-                }
+                };
             }
             return slot
         })
@@ -198,17 +199,20 @@ export const Feedback = () => {
             setLoading(true)
             const data = await get_payment_report(studentId);
             setLoading(false)
-          
-            const uniqueData = data.reduce((unique, item) => {
-                if (unique?.some(detail => detail.tutorId === item.tutorId)) {
-                    return unique
-                }
-                else {
-                    return [...unique, item]
-                }
-            }, [])
-            const transformedData = uniqueData.map(item => transformFeedbackData(item)).flat().filter(slot => slot.studentId === studentId);
-            setFeedbackData(transformedData);
+
+            if (!data?.response?.data) {
+                const uniqueData = data.reduce((unique, item) => {
+                    if (unique?.some(detail => detail.tutorId === item.tutorId)) {
+                        return unique
+                    }
+                    else {
+                        return [...unique, item]
+                    }
+                }, [])
+                const transformedData = uniqueData.map(item => transformFeedbackData(item))
+                    .flat().filter(slot => slot.studentId === studentId);
+                setFeedbackData(transformedData);
+            }
         };
 
         fetchPaymentReport();
@@ -219,8 +223,7 @@ export const Feedback = () => {
             setQuestionLoading(true)
             const fetchFeedbackToQuestion = async () => {
                 const data = await get_feedback_to_question(selectedEvent.id, selectedEvent.tutorId, studentId)
-                console.log(data)
-                if (data.length)
+                if (!!data.length)
                     setQuestions(data)
                 setQuestionLoading(false)
             }
@@ -274,10 +277,10 @@ export const Feedback = () => {
     //     }
     // }, [student, upcomingEvent]);
 
-    if(loading)
+    if (loading)
         return <Loading />
     return (
-        <StudentLayout  >
+        <StudentLayout>
             <div className="container mt-1">
                 <div className="py-2 row" >
                     <div className={` ${selectedEvent.id ? 'col-md-8' : 'col-md-12'}`}>

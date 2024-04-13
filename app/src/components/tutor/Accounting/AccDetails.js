@@ -41,7 +41,7 @@ const AccDetails = ({ sessions }) => {
         setLoading(true)
         const fetchPayDay = async () => {
             const data = await get_last_pay_day();
-            setLastPayDay(data.Payday)
+            data?.Payday && setLastPayDay(data.Payday)
             setLoading(false)
         }
         fetchPayDay()

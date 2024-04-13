@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import { get_bank_details, post_tutor_setup, upload_tutor_bank } from '../../../axios/tutor';
 import { showDate } from '../../../helperFunctions/timeHelperFunctions';
 import Acad_Commission from './Acad_Commission._Table';
@@ -104,7 +105,7 @@ const TutorAccSetup = ({ sessions, currentYearAccHours, currentYearEarning, prev
 
     const fetchingTutorBankRecord = async () => {
         const result = await get_bank_details(window.localStorage.getItem('tutor_user_id'));
-        if (result[0]) {
+        if (result?.[0]) {
             const data = result[0]
             setDBValues({
                 AcademyId: data.AcademyId,

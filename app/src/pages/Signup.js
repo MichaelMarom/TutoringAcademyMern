@@ -157,7 +157,6 @@ const Signup = () => {
               </p>
             </div>
             <div className="col-lg-6 mb-5 mb-lg-0">
-              {/* <SignUp path="/signup" routing="path" signInUrl="/login" /> */}
               <div className="card">
                 <div className="card-body py-5 px-md-5">
                   <form onSubmit={handleSignup}>

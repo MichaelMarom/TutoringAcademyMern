@@ -36,15 +36,17 @@ export const SingleTutorFeedbacks = () => {
     useEffect(() => {
         const fetchTutorBookings = async () => {
             const result = await get_tutor_bookings(params.AcademyId);
-            const events = result.map((record) => {
-                const reservedSlots = JSON.parse(record.reservedSlots ?? '[]');
-                const bookedSlots = JSON.parse(record.bookedSlots ?? '[]');
-                const combinedSlots = reservedSlots.concat(bookedSlots);
+            if (result?.response?.data) {
+                const events = result.map((record) => {
+                    const reservedSlots = JSON.parse(record.reservedSlots ?? '[]');
+                    const bookedSlots = JSON.parse(record.bookedSlots ?? '[]');
+                    const combinedSlots = reservedSlots.concat(bookedSlots);
 
-                return combinedSlots;
-            }).flat()
+                    return combinedSlots;
+                }).flat()
 
-            setEvents(events.filter(event => (convertToDate(event.start).getTime() <= (new Date()).getTime()) && event.rating));
+                setEvents(events.filter(event => (convertToDate(event.start).getTime() <= (new Date()).getTime()) && event.rating));
+            }
         }
         fetchTutorBookings();
     }, [params])

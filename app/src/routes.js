@@ -15,10 +15,11 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import rolePermissions from "./utils/permissions";
 import UnAuthorizeRoute from "./utils/UnAuthorizeRoute";
-import { get_tutor_setup, get_tutor_setup_by_userId } from "./axios/tutor";
-import { setShortlist } from "./redux/student_store/shortlist";
+import { get_tutor_setup } from "./axios/tutor";
 import { get_my_data, get_student_setup_by_userId } from "./axios/student";
+import { get_user_detail } from "./axios/auth";
 
+import { setShortlist } from "./redux/student_store/shortlist";
 import { setStudent } from "./redux/student_store/studentData";
 import { setTutor } from "./redux/tutor_store/tutorData";
 import { setChats } from "./redux/chat/chat";
@@ -27,7 +28,6 @@ import {
   useClerk, useAuth, useUser,
   SignedIn
 } from '@clerk/clerk-react';
-import { get_user_detail } from "./axios/auth";
 import { redirect_to_login } from "./helperFunctions/auth";
 import { setStudentSessions } from "./redux/student_store/studentSessions";
 import { setTutorSessions } from "./redux/tutor_store/tutorSessions";
@@ -56,11 +56,12 @@ const App = () => {
   const nullValues = ['undefined', 'null'];
 
   const screen = location.pathname.split('/')[1]
+
   const handleExpiredToken = (result) => {
     const isExpired = result?.response?.data?.message?.includes('expired');
     const isMalformed = result?.response?.data?.message?.includes('malformed');
     const missingToken = result?.response?.data?.reason?.includes('attached');
-
+    console.log('handle expiration', isExpired, isMalformed, missingToken)
     if ((isExpired || isMalformed) && !missingToken) {
       return redirect_to_login(navigate, signOut)
     }
@@ -74,17 +75,19 @@ const App = () => {
           data?.response?.data?.message?.includes('malformed')) {
           return redirect_to_login(navigate, signOut)
         }
-        dispatch(setUser(data));
-        localStorage.setItem('user', JSON.stringify(data));
+        if (!data?.response?.data) {
+          dispatch(setUser(data));
+          localStorage.setItem('user', JSON.stringify(data));
 
-        data.SID && data.role === 'tutor' && dispatch(setTutor())
-        if (data.SID && (data.role === 'student' || screen === 'student')) {
-          dispatch(setShortlist())
-          if (data.role === 'student') {
-            const result = await get_student_setup_by_userId(data.SID);
-            if (result?.[0]) {
-              dispatch(setStudent(result[0]))
-              localStorage.setItem('student_user_id', result[0].AcademyId);
+          data.SID && data.role === 'tutor' && dispatch(setTutor())
+          if (data.SID && (data.role === 'student' || screen === 'student')) {
+            dispatch(setShortlist())
+            if (data.role === 'student') {
+              const result = await get_student_setup_by_userId(data.SID);
+              if (result?.[0] && result[0].AcademyId) {
+                dispatch(setStudent(result[0]))
+                localStorage.setItem('student_user_id', result[0].AcademyId);
+              }
             }
           }
         }
@@ -97,7 +100,7 @@ const App = () => {
     if (user && user.role !== 'admin' && user.SID && isSignedIn && token)
       get_tutor_setup({ userId: user.SID }).then((result) => {
         handleExpiredToken(result);
-        localStorage.setItem("tutor_user_id", result?.data?.[0]?.AcademyId || null);
+        result?.data?.[0]?.AcademyId && localStorage.setItem("tutor_user_id", result?.data?.[0]?.AcademyId);
       });
   }, [user, isSignedIn, token]);
 
@@ -114,15 +117,22 @@ const App = () => {
   //sessions :nextsession, :allsessions, :time remaing for next lesson
   useEffect(() => {
     if (token) {
-      student.AcademyId && dispatch(setStudentSessions(student));
-      tutor.AcademyId && dispatch(setTutorSessions(tutor));
+      const dispatchUserSessions = async () => {
+        const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
+        const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
+        student.AcademyId && handleExpiredToken(studentSessions)
+        tutor.AcademyId && handleExpiredToken(tutorSessions)
 
-      const intervalId = setInterval(() => {
-        student.AcademyId && dispatch(setStudentSessions(student));
-        tutor.AcademyId && dispatch(setTutorSessions(tutor));
-      }, 60000);
+        const intervalId = setInterval(async () => {
+          const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
+          const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
+          student.AcademyId && handleExpiredToken(studentSessions)
+          tutor.AcademyId && handleExpiredToken(tutorSessions)
+        }, 60000);
 
-      return () => clearInterval(intervalId);
+        return () => clearInterval(intervalId);
+      }
+      dispatchUserSessions()
     }
   }, [student, tutor, dispatch, token]);
 
@@ -132,7 +142,7 @@ const App = () => {
     }
     const res = await get_my_data(studentUserId)
     if (res?.response?.data?.message?.includes('expired')) return redirect_to_login(navigate, signOut)
-    dispatch(setStudent(res[1][0][0]));
+    !res?.response?.data?.message && dispatch(setStudent(res[1][0][0]));
   }
 
   useEffect(() => {

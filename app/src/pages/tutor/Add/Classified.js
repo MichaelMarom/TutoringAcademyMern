@@ -21,7 +21,7 @@ const Classified = () => {
   useEffect(() => {
     const fetch = async () => {
       const data = await fetch_students_published_ads()
-      setAds(data)
+      !!data?.length && setAds(data)
     }
     fetch()
   }, [])

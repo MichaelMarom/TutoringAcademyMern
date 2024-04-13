@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
-import { forget_password, get_user_detail } from '../../axios/auth';
+import { get_user_detail } from '../../axios/auth';
 import Button from '../common/Button';
 import Modal from '../common/Modal'
 import { useAuth, useSignIn } from "@clerk/clerk-react";
@@ -91,10 +91,9 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
             let fetchUser = async () => {
                 if (token && isLoaded) {
                     const userDetails = await get_user_detail(userId, token)
-                    dispatch(setUser(userDetails))
-                    localStorage.setItem('user', JSON.stringify(userDetails))
-                    console.log(userDetails);
                     if (userDetails.role) {
+                        dispatch(setUser(userDetails))
+                        localStorage.setItem('user', JSON.stringify(userDetails))
                         userDetails.role !== 'admin' ? navigate(`/${userDetails.role}/intro`) :
                             navigate(`/${userDetails.role}/tutor-data`)
                     }
@@ -103,18 +102,6 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
             fetchUser()
         }
     }, [userId, isLoaded, token, isSignedIn])
-
-    const handlePasswordChange = async () => {
-        setLoading(true)
-        const data = await forget_password(email, password);
-        if (data) {
-            toast.success("Passowrd Updates Succesfully")
-        }
-        else {
-            toast.error("Could not update password")
-        }
-        setLoading(false)
-    }
 
     return (
         <Modal
@@ -188,7 +175,7 @@ export const ForgetPasswordModal = ({ modalOpen, setOpenModel }) => {
                         )}
                         <hr className='mt-4' />
                         <div className='d-flex justify-content-between'>
-                            <TAButton buttonText="Close"  handleClick={() => setOpenModel(false)} />
+                            <TAButton buttonText="Close" handleClick={() => setOpenModel(false)} />
 
                             <TAButton buttonText="Reset" className='saving-btn blinking button' handleClick={reset} loading={loading} />
 

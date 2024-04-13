@@ -19,10 +19,12 @@ const Accounting = () => {
     useEffect(() => {
         const fetchSessionDetails = async () => {
             const data = await get_sessions_details(AcademyId);
-            setSessions(data.sessions)
-            setCurrentYearHrs(data.currentYearAccHours)
-            setCurrentYearEarning(data.currentYearEarning)
-            setPreviousYearEarnig(data.previousYearEarning)
+            if (!data?.response?.data) {
+                setSessions(data.sessions)
+                setCurrentYearHrs(data.currentYearAccHours)
+                setCurrentYearEarning(data.currentYearEarning)
+                setPreviousYearEarnig(data.previousYearEarning)
+            }
         }
         fetchSessionDetails()
     }, [])

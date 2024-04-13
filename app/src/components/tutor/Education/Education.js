@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { IoIosCheckmarkCircle } from 'react-icons/io';
 
-import {
-    get_certificates, get_degree, get_experience, get_level,
-    get_my_edu, get_state, post_edu, post_tutor_setup, upload_edu_form, upload_form_two
-} from '../../../axios/tutor';
-import career from '../../../images/Experience-photo50.jpg';
+import { get_my_edu, post_edu, post_tutor_setup } from '../../../axios/tutor';
+import { deleteFileOnServer, getPreviousFilePathFromDB, upload_file } from '../../../axios/file';
+import career from '../../../assets/images/Experience-photo50.jpg';
 
 import { moment } from '../../../config/moment'
 
@@ -13,7 +11,6 @@ import Select from 'react-select'
 import Actions from '../../common/Actions';
 import { FaRegTimesCircle } from 'react-icons/fa';
 import { toast } from 'react-toastify';
-import { deleteFileOnServer, getPreviousFilePathFromDB, upload_file } from '../../../axios/file';
 import Loading from '../../common/Loading';
 import { AUST_STATES, CAN_STATES, CERTIFICATES, Countries, EXPERIENCE, LEVEL, UK_STATES, US_STATES, languages } from '../../../constants/constants'
 import { compareStates, getFileExtension, unsavedEducationChangesHelper } from '../../../helperFunctions/generalHelperFunctions';
@@ -197,11 +194,10 @@ const Education = () => {
     const dynamicSave = async (key, value) => {
         if (jsonFields.includes(key)) value = JSON.stringify(value)
         if (key && value && tutor.AcademyId) {
-            let response = await post_edu({
+            await post_edu({
                 AcademyId: tutor.AcademyId,
                 [key]: value
             })
-            console.log(response)
         }
     }
 
@@ -242,14 +238,12 @@ const Education = () => {
         }
         let flag = { value: null, valid: 1 }
 
-        console.log(expiration.length)
         Object.keys(fieldsForThirdStep).map(fields => {
             if (fieldsForThirdStep[fields].validate) {
                 const validated = jsonFields.includes(fields) ?
-                    !!Object.keys(fieldsForThirdStep[fields].value).length :
+                    !!Object.keys(fieldsForThirdStep[fields].value)?.length :
                     !!fieldsForThirdStep[fields].value?.length;
 
-                console.log(validated, fields, expiration)
                 if (!validated) {
                     flag.valid = 0;
                     flag.value = fields
@@ -539,10 +533,7 @@ const Education = () => {
             const formData = new FormData();
             formData.append('file', degreeFile);
             try {
-
-                const response = await upload_file(formData, deg_file_name)
-
-                console.log(response.data);
+                await upload_file(formData, deg_file_name)
             } catch (error) {
                 console.error('Error uploading file:', error);
             }

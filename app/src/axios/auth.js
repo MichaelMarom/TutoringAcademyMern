@@ -37,8 +37,6 @@ export const get_user_detail = async (userId, token) => {
     }
     catch (err) {
         showErrorToast(err)
-        console.log(err)
-        return err;
     }
 }
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Input from '../../common/Input'
 import GradePills from './../GradePills'
 import Button from '../../common/Button'
-import { post_tutor_setup, remove_subject_rates, upload_tutor_rates } from '../../../axios/tutor'
+import {  remove_subject_rates, upload_tutor_rates } from '../../../axios/tutor'
 import { toast } from 'react-toastify'
 import { useSelector } from 'react-redux'
 

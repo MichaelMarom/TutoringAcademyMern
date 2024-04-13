@@ -8,39 +8,37 @@ import Loading from '../common/Loading'
 const StudentTable = () => {
 
     let [data, set_data] = useState([]);
-    let navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const [fetched, setFetched] = useState(false)
     useEffect(() => {
         setLoading(true)
         get_student_data()
             .then((result) => {
-                setLoading(false)
-                set_data(result)
+                if (!result?.response?.data) {
+                    set_data(result)
+                }
+            }).finally(() => {
                 setFetched(true)
+                setLoading(false)
             })
     }, [])
 
     let set_status = async (e, Id, Status) => {
         e.preventDefault();
-        let response = await set_student_status(Id, Status)
-
-
-        if (response.bool) {
-            alert(response.mssg)
-            get_student_data()
-                .then((result) => {
-                    console.log(result)
-                    set_data(result)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
-        } else {
-
-            alert(response.mssg)
-
-        }
+        // let response = await set_student_status(Id, Status)
+        // if (response.bool) {
+        //     alert(response.mssg)
+        //     get_student_data()
+        //         .then((result) => {
+        //             console.log(result)
+        //             set_data(result)
+        //         })
+        //         .catch((err) => {
+        //             console.log(err)
+        //         })
+        // } else {
+        //     alert(response.mssg)
+        // }
     }
 
     let redirect_to_student_setup = (student_id, screenName) => {

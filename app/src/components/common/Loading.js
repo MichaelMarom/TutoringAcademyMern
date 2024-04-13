@@ -1,5 +1,5 @@
 import React from 'react';
-import Loading_Icon from '../../images/button__icon.png'
+import Loading_Icon from '../../assets/images/button__icon.png'
 
 const Loading = ({ height = "100vh", iconSize = "100px", loadingText = null }) => {
     return (

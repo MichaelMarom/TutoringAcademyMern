@@ -24,8 +24,10 @@ const TutorTable = () => {
     useEffect(() => {
         get_tutor_data()
             .then((result) => {
-                set_data(result);
-                setFetching(false)
+                if (!result?.response?.data) {
+                    set_data(result);
+                    setFetching(false)
+                }
             })
             .catch((err) => {
                 console.log(err)
@@ -33,7 +35,7 @@ const TutorTable = () => {
     }, [])
 
     let handleStatusChange = async (id, status, currentStatus) => {
-       
+
         if (currentStatus === 'pending')
             return toast.warning('You can only change  Status of "Under-Review" Tutors!')
         if (currentStatus === status) return toast.warning(`You already on "${status}" Status`)
@@ -42,8 +44,10 @@ const TutorTable = () => {
 
         if (response.bool) {
             const result = await get_tutor_data()
-            set_data(result)
-            setUpdatingStatus(false)
+            if (!result?.response?.data) {
+                set_data(result)
+                setUpdatingStatus(false)
+            }
         } else {
             toast.error(response.mssg)
             setUpdatingStatus(false)
@@ -82,7 +86,7 @@ const TutorTable = () => {
                                 <td data-src={null} className='col-1' onDoubleClick={() => {
                                     // item.Status === PROFILE_STATUS.CLOSED ?
                                     //     toast.warning('You cannot view Closed tutor Profile!') :
-                                        redirect_to_tutor_setup(item.AcademyId, item.TutorScreenname)
+                                    redirect_to_tutor_setup(item.AcademyId, item.TutorScreenname)
                                 }}>
                                     <img src={item.Photo}
                                         style={{ height: '80px', width: '100px' }} />

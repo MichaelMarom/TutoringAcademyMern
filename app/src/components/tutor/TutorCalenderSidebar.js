@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { fetch_holidays } from '../../axios/holiday';
 import { hours, days } from '../../constants/constants';
-import BTN_ICON from '../../images/button__icon.png'
+import BTN_ICON from '../../assets/images/button__icon.png'
 
 
 function TutorCalenderSidebar({
@@ -23,7 +23,7 @@ function TutorCalenderSidebar({
         }
     }, [activeTab]);
 
-    useEffect(() => { fetch_holidays('PK', 2023, 12) }, [])
+    // useEffect(() => { fetch_holidays('PK', 2023, 12) }, [])
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);

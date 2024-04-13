@@ -9,13 +9,11 @@ import CommonLayout from '../layouts/CommonLayout';
 import { NoChatSelectedScreen } from '../components/Chat/NoChatSelectedScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { get_chat_message, post_message, set_online_status } from '../axios/chat';
-import { capitalizeFirstLetter, convertTutorIdToName } from '../helperFunctions/generalHelperFunctions';
 import { socket } from '../config/socket'
 import { setChats } from '../redux/chat/chat';
 import Actions from '../components/common/Actions';
 import Loading from '../components/common/Loading';
 import Recomendation from '../components/Chat/Recomendation';
-import { setEraserWidthTo } from '../redux/student_store/Eraser';
 
 function Chat() {
     const [selectedChat, setSelectedChat] = useState({});
@@ -113,7 +111,7 @@ function Chat() {
         const getMessages = async () => {
             if (params.id) {
                 const data = await get_chat_message(params.id);
-                setMessages(data);
+                !data?.response?.data && setMessages(data);
             }
             setFetchingMessages(false);
         };

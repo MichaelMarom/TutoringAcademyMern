@@ -1,6 +1,7 @@
 // slice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { formatted_student_sessions } from "../../axios/student";
+import { showErrorToast } from "../../axios/config";
 
 // Create a slice with your event-related reducers
 const slice = createSlice({
@@ -18,12 +19,11 @@ const slice = createSlice({
         },
         setStudentSession: (state, action) => {
             state.isLoading = false;
-            state.sessions = action.payload.sessions;
-            state.upcomingSession = action.payload.upcomingSession;
-            state.currentSession = action.payload.currentSession;
+            state.sessions = action.payload.sessions || [];
+            state.upcomingSession = action.payload.upcomingSession || {};
+            state.currentSession = action.payload.currentSession || {};
             state.inMins = action.payload.inMins;
-
-            state.upcomingSessionFromNow = action.payload.upcomingSessionFromNow;
+            state.upcomingSessionFromNow = action.payload.upcomingSessionFromNow || '';
         },
     },
 });
@@ -32,16 +32,16 @@ export default slice.reducer;
 
 // ACTIONS
 
-export const setStudentSessions = (student) => {
+export const setStudentSessions = async (student) => {
     return async (dispatch) => {
         try {
             dispatch(slice.actions.isLoading())
             const result = await formatted_student_sessions(student.AcademyId)
-            dispatch(slice.actions.setStudentSession(result));
+            !result?.response?.data && dispatch(slice.actions.setStudentSession(result));
             return result;
         }
         catch (err) {
-            console.log(err)
+            return err
         }
     };
 }

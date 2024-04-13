@@ -1,6 +1,6 @@
 import React from 'react';
 import { showDate } from '../../helperFunctions/timeHelperFunctions';
-import logo from '../../images/tutoring Logo.png'
+import logo from '../../assets/images/tutoring Logo.png'
 import moment from 'moment-timezone'
 import { HiPrinter } from "react-icons/hi2";
 import { MdDownloadForOffline } from "react-icons/md";

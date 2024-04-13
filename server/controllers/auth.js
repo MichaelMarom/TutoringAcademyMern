@@ -10,7 +10,7 @@ function generateToken(user) {
         email: user.email,
     };
     const options = {
-        expiresIn: '3h'
+        expiresIn: '8h'
     };
     const secretKey = process.env.SECRET_KEY
     return jwt.sign(payload, secretKey, options);
@@ -30,7 +30,7 @@ const verifyToken = async (req, res, next) => {
     // }
 
     if (!token || token === 'undefined' || token === 'null')
-        return res.status(401).json({ reason: "token not attached!", message: "The security token expired after 20 minutes of ideling, please login again." });
+        return res.status(401).json({ reason: "token not attached!", message: "The security token has expired , please login again to continue protecting your account." });
 
     try {
         // const clientToken = cookies.get('__session');
@@ -206,8 +206,6 @@ const token_auth = (token) => {
     const data = jwt.verify(token, process.env.JWT_SECRET)
     console.log(data)
 }
-
-
 
 module.exports = {
     login,

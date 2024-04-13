@@ -60,7 +60,7 @@ export function getStudentBookings(studentId, tutorId) {
     return async (dispatch) => {
         dispatch(slice.actions.isLoading(true));
         const result = await get_student_tutor_events(studentId, tutorId);
-        if (result.length) {
+        if (result?.length) {
             const reservedSlots = result.map(data => JSON.parse(data.reservedSlots)).flat()
             const bookedSlots = result.map(data => JSON.parse(data.bookedSlots)).flat()
             dispatch(slice.actions.setReservedSlots(reservedSlots))

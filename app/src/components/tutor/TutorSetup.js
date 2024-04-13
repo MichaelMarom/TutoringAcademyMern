@@ -27,7 +27,6 @@ import { capitalizeFirstLetter, unsavedChangesHelper } from "../../helperFunctio
 import ReactDatePicker from "react-datepicker";
 import { Link, useLocation } from "react-router-dom";
 import Button from "../common/Button";
-import { RxAvatar } from "react-icons/rx";
 import { IoPersonCircle } from "react-icons/io5";
 import { convertToDate } from "../common/Calendar/Calendar";
 import { apiClient } from "../../axios/config";
@@ -112,7 +111,7 @@ const TutorSetup = () => {
     tutor.AcademyId &&
       apiClient.get('/tutor/setup/intro', { params: { user_id: tutor.AcademyId.replace(/[.\s]/g, '') } })
         .then(res => {
-          set_video(res.data.url)
+          res?.data?.url && set_video(res.data.url)
         })
         .catch(err => console.log(err))
   }, [tutor])

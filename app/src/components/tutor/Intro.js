@@ -20,8 +20,10 @@ const Intro = () => {
         const fetchData = async () => {
             try {
                 const result = await get_adminConstants();
-                set_intro(result.data[0].IntroContent);
-                set_db_intro(result.data[0].IntroContent);
+                if (!!result?.data?.[0]?.IntroContent) {
+                    set_intro(result.data[0].IntroContent);
+                    set_db_intro(result.data[0].IntroContent);
+                }
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

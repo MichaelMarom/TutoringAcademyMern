@@ -1,10 +1,9 @@
 {
-  "name": "mm_telecom",
+  "name": "tutoring-academy",
   "version": "1.0.0",
   "description": "A marketplace where students are matched with tutors. the heart of the software is a collaborating screen where a tutor can video chat with the student, and also use a whiteboard on the same screen to demonstrate the lesson.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
   "repository": {

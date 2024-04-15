@@ -70,17 +70,7 @@ const TutorAside = ({
     if (!event) return;
     const { value } = event.target;
     setVolume(value);
-  };
-
-  /**
-   * validate id
-   * get session
-   * check its date and see its time in future/past/current
-   * show message accordingly
-   * if current session, then show collabs,
-   * if user visit /collab with no sessionId, then we show live session link, he can click and collab
-   *
-   */
+  }
 
   const scrollToBottom = () => {
     if (chatContainer.current) {

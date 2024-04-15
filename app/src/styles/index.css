@@ -28,11 +28,6 @@ code {
   background-color: #eaf6ff !important;
 }
 
-.rbc-time-slot.disable-slot,
-.rbc-day-bg.disabled-date.rbc-today,
-.disabled-date.rbc-day-slot.rbc-time-column.rbc-now.rbc-today {
-  /* background-color: orange !important; */
-}
 
 .rbc-event-label {
   display: none !important;
@@ -128,12 +123,10 @@ button.Toastify__close-button.Toastify__close-button--light {
   left: 50px;
 }
 
-/* //video recorder */
+/* video recorder */
 .record-button__Button-sc-1n5amwk-0.jbBlLf {
   margin: 0 !important;
 }
-
-/* checkbox */
 
 input[type="checkbox"] {
   accent-color: green

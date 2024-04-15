@@ -43,8 +43,6 @@
 
 
 .blinking-border-bottom {
-  /* margin: 20% 45% 0;
-  font-size: 4em; */
   border: none;
   border-bottom: 10px solid green;
   animation-name: border-blinking;
@@ -164,7 +162,7 @@
 
 
 
-/***********************_________________TOAST--------------**********************/
+/*----TOAST------*/
 
 .custom-toast-container {
   bottom: 100px
@@ -172,7 +170,6 @@
 
 .react-toastify-icon.toast-info svg {
   fill: white;
-  /* Change to your desired color */
 }
 
 .setup-private-info .Toastify__close-button>svg {
@@ -190,7 +187,7 @@
   bottom: 300px
 }
 
-/********************************________________________BUtton ______________________**********************/
+/*---________________________BUtton ______________________---*/
 
 
 .action-btn {
@@ -202,7 +199,6 @@
   outline: none;
   background-color: #f4f5f6;
   border-radius: 40px;
-  /* box-shadow: -6px -12px 10px #ffffff, -6px -10px 15px #ffffff, -21px 0px 6px #ffffff, 6px 6px 11px rgba(0, 0, 0, 0.2); */
   transition: 0.13s ease-in-out;
   cursor: pointer;
 }
@@ -270,7 +266,6 @@
   display: flex;
   transform: translate3d(0px, -4px, 0px);
   grid-column: 4;
-  /* Update to place the icon in he last column */
   align-self: center;
   justify-self: center;
   width: 20px;
@@ -316,7 +311,6 @@
   display: flex;
   transform: translate3d(0px, -4px, 0px);
   grid-column: 4;
-  /* Update to place the icon in he last column */
   align-self: center;
   justify-self: center;
   width: 20px;
@@ -343,7 +337,6 @@
   transition: 0.13s ease-in-out;
 }
 
-/* saving */
 
 .action-btn.saving-btn {
   position: relative;
@@ -391,7 +384,6 @@
   display: flex;
   transform: translate3d(0px, -4px, 0px);
   grid-column: 4;
-  /* Update to place the icon in he last column */
   align-self: center;
   justify-self: center;
   width: 20px;
@@ -419,13 +411,12 @@
 }
 
 
-/* //-----------------------------------------------------------------/SmallSideBar---------------------------------- */
+/* -----------------------------------------------------------------SmallSideBar---------------------------------- */
 
 .sidebar {
   position: fixed;
   top: 0;
   right: -200px;
-  /* Initially hides the sidebar */
   width: 200px;
   height: 100vh;
   background-color: #f8f9fa;
@@ -434,7 +425,6 @@
 
 .sidebar.open {
   right: 0;
-  /* Shows the sidebar when open */
 }
 
 .sidebar-content {
@@ -449,14 +439,13 @@
 
 .content {
   margin-left: 200px;
-  /* Adjust this value to make space for the sidebar */
   padding: 20px;
 }
 
 
 
 
-/**************************-------------------- scrollbar ---------------**************************************/
+/*--------------------- scrollbar -----------------*/
 ::-webkit-scrollbar {
   width: 8px;
   height: 10px;
@@ -472,7 +461,6 @@
 ::-webkit-scrollbar-thumb {
   background: #47c176;
   border-radius: 200px;
-  /* background: rgb(117, 117, 117); */
 }
 
 /* Handle on hover */

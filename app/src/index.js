@@ -8,7 +8,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import App from './routes';
 import { ClerkProvider } from '@clerk/clerk-react'
-import AuthVerify from './hooks/AuthVerify';
 
 const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY
 

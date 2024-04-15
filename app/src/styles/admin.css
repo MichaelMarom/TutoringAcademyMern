@@ -71,9 +71,7 @@
     }
 }
 
-/*TOS*/
 body {
-    /* overflow: unset !important; */
     overflow-wrap: break-word;
 }
 
@@ -93,6 +91,5 @@ body {
 .agreement-checkbox {
     float: left;
     width: 20px;
-    /* Set the fixed width */
     margin-right: 10px;
 }

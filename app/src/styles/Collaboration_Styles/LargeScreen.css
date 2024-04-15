@@ -1,18 +1,21 @@
 @media screen and (min-width: 800px) {
-    *{
+    * {
         box-sizing: border-box;
     }
+
     .ReactModal__Overlay {
         z-index: 11;
         height: fit-content;
     }
-    .disabled-date,.disabled-slot {
-        /* background-color: orange;  */
+
+    .disabled-date,
+    .disabled-slot {
         color: #888;
         pointer-events: none;
-      }
-      
-    html,body{
+    }
+
+    html,
+    body {
         height: 100%;
         width: 100%;
         overflow: scroll;
@@ -21,35 +24,23 @@
         user-select: none;
     }
 
-    .class-header{
+    .class-header {
         height: 80px;
         width: 100%;
         background-color: #6babff;
     }
 
-    
 
-    CLASS ROOM STYLES
-    CLASS ROOM STYLES
-    CLASS ROOM STYLES
-    CLASS ROOM STYLES
-                        CLASS ROOM STYLES
-                        CLASS ROOM STYLES
-                        CLASS ROOM STYLES
-                        CLASS ROOM STYLES
-    CLASS ROOM STYLES
-    CLASS ROOM STYLES
-    CLASS ROOM STYLES
-    CLASS ROOM STYLES
-    */
 
-    .class-room{
+    /* CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES CLASS ROOM STYLES
+     CLASS ROOM STYLES */
+      .class-room {
         width: 100vw;
         height: calc(100vh - 200px);
         position: relative;
     }
 
-    .tools-bar{
+    .tools-bar {
         height: 50px;
         cursor: pointer;
         position: absolute;
@@ -60,7 +51,7 @@
         background-color: #ffffff;
     }
 
-    .aside-bar{
+    .aside-bar {
         height: calc(100vh - 50px);
         width: 70px;
         position: absolute;
@@ -71,14 +62,14 @@
         background-color: #ffffff;
     }
 
-    canvas{
-       position: absolute;
-       left: 0;
-       bottom: 0;
-       cursor: crosshair;
+    canvas {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        cursor: crosshair;
     }
 
-    .text-template{
+    .text-template {
         height: auto;
         width: auto;
         border-radius: 10px;
@@ -91,7 +82,7 @@
         position: absolute;
     }
 
-    .resize-img{
+    .resize-img {
         height: 20px;
         width: 20px;
         position: absolute;
@@ -100,16 +91,7 @@
         background-color: #6babff;
     }
 
-   /* textarea{
-        height: 300px;
-        width: 300px;
-        resize: none;
-        overflow: auto;
-        border: none;
-        z-index: 5;
-    }*/
-
-    .editor-top{
+    .editor-top {
         height: fit-content;
         z-index: 3;
         position: absolute;
@@ -120,10 +102,10 @@
         white-space: nowrap;
         left: -60px;
         top: 3px;
-       
+
     }
 
-    .editor-top div{
+    .editor-top div {
         height: 100%;
         display: flex;
         align-items: center;
@@ -134,57 +116,57 @@
         float: left;
     }
 
-    .editor-top div:hover{
+    .editor-top div:hover {
         background-color: #e7e7e7;
     }
 
-    .class-room{
+    .class-room {
         width: 100vw;
         height: calc(100vh - 120px);
         position: relative;
     }
 
-    .conference-box{
+    .conference-box {
         height: calc(100vh - 50px);
         width: 400px;
         float: right;
         background-color: #ffffff;
     }
 
-    .tutor-tools{
+    .tutor-tools {
         height: 100%;
         width: 70%;
         background-color: #fff;
 
     }
 
-    #option{
-        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    #option {
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     }
-    
-    .tutor-tools .logo{
+
+    .tutor-tools .logo {
         height: 100%;
         width: 140px;
         float: left;
         background-color: #fff;
-        
+
     }
 
-    .tutor-tools .logo div{
+    .tutor-tools .logo div {
         height: 100%;
         width: 50%;
         float: left;
         background-color: #fff;
-        
+
     }
 
-    .history{
+    .history {
         height: 100%;
         width: 100px;
         float: left;
     }
 
-    .history div{
+    .history div {
         height: 100%;
         display: flex;
         align-items: center;
@@ -195,13 +177,13 @@
     }
 
 
-    .tool-items{
+    .tool-items {
         height: 100%;
         width: fit-content;
         float: left;
     }
 
-    .tool-items div{
+    .tool-items div {
         height: 100%;
         display: flex;
         align-items: center;
@@ -209,15 +191,15 @@
         width: 60px;
         float: left;
     }
-    
-    .tutor-options{
+
+    .tutor-options {
         height: 50px;
         width: 100%;
         position: relative;
         background-color: #fff;
     }
 
-    .tutor-options div{
+    .tutor-options div {
         height: 100%;
         width: 50px;
         display: flex;
@@ -227,10 +209,10 @@
         justify-content: center;
         float: left;
         background-color: #fff;
-        
+
     }
 
-    .writing-set{
+    .writing-set {
         position: absolute;
         height: 50px;
         left: 0;
@@ -246,7 +228,7 @@
         background-color: #a2a2a2;
     }
 
-    .col-thickness{
+    .col-thickness {
         position: fixed;
         height: 50px;
         left: 0;
@@ -261,11 +243,11 @@
         background-color: #a2a2a2;
     }
 
-    #set{
+    #set {
         display: block;
     }
 
-    .writing-set label{
+    .writing-set label {
         height: 100%;
         width: 50px;
         float: left;
@@ -276,15 +258,15 @@
 
         justify-content: center;
         background-color: #fff;
-        
+
     }
 
-    #bb{
+    #bb {
         border: 3px solid #0062ff;
 
     }
 
-    .writing-set div{
+    .writing-set div {
         height: 100%;
         width: 50px;
         float: left;
@@ -295,42 +277,43 @@
 
         justify-content: center;
         background-color: #fff;
-        
+
     }
 
-    .writing-set div img:hover{
+    .writing-set div img:hover {
         transform: scale(1.2);
         transition: .5s;
     }
 
-    .writing-set div img:last-child:hover{
+    .writing-set div img:last-child:hover {
         transform: scale(1);
         font-weight: bolder;
         background-color: #e7e7e7;
         border-radius: 5px;
     }
 
-    .writing-set div:first-child{
+    .writing-set div:first-child {
         border-top-left-radius: 8px;
         border-bottom-left-radius: 8px;
     }
 
-    .writing-set div:last-child{
+    .writing-set div:last-child {
         border-top-right-radius: 8px;
         border-bottom-right-radius: 8px;
     }
 
-    .image-frame, .video-frame{
+    .image-frame,
+    .video-frame {
         height: 100%;
         width: 100%;
         margin: 0;
     }
 
-    #active{
+    #active {
         background-color: #e7e7e7;
     }
 
-    .conference-box{
+    .conference-box {
         height: calc(100vh - 200px);
         width: 400px;
         position: fixed;
@@ -341,7 +324,7 @@
         background-color: #ffffff;
     }
 
-    .video-tab{
+    .video-tab {
         height: 250px;
         width: 100%;
         position: relative;
@@ -350,7 +333,7 @@
         background-color: #000000;
     }
 
-    .mssg-bx{
+    .mssg-bx {
         position: relative;
         height: 410px;
         width: 100%;
@@ -362,7 +345,7 @@
         display: block;
     }
 
-    .mssg-panel{
+    .mssg-panel {
         position: relative;
         height: 50px;
         width: 100%;
@@ -371,7 +354,7 @@
         background-color: #ffffff;
     }
 
-    .info-panel{
+    .info-panel {
         position: relative;
         height: 40px;
         width: 100%;
@@ -380,7 +363,7 @@
         margin: 0;
     }
 
-    .mic{
+    .mic {
         float: right;
         height: 100%;
         width: 10%;
@@ -390,7 +373,8 @@
         justify-content: center;
     }
 
-    .chatmate,.mychat{
+    .chatmate,
+    .mychat {
         height: fit-content;
         max-width: 80%;
         display: block;
@@ -403,8 +387,8 @@
         background-color: #0095ff;
     }
 
-    .chatmate{
-        
+    .chatmate {
+
         margin-left: 7px;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 15px;
@@ -412,22 +396,22 @@
     }
 
 
-    .mychat{
+    .mychat {
         margin-right: 7px;
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 0;
     }
 
-    #x-position-negative{
+    #x-position-negative {
         justify-content: left;
     }
 
-    #x-position-positive{
+    #x-position-positive {
         justify-content: right;
     }
 
 
-    .board-panel{
+    .board-panel {
         position: absolute;
         left: 55px;
         height: 60px;
@@ -437,18 +421,18 @@
         z-index: 20;
     }
 
-   #show{
-    display: block;
-   }
+    #show {
+        display: block;
+    }
 
-    .notice-board{
+    .notice-board {
         height: 100%;
         width: 150px;
         right: 0;
         background-color: chocolate;
     }
 
-    .tutor-office{
+    .tutor-office {
         min-height: 200px;
         width: 60px;
         padding: 5px;
@@ -459,7 +443,7 @@
     }
 
 
-    .tutor-office div{
+    .tutor-office div {
         height: 50px;
         width: 50px;
         border-radius: 5px;
@@ -468,15 +452,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0  0 10px 0;
+        margin: 0 0 10px 0;
         background-color: #ffffff;
     }
 
-    .tutor-office div:last-child{
+    .tutor-office div:last-child {
         margin: 0;
     }
 
-    .color-pallete, .fill-pallete{
+    .color-pallete,
+    .fill-pallete {
         height: 500px;
         width: 300px;
         position: fixed;
@@ -487,20 +472,20 @@
         background-color: #ffffff;
     }
 
-    .pen-color{
+    .pen-color {
         height: 60%;
         width: 100%;
         background-color: #ffffff;
         padding: 5px;
     }
 
-    .pen-thickness{
+    .pen-thickness {
         height: 40%;
         width: 100%;
         background-color: #ffffff;
     }
 
-    .line-illustration{
+    .line-illustration {
         height: 60%;
         width: 100%;
         display: flex;
@@ -510,7 +495,6 @@
     }
 
     .slider {
-        -webkit-appearance: none;
         width: 100%;
         height: 5px;
         border-radius: 5px;
@@ -520,12 +504,12 @@
         -webkit-transition: .2s;
         transition: opacity .2s;
     }
-      
+
     .slider:hover {
         opacity: 1;
-        
+
     }
-      
+
     .slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
@@ -535,7 +519,7 @@
         background: #04AA6D;
         cursor: pointer;
     }
-      
+
     .slider::-moz-range-thumb {
         width: 20px;
         height: 20px;
@@ -545,13 +529,13 @@
     }
 
 
-    .line-thickness-cnt{
+    .line-thickness-cnt {
         height: 40%;
         width: 100%;
 
     }
 
-    .pen-color div{
+    .pen-color div {
         height: 40px;
         width: 40px;
         float: left;
@@ -565,7 +549,7 @@
         border-radius: 50%;
     }
 
-    .fill-pallete div{
+    .fill-pallete div {
         height: 30px;
         width: 30px;
         float: left;
@@ -577,11 +561,11 @@
         border-radius: 50%;
     }
 
-    .color-pallete div:hover{
+    .color-pallete div:hover {
         background-color: #ffffff;
     }
 
-    .thickness-panel{
+    .thickness-panel {
         height: fit-content;
         width: 150px;
         padding: 10px;
@@ -593,7 +577,7 @@
         top: 150px;
     }
 
-    .board-tab{
+    .board-tab {
         height: 50px;
         width: 100%;
         z-index: 15;
@@ -603,7 +587,7 @@
 
     }
 
-    .formula-panel{
+    .formula-panel {
         height: 350px;
         width: 750px;
         position: absolute;
@@ -613,7 +597,7 @@
         background-color: #ffffff;
     }
 
-    .formula-panel .head{
+    .formula-panel .head {
         height: 50px;
         width: 750px;
         display: flex;
@@ -626,7 +610,7 @@
         background-color: #351753;
     }
 
-    .formula-panel .midd{
+    .formula-panel .midd {
         height: 250px;
         width: 750px;
         display: flex;
@@ -640,7 +624,7 @@
         background-color: #cd6464;
     }
 
-    .formula-panel .btm{
+    .formula-panel .btm {
         height: 50px;
         width: 750px;
         display: flex;
@@ -652,7 +636,7 @@
         background-color: #3b3b3b;
     }
 
-    .tutor-video-options{
+    .tutor-video-options {
         height: 50px;
         width: 150px;
         border-radius: 2.5px;
@@ -660,11 +644,11 @@
         padding: 0;
         top: 180px;
         left: 8px;
-        
+
         background-color: transparent;
     }
 
-    .tutor-video-options div{
+    .tutor-video-options div {
         height: 50px;
         width: 50px;
         margin: 0 5px 0 5px;
@@ -678,16 +662,16 @@
         background-color: transparent;
     }
 
-    .tutor-video-options div:hover{
+    .tutor-video-options div:hover {
         background-color: rgb(163, 163, 163, .5);
     }
 
-    .student-lec-pane-head{
+    .student-lec-pane-head {
         height: 60px;
         width: 100%;
     }
 
-    .notification{
+    .notification {
         min-height: 70px;
         padding: 18px;
         width: 400px;
@@ -705,7 +689,7 @@
         margin-right: auto;
     }
 
-    .popin{
+    .popin {
         height: 50px;
         width: fit-content;
         font-size: large;
@@ -724,8 +708,8 @@
     }
 
 
-    .reqbtn{
-        height: 30px ;
+    .reqbtn {
+        height: 30px;
         width: 60px;
         border-radius: 3px;
         display: flex;
@@ -741,7 +725,7 @@
         margin: 0 5px 0 5px;
     }
 
-    .tutor-requests{
+    .tutor-requests {
         height: fit-content;
         padding: 5px;
         width: 350px;
@@ -754,26 +738,26 @@
     }
 
 
-    .request-bx{
+    .request-bx {
         height: 120px;
         width: 100%;
         display: block;
         background-color: #fff;
     }
 
-    .text{
+    .text {
         height: 60%;
         width: 100%;
         padding: 10px;
     }
 
-    .btns{
+    .btns {
         height: 40%;
         width: 100%;
         padding: 8px;
     }
 
-    .btns button{
+    .btns button {
         float: right;
         margin-left: 10px;
         height: 100%;
@@ -787,7 +771,7 @@
         border-radius: 5px;
     }
 
-    .shapes-option-cnt{
+    .shapes-option-cnt {
         height: 400px;
         width: 300px;
         padding: 10px;
@@ -800,26 +784,26 @@
 
     }
 
-    .shapes{
+    .shapes {
         height: 30%;
         width: 100%;
 
     }
 
-    .shape-styles{
+    .shape-styles {
         height: 70%;
         width: 100%;
         display: block;
     }
 
-    .shape-stroke-color{
+    .shape-stroke-color {
         height: 50%;
         width: 100%;
         float: unset;
         display: block;
     }
 
-    .shape-stroke-color div{
+    .shape-stroke-color div {
         float: left;
         height: 50px;
         width: 50px;
@@ -828,14 +812,14 @@
         cursor: pointer;
     }
 
-    .shape-fill-color{
+    .shape-fill-color {
         height: 50%;
         width: 100%;
         float: unset;
         display: block;
     }
 
-    .shape-fill-color div{
+    .shape-fill-color div {
         float: left;
         height: 50px;
         width: 50px;
@@ -844,7 +828,7 @@
         cursor: pointer;
     }
 
-    .shapes-option-cnt .shape-option{
+    .shapes-option-cnt .shape-option {
         padding: 10px;
         float: left;
         display: flex;
@@ -857,7 +841,7 @@
         cursor: pointer;
     }
 
-    .conference-switch{
+    .conference-switch {
         height: 80%;
         width: fit-content;
         white-space: nowrap;
@@ -871,7 +855,7 @@
         cursor: pointer;
     }
 
-    .timer-cnt{
+    .timer-cnt {
         height: 80%;
         width: fit-content;
         white-space: nowrap;
@@ -885,17 +869,17 @@
         cursor: pointer;
     }
 
-    .conference-switch:hover{
+    .conference-switch:hover {
         background-color: #6babff;
         color: #fff;
     }
 
-    .fillText-cnt{
+    .fillText-cnt {
         position: absolute;
         padding: 15px;
         cursor: pointer;
         z-index: 25;
-        
+
         height: fit-content;
         max-width: 400px;
         resize: both;
@@ -903,7 +887,7 @@
         border: 1px dashed #000;
     }
 
-    .fillimg-cnt{
+    .fillimg-cnt {
         position: fixed;
         padding: 10px;
         cursor: pointer;
@@ -916,7 +900,7 @@
         border: 1px dotted #000;
     }
 
-    .fillimg-cnt::before{
+    .fillimg-cnt::before {
         height: 45px;
         width: 45px;
         content: '  ';
@@ -929,8 +913,8 @@
 
     }
 
-  
-    .fillImg-screw{
+
+    .fillImg-screw {
         height: 40px;
         width: 40px;
         background-color: #000;
@@ -938,10 +922,10 @@
         padding: 0;
         z-index: 30;
         border-radius: 50%;
-        
+
     }
 
-    .fillText-editor{
+    .fillText-editor {
         height: 100px;
         width: 150px;
         padding: 10px;
@@ -954,7 +938,7 @@
 
     }
 
-    .fillText-editor div{
+    .fillText-editor div {
         padding: 10px;
         font-size: large;
         font-weight: bold;
@@ -963,7 +947,7 @@
         cursor: pointer;
     }
 
-    .fillText-editor div:hover{
+    .fillText-editor div:hover {
         background-color: #6babff;
         color: #fff;
         font-size: large;
@@ -971,7 +955,7 @@
         font-weight: bold;
     }
 
-    .video-chat-loader{
+    .video-chat-loader {
         height: fit-content;
         width: fit-content;
         align-items: center;
@@ -990,24 +974,22 @@
         display: none;
     }
 
-    /* Tutor Switch For Student Access To White Board*/
-
-    .switch{
+    .switch {
         position: relative;
         display: inline-block;
         width: 60px;
         height: 34px;
         padding: 10px;
-      }
-      
-      .switch input { 
+    }
+
+    .switch input {
         opacity: 0;
         width: 0;
         height: 0;
         margin-top: 10px;
-      }
-      
-      .toggle {
+    }
+
+    .toggle {
         position: absolute;
         cursor: pointer;
         top: 0;
@@ -1018,9 +1000,9 @@
         background-color: #ccc;
         -webkit-transition: .4s;
         transition: .4s;
-      }
-      
-      .toggle:before {
+    }
+
+    .toggle:before {
         position: absolute;
         content: "";
         height: 26px;
@@ -1030,31 +1012,30 @@
         background-color: white;
         -webkit-transition: .4s;
         transition: .4s;
-      }
-      
-      input:checked + .toggle {
+    }
+
+    input:checked+.toggle {
         background-color: #2196F3;
-      }
-      
-      input:focus + .toggle {
+    }
+
+    input:focus+.toggle {
         box-shadow: 0 0 1px #2196F3;
-      }
-      
-      input:checked + .toggle:before {
+    }
+
+    input:checked+.toggle:before {
         -webkit-transform: translateX(26px);
         -ms-transform: translateX(26px);
         transform: translateX(26px);
-      }
-      
-      /* Rounded toggles */
-      .toggle.round {
-        border-radius: 34px;
-      }
-      
-      .toggle.round:before {
-        border-radius: 50%;
-      }
+    }
 
-      
+    .toggle.round {
+        border-radius: 34px;
+    }
+
+    .toggle.round:before {
+        border-radius: 50%;
+    }
+
+
 
 }

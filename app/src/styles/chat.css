@@ -1,9 +1,9 @@
-body{
-    background:white
+body {
+    background: white
 }
 
-.ks-page-content{
-    margin-top:10%;    
+.ks-page-content {
+    margin-top: 10%;
 }
 
 .ks-messenger {
@@ -363,7 +363,6 @@ body{
 .ks-messenger__messages>.ks-body .ks-items>.ks-item>.ks-body>.ks-message>.ks-files>.ks-file a {
     display: block;
     color: #333;
-    vertical-align: top
 }
 
 .ks-messenger .ks-messages>.ks-body .ks-items>.ks-item>.ks-body>.ks-message>.ks-files>.ks-file a>.ks-info,
@@ -842,6 +841,7 @@ body{
     .btn.ks-messenger-info-block-toggle {
         position: static
     }
+
     .ks-messenger .ks-info,
     .ks-messenger__info {
         position: fixed;
@@ -852,6 +852,7 @@ body{
         height: -webkit-calc(100% - 120px);
         height: calc(100% - 120px)
     }
+
     .ks-messenger .ks-info.ks-open,
     .ks-messenger__info.ks-open {
         right: 0;
@@ -864,6 +865,7 @@ body{
     .ks-messenger .ks-discussions {
         width: 100%
     }
+
     .ks-messenger .ks-messages,
     .ks-messenger__messages {
         position: fixed;
@@ -875,6 +877,7 @@ body{
         width: 100%;
         right: -1000px
     }
+
     .ks-messenger .ks-messages.ks-open,
     .ks-messenger__messages.ks-open {
         right: 0;
@@ -884,6 +887,7 @@ body{
 }
 
 @media screen and (max-width:560px) {
+
     .ks-messenger .ks-messages>.ks-footer,
     .ks-messenger__messages>.ks-footer {
         -webkit-box-orient: vertical;
@@ -892,10 +896,12 @@ body{
         -ms-flex-direction: column;
         flex-direction: column
     }
+
     .ks-messenger .ks-messages>.ks-footer textarea,
     .ks-messenger__messages>.ks-footer textarea {
         margin-bottom: 20px
     }
+
     .ks-messenger__ks-messages-footer {
         -webkit-box-orient: vertical;
         -webkit-box-direction: normal;
@@ -903,6 +909,7 @@ body{
         -ms-flex-direction: column;
         flex-direction: column
     }
+
     .ks-messenger__ks-messages-footer textarea {
         margin-bottom: 20px
     }

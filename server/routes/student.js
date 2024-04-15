@@ -63,7 +63,7 @@ STUDENT_ROUTES.delete('/student/ads/shortlist/:adId/:studentId', verifyToken, pa
 
 
 //faculty+subjs
-STUDENT_ROUTES.get('/student/subject/:subjectName/faculty/:facultyId', verifyToken, get_tutor_by_subject_faculty)
+STUDENT_ROUTES.get('/student/:studentId/subject/:subjectName/faculty/:facultyId', verifyToken, get_tutor_by_subject_faculty)
 
 module.exports = {
     STUDENT_ROUTES

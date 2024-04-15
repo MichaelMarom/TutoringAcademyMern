@@ -198,9 +198,9 @@ export let get_tutor_subject = async (subject) => {
     }
 }
 
-export const getTutorsAccordingToSubjectandFaculty = async (subjectName, facultyId) => {
+export const getTutorsAccordingToSubjectandFaculty = async (subjectName, facultyId, studentId) => {
     try {
-        const { data } = await apiClient.get(`/student/subject/${subjectName}/faculty/${facultyId}`)
+        const { data } = await apiClient.get(`/student/${studentId}/subject/${subjectName}/faculty/${facultyId}`)
         return data
     }
     catch (err) {

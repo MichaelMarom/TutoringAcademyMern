@@ -195,8 +195,16 @@ export let get_tutor_subject = async (subject) => {
     }
     catch (err) {
         showErrorToast(err)
-        console.log(err)
-        return err
+    }
+}
+
+export const getTutorsAccordingToSubjectandFaculty = async (subjectName, facultyId, studentId) => {
+    try {
+        const { data } = await apiClient.get(`/student/${studentId}/subject/${subjectName}/faculty/${facultyId}`)
+        return data
+    }
+    catch (err) {
+        showErrorToast(err)
     }
 }
 

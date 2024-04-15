@@ -112,7 +112,7 @@ let upload_setup_info = (req, res) => {
         let records = await poolConnection.request().query(`INSERT INTO StudentSetup(FirstName,
              MiddleName, LastName, Email, Cell, Language, SecLan, ParentAEmail, ParentBEmail, 
              ParentAName, ParentBName,
-             AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT
+             AgeGrade, Grade, Address1, Address2, City, State, ZipCode, Country,  GMT,
              AcademyId, ScreenName, Photo, Status, ParentConsent, userId)
         VALUES ('${fname}', '${mname}', '${sname}','${email}','${cell}',
         '${lang}', '${secLan}', '${parentAEmail}', '${parentBEmail}', 
@@ -207,7 +207,10 @@ let get_tutor_subject = async (req, res) => {
                     cast(SubjectRates.AcademyId as varchar(max))
                     JOIN Education as edu ON
                     cast(TutorSetup.AcademyId as varchar(max)) =  cast(edu.AcademyId as varchar(max))
-                    WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}';`)
+                    WHERE CONVERT(VARCHAR, SubjectRates.faculty) = '${subject}' and
+                    TutorSetup.Status = 'active'
+                    `
+                    )
 
                     res.status(200).send(subjects.recordset)
                 }
@@ -221,6 +224,66 @@ let get_tutor_subject = async (req, res) => {
         console.log(err)
         res.status(500).send({ message: err.message })
     }
+}
+
+const get_tutor_by_subject_faculty = async (req, res) => {
+    marom_db(async (config) => {
+        try {
+            let { subjectName, facultyId, studentId } = req.params;
+
+            const poolConnection = await sql.connect(config);
+            if (poolConnection) {
+                const subjects = await poolConnection.request().query(`
+                SELECT 
+                SR.rate,
+                TS.Photo, 
+                TS.ResponseHrs, 
+                TS.Status as status,
+                TS.AcademyId,
+                TS.Country,
+                TS.GMT,
+                TR.CancellationPolicy as cancPolicy,
+                TR.IntroSessionDiscount,
+                SSL.CodeApplied
+            FROM 
+                SubjectRates as SR 
+            JOIN 
+                TutorSetup as TS ON cast(TS.AcademyId as varchar(max)) = cast(SR.AcademyId as varchar(max))
+            JOIN 
+                TutorRates as TR ON cast(TR.AcademyId as varchar(max)) = cast(SR.AcademyId as varchar(max))
+            JOIN 
+                Education as edu ON cast(TS.AcademyId as varchar(max)) = cast(edu.AcademyId as varchar(max))
+            LEFT JOIN 
+                StudentShortList  as SSL ON cast(SSL.AcademyId as varchar(max)) = cast(TS.AcademyId as varchar(max)) and cast(SSL.Student as varchar)= 'Ben. S. M2e9026'
+
+
+            WHERE 
+                CONVERT(VARCHAR, SR.faculty) = '${facultyId}' 
+                AND TS.Status = 'active' 
+                AND CONVERT(VARCHAR, SR.subject) = '${subjectName}' 
+            
+
+                    ` )
+
+
+                // edu.EducationalLevelExperience,
+                // edu.EducationalLevel,
+                // edu.Certificate,
+                // edu.CertificateExpiration,
+                // edu.CertificateState,
+                // edu.CertCountry,
+
+
+
+                res.status(200).send(subjects.recordset)
+            }
+        }
+        catch (err) {
+            console.log(err)
+            res.status(400).send({ message: err.message })
+        }
+    })
+
 }
 
 let upload_student_short_list = async (req, res) => {
@@ -1084,6 +1147,7 @@ module.exports = {
     upload_student_short_list,
     get_student_short_list_data,
     get_student_market_data,
+    get_tutor_by_subject_faculty,
     get_my_data,
     get_student_bookings,
     post_student_bookings,

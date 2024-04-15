@@ -117,22 +117,22 @@ const App = () => {
   //sessions :nextsession, :allsessions, :time remaing for next lesson
   useEffect(() => {
     if (token) {
-      const dispatchUserSessions = async () => {
-        const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
-        const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
-        student.AcademyId && handleExpiredToken(studentSessions)
-        tutor.AcademyId && handleExpiredToken(tutorSessions)
+      // const dispatchUserSessions = async () => {
+      //   const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
+      //   const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
+      //   student.AcademyId && handleExpiredToken(studentSessions)
+      //   tutor.AcademyId && handleExpiredToken(tutorSessions)
 
-        const intervalId = setInterval(async () => {
-          const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
-          const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
-          student.AcademyId && handleExpiredToken(studentSessions)
-          tutor.AcademyId && handleExpiredToken(tutorSessions)
-        }, 60000);
+      //   const intervalId = setInterval(async () => {
+      //     const studentSessions = student.AcademyId && dispatch(await setStudentSessions(student));
+      //     const tutorSessions = tutor.AcademyId && dispatch(await setTutorSessions(tutor));
+      //     student.AcademyId && handleExpiredToken(studentSessions)
+      //     tutor.AcademyId && handleExpiredToken(tutorSessions)
+      //   }, 60000);
 
-        return () => clearInterval(intervalId);
-      }
-      dispatchUserSessions()
+      //   return () => clearInterval(intervalId);
+      // }
+      // dispatchUserSessions()
     }
   }, [student, tutor, dispatch, token]);
 

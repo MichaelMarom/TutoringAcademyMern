@@ -13,7 +13,7 @@ export const showErrorToast = (err) => {
 }
 
 export const apiClient = axios.create({
-    baseURL: "http://localhost:9876", // Adjust the base URL to match your backend API endpoint
+    baseURL: "process.env.REACT_APP_SERVER_URL",
     headers: {
         "Content-Type": "application/json",
     },
@@ -34,7 +34,7 @@ apiClient.interceptors.request.use(
 );
 
 export const fileUploadClient = axios.create({
-    baseURL: "http://localhost:9876",
+    baseURL: "process.env.REACT_APP_SERVER_URL",
     headers: {
         'Content-Type': 'multipart/form-data',
     },

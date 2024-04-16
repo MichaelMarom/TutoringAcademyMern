@@ -36,19 +36,8 @@ let store = configureStore({
 
     tutor: tutorReducer,
     video: videoReducer,
-    // lineWidth: thicknessReducer,
-    // color: colorLineReducer,
+    
     tutorSessions: tutorSessionsReducer,
-    // eraserWidth: eraserReducer,
-    // paint: paintReducer,
-    // tool: toolReducer,
-    // mode: modeReducer,
-    // BoardUser: BoardAccessReducer,
-    // save: save,
-
-    // screenName: ScreenName,
-    // toolReq: toolReq,
-    // asideReq: asideReq,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 })
